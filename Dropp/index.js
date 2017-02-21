@@ -3,7 +3,7 @@ const app = express();
 const port = 3000;
 
 app.post('/', function(req, res) {
-  console.log('Get me');
+  console.log('Posted');
   const shit = req.body;
   console.log(shit);
   res.send('heyo');
