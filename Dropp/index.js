@@ -1,6 +1,14 @@
+var admin = require("firebase-admin");
 const express = require('express');
 const app = express();
 const port = 3000;
+
+var serviceAccount = require('./serviceAccountKey.json');
+
+admin.initializeApp({
+  credential: admin.credential.cert(serviceAccount),
+  databaseURL: "https://dropp-3a65d.firebaseio.com"
+});
 
 app.post('/', function(req, res) {
   console.log('Posted');
