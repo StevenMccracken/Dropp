@@ -1,4 +1,4 @@
-var admin = require("firebase-admin");
+var admin = require('firebase-admin');
 const express = require('express');
 const app = express();
 const port = 3000;
@@ -12,13 +12,12 @@ admin.initializeApp({
 
 app.post('/', function(req, res) {
   console.log('Posted');
-  const shit = req.body;
-  console.log(shit);
+  console.log(req.body);
   res.send('heyo');
 })
 
 app.get('/', (request, response) => {
-  response.send('Hello from Express!');
+  response.send('Let\'s Dropp');
 });
 
 app.listen(port, (err) => {
