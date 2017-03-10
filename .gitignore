@@ -1,7 +1,7 @@
 # Firebase key
 serviceAccountKey.json
 
-node_modules/
+Dropp/node_modules/*
 
 # macOS
 .DS_Store
