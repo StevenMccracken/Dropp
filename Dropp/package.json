@@ -1,16 +1,16 @@
 {
   "name": "Dropp",
   "version": "1.0.0",
-  "description": "Location Base social media application",
-  "main": "index.js",
+  "description": "Location-based social media application",
+  "main": "server.js",
   "dependencies": {
     "firebase-admin": "^4.1.3"
   },
   "devDependencies": {},
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "node index.js"
+    "start": "node server.js"
   },
-  "author": "",
+  "author": "Steven McCracken, Rich Cherngchaosil",
   "license": "ISC"
 }

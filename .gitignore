@@ -2,6 +2,7 @@
 serviceAccountKey.json
 
 Dropp/node_modules/*
+npm-debug.log
 
 # macOS
 .DS_Store
