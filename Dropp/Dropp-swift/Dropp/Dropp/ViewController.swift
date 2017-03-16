@@ -26,6 +26,19 @@ class ViewController: UIViewController, UIImagePickerControllerDelegate, UINavig
 
     //MARK: Actions
     
+    // Opens the camera to take a photo or video
+    @IBAction func takePicture(_ sender: UIButton) {
+        if UIImagePickerController.isSourceTypeAvailable(.camera) {
+            picker.allowsEditing = false
+            picker.sourceType = UIImagePickerControllerSourceType.camera
+            picker.cameraCaptureMode = .photo
+            picker.modalPresentationStyle = .fullScreen
+            present(picker,animated: true,completion: nil)
+        } else {
+            noCamera()
+        }
+    }
+    
     // Opens the photo library to pick a photo or video
     @IBAction func photoFromLibrary(_ sender: UIButton) {
         picker.allowsEditing = false // Ensures no edited versions of the photos
@@ -45,5 +58,19 @@ class ViewController: UIViewController, UIImagePickerControllerDelegate, UINavig
     // Removes the photo library view when the user presses cancel
     func imagePickerControllerDidCancel(_ picker: UIImagePickerController) {
         dismiss(animated: true, completion: nil)
+    }
+    
+    func noCamera() {
+        let alertVC = UIAlertController(
+            title: "No Camera",
+            message: "Sorry, this device has no camera",
+            preferredStyle: .alert)
+        let okAction = UIAlertAction(
+            title: "OK",
+            style:.default,
+            handler: nil)
+        
+        alertVC.addAction(okAction)
+        present(alertVC, animated: true, completion: nil)
     }
 }

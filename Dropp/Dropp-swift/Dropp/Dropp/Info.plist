@@ -35,7 +35,9 @@
 		<string>UIInterfaceOrientationLandscapeRight</string>
 	</array>
 	<key>NSPhotoLibraryUsageDescription</key>
-	<string>Add a photo to your Dropp</string>
+	<string>Upload a photo for your Dropp</string>
+    <key>NSCameraUsageDescription</key>
+    <string>Take a photo for your Dropp</string>
 	<key>UISupportedInterfaceOrientations~ipad</key>
 	<array>
 		<string>UIInterfaceOrientationPortrait</string>
