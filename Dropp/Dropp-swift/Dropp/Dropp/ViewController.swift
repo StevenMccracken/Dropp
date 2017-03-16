@@ -8,14 +8,18 @@
 
 import UIKit
 
-class ViewController: UIViewController, UIImagePickerControllerDelegate, UINavigationControllerDelegate {
+class ViewController: UIViewController, UITextFieldDelegate, UIImagePickerControllerDelegate, UINavigationControllerDelegate {
     //MARK: Properties
+    @IBOutlet weak var messageTextField: UITextField!
     @IBOutlet weak var imageView: UIImageView!
+    @IBOutlet weak var messageLabel: UILabel!
+    
     let picker = UIImagePickerController()
     
     override func viewDidLoad() {
         super.viewDidLoad()
         // Do any additional setup after loading the view, typically from a nib.
+        messageTextField.delegate = self
         picker.delegate = self
     }
 
@@ -23,8 +27,15 @@ class ViewController: UIViewController, UIImagePickerControllerDelegate, UINavig
         super.didReceiveMemoryWarning()
         // Dispose of any resources that can be recreated
     }
+    
+    //MARK:
 
     //MARK: Actions
+    @IBAction func postMessage(_ sender: UIButton) {
+        messageTextField.resignFirstResponder() // Hide the keyboard
+        messageLabel.text = messageTextField.text
+        messageTextField.text = ""
+    }
     
     // Opens the camera to take a photo or video
     @IBAction func takePicture(_ sender: UIButton) {
@@ -48,6 +59,15 @@ class ViewController: UIViewController, UIImagePickerControllerDelegate, UINavig
     }
     
     //MARK: Delegates
+    func textFieldShouldReturn(_ textField: UITextField) -> Bool {
+        textField.resignFirstResponder() // Hide the keyboard
+        return true
+    }
+    
+    func textFieldDidEndEditing(_ textField: UITextField) {
+        // Do nothing
+    }
+    
     func imagePickerController(_ picker: UIImagePickerController,
                                didFinishPickingMediaWithInfo info: [String : AnyObject]) {
         let chosenImage = info[UIImagePickerControllerOriginalImage] as! UIImage
