@@ -1,9 +1,15 @@
 var admin = require('firebase-admin');
 var express = require('express');
-var app = express();
+var bodyParser = require('body-parser')
 
+var app = express();
 var port = process.env.PORT || 3000;
 var router = express.Router();
+
+app.use(bodyParser.json());
+app.use(bodyParser.urlencoded({
+    extended: true
+}));
 
 // Setup firebase
 var serviceAccount = require('./serviceAccountKey.json');
@@ -11,6 +17,8 @@ admin.initializeApp({
   credential: admin.credential.cert(serviceAccount),
   databaseURL: "https://dropp-3a65d.firebaseio.com"
 });
+
+var db = admin.database(); // Get the db object to call on
 
 // Middleware
 router.use( (req, res, next) => {
@@ -25,40 +33,46 @@ router.get('/', (req, res) => {
 
 app.use('/api', router);
 
+// Get all dropps
 router.route('/dropps')
   .get( (req, res) => {
-    res.json(
-      {
-        "1":
-        {
-          "id": 4,
-          "timezone": "PST",
-          "timestamp": "2017-03-14 12:42:41",
-          "text": "Game at the pyramid is lit!",
-          "media": null
-        },
-        "2":
-        {
-          "id": 5,
-          "timezone": "PST",
-          "timestamp": "2017-03-14 09:21:16",
-          "text": "So bored at the library right now...",
-          "media": null
-        }
-      }
-    );
+    var ref = db.ref("/");
+    ref.once("value", (snapshot) => {
+      res.json(snapshot.val());
+    });
   });
 
+// Post a dropp
+router.route('/dropps')
+  .post( (req, res) => {
+    var ref = db.ref("/");
+    ref.push(
+      {
+        "location"  : req.body.location,
+        "timestamp" : parseInt(req.body.timestamp),
+        "content"   :
+        {
+          "text"    : req.body.text,
+          "media"   : req.body.media === 'null' ? null : req.body.media
+        }
+      });
+      res.send("Posted your dropp");
+  });
+
+// Get a specific dropp
 router.route('/dropps/:dropp_id')
   .get( (req, res) => {
-    res.send(req.params.dropp_id);
+    var ref = db.ref("/" + req.params.dropp_id);
+    ref.once("value", (snapshot) => {
+      res.json(snapshot.val());
+    });
   });
 
 // Start listening
 app.listen(port, (err) => {
   if (err) {
-    return console.log('something bad happened', err);
+    return console.log('Server error', err);
   }
 
-  console.log(`server is listening on ${port}`);
+  console.log(`Dropp server is listening on ${port}`);
 });
