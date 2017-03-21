@@ -7,25 +7,75 @@
 //
 
 import UIKit
+import CoreLocation
 
-class ViewController: UIViewController, UITextFieldDelegate, UIImagePickerControllerDelegate, UINavigationControllerDelegate {
+class ViewController: UIViewController, UITextFieldDelegate, UIImagePickerControllerDelegate, UINavigationControllerDelegate, CLLocationManagerDelegate {
     //MARK: Properties
     @IBOutlet weak var messageTextField: UITextField!
     @IBOutlet weak var imageView: UIImageView!
     @IBOutlet weak var messageLabel: UILabel!
     
     let picker = UIImagePickerController()
+    let locationManager = CLLocationManager()
     
     override func viewDidLoad() {
         super.viewDidLoad()
         // Do any additional setup after loading the view, typically from a nib.
         messageTextField.delegate = self
         picker.delegate = self
+        
+        // Ask for Authorisation from the User for location
+        self.locationManager.requestAlwaysAuthorization()
+        
+        // For use in foreground
+        self.locationManager.requestWhenInUseAuthorization()
+        
+        if CLLocationManager.locationServicesEnabled() {
+            locationManager.delegate = self
+            locationManager.desiredAccuracy = kCLLocationAccuracyNearestTenMeters
+            locationManager.startUpdatingLocation()
+        }
     }
 
     override func didReceiveMemoryWarning() {
         super.didReceiveMemoryWarning()
         // Dispose of any resources that can be recreated
+    }
+    
+    func sendMessage(_ text: String) {
+        let loc = locationManager.location!.coordinate
+        
+        let dict = ["location": "\(loc.latitude),\(loc.longitude)", "timestamp": 69, "text": text, "media": "pic.jpg"] as [String: Any]
+        if let jsonData = try? JSONSerialization.data(withJSONObject: dict, options: .prettyPrinted) {
+            let url = NSURL(string: "http://localhost:3000/api/dropps")!
+            let request = NSMutableURLRequest(url: url as URL)
+            request.httpMethod = "POST"
+            
+            request.addValue("application/json", forHTTPHeaderField: "Content-Type")
+            request.httpBody = jsonData
+            
+            let task = URLSession.shared.dataTask(with: request as URLRequest){ data,response,error in
+                if error != nil{
+                    print(error?.localizedDescription)
+                    return
+                }
+                
+                do {
+                    // IF RESPONSE IS JUST TEXT USE THIS LINE
+                    let responseData = String(data: data!, encoding: String.Encoding.utf8)
+                    
+                    // IF RESPONSE IS A JSON USE THESE LINES
+                    //let json = try JSONSerialization.jsonObject(with: data, options: .allowFragments) as! [String:Any]
+                    //let responseData = json["dropps"] as? [[String: Any]] ?? []
+                    
+                    print(responseData)
+                    
+                } catch let error as NSError {
+                    print(error)
+                }        
+            }          
+            task.resume()
+        }
     }
     
     //MARK:
@@ -35,6 +85,7 @@ class ViewController: UIViewController, UITextFieldDelegate, UIImagePickerContro
         messageTextField.resignFirstResponder() // Hide the keyboard
         messageLabel.text = messageTextField.text
         messageTextField.text = ""
+        sendMessage(messageLabel.text!)
     }
     
     // Opens the camera to take a photo or video

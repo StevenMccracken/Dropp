@@ -46,7 +46,7 @@ router.route('/dropps')
 router.route('/dropps')
   .post( (req, res) => {
     var ref = db.ref("/");
-    ref.push(
+    var newDropp = ref.push(
       {
         "location"  : req.body.location,
         "timestamp" : parseInt(req.body.timestamp),
@@ -56,7 +56,7 @@ router.route('/dropps')
           "media"   : req.body.media === 'null' ? null : req.body.media
         }
       });
-      res.send("Posted your dropp");
+    res.status(201).send(newDropp.key); // Return the dropp id
   });
 
 // Get a specific dropp
