@@ -149,6 +149,7 @@
 				TargetAttributes = {
 					69A43EC41E5BEEA6003E6420 = {
 						CreatedOnToolsVersion = 8.2.1;
+						DevelopmentTeam = VW2FMQUB95;
 						ProvisioningStyle = Automatic;
 					};
 					69A43ED81E5BEEA6003E6420 = {
@@ -344,6 +345,7 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_LAUNCHIMAGE_NAME = LaunchImage;
+				DEVELOPMENT_TEAM = VW2FMQUB95;
 				INFOPLIST_FILE = Dropp/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = com.groub.Dropp;
@@ -357,6 +359,7 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_LAUNCHIMAGE_NAME = LaunchImage;
+				DEVELOPMENT_TEAM = VW2FMQUB95;
 				INFOPLIST_FILE = Dropp/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = com.groub.Dropp;
@@ -412,6 +415,7 @@
 				69A43EE41E5BEEA6003E6420 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 		69A43EE51E5BEEA6003E6420 /* Build configuration list for PBXNativeTarget "DroppTests" */ = {
 			isa = XCConfigurationList;
@@ -420,6 +424,7 @@
 				69A43EE71E5BEEA6003E6420 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
 	};

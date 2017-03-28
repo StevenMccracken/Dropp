@@ -44,8 +44,10 @@ class ViewController: UIViewController, UITextFieldDelegate, UIImagePickerContro
     
     func sendMessage(_ text: String) {
         let loc = locationManager.location!.coordinate
+        let locString = "\(loc.latitude),\(loc.longitude)"
+        let time = NSDate().timeIntervalSince1970
+        let dict = ["location": locString, "timestamp": time, "text": text, "media": ""] as [String: Any]
         
-        let dict = ["location": "\(loc.latitude),\(loc.longitude)", "timestamp": 69, "text": text, "media": "pic.jpg"] as [String: Any]
         if let jsonData = try? JSONSerialization.data(withJSONObject: dict, options: .prettyPrinted) {
             let url = NSURL(string: "http://localhost:3000/api/dropps")!
             let request = NSMutableURLRequest(url: url as URL)
@@ -68,7 +70,7 @@ class ViewController: UIViewController, UITextFieldDelegate, UIImagePickerContro
                     //let json = try JSONSerialization.jsonObject(with: data, options: .allowFragments) as! [String:Any]
                     //let responseData = json["dropps"] as? [[String: Any]] ?? []
                     
-                    print(responseData)
+                    print(responseData!)
                     
                 } catch let error as NSError {
                     print(error)
