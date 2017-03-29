@@ -46,7 +46,8 @@ class ViewController: UIViewController, UITextFieldDelegate, UIImagePickerContro
         let loc = locationManager.location!.coordinate
         let locString = "\(loc.latitude),\(loc.longitude)"
         let time = NSDate().timeIntervalSince1970
-        let dict = ["location": locString, "timestamp": time, "text": text, "media": ""] as [String: Any]
+        let user = UIDevice.current.name // UPDATE TO USER PROFILE NAME
+        let dict = ["location": locString, "timestamp": time, "text": text, "media": "", "user_id": user] as [String: Any]
         
         if let jsonData = try? JSONSerialization.data(withJSONObject: dict, options: .prettyPrinted) {
             let url = NSURL(string: "http://localhost:3000/api/dropps")!
@@ -80,9 +81,38 @@ class ViewController: UIViewController, UITextFieldDelegate, UIImagePickerContro
         }
     }
     
-    //MARK:
+    // Mark: Actions
+    @IBAction func getDropp(_ sender: UIButton) {
+        let url = NSURL(string: "http://localhost:3000/api/dropps/-KfrvxsaEs2MI_TFX7Kx")!
+        let request = NSMutableURLRequest(url: url as URL)
+        request.httpMethod = "GET"
+        
+        let task = URLSession.shared.dataTask(with: request as URLRequest) { (data, response, error) in
+            if error != nil {
+                print(error)
+            } else {
+                do {
+                    let parsedData = try JSONSerialization.jsonObject(with: data!, options: []) as! [String:Any]
+                    let content = parsedData["content"] as! [String:Any]
+                    let location = parsedData["location"] as! String
+                    let timestamp = parsedData["timestamp"] as! Int
+                    let user = parsedData["user_id"] as! String
+                    
+                    for (key, value) in content {
+                        print("\(key) - \(value) ")
+                    }
+                    print(location)
+                    print(timestamp)
+                    print(user)
+                    
+                } catch let error as NSError {
+                    print(error)
+                }
+            }
+        }
+        task.resume()
+    }
 
-    //MARK: Actions
     @IBAction func postMessage(_ sender: UIButton) {
         messageTextField.resignFirstResponder() // Hide the keyboard
         messageLabel.text = messageTextField.text
