@@ -94,11 +94,14 @@ app.listen(port, (err) => {
 // Filters out the dropps that are further than max_distance from user_location
 function getCloseDropps(dropps, user_location, max_distance) {
   var closeDropps = {};
+
+  // Loop over all the dropps in the JSON
   for(var dropp in dropps) {
-    var info = dropps[dropp];
-    var dropp_location = info["location"].split(",").map(Number);
-    var distance = dist(user_location, dropp_location);
-    if(distance <= max_distance) closeDropps[dropp] = info;
+    var info = dropps[dropp]; // dropp is the key (ex. '-Ksadflkjl3d')
+    var dropp_location = info["location"].split(",").map(Number); // Get string lat/long coords into number array
+
+    var distance = dist(user_location, dropp_location); // Calculate straight-path distance between the points
+    if(distance <= max_distance) closeDropps[dropp] = info; // Save the dropp to the return set if it's close enough
   }
   return closeDropps;
 }
