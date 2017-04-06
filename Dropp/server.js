@@ -3,7 +3,7 @@ var express = require('express');
 var bodyParser = require('body-parser')
 
 var app = express();
-var port = process.env.PORT || 3000;
+var port = 80;
 var router = express.Router();
 
 app.use(bodyParser.json());
@@ -101,7 +101,7 @@ router.route('/dropps')
 // Start listening
 app.listen(port, (err) => {
     if (err) return console.log('Server error', err);
-    console.log(`Dropp server is listening on ${port}`);
+    console.log(`Dropp server is listening on port ${port}`);
 });
 
 /* ----- Utility functions ----- */
