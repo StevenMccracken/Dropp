@@ -46,7 +46,7 @@ router.route('/dropps')
 // Get a specific dropp
 router.route('/dropps/:dropp_id')
 .get((req, res) => {
-    var ref = db.ref("/dropps" + req.params.dropp_id);
+    var ref = db.ref("/dropps/" + req.params.dropp_id);
     ref.once("value", (snapshot) => {
         res.json(snapshot.val());
     });
