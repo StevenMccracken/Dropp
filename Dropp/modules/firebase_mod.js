@@ -1,10 +1,10 @@
 /* Firebase module */
 
-// Setup Firebase
 var admin 			= require('firebase-admin');
 var serviceAccount 	= require('../serviceAccountKey.json');
 var db 				= null;
 
+// Authenticate firebase
 admin.initializeApp({
 	credential: admin.credential.cert(serviceAccount),
 	databaseURL: "https://dropp-3a65d.firebaseio.com"
@@ -12,16 +12,13 @@ admin.initializeApp({
 
 db = admin.database();
 
-
-
-
 var exports = module.exports = {};
 
-exports.test = function(){
+exports.test = function() {
 	console.log("test");
 }
 
-exports.GET = function(_url, callback){
+exports.GET = function(_url, callback) {
 	var ref = db.ref(_url);
 
 	ref.once("value", (snapshot) => {
@@ -30,17 +27,15 @@ exports.GET = function(_url, callback){
 	}, err => {
 		// On failure
 		console.log(err);
-	})
+	});
 }
 
-
-exports.POST = function(_url, _post, _operation, callback){
-
+exports.POST = function(_url, _post, _operation, callback) {
 	var ref = db.ref(_url);
 
-	switch(_operation){
+	switch(_operation) {
 		case "push":
-			callback(ref.push(_post).key); // return the dropps id
+			callback(ref.push(_post).key); // return the dropp id
 			break;
 	}
 }
