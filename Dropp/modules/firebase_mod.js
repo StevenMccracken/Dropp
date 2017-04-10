@@ -21,27 +21,6 @@ exports.test = function(){
 	console.log("test");
 }
 
-/*
-// Get request that return promise, currently not being use
-exports.GET = function(_url){
-
-	var ref = db.ref(_url);
-
-	var promise = new Promise((resolve, reject) => {
-		ref.once("value", (snapshot) => {
-			// On Success
-			var dropps = snapshot.val();
-			resolve(dropps);
-		}, (error) => {
-			// On failure
-			reject(error);
-		})
-	});
-
-	return promise
-}
-*/
-
 exports.GET = function(_url, callback){
 	var ref = db.ref(_url);
 
@@ -55,24 +34,13 @@ exports.GET = function(_url, callback){
 }
 
 
-exports.POST = function(_url, _post, _operation){
+exports.POST = function(_url, _post, _operation, callback){
 
 	var ref = db.ref(_url);
 
-	var promise = null;
-
 	switch(_operation){
 		case "push":
-			promise = new Promise((resolve, reject) => {
-				ref.push(_post, response => {
-					// On Success
-					resolve(response);
-				}, error => {
-					// On failure
-					reject(error);
-				})
-			});
+			callback(ref.push(_post).key); // return the dropps id
 			break;
 	}
-	return promise;
 }

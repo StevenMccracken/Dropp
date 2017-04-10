@@ -22,19 +22,8 @@ module.exports = function(_router){
 	});
 
 	// Get all dropps
-	router.route('/dropps')
-	.get((req, res) => {
-		/*
-		firebase.GET("/dropps").then(response => {
-			// On Success
-			var dropps = response;
-			res.json(dropps);
-		}, error => {
-			// On Error
-			console.log("Error on: /dropps request" );
-			console.log(error);
-		});
-		*/
+	router.route('/dropps').get((req, res) => {
+
 		firebase.GET("/dropps", dropps => {
 			res.json(dropps);
 		})
@@ -42,25 +31,16 @@ module.exports = function(_router){
 
 
 	// Get a specific dropp
-	router.route('/dropps/:dropp_id')
-	.get((req, res) => {
-		/*
-		firebase.GET("/dropps/" + _req.params.dropp_id).then(response => {
-			// On Success
-			var dropps = response;
+	router.route('/dropps/:dropp_id').get((req, res) => {
+
+		firebase.GET("/dropps/" + _req.params.dropp_id, dropps => {
 			res.json(dropps);
-		}, error => {
-			// On Error
-			console.log("Error on: /dropps/:dropps_id");
-			console.log(error);
 		});
-		*/
 	});
 
 	// Get dropps specific to user location provided in the request body
-	router.route('/dropps/location')
-	.post((req, res) => {
-		/*
+	router.route('/dropps/location').post((req, res) => {
+
 	    if(req.body.location == null || req.body.max_distance == null) {
 	        console.log('Invalid request, body contains');
 	        console.log(req.body);
@@ -68,30 +48,22 @@ module.exports = function(_router){
 	        return;
 	    }
 
-	    firebase.GET("/dropps").then(response => {
-	    	// On Success
-			var dropps 	= response;
-			try{
-				var user_location 	= req.body.location.split(",").map(Number);
+	    firebase.GET("/dropps", dropps => {
+	    	try{
+	    		var user_location 	= req.body.location.split(",").map(Number);
 				var max_distance 	= req.body.max_distance;
 				var closeDropps = service.getCloseDropps(dropps, user_location, max_distance);
 				res.json(closeDropps);
-			} catch (err){
-				console.log(err);
-			}
-			
-	    }, error =>{
-	    	// On error
-	    	console.log("Error on: /dropps/location");
-	    	console.log(error);
+	    	}catch(err){
+	    		console.log(err);
+	    	}
 	    });
-		*/
 	});
 
 
 	// Post a dropp
-	router.route('/dropps')
-	.post((req, res) => {
+	router.route('/dropps').post((req, res) => {
+
 	    if(req.body.location == null || req.body.timestamp == null || req.body.user_id == null) {
 	        console.log('Invalid request, body contains');
 	        console.log(req.body);
@@ -99,7 +71,6 @@ module.exports = function(_router){
 	        return;
 	    }
 
-	    /*
 	    var newDropp = {
             "location"  : req.body.location,
             "timestamp" : parseInt(req.body.timestamp),
@@ -111,30 +82,10 @@ module.exports = function(_router){
             }
         }
 
-        firebase.POST("/dropps", newDropp, "push").then(response => {
+        firebase.POST("/dropps", newDropp, "push", response => {
         	res.send(response);
-        }, error => {
-        	console.log("Error on POST /dropps");
-        	console.log(error);
         });
-		*/
-
-	    /*
-	    var ref = db.ref("/dropps");
-	    var newDropp = ref.push(
-	        {
-	            "location"  : req.body.location,
-	            "timestamp" : parseInt(req.body.timestamp),
-	            "user_id"   : req.body.user_id,
-	            "content"   :
-	            {
-	                "text"    : req.body.text       === 'null' ? '' : req.body.text,
-	                "media"   : req.body.media      === 'null' ? '' : req.body.media
-	            }
-	        });
-	        res.send(newDropp.key); // Return the dropp id
-	        */
-	    });
+	});
 
 	return router;
 }
