@@ -1,9 +1,9 @@
 {
-  "name": "dropp",
+  "name": "dropp-react-native",
   "version": "0.1.0",
   "private": true,
   "devDependencies": {
-    "react-native-scripts": "0.0.26",
+    "react-native-scripts": "0.0.27",
     "jest-expo": "^0.3.0",
     "react-test-renderer": "~15.4.1"
   },
