@@ -11,11 +11,11 @@ import Foundation
 class UserObject : NSObject {
     var userId: String?
     var location: String?
-    var timestamp: String?
+    var timestamp: Int?
     var content: String?
     var text: String?
     
-    init(pUserId: String, pLocation: String, pTimestamp: String, pContent: String, pText: String) {
+    init(pUserId: String, pLocation: String, pTimestamp: Int, pContent: String, pText: String) {
         self.userId = pUserId
         self.location = pLocation
         self.timestamp = pTimestamp
@@ -38,11 +38,11 @@ class UserObject : NSObject {
             idx = arc4random_uniform(UInt32(texts.count))
             let randomText = texts[Int(idx)]
             
-            let aTimeStamp = "\(NSDate().timeIntervalSince1970 * 1000)"
+            let aTimeStamp = 1
             
             self.init(pUserId: "0", pLocation: randomLocation, pTimestamp: aTimeStamp, pContent: randomContent, pText: randomText)
         } else {
-            self.init(pUserId: "0", pLocation: "Unknown Location", pTimestamp: "Unknown Timestamp", pContent: "No Content", pText: "No Text")
+            self.init(pUserId: "0", pLocation: "Unknown Location", pTimestamp: 1, pContent: "No Content", pText: "No Text")
         }
     }
 }

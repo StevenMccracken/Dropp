@@ -52,6 +52,7 @@ class FeedTableViewController: UITableViewController, CLLocationManagerDelegate 
     
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
+        tableView.reloadData()
     }
     
     override func viewDidAppear(_ animated: Bool) {
@@ -59,6 +60,7 @@ class FeedTableViewController: UITableViewController, CLLocationManagerDelegate 
     }
     
     func getDropps() -> String {
+        print("getDropps()")
         var droppList = ""
         
         let maxDistance = 100 // meters
@@ -69,7 +71,8 @@ class FeedTableViewController: UITableViewController, CLLocationManagerDelegate 
         
         if let jsonData = try? JSONSerialization.data(withJSONObject: dict, options: .prettyPrinted) {
             //            let url = NSURL(string: "http://138.68.246.136:3000/api/dropps/location")!
-            let url = NSURL(string: "http://dropped.me:3000/api/dropps/location")!
+            //let url = NSURL(string: "http://dropped.me:3000/api/dropps/location")!
+            let url = NSURL(string: "http://localhost/api/dropps/location")!
             let request = NSMutableURLRequest(url: url as URL)
             request.httpMethod = "POST"
             
@@ -98,8 +101,9 @@ class FeedTableViewController: UITableViewController, CLLocationManagerDelegate 
                             let message = content["text"] as! String
                             
                             let sublabel = "On \(date) at (\(loc)), \(user) said '\(message)'\n"
-                            let newUser = UserObject(pUserId: user, pLocation: loc, pTimestamp: "\(timestamp)", pContent: "", pText: message)
+                            let newUser = UserObject(pUserId: user, pLocation: loc, pTimestamp: timestamp, pContent: "", pText: message)
                             print(sublabel)
+                            print("Creating new user")
                             self.userArr.append(newUser)
                         }
                         
@@ -134,11 +138,11 @@ class FeedTableViewController: UITableViewController, CLLocationManagerDelegate 
         let cell = tableView.dequeueReusableCell(withIdentifier: cellIdentifier , for: indexPath)
 
         // Configure the cell...
-        let date = user.timestamp
-        let loc = user.location
-        let userId = user.userId
-        let message = user.text
-        let sublabel = "On \(date) at (\(loc)), \(userId) said '\(message)'\n"
+        let date = user.timestamp!
+        let loc = user.location!
+        let userId = user.userId!
+        let message = user.text!
+        let sublabel = "\(userId) said '\(message)'\n"
         cell.textLabel?.text = sublabel
 
         return cell
