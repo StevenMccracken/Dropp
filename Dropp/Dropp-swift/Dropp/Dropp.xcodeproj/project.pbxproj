@@ -7,6 +7,9 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		1631B0001E96D5BE00820B09 /* FeedTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1631AFFF1E96D5BE00820B09 /* FeedTableViewController.swift */; };
+		16AF6C0B1E9B30270022C051 /* UserObject.swift in Sources */ = {isa = PBXBuildFile; fileRef = 16AF6C0A1E9B30270022C051 /* UserObject.swift */; };
+		16AF6C0D1E9B35B00022C051 /* UserStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = 16AF6C0C1E9B35B00022C051 /* UserStore.swift */; };
 		69789C581E8A055500FA0605 /* FeedViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 69789C571E8A055500FA0605 /* FeedViewController.swift */; };
 		69A43EC91E5BEEA6003E6420 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 69A43EC81E5BEEA6003E6420 /* AppDelegate.swift */; };
 		69A43ECB1E5BEEA6003E6420 /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 69A43ECA1E5BEEA6003E6420 /* ViewController.swift */; };
@@ -28,6 +31,9 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		1631AFFF1E96D5BE00820B09 /* FeedTableViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = FeedTableViewController.swift; path = ../FeedTableViewController.swift; sourceTree = "<group>"; };
+		16AF6C0A1E9B30270022C051 /* UserObject.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = UserObject.swift; path = ../UserObject.swift; sourceTree = "<group>"; };
+		16AF6C0C1E9B35B00022C051 /* UserStore.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = UserStore.swift; sourceTree = "<group>"; };
 		69789C571E8A055500FA0605 /* FeedViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = FeedViewController.swift; sourceTree = "<group>"; };
 		69A43EC51E5BEEA6003E6420 /* Dropp.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Dropp.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		69A43EC81E5BEEA6003E6420 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
@@ -85,6 +91,9 @@
 				69A43ECA1E5BEEA6003E6420 /* ViewController.swift */,
 				69A43ECC1E5BEEA6003E6420 /* Main.storyboard */,
 				69789C571E8A055500FA0605 /* FeedViewController.swift */,
+				1631AFFF1E96D5BE00820B09 /* FeedTableViewController.swift */,
+				16AF6C0A1E9B30270022C051 /* UserObject.swift */,
+				16AF6C0C1E9B35B00022C051 /* UserStore.swift */,
 				69A43ECF1E5BEEA6003E6420 /* Assets.xcassets */,
 				69A43EE81E5BF19C003E6420 /* AppIcon.appiconset */,
 				69A43ED11E5BEEA6003E6420 /* LaunchScreen.storyboard */,
@@ -207,9 +216,12 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				16AF6C0D1E9B35B00022C051 /* UserStore.swift in Sources */,
 				69A43ECB1E5BEEA6003E6420 /* ViewController.swift in Sources */,
 				69789C581E8A055500FA0605 /* FeedViewController.swift in Sources */,
 				69A43EC91E5BEEA6003E6420 /* AppDelegate.swift in Sources */,
+				16AF6C0B1E9B30270022C051 /* UserObject.swift in Sources */,
+				1631B0001E96D5BE00820B09 /* FeedTableViewController.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
