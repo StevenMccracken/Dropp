@@ -1,5 +1,6 @@
-# Firebase key
+# Google service keys
 serviceAccountKey.json
+storageAccountKey.json
 
 Dropp/node_modules/*
 npm-debug.log

@@ -50,7 +50,7 @@ class ViewController: UIViewController, UITextFieldDelegate, UIImagePickerContro
         let dict = ["location": locString, "timestamp": time, "text": text, "media": "", "user_id": user] as [String: Any]
         
         if let jsonData = try? JSONSerialization.data(withJSONObject: dict, options: .prettyPrinted) {
-            let url = NSURL(string: "http://138.68.246.136:3000/api/dropps")!
+            let url = NSURL(string: "http://dropps.me/api/dropps")!
             let request = NSMutableURLRequest(url: url as URL)
             request.httpMethod = "POST"
             
@@ -83,7 +83,7 @@ class ViewController: UIViewController, UITextFieldDelegate, UIImagePickerContro
     
     // Mark: Actions
     @IBAction func getDropp(_ sender: UIButton) {
-        let url = NSURL(string: "http://138.68.246.136:3000/api/dropps/-KfrvxsaEs2MI_TFX7Kx")!
+        let url = NSURL(string: "http://dropps.me/api/dropps/-KfrvxsaEs2MI_TFX7Kx")!
         let request = NSMutableURLRequest(url: url as URL)
         request.httpMethod = "GET"
         
