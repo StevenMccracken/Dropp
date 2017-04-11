@@ -134,7 +134,12 @@ class FeedTableViewController: UITableViewController, CLLocationManagerDelegate 
         let cell = tableView.dequeueReusableCell(withIdentifier: cellIdentifier , for: indexPath)
 
         // Configure the cell...
-        cell.textLabel?.text = user.userId
+        let date = user.timestamp
+        let loc = user.location
+        let userId = user.userId
+        let message = user.text
+        let sublabel = "On \(date) at (\(loc)), \(userId) said '\(message)'\n"
+        cell.textLabel?.text = sublabel
 
         return cell
     }

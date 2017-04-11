@@ -56,7 +56,7 @@ class FeedViewController: UIViewController, CLLocationManagerDelegate {
         let dict = ["location": locString, "max_distance": maxDistance] as [String: Any]
         
         if let jsonData = try? JSONSerialization.data(withJSONObject: dict, options: .prettyPrinted) {
-            let url = NSURL(string: "http://dropps.me/api/dropps/location")!
+            let url = NSURL(string: "http://dropps.me/api/dropps/location")!    
             let request = NSMutableURLRequest(url: url as URL)
             request.httpMethod = "POST"
             
