@@ -11,9 +11,9 @@ import Foundation
 class UserStore {
     var allUsers: [UserObject] = []
     
-    func createUser() -> UserObject {
-        let newUser = UserObject(random: true)
-        allUsers.append(newUser)
-        return newUser
-    }
+//    func createUser() -> UserObject {
+//        //let newUser = UserObject(random: true)
+//        allUsers.append(newUser)
+//        return newUser
+//    }
 }
