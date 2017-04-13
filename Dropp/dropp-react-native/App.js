@@ -50,6 +50,15 @@ export default class App extends React.Component {
       this.setState({ image: result.uri });
     }
   }
+  _takePic = async () => {
+    let result = await ImagePicker.launchCameraAsync({
+      allowsEditing: true,
+      aspect: [4, 3],
+    });
+    if(!result.cancelled) {
+      this.setState({image: result.uri});
+    }
+  }
 
 	_sendDroppButtonPressed = () => {
     this._getLocationAsync();
@@ -101,6 +110,11 @@ export default class App extends React.Component {
               <Text style={styles.button}>
                 <Text> Pick an Image </Text>
               </Text>
+            </TouchableHighlight>
+            <TouchableHighlight onPress={this._takePic}>
+              <Text style={styles.button}>
+                <Text> Take an Image </Text>
+                </Text>
             </TouchableHighlight>
             <TouchableHighlight onPress={this._droppbuttonPressed}>
               <Text style={styles.button}>
