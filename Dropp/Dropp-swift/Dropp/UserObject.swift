@@ -23,26 +23,27 @@ class UserObject : NSObject {
         self.text = pText
     }
     
-    convenience init(random: Bool = false) {
-        if random {
-            let locations = ["Pyramid", "USU", "Rec Center", "Parking Lot", "CECS Building"]
-            let contents = ["Hello There", "What's up", "How you doing?", "This is the test", "YOLO SWAG"]
-            let texts = ["text1", "text2", "text3", "text4", "text5"]
-            
-            var idx = arc4random_uniform(UInt32(locations.count))
-            let randomLocation = locations[Int(idx)]
-            
-            idx = arc4random_uniform(UInt32(contents.count))
-            let randomContent = contents[Int(idx)]
-            
-            idx = arc4random_uniform(UInt32(texts.count))
-            let randomText = texts[Int(idx)]
-            
-            let aTimeStamp = 1
-            
-            self.init(pUserId: "0", pLocation: randomLocation, pTimestamp: aTimeStamp, pContent: randomContent, pText: randomText)
-        } else {
-            self.init(pUserId: "0", pLocation: "Unknown Location", pTimestamp: 1, pContent: "No Content", pText: "No Text")
-        }
-    }
+    // Ignore this for now. It was just for testing.
+//    convenience init(random: Bool = false) {
+//        if random {
+//            let locations = ["69,69", "1,0", "2,0", "6,9"]
+//            let contents = ["Hello There", "What's up", "How you doing?", "This is the test", "YOLO SWAG"]
+//            let texts = ["text1", "text2", "text3", "text4", "text5"]
+//            
+//            var idx = arc4random_uniform(UInt32(locations.count))
+//            let randomLocation = locations[Int(idx)]
+//            
+//            idx = arc4random_uniform(UInt32(contents.count))
+//            let randomContent = contents[Int(idx)]
+//            
+//            idx = arc4random_uniform(UInt32(texts.count))
+//            let randomText = texts[Int(idx)]
+//            
+//            let aTimeStamp = 1
+//            
+//            self.init(pUserId: "0", pLocation: randomLocation, pTimestamp: aTimeStamp, pContent: randomContent, pText: randomText)
+//        } else {
+//            self.init(pUserId: "0", pLocation: "Unknown Location", pTimestamp: 1, pContent: "No Content", pText: "No Text")
+//        }
+//    }
 }
