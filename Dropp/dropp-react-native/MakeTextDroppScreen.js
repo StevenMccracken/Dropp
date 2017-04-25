@@ -1,3 +1,5 @@
+import Expo from 'expo';
+import React from 'react';
 import {
     Button,
     View,
@@ -8,7 +10,7 @@ import {
     StyleSheet,
 } from 'react-native';
 
-class MakeTextDroppScreen extends React.Component {
+export class MakeTextDroppScreen extends React.Component {
     /*static navigationOptions = ({ navigation }) => ({
         title: `Chat with ${navigation.state.params.user}`,
     });*/
