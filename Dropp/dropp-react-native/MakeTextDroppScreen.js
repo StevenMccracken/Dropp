@@ -1,17 +1,14 @@
+import React from 'react';
 import {
     Button,
     View,
-    AppRegistry,
     Text,
     TextInput,
     Keyboard,
     StyleSheet,
 } from 'react-native';
 
-class MakeTextDroppScreen extends React.Component {
-    /*static navigationOptions = ({ navigation }) => ({
-        title: `Chat with ${navigation.state.params.user}`,
-    });*/
+export class MakeTextDroppScreen extends React.Component {
     constructor(props){
         super(props);
         this.state = {text: ''};
@@ -28,7 +25,7 @@ class MakeTextDroppScreen extends React.Component {
               onSubmitEditing={Keyboard.dismiss}
               keyboardType={'default'}
             />
-            <Button title="return" onPress={this._droppbuttonPressed}/>
+            <Button title="Send Dropp" onPress={this._sendTextMessage}/>
             </View>
         );
     }
