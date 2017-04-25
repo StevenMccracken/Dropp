@@ -30,7 +30,7 @@ export class MakeTextDroppScreen extends React.Component {
               onSubmitEditing={Keyboard.dismiss}
               keyboardType={'default'}
             />
-            <Button title="return" onPress={this._droppbuttonPressed}/>
+            <Button title="Send Dropp" onPress={this._sendTextMessage}/>
             </View>
         );
     }
