@@ -1,16 +1,67 @@
 import Expo from 'expo';
 import React from 'react';
-import { StyleSheet, Text, View } from 'react-native';
+import {
+    Button,
+    View,
+    AppRegistry,
+    Text,
+    StyleSheet,
+} from 'react-native';
+import { TabNavigator, StackNavigator } from 'react-navigation';
 
-class App extends React.Component {
-  render() {
-    return (
-      <View style={styles.container}>
-        <Text>Open up main.js to start working on your app!</Text>
-      </View>
-    );
-  }
+
+class FeedScreen extends React.Component {
+    render() {
+        const { navigate } = this.props.navigation;
+        return (
+            <View>
+                <Text>PLACEHOLDER for list of dropps near area.</Text>
+            </View>
+        );
+    }
 }
+
+class MakeDroppScreen extends React.Component {
+    render() {
+        const { navigate } = this.props.navigation;
+        return (
+            <View style={styles.container}>
+                <Button 
+                    onPress={() => navigate('TextDropp')}
+                    title="Make a Text Post"
+                />
+            </View>
+        );    }
+}
+
+const MainScreenNavigator = TabNavigator({
+    Feed: { screen: FeedScreen },
+    Dropp: { screen: MakeDroppScreen },
+}, /*{
+        navigationOptions: {
+            title: "My Chats",
+        },
+    }*/);
+
+class MakeTextDroppScreen extends React.Component {
+    /*static navigationOptions = ({ navigation }) => ({
+        title: `Chat with ${navigation.state.params.user}`,
+    });*/
+    render() {
+        // The screen's current route is passed in to props.navigation.state:
+        //const { params } = this.props.navigation.state;
+        return (
+            <View>
+                <Text>PLACEHOLDER FOR MakeTextDroppScreen</Text>
+            </View>
+        );
+    }
+}
+
+const App = StackNavigator({
+    Home: { screen: MainScreenNavigator },
+    TextDropp: { screen: MakeTextDroppScreen },
+});
 
 const styles = StyleSheet.create({
   container: {
