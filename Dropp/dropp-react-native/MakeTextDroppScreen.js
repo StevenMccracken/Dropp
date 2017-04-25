@@ -1,8 +1,10 @@
+import Expo from 'expo';
 import React from 'react';
 import {
     Button,
     Modal,
     View,
+    AppRegistry,
     Text,
     TextInput,
     Keyboard,
@@ -12,6 +14,9 @@ import {
 import { Constants, Location, Permissions } from 'expo';
 
 export class MakeTextDroppScreen extends React.Component {
+    /*static navigationOptions = ({ navigation }) => ({
+        title: `Chat with ${navigation.state.params.user}`,
+    });*/
     constructor(props){
         super(props);
         this.state = {

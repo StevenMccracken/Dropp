@@ -9,8 +9,11 @@ import {
     Keyboard,
     StyleSheet,
 } from 'react-native';
+
 import { TabNavigator, StackNavigator } from 'react-navigation';
 import { MakeTextDroppScreen } from './MakeTextDroppScreen';
+import { MakeDroppScreen } from './MakeDroppScreen';
+import { MakePicDroppScreen} from './MakePicDroppScreen';
 
 class FeedScreen extends React.Component {
     render() {
@@ -21,19 +24,6 @@ class FeedScreen extends React.Component {
             </View>
         );
     }
-}
-
-class MakeDroppScreen extends React.Component {
-    render() {
-        const { navigate } = this.props.navigation;
-        return (
-            <View style={styles.container}>
-                <Button 
-                    onPress={() => navigate('TextDropp')}
-                    title="Make a Text Post"
-                />
-            </View>
-        );    }
 }
 
 const MainScreenNavigator = TabNavigator({
@@ -48,6 +38,7 @@ const MainScreenNavigator = TabNavigator({
 const App = StackNavigator({
     Home: { screen: MainScreenNavigator },
     TextDropp: { screen: MakeTextDroppScreen },
+    PicDropp: {screen: MakePicDroppScreen},
 });
 
 const styles = StyleSheet.create({
