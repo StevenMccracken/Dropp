@@ -1,371 +1,383 @@
-/* Firebase module */
+/**
+ * firebase_mod - Database @module
+ */
 
-var db 							= null,
-		bcrypt					= require('bcrypt-nodejs'),
-		admin 					= require('firebase-admin'),
-		serviceAccount 	= require('../serviceAccountKey.json');
+const admin 					= require('firebase-admin');
+const error          	= require('./error_mod.js');
+const bcrypt					= require('bcrypt-nodejs');
+const errorMessages   = require('./errorMessage_mod.js');
+const serviceAccount	= require('../serviceAccountKey.json');
 
-// Authenticate firebase
+// Authenticate firebase with server admin credentials
 admin.initializeApp({
 	credential: admin.credential.cert(serviceAccount),
 	databaseURL: 'https://dropp-3a65d.firebaseio.com'
 });
 
-db = admin.database();
-var exports = module.exports = {};
+// Obtain the database reference
+const db = admin.database();
 
-// Validates username and password from request with database record
-exports.validateCredentials = function(username, password, callback) {
-	// Declare error variables
-	var dbReason, errorType, explanation;
+module.exports = {
+	/**
+	 * validateCredentials - Validates username and password credentials
+	 * @param {string} username a username
+	 * @param {string} password a password
+	 * @param {callback} callback the callback that handles credentials validity
+	 */
+	validateCredentials: function(username, password, callback) {
+    var responseJson, serverLog;
 
-	// Retrieve password for requested user
-	var passwordRef = db.ref('/passwords/' + username);
-	passwordRef.once('value', snapshot => {
-		if (snapshot.val() == null) {
-			dbReason    = username + ' does not exist in passwords table';
-			errorType   = 'login_error';
-			explanation = 'The username or password is incorrect';
-			return callback(fail('validateCredentials', dbReason, errorType, explanation));
-		}
-
-		// Compare the entered password to the database password
-		bcrypt.compare(password, snapshot.val(), (err, res) => {
-			if (err) {
-        switch (err) {
-					case 'Not a valid BCrypt hash.':
-						dbReason    = 'Password for ' + username + ' is not hashed in the database';
-						errorType   = 'api_error';
-						explanation = 'There was a problem with our back-end services';
-						break;
-          default:
-            dbReason    = 'unknown';
-            errorType   = 'api_error';
-            explanation = 'There was a problem with our back-end services';
-        }
-
-        return callback(fail('validateCredentials', dbReason, errorType, explanation));
-      }
-
-			if (!res) {
-        dbReason    = password + ' does not match ' + username + '\'s password';
-        errorType   = 'login_error';
-        explanation = 'The username or password is incorrect';
-        return callback(fail('validateCredentials', dbReason, errorType, explanation));
-      }
-
-			var successJson = {
-        success: {
-          message: 'Valid login credentials',
-        }
-      };
-
-      callback(successJson);
-		});
-	}, err => {
-		// Determine type of error
-		var errorCode = -1; // FIXME: Parse err object for more specific information
-		switch (errorCode) {
-			default:
-				dbReason    = err;
-				errorType   = 'api_error';
-				explanation = 'There was a problem with our back-end services';
-		}
-
-		return callback(fail('validateCredentials', dbReason, errorType, explanation));
-	});
-};
-
-// Creates a user
-exports.createUser = function(req, callback) {
-	// Declare error variables
-	var dbReason, errorType, explanation;
-
-	// Check if a user with that username already exists
-	var userRef = db.ref('/users'), passwordRef = db.ref('/passwords');
-	userRef.orderByKey().equalTo(req.body.username).once('value', function(snapshot) {
-		var user = snapshot.val();
-		if (user) {
-			return callback(fail('createUser', 'username already exists', 'resource_error', 'That username is already being used'));
-		}
-
-		/**
-		 * User does not already exist, so add them to the users table first.
-		 * Start constructing JSON array with user information
-		 */
-		user = {};
-		user['email'] = req.body.email;
-
-		// Push user to database (username => userInfoJson)
-		userRef.child(req.body.username).set(user)
-			.then(function() {
-				// Hash the password from the request
-				bcrypt.genSalt(5, (err, salt) => {
-					if (err) {
-		        // Determine type of error
-		        var errorCode = err.code == null ? -1 : err.code;
-
-		        // TODO: discover more error codes to provide more specific feedback
-		        switch (errorCode) {
-		          default:
-		            dbReason    = 'unknown';
-		            errorType   = 'api_error';
-		            explanation = 'There was a problem with our back-end services';
-		        }
-
-		        return callback(fail('createUser', dbReason, errorType, explanation));
-		      }
-
-					bcrypt.hash(req.body.password, salt, null, (err, hash) => {
-						if (err) {
-							// Determine type of error
-							var errorCode = -1; // FIXME: Parse err object for more specific information
-							switch (errorCode) {
-								default:
-									dbReason    = err;
-									errorType   = 'api_error';
-									explanation = 'There was a problem with our back-end services';
-							}
-
-							return callback(fail('createUser', dbReason, errorType, explanation));
-						}
-
-						// After adding user, add the password record in the password table
-						passwordRef.child(req.body.username).set(hash)
-							.then(function() {
-								// Add username to user info JSON and pass it to the callback for client
-								user['username'] = req.body.username;
-								return callback(user);
-							})
-							.catch(function(err) {
-								// Adding password record failed, so remove user from user table to prevent inconsistency
-								var userDeleted = false;
-
-								// Try to remove the password record at most 15 times
-								for (var i = 0; i < 15 && !userDeleted; i++) {
-									db.ref('/users/' + req.body.username).remove()
-										.then(function() {
-											userDeleted = true;
-										})
-										.catch(function(removeError) {
-											console.log('Attempt %d failed to remove password record for %s', i, req.body.username);
-										});
-								}
-
-								// Log serious error if User & Password tables are inconsistent
-								if (!userDeleted) {
-									console.log('EXTREME ERROR. Failed to delete password record for %s 15 times. Manually deleted the record', req.body.username);
-								}
-
-								// Determine type of error
-								var errorCode = -1; // FIXME: Parse err object for more specific information
-								switch (errorCode) {
-									default:
-										dbReason    = err;
-										errorType   = 'api_error';
-										explanation = 'There was a problem with our back-end services';
-								}
-
-								return callback(fail('createUser', dbReason, errorType, explanation));
-							});
-					});
-				});
-			})
-			.catch(function(err) {
-				// Determine type of error
-				var errorCode = -1; // FIXME: Parse err object for more specific information
-				switch (errorCode) {
-					default:
-						dbReason    = err;
-						errorType   = 'api_error';
-						explanation = 'There was a problem with our back-end services';
-				}
-
-				return callback(fail('createUser', dbReason, errorType, explanation));
-			});
-	}, err => {
-		// Determine type of error
-		var errorCode = -1; // FIXME: Parse err object for more specific information
-		switch (errorCode) {
-			default:
-				dbReason    = err;
-				errorType   = 'api_error';
-				explanation = 'There was a problem with our back-end services';
-		}
-
-		return callback(fail('createUser', dbReason, errorType, explanation));
-	});
-};
-
-// Retrieves a user
-exports.getUser = function(username, callback) {
-	// Declare error variables
-	var dbReason, errorType, explanation;
-
-	// Retrieve user from the database
-	var ref = db.ref('/users/' + username);
-	ref.once('value', snapshot => {
-		if (snapshot.val() == null) {
-			dbReason    = 'user does not exist';
-			errorType   = 'resource_dne_error';
-			explanation = 'That user does not exist';
-			return callback(fail('getUser', dbReason, errorType, explanation));
-		}
-
-		// Return the user record with the callback
-		callback(snapshot.val());
-	}, err => {
-		// Determine type of error
-		var errorCode = -1; // FIXME: Parse err object for more specific information
-		switch (errorCode) {
-			default:
-				dbReason    = err;
-				errorType   = 'api_error';
-				explanation = 'There was a problem with our back-end services';
-		}
-
-		return callback(fail('getUser', dbReason, errorType, explanation));
-	});
-};
-
-// Retrieve all dropps
-exports.getAllDropps = function(callback) {
-	// Declare error variables
-	var dbReason, errorType, explanation;
-
-	var ref = db.ref('/dropps');
-	ref.once('value', snapshot => {
-		callback(snapshot.val());
-	}, err => {
-		// Determine type of error
-		var errorCode = -1; // FIXME: Parse err object for more specific information
-		switch (errorCode) {
-			default:
-				dbReason    = err;
-				errorType   = 'api_error';
-				explanation = 'There was a problem with our back-end services';
-		}
-
-		return callback(fail('getAllDropps', dbReason, errorType, explanation));
-	});
-};
-
-// Retrieve all dropps posted by a specific user
-exports.getDroppsByUser = function(username, callback) {
-	// Declare error variables
-	var dbReason, errorType, explanation;
-
-	var dropps = {};
-	var ref = db.ref('/dropps');
-
-	// Load dropps reference to have dropps in the closure
-	ref.on('value', snapshot => {
-		// Push dropps onto JSON that belong to username
-		ref.orderByChild('user_id').equalTo(username).on('child_added', snap => {
-			dropps[snap.key] = snap.val();
-		}, err => {
-			// Determine type of error
-			var errorCode = -1; // FIXME: Parse err object for more specific information
-			switch (errorCode) {
-				default:
-					dbReason    = err;
-					errorType   = 'api_error';
-					explanation = 'There was a problem with our back-end services';
+		// Obtain the db reference for the password of the username argument
+		const passwordRef = db.ref('/passwords/' + username);
+		passwordRef.once('value', passwordRefSnapshot => {
+			// If the snapshot value is null, no user exists at /passwords/<username>
+			if (passwordRefSnapshot.val() == null) {
+        serverLog = username + ' does not exist in passwords table';
+        responseJson = logError('validateCredentials', error.LOGIN_ERROR, null, serverLog);
+				return callback(responseJson);
 			}
 
-			return callback(fail('getDroppsByUser', dbReason, errorType, explanation));
+			/**
+			 * Username and password exist in the database, so
+			 * compare the password argument to the database record
+			 */
+			bcrypt.compare(password, passwordRefSnapshot.val(), (bcryptCompareError, passwordsMatch) => {
+				if (bcryptCompareError != null) {
+          // Error is not null so the bcrypt compare function failed
+          switch (bcryptCompareError) {
+            case 'Not a valid BCrypt hash.':
+              serverLog = 'Password for ' + username + ' is not correctly hashed in the database';
+              break;
+            default:
+              serverLog = bcryptCompareError;
+          }
+
+          responseJson = logError('validateCredentials', error.API_ERROR, null, serverLog);
+	      } else if (!passwordsMatch) {
+          // The comparison result is false so the passwords do not match
+          serverLog = password + ' does not match ' + username + '\'s password';
+          responseJson = logError('validateCredentials', error.LOGIN_ERROR, null, serverLog);
+	      } else {
+          // The comparison result is true so the passwords match
+          responseJson = {
+            success: {
+  	          message: 'Valid login credentials',
+  	        }
+          };
+        }
+
+	      return callback(responseJson);
+			});
+		}, passwordRefError => {
+      // An error occured with the database reference
+      responseJson = logError('validateCredentials', error.API_ERROR, null, passwordRefError);
+      return callback(responseJson);
+		});
+	},
+
+	/**
+	 * Creates a user record in the database
+	 * @param {Object} req the HTTP request
+	 * @param {callback} callback the callback that handles the database response
+	 */
+	createUser: function(req, callback) {
+		var responseJson;
+
+		// Obtain the db reference for the users records
+		const usersRef = db.ref('/users');
+
+		// First see if a user with the requested username already exists
+		usersRef.orderByKey().equalTo(req.body.username).once('value', userSnapshot => {
+			// If userSnapshot value is not null, a user with that username already exists
+			if (userSnapshot.val() != null) {
+				const message = 'That username is already in use';
+				const serverLog = 'new user was not created because the requested username already exists';
+				responseJson = logError('createUser', error.RESOURCE_ERROR, message, serverLog);
+				return callback(responseJson);
+			}
+
+			/**
+			 * User does not already exist, so add them to the users
+			 * table first. Construct JSON with user information
+			 */
+			var newUserInfo = {
+				email: req.body.email
+			};
+
+			/**
+			 * Set user record in the users table. The key is req.body.username
+			 * and the value is the user JSON constructed earlier
+			 */
+			usersRef.child(req.body.username).set(newUserInfo)
+				.then(function() {
+					/**
+					 * User record was added to the database, so generate salt to hash
+					 * the password given in the request body. Use 5 rounds of salting
+					 */
+					bcrypt.genSalt(5, (bcryptGenSaltError, salt) => {
+						if (bcryptGenSaltError != null) {
+							responseJson = logError('createUser', error.API_ERROR, null, bcryptGenSaltError);
+			        return callback(responseJson);
+			      }
+
+						// There was no genSalt() error. Hash the password with the salt
+						bcrypt.hash(req.body.password, salt, null, (bcryptHashError, hashedPassword) => {
+							if (bcryptHashError != null) {
+								responseJson = logError('createUser', error.API_ERROR, null, bcryptHashError);
+				        return callback(responseJson);
+							}
+
+							/**
+							 * The password has been hashed with salt. Add it to the passwords
+							 * records. First obtain the db reference for the passwords records
+							 */
+							const passwordsRef = db.ref('/passwords');
+
+							/**
+							 * Set password record in the passwords table. The key is
+							 * req.body.username and the value is the hashed password
+							 */
+							passwordsRef.child(req.body.username).set(hashedPassword)
+								.then(function() {
+									/**
+									 * Password was successfully added to the passwords table.
+									 * Add username to JSON for the client. Send the JSON
+									 * containing all the user information with the callback
+									 */
+									newUserInfo['username'] = req.body.username;
+									return callback(newUserInfo);
+								})
+								.catch(function(setPasswordError) {
+									/**
+									 * Adding password record failed so remove user
+									 * from user table to prevent inconsistency
+									 */
+									var userDeleted = false;
+
+									// Removing the user record might not succeed so try multiple times
+									var attemptLimit = 15;
+									for (var attempts = 0; attempts < attemptLimit && !userDeleted; attempts++) {
+										db.ref('/users/' + req.body.username).remove()
+											.then(function() {
+												// Successfully deleted the user record
+												userDeleted = true;
+											})
+											.catch(function(removeUserError) {
+												// Deleting the user failed. Log progress and try again
+												console.log('Attempt %d failed to remove password record for %s', attempts + 1, req.body.username);
+											});
+									}
+
+									/**
+									 * If the password record does not exist in the passwords table, but
+									 * a user record for that password DOES exist in the user table, the
+									 * database is inconsistent because a user exists without a password.
+									 * All attempts to delete the user failed, so log this error with high
+									 * alert. FIXME: Send some sort of notification to make error more visible
+									 */
+									if (!userDeleted) {
+										console.log('EXTREME ERROR. Failed to delete password record for %s %d times. Manually deleted the record!', req.body.username, attemptLimit);
+									}
+
+									responseJson = logError('createUser', error.API_ERROR, null, setPasswordError);
+									return callback(responseJson);
+								});
+						});
+					});
+				})
+				.catch(function(setUserError) {
+					responseJson = logError('createUser', error.API_ERROR, null, setUserError);
+					return callback(responseJson);
+				});
+		}, usersRefError => {
+			responseJson = logError('createUser', error.API_ERROR, null, usersRefError);
+			return callback(responseJson);
+		});
+	},
+
+	/**
+	 * Retrieves a user from the database
+	 * @param {string} username a username to search for in the database
+	 * @param {callback} callback the callback that handles the database response
+	 */
+	getUser: function(username, callback) {
+    var responseJson;
+
+		// Obtain the db reference for the user record in the users table
+		const userRef = db.ref('/users/' + username);
+		userRef.once('value', userSnapshot => {
+			// If the snapshot value is null, the user for username does not exist
+			if (userSnapshot.val() == null) {
+        const serverLog = 'user with username = ' + username + ' does not exist';
+        responseJson = logError('getUser', error.RESOURCE_DNE_ERROR, null, serverLog);
+			} else {
+        responseJson = userSnapshot.val();
+      }
+
+			return callback(responseJson);
+		}, userRefError => {
+      // An error occured with the database reference
+      responseJson = logError('getUser', error.API_ERROR, null, userRefError);
+      return callback(responseJson);
+		});
+	},
+
+	/**
+	 * Retrieve all dropps from the database
+	 * @param {callback} callback the callback that handles the database response
+	 */
+	getAllDropps: function(callback) {
+		// Obtain the db reference for the dropps records
+		const droppsRef = db.ref('/dropps');
+		droppsRef.once('value', droppsSnapshot => {
+			return callback(droppsSnapshot.val());
+		}, droppsRefError => {
+			var errorJson = logError('getAllDropps', error.API_ERROR, null, droppsRefError);
+			return callback(errorJson);
+		});
+	},
+
+	/**
+	 * Retrieve all dropps posted by a specific user
+	 * @param {string} username the username to select dropps by
+	 * @param {callback} callback the callback to handle the database response
+	 */
+	getDroppsByUser: function(username, callback) {
+		var responseJson = {};
+
+		/**
+		 * First check if a user with username argument exists. Obtain
+		 * the db reference for the user record in the users table
+		 */
+		const userRef = db.ref('/users/' + username);
+		userRef.once('value', userSnapshot => {
+			/**
+			 * If the snapshot value is null the requested user
+			 * does not exist. Don't query the db for any dropps
+			 */
+			if (userSnapshot.val() == null) {
+        const serverLog = 'user with username = ' + username + ' does not exist';
+        responseJson = logError('getDroppsByUser', error.RESOURCE_DNE_ERROR, 'That user does not exist', serverLog);
+				return callback(responseJson);
+			}
+
+			/**
+			 * The user exists so query the db for their dropps. Obtain
+			 * db reference to retain all dropp values in the closure
+			 */
+			const droppsRef = db.ref('/dropps');
+			droppsRef.on('value', droppsSnapshot => {
+				// Get all dropps that have username = <username> argument
+				droppsRef.orderByChild('username').equalTo(username).on('child_added', droppSnapshot => {
+					// Add each dropp posted by user to responseJson
+					responseJson[droppSnapshot.key] = droppSnapshot.val();
+				}, droppSnapshotError => {
+					responseJson = logError('getDroppsByUser', error.API_ERROR, null, droppSnapshotError);
+					return callback(responseJson);
+				});
+
+				// Return all dropps posted by specific user with the callback
+				return callback(responseJson);
+			}, droppsRefError => {
+				responseJson = logError('getDroppsByUser', error.API_ERROR, null, droppsRefError);
+				return callback(responseJson);
+			});
+		}, userRefError => {
+      // An error occured with the database reference
+      responseJson = logError('getDroppsByUser', error.API_ERROR, null, dbRefError);
+      return callback(responseJson);
+		});
+	},
+
+	/**
+	 * Retrieve a specific dropp from the database
+	 * @param {string} droppId the id of the dropp
+	 * @param {callback} callback the callback to handle the database response
+	 */
+	getDropp: function(droppId, callback) {
+    var responseJson;
+
+		// Obtain the db reference for the specific dropp record
+		const droppRef = db.ref('/dropps/' + droppId);
+		droppRef.once('value', droppSnapshot => {
+			// If the snapshot value is null, there is no dropp with that droppId
+			if (droppSnapshot.val() == null) {
+				const serverLog = 'Db was queried for dropp ' + droppId + ' but it does not exist';
+        responseJson = logError('getDropp', error.RESOURCE_DNE_ERROR, null, serverLog);
+			} else {
+        responseJson = droppSnapshot.val();
+      }
+
+      return callback(responseJson);
+		}, droppRefError => {
+      responseJson = logError('getDropp', error.API_ERROR, null, droppRefError);
+      return callback(responseJson);
+		});
+	},
+
+	/**
+	 * Post a dropp to the database
+	 * @param {string} username the username of the author of the dropp
+	 * @param {Object} req the HTTP request
+	 * @param {callback} callback the callback to handle the database response
+	 */
+	createDropp: function(username, req, callback) {
+		// Build dropp JSON for database. TODO: move this to the service layer
+		const dropp = {
+			"location" 	: req.body.location,
+			"timestamp"	: parseInt(req.body.timestamp),
+			"username" 	: username,
+			"content" 	: {
+						"text" 	: req.body.text 	== null ? '' : req.body.text,
+						"media" : req.body.media 	== null ? '' : req.body.media
+			}
+		};
+
+		var responseJson;
+
+		// Obtain the db reference for the dropps table
+		const droppsRef = db.ref('/dropps');
+
+		// Push dropp JSON to the database and save the auto-generated push key
+		const droppRef = droppsRef.push(dropp, function(droppRefError) {
+			if (droppRefError != null) {
+				responseJson = logError('createDropp', error.API_ERROR, null, droppRefError);
+				return callback(responseJson);
+			}
 		});
 
-		// Return dropps posted by specific user with callback
-		return callback(dropps);
-	}, err => {
-		// Determine type of error
-		var errorCode = -1; // FIXME: Parse err object for more specific information
-		switch (errorCode) {
-			default:
-				dbReason    = err;
-				errorType   = 'api_error';
-				explanation = 'There was a problem with our back-end services';
-		}
-
-		return callback(fail('getDroppsByUser', dbReason, errorType, explanation));
-	});
-};
-
-// Retrieve a specific dropp
-exports.getDropp = function(droppId, callback) {
-	// Declare error variables
-	var dbReason, errorType, explanation;
-
-	// Query database for specific dropp
-	var ref = db.ref('/dropps/' + droppId);
-	ref.once('value', snapshot => {
-		if (snapshot.val() == null) {
-			dbReason    = droppId + ' does not exist';
-			errorType   = 'resource_dne_error';
-			explanation = 'That dropp does not exist';
-			return callback(fail('getDropp', dbReason, errorType, explanation));
-		}
-
-		return callback(snapshot.val());
-	}, err => {
-		// Determine type of error
-		var errorCode = -1; // FIXME: Parse err object for more specific information
-		switch (errorCode) {
-			default:
-				dbReason    = err;
-				errorType   = 'api_error';
-				explanation = 'There was a problem with our back-end services';
-		}
-
-		return callback(fail('getDropp', dbReason, errorType, explanation));
-	});
-};
-
-// Post a dropp
-exports.createDropp = function(req, callback) {
-	// Build dropp JSON for database
-	var dropp = {
-		"location" 	: req.body.location,
-		"timestamp"	: parseInt(req.body.timestamp),
-		"user_id" 	: req.body.username,
-		"content" 	: {
-					"text" 	: req.body.text 	== null ? '' : req.body.text,
-					"media" : req.body.media 	== null ? '' : req.body.media // FIXME: actually upload image
-		}
-	};
-
-	// Push JSON to database and save the auto-generated push key
-	var ref = db.ref('/dropps');
-	var droppRef = ref.push(dropp, function(err) {
-		if (err) {
-			// FIXME: Find out error types
-			var dbReason    = err;
-			var errorType   = 'api_error';
-			var explanation = 'There was a problem with our back-end services';
-			return callback(fail('createDropp', dbReason, errorType, explanation));
-		}
-	});
-
-	return callback({ droppId: droppRef.key });
+		// Return the newly created dropp id with the callback
+		responseJson = { droppId: droppRef.key };
+		return callback(responseJson);
+	}
 };
 
 /**
- * Creates a detailed JSON message when a failure occurs and logs the error
- * @param {string} source - the name of the function where the error occurred
- * @param {string} reason - the detailed reason the function received an error (kept private on the server)
- * @param {string} errorType - the standardized error type
- * @param {string} details - a more clear explanation of what went wrong (for the client)
- * @returns {Object}
+ * logError - Logs a verbose JSON to the server and
+ * creates a slightly less verbose JSON for the client
+ * @param {string} source the function where the error
+ * occured (should be the inner-most named function)
+ * @param {string} errorType formal error type
+ * @param {string} errorMessage detailed message explaining the error for the
+ * client. If null, a default message will be added corresponding to errorType
+ * @param {string} serverLog detailed message
+ * explaining the failure for server logs
+ * @returns {Object} error JSON to send to client
  */
-function fail(source, reason, errorType, details) {
-  console.log('%s function failed because: %s', source, reason);
-  var responseJSON = {
+function logError(source, errorType, errorMessage, serverLog) {
+  console.log(JSON.stringify({
+    error: {
+      timestamp: (new Date().toISOString()),
+      type: errorType,
+      source: source,
+      details: serverLog
+    }
+  }));
+
+  return {
     error: {
       type: errorType,
-      message: details,
+      message: (errorMessage != null ? errorMessage : errorMessages(errorType))
     }
   };
-
-  return responseJSON;
 }
