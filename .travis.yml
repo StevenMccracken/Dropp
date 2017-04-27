@@ -13,3 +13,8 @@ script:
 
 after_success:
  - echo "Success!"
+
+notifications:
+ email: false
+ slack:
+    on_success: always
