@@ -1,4 +1,4 @@
-sudo: required
+# sudo: required
 
 language: node_js
 node_js:
@@ -10,7 +10,7 @@ before_script:
  - npm install
 
 script:
- sudo grunt test # run karma and jamine testing
+ grunt test # run karma and jamine testing
 
 notifications:
  email: false
