@@ -1,3 +1,5 @@
+[![Build Status](https://travis-ci.org/StevenMccracken/Dropp.svg?branch=master)](https://travis-ci.org/StevenMccracken/Dropp)
+
 # Dropp
 Description
 
