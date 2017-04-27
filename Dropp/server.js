@@ -8,6 +8,8 @@ const app       = express();
 const router 		= require('./modules/router_mod.js')(express.Router());
 const bodyParser  = require('body-parser');
 
+var exports = module.exports = {};
+
 // Set properties of the express server
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({
@@ -24,7 +26,11 @@ app.use('/', router);
  * @param {Number} PORT the port to listen on
  * @param {callback} err the callback that handles any errors
  */
-app.listen(PORT, (err) => {
+var server = app.listen(PORT, (err) => {
     if (err) console.log('Server connection error', err);
     else console.log(`Dropp server is listening on port ${PORT}`);
 });
+
+exports.closeServer = function(){
+	server.close();
+};

@@ -5,6 +5,7 @@ Description
 
 You need to install npm and node
 
+
 ## To Start Server
 
 1). Generating Firebase Admin Credential 
@@ -22,4 +23,9 @@ You need to install npm and node
 	- Quick fix
 	'PATH="/c/Program Files/nodejs/:$PATH"'
 
-4). 'npm start'
+4). Run:
+	'npm start'
+	
+## To Test
+	Run:
+		'grunt test'
