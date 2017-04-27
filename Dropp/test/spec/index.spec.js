@@ -1,7 +1,7 @@
 
 var request = require("request");
 var server = require("../../server.js");
-var base_url = "http://localhost/"
+var base_url = "http://localhost:3000"
 
 describe("Hellow World Server", function(){
 	describe("GET /", function(){
