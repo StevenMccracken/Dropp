@@ -11,5 +11,5 @@ before_script:
 script:
  grunt test # run karma and jamine testing
 
- after_success:
+after_success:
  - echo "Success!"
