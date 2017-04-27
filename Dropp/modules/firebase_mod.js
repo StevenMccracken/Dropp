@@ -8,7 +8,11 @@ const bcrypt					= require('bcrypt-nodejs');
 const errorMessages   = require('./errorMessage_mod.js');
 // const serviceAccount	= require('../serviceAccountKey.json');
 var serviceAccount = process.env.SERVICE_KEY;
-serviceAccount = serviceAccount? serviceAccount : require('../serviceAccountKey.json');
+if (serviceAccount) {
+	serviceAccount = JSON.parse(serviceAccount);
+} else {
+	serviceAccount = require('../serviceAccountKey.json');
+}
 // Authenticate firebase with server admin credentials
 admin.initializeApp({
 	credential: admin.credential.cert(serviceAccount),

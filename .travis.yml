@@ -11,9 +11,6 @@ before_script:
 script:
  grunt test # run karma and jamine testing
 
-after_success:
- - echo "Success!"
-
 notifications:
  email: false
  slack:
