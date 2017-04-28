@@ -6,8 +6,13 @@ const admin 					= require('firebase-admin');
 const error          	= require('./error_mod.js');
 const bcrypt					= require('bcrypt-nodejs');
 const errorMessages   = require('./errorMessage_mod.js');
-const serviceAccount	= require('../serviceAccountKey.json');
-
+// const serviceAccount	= require('../serviceAccountKey.json');
+var serviceAccount = process.env.TEST;
+if (serviceAccount) {
+	serviceAccount = JSON.parse(serviceAccount);
+} else {
+	serviceAccount = require('../serviceAccountKey.json');
+}
 // Authenticate firebase with server admin credentials
 admin.initializeApp({
 	credential: admin.credential.cert(serviceAccount),

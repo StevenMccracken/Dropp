@@ -1,9 +1,12 @@
+[![Build Status](https://travis-ci.org/StevenMccracken/Dropp.svg?branch=master)](https://travis-ci.org/StevenMccracken/Dropp)
+
 # Dropp
 Description
 
 ## Prerequisites
 
 You need to install npm and node
+
 
 ## To Start Server
 
@@ -22,4 +25,9 @@ You need to install npm and node
 	- Quick fix
 	'PATH="/c/Program Files/nodejs/:$PATH"'
 
-4). 'npm start'
+4). Run:
+	'npm start'
+	
+## To Test
+	Run:
+		'grunt test'
