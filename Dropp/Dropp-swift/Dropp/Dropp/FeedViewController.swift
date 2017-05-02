@@ -53,10 +53,10 @@ class FeedViewController: UIViewController, CLLocationManagerDelegate {
         let loc = locationManager.location!.coordinate
         let locString = "\(loc.latitude),\(loc.longitude)"
         
-        let dict = ["location": locString, "max_distance": maxDistance] as [String: Any]
+        let dict = ["location": locString, "maxDistance": maxDistance] as [String: Any]
         
         if let jsonData = try? JSONSerialization.data(withJSONObject: dict, options: .prettyPrinted) {
-            let url = NSURL(string: "http://dropps.me/api/dropps/location")!    
+            let url = NSURL(string: "https://dropps.me/location/dropps/")!
             let request = NSMutableURLRequest(url: url as URL)
             request.httpMethod = "POST"
             
@@ -75,7 +75,7 @@ class FeedViewController: UIViewController, CLLocationManagerDelegate {
                             let dropp = parsedData[row.key] as! [String:Any]
                             
                             // Extract specific info from that JSON entry
-                            let user = dropp["user_id"] as! String
+                            let user = dropp["username"] as! String
                             let loc = dropp["location"] as! String
                             
                             let timestamp = dropp["timestamp"] as! Int

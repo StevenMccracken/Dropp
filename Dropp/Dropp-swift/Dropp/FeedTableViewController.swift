@@ -14,6 +14,7 @@ class FeedTableViewController: UITableViewController, CLLocationManagerDelegate 
     let locationManager = CLLocationManager()
     var userArr: [UserObject] = []
     let cellIdentifier = "CellIdentifier"
+    var token = "JWT eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6InRlc3QiLCJkZXRhaWxzIjp7ImVtYWlsIjoidGVzdEB0ZXN0LmNvbSJ9LCJpYXQiOjE0OTM3MDA2MTUsImV4cCI6MTQ5NjI5MjYxNX0.K2AlNLMPT-JOKNY6QueWAtubKaOhjWlRjPYD3o0eSeA"
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -29,7 +30,17 @@ class FeedTableViewController: UITableViewController, CLLocationManagerDelegate 
             locationManager.desiredAccuracy = kCLLocationAccuracyNearestTenMeters
             locationManager.startUpdatingLocation()
         }
-        // After the view is loaded, fetch the data from the server
+        
+        if self.token == "" {
+            var tokenz = getToken(username: "test", password: "test")
+            // After the view is loaded, fetch the data from the server
+            while self.token.isEmpty {
+                print("fuck you Steve")
+            }
+            print("Anal")
+        }
+        print("Fuck you leaf")
+        
         getDropps()
 
         // Uncomment the following line to preserve selection between presentations
@@ -59,20 +70,13 @@ class FeedTableViewController: UITableViewController, CLLocationManagerDelegate 
         super.viewDidAppear(animated)
     }
     
-    func getDropps() -> String {
-        print("getDropps()")
-        var droppList = ""
-        
-        let maxDistance = 100 // meters
-        let loc = locationManager.location!.coordinate
-        let locString = "\(loc.latitude),\(loc.longitude)"
-        
-        let dict = ["location": locString, "max_distance": maxDistance] as [String: Any]
+    func getToken(username: String, password: String) -> String {
+        print("Hi")
+        let dict = ["username": username, "password": password] as [String: Any]
+        var tokenStr = ""
         
         if let jsonData = try? JSONSerialization.data(withJSONObject: dict, options: .prettyPrinted) {
-            //            let url = NSURL(string: "http://138.68.246.136:3000/api/dropps/location")!
-            //let url = NSURL(string: "http://dropped.me:3000/api/dropps/location")!
-            let url = NSURL(string: "http://localhost/api/dropps/location")!
+            let url = NSURL(string: "https://dropps.me/authenticate")!
             let request = NSMutableURLRequest(url: url as URL)
             request.httpMethod = "POST"
             
@@ -81,31 +85,103 @@ class FeedTableViewController: UITableViewController, CLLocationManagerDelegate 
             
             let task = URLSession.shared.dataTask(with: request as URLRequest) { (data, response, error) in
                 if error != nil {
-                    print(error)
+                    //print(error)
+                    print("error in getToken")
+                } else {
+                    do {
+                        print("Do")
+                        let parsedData = try JSONSerialization.jsonObject(with: data!, options: []) as! [String:Any]
+                        print(parsedData)
+                        
+                        if parsedData["error"] != nil {
+                            print(parsedData["error"]!)
+                            print("Error in parsedData")
+                        } else {
+                            let success = parsedData["success"] as? [String: Any]
+                            self.token = success?["token"] as! String
+                            print("Printing self.token")
+                            print(self.token)
+//                            print(success)
+                            print("Success in getToken")
+                            // TODO: get token and set global value
+                        }
+                        print("Hello")
+                    } catch let error as NSError {
+                        print("catching error")
+                        print(error)
+                    }
+                }
+            }
+            task.resume()
+            print("jsonData: ")
+            print(jsonData)
+        }
+
+        return tokenStr
+    }
+    
+    func getDropps() -> String {
+        print("getDropps()")
+        var droppList = ""
+        
+        let maxDistance = 100 // meters
+        let loc = locationManager.location!.coordinate
+        let locString = "\(loc.latitude),\(loc.longitude)"
+        
+        let dict = ["location": locString, "maxDistance": maxDistance] as [String: Any]
+        
+        if let jsonData = try? JSONSerialization.data(withJSONObject: dict, options: .prettyPrinted) {
+            //            let url = NSURL(string: "http://138.68.246.136:3000/api/dropps/location")!
+            //let url = NSURL(string: "http://dropped.me:3000/api/dropps/location")!
+            let url = NSURL(string: "https://dropps.me/location/dropps")!
+            let request = NSMutableURLRequest(url: url as URL)
+            request.httpMethod = "POST"
+            
+            request.addValue("application/json", forHTTPHeaderField: "Content-Type")
+            request.addValue(self.token, forHTTPHeaderField: "Authorization")
+            request.httpBody = jsonData
+            
+            // add key:value "Authorization": <token> to headers
+            
+            let task = URLSession.shared.dataTask(with: request as URLRequest) { (data, response, error) in
+                if error != nil {
+                    //print(error)
                 } else {
                     do {
                         let parsedData = try JSONSerialization.jsonObject(with: data!, options: []) as! [String:Any]
+                        print("printing parsed Data")
+                        print(parsedData)
+                        let droppJson = parsedData["dropps"] as! [String:Any]
+                        print("droppedJson")
+                        print(droppJson)
                         
-                        for row in parsedData {
-                            // Get the key/value info from the JSON
-                            let dropp = parsedData[row.key] as! [String:Any]
-                            
-                            // Extract specific info from that JSON entry
-                            let user = dropp["user_id"] as! String
-                            let loc = dropp["location"] as! String
-                            
-                            let timestamp = dropp["timestamp"] as! Int
-                            let date = NSDate(timeIntervalSince1970: TimeInterval(timestamp))
-                            
-                            let content = dropp["content"] as! [String:Any]
-                            let message = content["text"] as! String
-                            
-                            let sublabel = "On \(date) at (\(loc)), \(user) said '\(message)'\n"
-                            let newUser = UserObject(pUserId: user, pLocation: loc, pTimestamp: timestamp, pContent: "", pText: message)
-                            print(sublabel)
-                            print("Creating new user")
-                            self.userArr.append(newUser)
+                        for (key, value) in droppJson {
+                            print("\(key): \(value)")
                         }
+                        
+                       
+                        
+//                        for row in parsedData {
+//                            // Get the key/value info from the JSON
+//                            let dropp = parsedData[row.key] as! [String:Any]
+//                            print("fuck you steve")
+//                            print(dropp)
+//                            // Extract specific info from that JSON entry
+//                            let user = dropp["username"] as! String
+//                            let loc = dropp["location"] as! String
+//                            
+//                            let timestamp = dropp["timestamp"] as! Int
+//                            let date = NSDate(timeIntervalSince1970: TimeInterval(timestamp))
+//                            
+//                            let content = dropp["content"] as! [String:Any]
+//                            let message = content["text"] as! String
+//                            
+//                            let sublabel = "On \(date) at (\(loc)), \(user) said '\(message)'\n"
+//                            let newUser = UserObject(pUserId: user, pLocation: loc, pTimestamp: timestamp, pContent: "", pText: message)
+//                            print(sublabel)
+//                            print("Creating new user")
+//                            self.userArr.append(newUser)
+//                        }
                         
                     } catch let error as NSError {
                         print(error)
