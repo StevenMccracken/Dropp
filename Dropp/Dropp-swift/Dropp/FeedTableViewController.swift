@@ -36,12 +36,12 @@ class FeedTableViewController: UITableViewController, CLLocationManagerDelegate 
         // self.clearsSelectionOnViewWillAppear = false
 
         // Uncomment the following line to display an Edit button in the navigation bar for this view controller.
-        // self.navigationItem.rightBarButtonItem = self.editButtonItem()
-//        let user1 = UserObject(pUserId: "0", pLocation: "USU", pTimestamp: "March 12, 2017", pContent: "Content 1", pText: "Text 1")
-//        let user2 = UserObject(pUserId: "1", pLocation: "USU", pTimestamp: "March 12, 2017", pContent: "Content 1", pText: "Text 1")
-//        let user3 = UserObject(pUserId: "2", pLocation: "USU", pTimestamp: "March 12, 2017", pContent: "Content 1", pText: "Text 1")
-//        let user4 = UserObject(pUserId: "3", pLocation: "USU", pTimestamp: "March 12, 2017", pContent: "Content 1", pText: "Text 1")
-//        let user5 = UserObject(pUserId: "4", pLocation: "USU", pTimestamp: "March 12, 2017", pContent: "Content 1", pText: "Text 1")
+//         self.navigationItem.rightBarButtonItem = self.editButtonItem()
+//        let user1 = UserObject(pUserId: "1", pMessage: "hello1")
+//        let user2 = UserObject(pUserId: "2", pMessage: "hello2")
+//        let user3 = UserObject(pUserId: "3", pMessage: "hello3")
+//        let user4 = UserObject(pUserId: "4", pMessage: "hello4")
+//        let user5 = UserObject(pUserId: "5", pMessage: "hello5")
 //        userArr.append(user1)
 //        userArr.append(user2)
 //        userArr.append(user3)
@@ -138,10 +138,10 @@ class FeedTableViewController: UITableViewController, CLLocationManagerDelegate 
         let cell = tableView.dequeueReusableCell(withIdentifier: cellIdentifier , for: indexPath)
 
         // Configure the cell...
-        let date = user.timestamp!
-        let loc = user.location!
+//        let date = user.timestamp!
+//        let loc = user.location!
         let userId = user.userId!
-        let message = user.text!
+        let message = user.message!
         let sublabel = "\(userId) said '\(message)'\n"
         cell.textLabel?.text = sublabel
 

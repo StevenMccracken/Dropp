@@ -14,6 +14,7 @@ class UserObject : NSObject {
     var timestamp: Int?
     var content: String?
     var text: String?
+    var message: String?
     
     init(pUserId: String, pLocation: String, pTimestamp: Int, pContent: String, pText: String) {
         self.userId = pUserId
@@ -21,6 +22,11 @@ class UserObject : NSObject {
         self.timestamp = pTimestamp
         self.content = pContent
         self.text = pText
+    }
+    
+    init(pUserId: String, pMessage: String) {
+        self.userId = pUserId
+        self.message = pMessage
     }
     
     // Ignore this for now. It was just for testing.
