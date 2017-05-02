@@ -17,29 +17,27 @@ import { TabNavigator, StackNavigator } from 'react-navigation';
 import { MakeTextDroppScreen } from './MakeTextDroppScreen';
 import { MakeDroppScreen } from './MakeDroppScreen';
 import { MakePicDroppScreen} from './MakePicDroppScreen';
+import { Constants, Location, Permissions } from 'expo';
 
 class FeedScreen extends React.Component {
+constructor(props){
+    super(props);
+    this.state = {
+            text: '',
+            errorMessage: null,
+            sendingMessage: false,
+            dropps: null,
+    };
+    this._getDropps();
+}
+    
     render() {
         const { navigate } = this.props.navigation;
+
         return (
             <View>
                 <FlatList
-                    data={[{title: 'asfasfasjkfhkasdhfjlkashdflkbhalkhalshasdlgsdfgjlksdfhgldfhglkjefhglsdfhlgksdjfhglk', image:'https://facebook.github.io/react/img/logo_og.png', key: 'a'}, 
-                        {title: 'ABCDEFGHIJKLMNOPQRSTUVWXYZ' , image: 'https://facebook.github.io/react/img/logo_og.png', key: 'b'},
-                         {title: 'hello2' , image: 'https://facebook.github.io/react/img/logo_og.png',  key: 'c'},
-                          {title: 'hello2' , image:' ', key: 'd'},
-                           {title: 'hello2' , image:' ', key: 'e'},
-                            {title: 'hello2' , image:' ', key: 'f'},
-                             {title: 'hello2' , image: 'https://facebook.github.io/react/img/logo_og.png', key: 'g'},
-                              {title: 'hello2' , image:' ', key: 'h'},
-                               {title: 'hello2' , image:' ', key: 'i'},
-                                {title: 'hello2' , image:' ', key: 'j'},
-                                 {title: 'hello2' , image:' ', key: 'k'},
-                                  {title: 'hello2' , image:' ', key: 'l'},
-                                   {title: 'hello2' , image:' ', key: 'm'},
-                                    {title: 'hello2' , image:' ', key: 'n'},
-                                     {title: 'hello2' , image:' ', key: 'o'},
-                                      {title: 'hello2' , image:' ', key: 'p'},]}
+                    data={this.state.dropps}
                     renderItem={this._renderItem}
                 />
             </View>
@@ -49,7 +47,7 @@ class FeedScreen extends React.Component {
     <TouchableHighlight noDefaultStyles={true} onPress={() => this._onPress(item)}>
         <View style = {styles.row}>
             <View style = {styles.textcontainer}>
-                <Text>{item.title}</Text>
+                <Text>{item.text}</Text>
             </View>
             <View style = {styles.photocontainer}>
                 {item.image && <Image source = {{uri: item.image}} style ={styles.photo}/>}
@@ -57,8 +55,63 @@ class FeedScreen extends React.Component {
         </View>
     </TouchableHighlight>
     );
-}
 
+    _getDropps = async() =>{
+        console.log("entered getdropss");
+        let{status} = await Permissions.askAsync(Permissions.LOCATION);
+        if(status !== 'granted'){
+            this.state({
+                errorMessage: 'Permission to access location was denied',
+            });
+        } 
+
+    let locData = await Location.getCurrentPositionAsync({enableHighAccuracy: true});
+    //let curLocation = locData.coords.latitude + "," + locData.coords.longitude;
+    let curLocation = "69.0,69.0";
+    let curTime = locData.timestamp;
+
+    var param = {
+        location: curLocation,
+        maxDistance: 15,
+    };
+
+    var formData = [];
+    for(var i in param){
+        var encodeKey = encodeURIComponent(i);
+        var encodeValue = encodeURIComponent(param[i]);
+        formData.push(encodeKey + "=" + encodeValue);
+    }
+    formData = formData.join("&");
+
+    var feedRequest = new Request('https://dropps.me/location/dropps', {
+        method: 'POST',
+        headers: new Headers( {
+            'Content-Type': 'application/x-www-form-urlencoded',
+            'Authorization': 'JWT eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6ImpvZWwiLCJkZXRhaWxzIjp7ImVtYWlsIjoiam9lbEBmYWtlbWFpbC5jb20ifSwiaWF0IjoxNDkzNzAzODgxLCJleHAiOjE0OTYyOTU4ODF9.Saz5GHRtpD0SXRED2RsLg71IBelwiUNgK0Sd8nMmXCU',
+        }),
+        body: formData,
+    });
+    var feedList = [];
+    //console.log(feedRequest);
+    fetch(feedRequest).then((drp) => {
+        //console.log(dropps);
+        drp.json().then((droppJSON) =>{
+            //console.log(droppJSON);
+            var dropList = droppJSON.dropps;
+            //feedList.push(JSON.stringify(dropList));
+            for(var d in dropList) {
+                //feedList.push(JSON.stringify(d));
+                //console.log(d);
+                //console.log(dropList[d]);
+                var post = dropList[d];
+                feedList.push({d, post});
+                console.log(feedList);
+            }
+            this.setState({dropps: feedList});
+        });
+    });
+    }
+}
 const MainScreenNavigator = TabNavigator({
     Feed: { screen: FeedScreen },
     Dropp: { screen: MakeDroppScreen },
