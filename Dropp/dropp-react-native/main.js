@@ -14,6 +14,8 @@ import { TabNavigator, StackNavigator } from 'react-navigation';
 import { MakeTextDroppScreen } from './MakeTextDroppScreen';
 import { MakeDroppScreen } from './MakeDroppScreen';
 import { MakePicDroppScreen} from './MakePicDroppScreen';
+import { LoginScreen } from './LoginScreen';
+import { CreateAccountScreen } from './CreateAccountScreen';
 
 class FeedScreen extends React.Component {
     render() {
@@ -34,11 +36,14 @@ const MainScreenNavigator = TabNavigator({
             title: "My Chats",
         },
     }*/);
+    
 
 const App = StackNavigator({
+    Login: { screen: LoginScreen },
+    CreateAccount: { screen: CreateAccountScreen },
     Home: { screen: MainScreenNavigator },
     TextDropp: { screen: MakeTextDroppScreen },
-    PicDropp: {screen: MakePicDroppScreen},
+    PicDropp: {screen: MakePicDroppScreen },
 });
 
 const styles = StyleSheet.create({

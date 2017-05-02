@@ -77,7 +77,6 @@ export class MakeTextDroppScreen extends React.Component {
             }),
             body: formData,
         });
-
         fetch(request).then((response) => {
             //convert to JSON
             response.json().then((responseObj) => console.log(responseObj));
