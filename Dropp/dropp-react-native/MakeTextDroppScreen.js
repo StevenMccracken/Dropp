@@ -81,6 +81,10 @@ export class MakeTextDroppScreen extends React.Component {
         fetch(request).then((response) => {
             //convert to JSON
             response.json().then((responseObj) => console.log(responseObj));
+
+            //if no errors, set timeout to be 2 seconds, so modal doesn't close immediately.
+            setTimeout(() => {this.setState({ sendingMessage: false})}, 2000);
+            
         });
         
     }
@@ -96,7 +100,7 @@ export class MakeTextDroppScreen extends React.Component {
         return (
             <View>
                 <Modal
-                    animationType={"none"}
+                    animationType={"slide"}
                     transparent={true}
                     visible={this.state.sendingMessage}
                     onRequestClose={() => {
@@ -106,7 +110,6 @@ export class MakeTextDroppScreen extends React.Component {
                     <View style = {[styles.container, modalBackgroundStyle]}>
                         <View style={[styles.innerContainer, innerContainerTransparentStyle]}>
                             <Text> Dropping message... </Text>
-                            <Button title="Cancel" onPress={() => this.setState({sendingMessage: false})}/> 
                         </View>
                     </View>
                 </Modal>
