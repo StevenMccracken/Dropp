@@ -2,22 +2,19 @@
  * server - Initializes the express server and starts listening
  */
 
-const PORT      = 80;
-const express   = require('express');
-const app       = express();
-const router 		= require('./modules/router_mod.js')(express.Router());
+const PORT        = 80;
+const express     = require('express');
+const app         = express();
+const router 	  	= require('./modules/router_mod.js')(express.Router());
 const bodyParser  = require('body-parser');
 
 // Set properties of the express server
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({
-    extended: true
-}));
+  extended        : true }));
 
 // Set the base route path
 app.use('/', router);
-
-// Start the server
 
 /**
  * Listens for all incoming requests

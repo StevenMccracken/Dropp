@@ -328,8 +328,8 @@ module.exports = {
 			"timestamp"	: parseInt(req.body.timestamp),
 			"username" 	: username,
 			"content" 	: {
-						"text" 	: req.body.text 	== null ? '' : req.body.text,
-						"media" : req.body.media 	== null ? '' : req.body.media
+						"text" 	: req.body.text == null ? '' : req.body.text,
+						"media" : req.body.media
 			}
 		};
 
