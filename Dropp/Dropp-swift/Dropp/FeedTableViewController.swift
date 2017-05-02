@@ -42,7 +42,7 @@ class FeedTableViewController: UITableViewController, CLLocationManagerDelegate 
         print("Fuck you leaf")
         
         getDropps()
-
+        tableView.reloadData()
         // Uncomment the following line to preserve selection between presentations
         // self.clearsSelectionOnViewWillAppear = false
 
@@ -156,7 +156,15 @@ class FeedTableViewController: UITableViewController, CLLocationManagerDelegate 
                         print(droppJson)
                         
                         for (key, value) in droppJson {
-                            print("\(key): \(value)")
+                            let nestedDic = value as! [String:Any]
+                            let nestedContentDic = nestedDic["content"] as! [String:Any]
+                            let usernameStr = nestedDic["username"]!
+                            let userText = nestedContentDic["text"]!
+                            print("\(usernameStr) said \(userText)")
+                            let newUsr = UserObject(pUserId: usernameStr as! String, pMessage: userText as! String)
+                            self.userArr.append(newUsr)
+//                            print(nestedDic["username"]!)
+//                            print(nestedContentDic["text"]!)
                         }
                         
                        
