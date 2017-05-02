@@ -70,6 +70,14 @@ class FeedTableViewController: UITableViewController, CLLocationManagerDelegate 
         super.viewDidAppear(animated)
     }
     
+    func addNewUser(newUser: UserObject) {
+        let newUserObj = newUser
+        self.userArr.append(newUserObj)
+        let indexPath = IndexPath(row: userArr.count - 1, section: 0)
+        print("hi")
+        tableView.insertRows(at: [indexPath], with: .automatic)
+    }
+    
     func getToken(username: String, password: String) -> String {
         print("Hi")
         let dict = ["username": username, "password": password] as [String: Any]
@@ -162,7 +170,8 @@ class FeedTableViewController: UITableViewController, CLLocationManagerDelegate 
                             let userText = nestedContentDic["text"]!
                             print("\(usernameStr) said \(userText)")
                             let newUsr = UserObject(pUserId: usernameStr as! String, pMessage: userText as! String)
-                            self.userArr.append(newUsr)
+                            self.addNewUser(newUser: newUsr)
+//                            self.userArr.append(newUsr)
 //                            print(nestedDic["username"]!)
 //                            print(nestedContentDic["text"]!)
                         }
