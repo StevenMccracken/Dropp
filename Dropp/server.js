@@ -10,8 +10,7 @@ const bodyParser  = require('body-parser');
 
 // Set properties of the express server
 app.use(bodyParser.json());
-app.use(bodyParser.urlencoded({
-  extended        : true }));
+app.use(bodyParser.urlencoded({ extended: true }));
 
 // Set the base route path
 app.use('/', router);
