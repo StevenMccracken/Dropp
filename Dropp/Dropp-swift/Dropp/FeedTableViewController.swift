@@ -42,7 +42,11 @@ class FeedTableViewController: UITableViewController, CLLocationManagerDelegate 
         print("Fuck you leaf")
         
         getDropps()
-        tableView.reloadData()
+        
+        DispatchQueue.main.async {
+            self.tableView.reloadData() // TODO: still doesn't make ui reload quicker
+        }
+        
         // Uncomment the following line to preserve selection between presentations
         // self.clearsSelectionOnViewWillAppear = false
 
@@ -126,6 +130,22 @@ class FeedTableViewController: UITableViewController, CLLocationManagerDelegate 
         }
 
         return tokenStr
+    }
+    
+    @IBAction func updateFeed(_ sender: Any) {
+        if self.userArr.count > 0 {
+            let numOfUsersToDelete = self.userArr.count - 1
+            for i in 0...numOfUsersToDelete {
+                print(i)
+                if self.userArr.count > 0 {
+                    self.userArr.remove(at: 0)
+                    var indexPath = IndexPath(row: 0, section: 0)
+                    tableView.deleteRows(at: [indexPath], with: .automatic)
+                }
+            }
+
+        }
+        getDropps()
     }
     
     func getDropps() -> String {

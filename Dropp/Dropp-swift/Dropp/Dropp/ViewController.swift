@@ -45,16 +45,20 @@ class ViewController: UIViewController, UITextFieldDelegate, UIImagePickerContro
     func sendMessage(_ text: String) {
         let loc = locationManager.location!.coordinate
         let locString = "\(loc.latitude),\(loc.longitude)"
-        let time = NSDate().timeIntervalSince1970
-        let user = UIDevice.current.name // UPDATE TO USER PROFILE NAME
-        let dict = ["location": locString, "timestamp": time, "text": text, "media": "", "user_id": user] as [String: Any]
+        let time = 123
+        let user = "test" // UPDATE TO USER PROFILE NAME
+        let token = "JWT eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6InRlc3QiLCJkZXRhaWxzIjp7ImVtYWlsIjoidGVzdEB0ZXN0LmNvbSJ9LCJpYXQiOjE0OTM3MDA2MTUsImV4cCI6MTQ5NjI5MjYxNX0.K2AlNLMPT-JOKNY6QueWAtubKaOhjWlRjPYD3o0eSeA"
+        
+        
+        let dict = ["location": locString, "timestamp": time, "text": text, "media": "", "username": user] as [String: Any]
         
         if let jsonData = try? JSONSerialization.data(withJSONObject: dict, options: .prettyPrinted) {
-            let url = NSURL(string: "http://dropps.me/api/dropps")!
+            let url = NSURL(string: "https://dropps.me/dropps")!
             let request = NSMutableURLRequest(url: url as URL)
             request.httpMethod = "POST"
             
             request.addValue("application/json", forHTTPHeaderField: "Content-Type")
+            request.addValue(token, forHTTPHeaderField: "Authorization")
             request.httpBody = jsonData
             
             let task = URLSession.shared.dataTask(with: request as URLRequest){ data,response,error in
@@ -64,14 +68,10 @@ class ViewController: UIViewController, UITextFieldDelegate, UIImagePickerContro
                 }
                 
                 do {
-                    // IF RESPONSE IS JUST TEXT USE THIS LINE
-                    let responseData = String(data: data!, encoding: String.Encoding.utf8)
-                    
                     // IF RESPONSE IS A JSON USE THESE LINES
-                    //let json = try JSONSerialization.jsonObject(with: data, options: .allowFragments) as! [String:Any]
-                    //let responseData = json["dropps"] as? [[String: Any]] ?? []
+                    let json = try JSONSerialization.jsonObject(with: data!, options: .allowFragments) as! [String:Any]
                     
-                    print(responseData!)
+                    print(json)
                     
                 } catch let error as NSError {
                     print(error)
