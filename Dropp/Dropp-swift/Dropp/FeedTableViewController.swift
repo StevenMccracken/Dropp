@@ -14,7 +14,7 @@ class FeedTableViewController: UITableViewController, CLLocationManagerDelegate 
     let locationManager = CLLocationManager()
     var userArr: [UserObject] = []
     let cellIdentifier = "CellIdentifier"
-    var token = "JWT eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6InRlc3QiLCJkZXRhaWxzIjp7ImVtYWlsIjoidGVzdEB0ZXN0LmNvbSJ9LCJpYXQiOjE0OTM3MDA2MTUsImV4cCI6MTQ5NjI5MjYxNX0.K2AlNLMPT-JOKNY6QueWAtubKaOhjWlRjPYD3o0eSeA"
+    var token = "JWT eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6InRlc3QiLCJkZXRhaWxzIjp7ImVtYWlsIjoidGVzdEB0ZXN0LmNvbSJ9LCJpYXQiOjE0OTM3NzU3NTIsImV4cCI6MTQ5NjM2Nzc1Mn0.Hp0zCu1hkkGOOR7e3gmpnT1xkI8OQ9fT13fizcv6W0c"
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -75,6 +75,7 @@ class FeedTableViewController: UITableViewController, CLLocationManagerDelegate 
     }
     
     func addNewUser(newUser: UserObject) {
+        print("Adding user")
         let newUserObj = newUser
         self.userArr.append(newUserObj)
         let indexPath = IndexPath(row: userArr.count - 1, section: 0)
@@ -173,6 +174,7 @@ class FeedTableViewController: UITableViewController, CLLocationManagerDelegate 
             
             let task = URLSession.shared.dataTask(with: request as URLRequest) { (data, response, error) in
                 if error != nil {
+                    print("Error in task")
                     //print(error)
                 } else {
                     do {
