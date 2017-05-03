@@ -16,16 +16,22 @@ class DetailViewController: UIViewController {
     @IBOutlet weak var messageLabel: UITextView!
     
     var userObj: UserObject!
+    var userCurrentLoc: String!
     
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         
         print("Printing UserOjbect in Detail:")
         print(userObj)
-        var userTimestamp = userObj.timestamp!
+        var userTimestamp = NSDate(timeIntervalSince1970: Double(userObj.timestamp!))
+        
+        let formatter = DateFormatter()
+        formatter.dateFormat = "yyyy-MM-dd HH:mm:ss"
+        let dateString = formatter.string(from: userTimestamp as Date)
+        print(dateString)
         
         userLabel.text = userObj.userId
-        timestampLabel.text = "\(userTimestamp)"
+        timestampLabel.text = dateString
         locationLabel.text = userObj.location
         messageLabel.text = userObj.message
         
