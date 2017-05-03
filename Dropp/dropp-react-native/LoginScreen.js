@@ -6,11 +6,10 @@ import {
     View,
     Button
 } from 'react-native';
-import { NavigationActions } from 'react-navigation'
+import { NavigationActions } from 'react-navigation';
+import * as ClientUtil from './ClientUtilities';
 
 export class LoginScreen extends React.Component {
-
-
     constructor(props){
         super(props);
         this.state = {
@@ -21,7 +20,7 @@ export class LoginScreen extends React.Component {
         };
     };
 
-    _sendLoginCredentials = async () => {
+    _tryLogin = async () => {
         this.setState({ sendingMessage: true });
         //create a post request
         var params = {
@@ -32,13 +31,8 @@ export class LoginScreen extends React.Component {
         console.log(params);
         console.log("End of parameters");
 
-        var formData = [];
-        for (var k in params) {
-            var encodedKey = encodeURIComponent(k);
-            var encodedValue = encodeURIComponent(params[k]);
-            formData.push(encodedKey + "=" + encodedValue);
-        }
-        formData = formData.join("&");
+        var formData = ClientUtil.makeFormData(params);
+
         var request = new Request('https://dropps.me/authenticate', {
             method: 'POST',
             headers: new Headers( {
@@ -63,15 +57,17 @@ export class LoginScreen extends React.Component {
                     ]
                     });
                     this.props.navigation.dispatch(resetAction);
-                    //navigate('Home', { token: responseObj.success.token });
                 } else {
-                    this.setState({ errorMessage: responseObj.error.message })
+                    Alert.alert(
+                        'Login Error',
+                        responseObj.error.message,
+                        [ {text: 'Ok', onPress: () => console.log('ok pressed')}, ],
+                        { cancelable: true }
+                    );
                     console.log(responseObj.error.message);
                 }
                 //route to Dropp Feed with our token!
             });
-
-            //if no errors, set timeout to be 2 seconds, so modal doesn't close immediately.
             
         });
         
@@ -79,6 +75,7 @@ export class LoginScreen extends React.Component {
 
     render() {
         let textErrorMessage = this.state.errorMessage ? this.state.errorMessage : ' ';
+        const { navigate } = this.props.navigation;
         return (
             <ScrollView style={{padding: 20}}>
                 <Text 
@@ -97,12 +94,12 @@ export class LoginScreen extends React.Component {
                 />
                 <View style={{margin:7}} />
                 <Button 
-                        onPress={this._sendLoginCredentials}
-                        title="Submit"
+                        onPress={this._tryLogin}
+                        title="Log in"
                     />
                 <Button 
-                        onPress={this.props.onLoginPress}
-                        title="Create Account"
+                        onPress={() => navigate('CreateAccount')}
+                        title="Make an account"
                     />
                 <Text>{textErrorMessage}</Text>
             </ScrollView>
