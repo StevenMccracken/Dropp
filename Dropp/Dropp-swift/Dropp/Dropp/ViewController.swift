@@ -47,7 +47,7 @@ class ViewController: UIViewController, UITextFieldDelegate, UIImagePickerContro
         let locString = "\(loc.latitude),\(loc.longitude)"
         let time = 123
         let user = "test" // UPDATE TO USER PROFILE NAME
-        let token = "JWT eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6InRlc3QiLCJkZXRhaWxzIjp7ImVtYWlsIjoidGVzdEB0ZXN0LmNvbSJ9LCJpYXQiOjE0OTM3NzU3NTIsImV4cCI6MTQ5NjM2Nzc1Mn0.Hp0zCu1hkkGOOR7e3gmpnT1xkI8OQ9fT13fizcv6W0c"
+        let token = "JWT eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6InRlc3QiLCJkZXRhaWxzIjp7ImVtYWlsIjoidGVzdEB0ZXN0LmNvbSJ9LCJpYXQiOjE0OTM3NzkyMTAsImV4cCI6MTQ5NjM3MTIxMH0.8G2U6U5LF84-5eRN4uzjinkKozWcX3_8Mitit1vn8Lw"
         
         
         let dict = ["location": locString, "timestamp": time, "text": text, "media": "", "username": user] as [String: Any]

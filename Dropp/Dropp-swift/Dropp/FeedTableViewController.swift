@@ -14,7 +14,7 @@ class FeedTableViewController: UITableViewController, CLLocationManagerDelegate 
     let locationManager = CLLocationManager()
     var userArr: [UserObject] = []
     let cellIdentifier = "CellIdentifier"
-    var token = "JWT eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6InRlc3QiLCJkZXRhaWxzIjp7ImVtYWlsIjoidGVzdEB0ZXN0LmNvbSJ9LCJpYXQiOjE0OTM3NzU3NTIsImV4cCI6MTQ5NjM2Nzc1Mn0.Hp0zCu1hkkGOOR7e3gmpnT1xkI8OQ9fT13fizcv6W0c"
+    var token = "JWT eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6InRlc3QiLCJkZXRhaWxzIjp7ImVtYWlsIjoidGVzdEB0ZXN0LmNvbSJ9LCJpYXQiOjE0OTM3NzkyMTAsImV4cCI6MTQ5NjM3MTIxMH0.8G2U6U5LF84-5eRN4uzjinkKozWcX3_8Mitit1vn8Lw"
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -187,11 +187,15 @@ class FeedTableViewController: UITableViewController, CLLocationManagerDelegate 
                         
                         for (key, value) in droppJson {
                             let nestedDic = value as! [String:Any]
-                            let nestedContentDic = nestedDic["content"] as! [String:Any]
+//                            let nestedContentDic = nestedDic["content"] as! [String:Any]
                             let usernameStr = nestedDic["username"]!
-                            let userText = nestedContentDic["text"]!
+                            let userText = nestedDic["text"]!
+                            let userTimestamp = nestedDic["timestamp"]
+                            let userLocation = nestedDic["location"]
+                            
                             print("\(usernameStr) said \(userText)")
-                            let newUsr = UserObject(pUserId: usernameStr as! String, pMessage: userText as! String)
+//                            let newUsr = UserObject(pUserId: usernameStr as! String, pMessage: userText as! String)
+                            let newUsr = UserObject(pUserId: usernameStr as! String, pTimestamp: userTimestamp as! Int, pMessage: userText as! String, pLoc: userLocation as! String)
                             self.addNewUser(newUser: newUsr)
 //                            self.userArr.append(newUsr)
 //                            print(nestedDic["username"]!)
@@ -230,6 +234,22 @@ class FeedTableViewController: UITableViewController, CLLocationManagerDelegate 
             task.resume()
         }
         return droppList
+    }
+    
+    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
+        // If the triggered segue is the "showUser" segue
+        switch segue.identifier {
+        case "showUser"?:
+            // Figure out which row was just tapped
+            if let row = tableView.indexPathForSelectedRow?.row {
+                // Get the item associated with this row and pass it along
+                let user = self.userArr[row]
+                let detailVC = segue.destination as! DetailViewController
+                detailVC.userObj = user
+            }
+        default:
+            preconditionFailure("Unexpected segue identifier.")
+        }
     }
 
     // MARK: - Table view data source

@@ -29,6 +29,17 @@ class UserObject : NSObject {
         self.message = pMessage
     }
     
+    init(pUserId: String, pTimestamp: Int, pMessage: String, pLoc: String) {
+        self.userId = pUserId
+        self.timestamp = pTimestamp
+        self.message = pMessage
+        self.location = pLoc
+    }
+    
+    override var description: String {
+        return "User: \(self.userId)\n Timestamp: \(self.timestamp)\n Message: \(self.message)\n Location: \(self.location)"
+    }
+    
     // Ignore this for now. It was just for testing.
 //    convenience init(random: Bool = false) {
 //        if random {

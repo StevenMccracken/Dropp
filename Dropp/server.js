@@ -1,7 +1,7 @@
 //var firebase 	= require('./modules/firebase_mod.js');
 var express 	= require('express');
 var app 		= express();
-var PORT 		= 80;
+var PORT 		= 81;
 var bodyParser 	= require('body-parser')
 var router 		= require('./modules/router_mod.js')(express.Router());
 
