@@ -11,6 +11,7 @@ import {
     FlatList,
     TouchableHighlight,
     Image,
+    Modal,
 } from 'react-native';
 
 import { TabNavigator, StackNavigator } from 'react-navigation';
@@ -29,34 +30,69 @@ constructor(props){
             errorMessage: null,
             sendingMessage: false,
             dropps: null,
+            modalVisible: false,
+            //modal data
     };
     this._getDropps();
 }
     
     render() {
         const { navigate } = this.props.navigation;
-
+        var modalBackgroundStyle = { backgroundColor: this.state.transparent ? 'rgba(0, 0, 0, 0.5)' : '#f5fcff', };
+        var innerContainerTransparentStyle = this.state.transparent ? {backgroundColor: '#fff', padding: 20}: null;
+        var activeButtonStyle = { backgroundColor: '#ddd' };
         return (
             <View>
+                <Modal 
+                    animationType = 'fade' 
+                    transparent = {true} 
+                    visible={this.state.modalVisible} 
+                    supportedOrientations = {["portrait"]} 
+                    onRequestClose={() => this._setModalVisible(false)}>
+                    <View style={[styles.modalContainer, modalBackgroundStyle]}>
+                        <View style={[styles.modalInnerContainer, innerContainerTransparentStyle]}>
+                            <Text>TESTSTSTSTSTSTETADFADASDASDASDASDA</Text>
+                            <Button 
+                                onPress={this._setModalVisible.bind(this, false)} 
+                                style={styles.modalButton} 
+                                title = "close"/>
+                        </View>
+                    </View>
+                </Modal>
                 <FlatList
                     data={this.state.dropps}
                     renderItem={this._renderItem}
+                    onRefresh = {this._onRefresh}
+                    refreshing = {false}
                 />
             </View>
         );
     }
+
     _renderItem = ({item}) => (
-    <TouchableHighlight noDefaultStyles={true} onPress={() => this._onPress(item)}>
+    <TouchableHighlight noDefaultStyles={true} onPress={() => this._onPress(item)} underlayColor ={"lightsalmon"} activeOpacity = {10}>
         <View style = {styles.row}>
             <View style = {styles.textcontainer}>
                 <Text>{item.text}</Text>
             </View>
             <View style = {styles.photocontainer}>
-                {item.image && <Image source = {{uri: item.image}} style ={styles.photo}/>}
+                {item.media && <Image source = {{uri: item.media}} style ={styles.photo}/>}
             </View>
         </View>
     </TouchableHighlight>
     );
+
+    _onPress = (item) => {
+        console.log("Pressed");
+        //set the modal data here with item
+        this._setModalVisible(true);
+    };
+
+    _setModalVisible = (visible) => {
+        this.setState({modalVisible: visible});
+    };
+
+    _onRefresh = () => {this._getDropps();}
 
     _getDropps = async() =>{
         console.log("entered getdropss");
@@ -67,61 +103,58 @@ constructor(props){
             });
         } 
 
-    let locData = await Location.getCurrentPositionAsync({enableHighAccuracy: true});
-    //let curLocation = locData.coords.latitude + "," + locData.coords.longitude;
-    let curLocation = "69.0,69.0";
-    let curTime = locData.timestamp;
+        let locData = await Location.getCurrentPositionAsync({enableHighAccuracy: true});
+        //let curLocation = locData.coords.latitude + "," + locData.coords.longitude;
+        let curLocation = "33.7786396,-118.1139802";
+        let curTime = locData.timestamp;
 
-    var param = {
-        location: curLocation,
-        maxDistance: 15,
-    };
+        var param = {
+            location: curLocation,
+            maxDistance: 1000,
+        };
 
-    var formData = [];
-    for(var i in param){
-        var encodeKey = encodeURIComponent(i);
-        var encodeValue = encodeURIComponent(param[i]);
-        formData.push(encodeKey + "=" + encodeValue);
-    }
-    formData = formData.join("&");
+        var formData = [];
+        for(var i in param){
+            var encodeKey = encodeURIComponent(i);
+            var encodeValue = encodeURIComponent(param[i]);
+            formData.push(encodeKey + "=" + encodeValue);
+        }
+        formData = formData.join("&");
 
-    var feedRequest = new Request('https://dropps.me/location/dropps', {
-        method: 'POST',
-        headers: new Headers( {
-            'Content-Type': 'application/x-www-form-urlencoded',
-            'Authorization': 'JWT eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6ImpvZWwiLCJkZXRhaWxzIjp7ImVtYWlsIjoiam9lbEBmYWtlbWFpbC5jb20ifSwiaWF0IjoxNDkzNzAzODgxLCJleHAiOjE0OTYyOTU4ODF9.Saz5GHRtpD0SXRED2RsLg71IBelwiUNgK0Sd8nMmXCU',
-        }),
-        body: formData,
-    });
-    var feedList = [];
-    //console.log(feedRequest);
-    fetch(feedRequest).then((drp) => {
-        //console.log(dropps);
-        drp.json().then((droppJSON) =>{
-            //console.log(droppJSON);
-            var dropList = droppJSON.dropps;
-            //feedList.push(JSON.stringify(dropList));
-            for(var d in dropList) {
-                //feedList.push(JSON.stringify(d));
-                //console.log(d);
-                //console.log(dropList[d]);
-                var post = dropList[d];
-                feedList.push({d, post});
-                console.log(feedList);
-            }
-            this.setState({dropps: feedList});
+        var feedRequest = new Request('https://dropps.me/location/dropps', {
+            method: 'POST',
+            headers: new Headers( {
+                'Content-Type': 'application/x-www-form-urlencoded',
+                'Authorization': 'JWT eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6ImpvZWwiLCJkZXRhaWxzIjp7ImVtYWlsIjoiam9lbEBmYWtlbWFpbC5jb20ifSwiaWF0IjoxNDkzNzc5MjIwLCJleHAiOjE0OTYzNzEyMjB9.6PFDs9PuZQQMO5o2qjNShlQ4sSj5dwodz4ar8vWKzhQ',
+            }),
+            body: formData,
         });
-    });
+        var feedList = [];
+        //parsing the json object into the array
+        fetch(feedRequest).then((drp) => {
+            drp.json().then((droppJSON) =>{
+                var dropList = droppJSON.dropps;
+                for(var d in dropList) {
+                    var post = dropList[d];
+                    feedList.push(post);
+                    console.log(feedList);
+                }
+                this.setState({dropps: feedList});
+            });
+        });
     }
 }
 const MainScreenNavigator = TabNavigator({
     Feed: { screen: FeedScreen },
     Dropp: { screen: MakeDroppScreen },
-}, /*{
-        navigationOptions: {
-            title: "My Chats",
+    }, {
+        tabBarOptions: {
+            style:{
+                backgroundColor: '#ffa07a',
+                opacity: 100,
+            },
         },
-    }*/);
+    });
 
 const App = StackNavigator({
     Login: { screen: LoginScreen },
@@ -145,7 +178,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     borderBottomWidth: 0.5,
     padding: 25,
-    borderBottomColor: '#E4E4E4'
+    borderBottomColor: '#000000'
   },
   dropptext:{
       flex: 2,
@@ -165,7 +198,19 @@ const styles = StyleSheet.create({
   photo: {
       width: 120,
       height: 120,
-  }
+  },
+  modalButton: {
+    marginTop: 10,
+  },
+  modalContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    padding: 20,
+  },
+  modalInnerContainer: {
+    borderRadius: 10,
+    alignItems: 'center',
+  },
 });
 
 Expo.registerRootComponent(App);
