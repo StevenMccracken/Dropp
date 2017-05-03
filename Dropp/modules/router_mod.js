@@ -5,7 +5,7 @@
 var 	router 				= null;
 const jwt						= require('jsonwebtoken');
 const errors				= require('./error_mod.js');
-const config    		= require(process.cwd() + '/config/secret.js');
+const config    		= require('../config/secret.js');
 const service 			= require('./service_mod.js');
 const passport			= require('passport');
 const firebase 			= require('./firebase_mod.js');

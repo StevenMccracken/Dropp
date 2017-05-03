@@ -1,0 +1,18 @@
+# sudo: required
+
+language: node_js
+node_js:
+ - "6"
+
+before_script:
+ - cd Dropp
+ - npm install -g grunt-cli
+ - npm install
+
+script:
+ grunt test # run karma and jamine testing
+
+notifications:
+ email: false
+ slack:
+    on_success: always
