@@ -21,6 +21,6 @@ app.use('/', router);
  * @param {callback} err the callback that handles any errors
  */
 app.listen(PORT, (err) => {
-    if (err) console.log('Server connection error', err);
+    if (err) return console.log('Server connection error', err);
     else console.log(`Dropp server is listening on port ${PORT}`);
 });
