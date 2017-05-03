@@ -2,7 +2,7 @@
  * server - Initializes the express server and starts listening
  */
 
-const PORT      = 80;
+const PORT      = 8080;
 const express   = require('express');
 const app       = express();
 const router 		= require('./modules/router_mod.js')(express.Router());
