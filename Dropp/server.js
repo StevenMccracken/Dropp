@@ -2,10 +2,10 @@
  * server - Initializes the express server and starts listening
  */
 
-const PORT        = 80;
+const PORT        = 8080;
 const express     = require('express');
 const app         = express();
-const router 	  = require('./modules/router_mod.js')(express.Router());
+const router 	    = require('./modules/router_mod.js')(express.Router());
 const bodyParser  = require('body-parser');
 
 // Set properties of the express server
@@ -21,6 +21,6 @@ app.use('/', router);
  * @param {callback} err the callback that handles any errors
  */
 app.listen(PORT, (err) => {
-    if (err) return console.log('Server connection error', err);
-    else console.log(`Dropp server is listening on port ${PORT}`);
+  if (err) return console.log('Server connection error', err);
+  else console.log(`Dropp server is listening on port ${PORT}`);
 });

@@ -30,16 +30,9 @@ class DetailViewController: UIViewController {
         let dateString = formatter.string(from: userTimestamp as Date)
         print(dateString)
         
-        userLabel.text = userObj.userId
-        timestampLabel.text = dateString
-        locationLabel.text = userObj.location
-        messageLabel.text = userObj.message
-        
-        
-        
-//        userLabel.text = "UserID"
-//        timestampLabel.text = "TimeStamp"
-//        locationLabel.text = "A Location"
-//        messageLabel.text = "A Message"
+        self.userLabel.text = userObj.userId
+        self.timestampLabel.text = dateString
+        self.locationLabel.text = userObj.location
+        self.messageLabel.text = userObj.message
     }
 }
