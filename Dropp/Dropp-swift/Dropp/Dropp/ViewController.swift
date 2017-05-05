@@ -119,7 +119,7 @@ class ViewController: UIViewController, UITextViewDelegate, UIImagePickerControl
         
         // Add parameters to the HTTP body
         let params = [:] as [String: String]
-        request.httpBody = self.createBody(parameters: params,
+        request.httpBody = self.http.createBody(parameters: params,
                                                     boundary: boundary,
                                                     data: UIImageJPEGRepresentation(image, 0.7)!,
                                                     mimeType: "image/jpeg",
@@ -468,35 +468,6 @@ class ViewController: UIViewController, UITextViewDelegate, UIImagePickerControl
         present(alert, animated: true, completion: nil)
     }
     
-    /**
-     * Loops over the parameters dictionary, adding them to the body as a Content-Disposition with the boundary.
-     * Then, adds the image as data, with the filename, the mime-type and with the boundary as before.
-     */
-    func createBody(parameters: [String: String],
-                    boundary: String,
-                    data: Data,
-                    mimeType: String,
-                    filename: String) -> Data {
-        let body = NSMutableData()
-        
-        let boundaryPrefix = "--\(boundary)\r\n"
-        
-        for (key, value) in parameters {
-            body.appendString(boundaryPrefix)
-            body.appendString("Content-Disposition: form-data; name=\"\(key)\"\r\n\r\n")
-            body.appendString("\(value)\r\n")
-        }
-        
-        body.appendString(boundaryPrefix)
-        body.appendString("Content-Disposition: form-data; name=\"image\"; filename=\"\(filename)\"\r\n")
-        body.appendString("Content-Type: \(mimeType)\r\n\r\n")
-        body.append(data)
-        body.appendString("\r\n")
-        body.appendString("--".appending(boundary.appending("--")))
-        
-        return body as Data
-    }
-    
     // Function performs UI changes when the keyboard appears
     func keyboardWillShow(notification: NSNotification) {
         if let keyboardSize = (notification.userInfo?[UIKeyboardFrameBeginUserInfoKey] as? NSValue)?.cgRectValue {
@@ -521,12 +492,6 @@ class ViewController: UIViewController, UITextViewDelegate, UIImagePickerControl
 }
 
 // MARK: Extensions
-extension NSMutableData {
-    func appendString(_ string: String) {
-        let data = string.data(using: String.Encoding.utf8, allowLossyConversion: false)
-        append(data!)
-    }
-}
 
 extension String {
     func trim() -> String {
