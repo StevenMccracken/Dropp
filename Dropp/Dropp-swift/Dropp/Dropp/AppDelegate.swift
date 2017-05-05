@@ -12,10 +12,21 @@ import UIKit
 class AppDelegate: UIResponder, UIApplicationDelegate {
 
     var window: UIWindow?
-
+    let http = HTTPModule()
 
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplicationLaunchOptionsKey: Any]?) -> Bool {
+        
         // Override point for customization after application launch.
+        
+        // Get a fresh token from the server
+        http.getNewToken() { token in
+            if token.isEmpty {
+                print("DIDN'T GET A TOKEN")
+            }
+            
+            UserDefaults.standard.setValue(token, forKey: "jwt")
+        }
+        
         return true
     }
 

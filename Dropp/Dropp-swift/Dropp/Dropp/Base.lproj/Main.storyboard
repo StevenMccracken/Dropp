@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="12120" systemVersion="16E195" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" colorMatched="YES" initialViewController="zO3-Ts-K1c">
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="12120" systemVersion="16F54b" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" colorMatched="YES" initialViewController="zO3-Ts-K1c">
     <device id="retina4_7" orientation="portrait">
         <adaptation id="fullscreen"/>
     </device>
@@ -10,49 +10,7 @@
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
     <scenes>
-        <!--Feed View Controller-->
-        <scene sceneID="Gxx-bY-Ink">
-            <objects>
-                <viewController id="RBN-Eb-p1D" customClass="FeedViewController" customModule="Dropp" customModuleProvider="target" sceneMemberID="viewController">
-                    <layoutGuides>
-                        <viewControllerLayoutGuide type="top" id="e93-gS-Itu"/>
-                        <viewControllerLayoutGuide type="bottom" id="N8V-A5-zIi"/>
-                    </layoutGuides>
-                    <view key="view" contentMode="scaleToFill" id="W3X-3M-i38">
-                        <rect key="frame" x="0.0" y="0.0" width="375" height="667"/>
-                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
-                        <subviews>
-                            <button opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="tdE-jb-Kii">
-                                <rect key="frame" x="166" y="593" width="43" height="30"/>
-                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
-                                <state key="normal" title="Dropp"/>
-                            </button>
-                            <label opaque="NO" userInteractionEnabled="NO" contentMode="TopLeft" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" text="" textAlignment="natural" lineBreakMode="wordWrap" numberOfLines="1000" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="44A-GS-t4d">
-                                <rect key="frame" x="16" y="66" width="343" height="519"/>
-                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
-                                <fontDescription key="fontDescription" type="system" pointSize="17"/>
-                                <nil key="textColor"/>
-                                <nil key="highlightedColor"/>
-                            </label>
-                            <button opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="via-0V-vqV">
-                                <rect key="frame" x="256" y="593" width="79" height="30"/>
-                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
-                                <state key="normal" title="View Feeds"/>
-                            </button>
-                        </subviews>
-                        <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
-                    </view>
-                    <toolbarItems/>
-                    <simulatedToolbarMetrics key="simulatedBottomBarMetrics"/>
-                    <connections>
-                        <outlet property="dropps" destination="44A-GS-t4d" id="2xo-Rw-x9Z"/>
-                    </connections>
-                </viewController>
-                <placeholder placeholderIdentifier="IBFirstResponder" id="jcj-2W-kfg" userLabel="First Responder" sceneMemberID="firstResponder"/>
-            </objects>
-            <point key="canvasLocation" x="-676" y="138.98050974512745"/>
-        </scene>
-        <!--Feed Table View Controller-->
+        <!--Nearby Dropps-->
         <scene sceneID="aqK-sL-vvL">
             <objects>
                 <tableViewController id="gbA-I4-hNV" customClass="FeedTableViewController" customModule="Dropp" customModuleProvider="target" sceneMemberID="viewController">
@@ -60,9 +18,10 @@
                         <rect key="frame" x="0.0" y="0.0" width="375" height="667"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <color key="backgroundColor" cocoaTouchSystemColor="groupTableViewBackgroundColor"/>
+                        <color key="tintColor" red="0.91661626100540161" green="0.31078633666038513" blue="0.3830183744430542" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                         <prototypes>
                             <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" selectionStyle="blue" hidesAccessoryWhenEditing="NO" indentationLevel="1" indentationWidth="0.0" reuseIdentifier="CellIdentifier" textLabel="Yq3-qd-9aq" style="IBUITableViewCellStyleDefault" id="dll-8h-9ta">
-                                <rect key="frame" x="0.0" y="55.5" width="375" height="44"/>
+                                <rect key="frame" x="0.0" y="56" width="375" height="44"/>
                                 <autoresizingMask key="autoresizingMask"/>
                                 <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="dll-8h-9ta" id="0wU-eL-KwI">
                                     <rect key="frame" x="0.0" y="0.0" width="375" height="43.5"/>
@@ -88,8 +47,9 @@
                             <outlet property="delegate" destination="gbA-I4-hNV" id="Z0g-Ki-M9c"/>
                         </connections>
                     </tableView>
-                    <navigationItem key="navigationItem" id="eJV-JE-kTy">
-                        <barButtonItem key="rightBarButtonItem" title="Refresh" id="Ymw-at-LS5">
+                    <navigationItem key="navigationItem" title="Nearby Dropps" id="eJV-JE-kTy">
+                        <barButtonItem key="rightBarButtonItem" systemItem="refresh" id="Ymw-at-LS5">
+                            <color key="tintColor" red="0.91661626100540161" green="0.31078633666038513" blue="0.3830183744430542" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                             <connections>
                                 <action selector="updateFeed:" destination="gbA-I4-hNV" id="sLp-6U-eWK"/>
                             </connections>
@@ -174,83 +134,119 @@
                         <rect key="frame" x="0.0" y="0.0" width="375" height="667"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
-                            <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" image="defaultImage" translatesAutoresizingMaskIntoConstraints="NO" id="n13-ev-8BL">
-                                <rect key="frame" x="62" y="86" width="250" height="250"/>
-                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="SKo-1G-71z">
+                                <rect key="frame" x="209" y="208" width="150" height="50"/>
+                                <fontDescription key="fontDescription" type="system" pointSize="20"/>
+                                <state key="normal" title="Take a photo">
+                                    <color key="titleColor" red="0.91661626100540161" green="0.31078633666038513" blue="0.3830183744430542" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                                </state>
+                                <connections>
+                                    <action selector="takePicture:" destination="BYZ-38-t0r" eventType="touchUpInside" id="6x9-b8-4nW"/>
+                                </connections>
+                            </button>
+                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="n7P-xa-mGV">
+                                <rect key="frame" x="16" y="208" width="150" height="50"/>
+                                <fontDescription key="fontDescription" type="system" pointSize="20"/>
+                                <state key="normal" title="Pick a photo">
+                                    <color key="titleColor" red="0.91661626100540161" green="0.31078633666038513" blue="0.3830183744430542" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                                </state>
+                                <connections>
+                                    <action selector="photoFromLibrary:" destination="BYZ-38-t0r" eventType="touchUpInside" id="dxP-DP-x6O"/>
+                                </connections>
+                            </button>
+                            <imageView userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" translatesAutoresizingMaskIntoConstraints="NO" id="n13-ev-8BL">
+                                <rect key="frame" x="0.0" y="266" width="375" height="300"/>
                             </imageView>
-                            <stackView opaque="NO" contentMode="scaleToFill" fixedFrame="YES" axis="vertical" translatesAutoresizingMaskIntoConstraints="NO" id="Ise-YG-JHX">
-                                <rect key="frame" x="134" y="18" width="106" height="60"/>
-                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
-                                <subviews>
-                                    <button opaque="NO" contentMode="scaleToFill" ambiguous="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="SKo-1G-71z">
-                                        <rect key="frame" x="0.0" y="0.0" width="106" height="30"/>
-                                        <state key="normal" title="Take a photo"/>
-                                        <connections>
-                                            <action selector="takePicture:" destination="BYZ-38-t0r" eventType="touchUpInside" id="6x9-b8-4nW"/>
-                                        </connections>
-                                    </button>
-                                    <button opaque="NO" contentMode="scaleToFill" ambiguous="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="n7P-xa-mGV">
-                                        <rect key="frame" x="0.0" y="30" width="106" height="30"/>
-                                        <state key="normal" title="Upload a photo"/>
-                                        <connections>
-                                            <action selector="photoFromLibrary:" destination="BYZ-38-t0r" eventType="touchUpInside" id="dxP-DP-x6O"/>
-                                        </connections>
-                                    </button>
-                                </subviews>
-                            </stackView>
-                            <textField opaque="NO" clipsSubviews="YES" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="left" contentVerticalAlignment="center" borderStyle="roundedRect" placeholder="Compose a message" textAlignment="natural" minimumFontSize="17" translatesAutoresizingMaskIntoConstraints="NO" id="yXd-61-NYL">
-                                <rect key="frame" x="62" y="344" width="150" height="30"/>
-                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
-                                <nil key="textColor"/>
-                                <fontDescription key="fontDescription" type="system" pointSize="14"/>
-                                <textInputTraits key="textInputTraits" enablesReturnKeyAutomatically="YES"/>
-                            </textField>
-                            <button opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="ou8-md-dWF">
-                                <rect key="frame" x="216" y="344" width="96" height="30"/>
-                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
-                                <state key="normal" title="Post message"/>
+                            <button hidden="YES" opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" showsTouchWhenHighlighted="YES" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="cBs-fZ-dfk">
+                                <rect key="frame" x="334" y="266" width="25" height="25"/>
+                                <constraints>
+                                    <constraint firstAttribute="width" constant="25" id="IHC-Ev-PZW"/>
+                                    <constraint firstAttribute="height" constant="25" id="zPo-kl-ZtC"/>
+                                </constraints>
+                                <state key="normal" title="Delete image" image="Cancel-Red"/>
+                                <connections>
+                                    <action selector="deletePhoto:" destination="BYZ-38-t0r" eventType="touchUpInside" id="hWE-2e-lAt"/>
+                                </connections>
+                            </button>
+                            <button opaque="NO" contentMode="scaleToFill" enabled="NO" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="ou8-md-dWF">
+                                <rect key="frame" x="120" y="574" width="135" height="36"/>
+                                <fontDescription key="fontDescription" type="system" pointSize="20"/>
+                                <color key="tintColor" red="0.91661626100000004" green="0.3107863367" blue="0.38301837439999997" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                                <state key="normal" title="Dropp it"/>
                                 <connections>
                                     <action selector="postMessage:" destination="BYZ-38-t0r" eventType="touchUpInside" id="3ds-Br-eAU"/>
                                 </connections>
                             </button>
-                            <label opaque="NO" userInteractionEnabled="NO" contentMode="TopLeft" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" text="" textAlignment="natural" lineBreakMode="wordWrap" numberOfLines="10" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="U0k-ou-Ceg">
-                                <rect key="frame" x="62" y="378" width="250" height="170"/>
-                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
-                                <fontDescription key="fontDescription" type="system" pointSize="17"/>
-                                <nil key="textColor"/>
+                            <textView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" keyboardDismissMode="onDrag" textAlignment="justified" translatesAutoresizingMaskIntoConstraints="NO" id="HvM-05-zDb">
+                                <rect key="frame" x="16" y="63" width="343" height="137"/>
+                                <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                                <color key="tintColor" red="0.91661626100540161" green="0.31078633666038513" blue="0.3830183744430542" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                                <fontDescription key="fontDescription" type="system" pointSize="15"/>
+                                <textInputTraits key="textInputTraits" autocapitalizationType="sentences"/>
+                                <dataDetectorType key="dataDetectorTypes" phoneNumber="YES" link="YES" address="YES" calendarEvent="YES" shipmentTrackingNumber="YES" flightNumber="YES" lookupSuggestion="YES"/>
+                            </textView>
+                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Say something" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="aWS-T8-7fq">
+                                <rect key="frame" x="16" y="28" width="186" height="33.5"/>
+                                <fontDescription key="fontDescription" style="UICTFontTextStyleTitle1"/>
+                                <color key="textColor" red="0.91661626100000004" green="0.3107863367" blue="0.38301837439999997" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                                 <nil key="highlightedColor"/>
                             </label>
-                            <button opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="eko-UN-4FX">
-                                <rect key="frame" x="146" y="556" width="83" height="30"/>
-                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
-                                <state key="normal" title="Get a Dropp"/>
+                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="WXG-ql-rXr">
+                                <rect key="frame" x="328" y="28" width="31" height="31"/>
+                                <constraints>
+                                    <constraint firstAttribute="height" constant="31" id="93f-qz-li0"/>
+                                    <constraint firstAttribute="width" constant="31" id="Ebn-uz-eRd"/>
+                                </constraints>
+                                <state key="normal" image="TrashIcon"/>
                                 <connections>
-                                    <action selector="getDropp:" destination="BYZ-38-t0r" eventType="touchUpInside" id="33C-jO-29d"/>
-                                </connections>
-                            </button>
-                            <button opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="s7g-ad-TYv">
-                                <rect key="frame" x="170" y="594" width="34" height="30"/>
-                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
-                                <state key="normal" title="Feed"/>
-                                <connections>
-                                    <segue destination="4ho-Av-ERu" kind="unwind" unwindAction="returnedWithSegue:" id="AHi-6a-cwB"/>
+                                    <action selector="trashDropp:" destination="BYZ-38-t0r" eventType="touchUpInside" id="JVJ-IV-8gV"/>
                                 </connections>
                             </button>
                         </subviews>
                         <color key="backgroundColor" red="1" green="1" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                        <constraints>
+                            <constraint firstAttribute="bottomMargin" secondItem="SKo-1G-71z" secondAttribute="bottom" constant="409" id="2nd-JP-yvF"/>
+                            <constraint firstItem="n13-ev-8BL" firstAttribute="top" secondItem="8bC-Xf-vdC" secondAttribute="top" constant="266" id="4Tl-ku-7U5"/>
+                            <constraint firstItem="HvM-05-zDb" firstAttribute="top" secondItem="8bC-Xf-vdC" secondAttribute="topMargin" constant="63" id="5fa-k3-n6k"/>
+                            <constraint firstAttribute="trailingMargin" secondItem="n7P-xa-mGV" secondAttribute="trailing" constant="193" id="6Xt-WG-ldn"/>
+                            <constraint firstItem="SKo-1G-71z" firstAttribute="leading" secondItem="8bC-Xf-vdC" secondAttribute="leadingMargin" constant="193" id="9wG-su-T0v"/>
+                            <constraint firstItem="ou8-md-dWF" firstAttribute="leading" secondItem="8bC-Xf-vdC" secondAttribute="leadingMargin" constant="104" id="BKd-yY-idh"/>
+                            <constraint firstAttribute="bottom" secondItem="n13-ev-8BL" secondAttribute="bottom" constant="101" id="HV2-n3-WYM"/>
+                            <constraint firstItem="cBs-fZ-dfk" firstAttribute="trailing" secondItem="8bC-Xf-vdC" secondAttribute="trailingMargin" id="Iov-ew-HXi"/>
+                            <constraint firstItem="aWS-T8-7fq" firstAttribute="leading" secondItem="8bC-Xf-vdC" secondAttribute="leadingMargin" id="LTG-IC-3gO"/>
+                            <constraint firstItem="cBs-fZ-dfk" firstAttribute="top" secondItem="8bC-Xf-vdC" secondAttribute="topMargin" constant="266" id="MMf-kO-wYL"/>
+                            <constraint firstItem="HvM-05-zDb" firstAttribute="trailing" secondItem="8bC-Xf-vdC" secondAttribute="trailingMargin" id="Nly-DH-3MF"/>
+                            <constraint firstItem="cBs-fZ-dfk" firstAttribute="leading" secondItem="8bC-Xf-vdC" secondAttribute="leadingMargin" constant="318" id="OE7-3E-CsL"/>
+                            <constraint firstAttribute="bottomMargin" secondItem="HvM-05-zDb" secondAttribute="bottom" constant="467" id="OMm-Ag-Mhn"/>
+                            <constraint firstItem="n7P-xa-mGV" firstAttribute="top" secondItem="8bC-Xf-vdC" secondAttribute="topMargin" constant="208" id="PYN-wK-iiD"/>
+                            <constraint firstAttribute="bottomMargin" secondItem="ou8-md-dWF" secondAttribute="bottom" constant="57" id="QMr-Y0-agX"/>
+                            <constraint firstItem="HvM-05-zDb" firstAttribute="leading" secondItem="8bC-Xf-vdC" secondAttribute="leadingMargin" id="RrC-jA-ao6"/>
+                            <constraint firstItem="aWS-T8-7fq" firstAttribute="top" secondItem="8bC-Xf-vdC" secondAttribute="topMargin" constant="28" id="Sqy-uS-rha"/>
+                            <constraint firstItem="WXG-ql-rXr" firstAttribute="top" secondItem="8bC-Xf-vdC" secondAttribute="topMargin" constant="28" id="TYq-ye-bNZ"/>
+                            <constraint firstItem="WXG-ql-rXr" firstAttribute="trailing" secondItem="8bC-Xf-vdC" secondAttribute="trailingMargin" id="YE6-7b-1Za"/>
+                            <constraint firstItem="SKo-1G-71z" firstAttribute="trailing" secondItem="8bC-Xf-vdC" secondAttribute="trailingMargin" id="a0J-RH-21c"/>
+                            <constraint firstAttribute="bottomMargin" secondItem="n7P-xa-mGV" secondAttribute="bottom" constant="409" id="bjX-vL-Kgq"/>
+                            <constraint firstItem="n13-ev-8BL" firstAttribute="leading" secondItem="8bC-Xf-vdC" secondAttribute="leading" id="i3o-ug-AgV"/>
+                            <constraint firstItem="WXG-ql-rXr" firstAttribute="leading" secondItem="8bC-Xf-vdC" secondAttribute="leadingMargin" constant="312" id="jKD-q1-pDb"/>
+                            <constraint firstItem="n7P-xa-mGV" firstAttribute="leading" secondItem="8bC-Xf-vdC" secondAttribute="leadingMargin" id="lgv-ez-zvk"/>
+                            <constraint firstItem="SKo-1G-71z" firstAttribute="top" secondItem="8bC-Xf-vdC" secondAttribute="topMargin" constant="208" id="pnh-1I-BJC"/>
+                            <constraint firstAttribute="trailingMargin" secondItem="aWS-T8-7fq" secondAttribute="trailing" constant="157" id="wBA-HN-J6D"/>
+                            <constraint firstAttribute="trailingMargin" secondItem="ou8-md-dWF" secondAttribute="trailing" constant="104" id="xAs-fR-Iv0"/>
+                            <constraint firstAttribute="trailing" secondItem="n13-ev-8BL" secondAttribute="trailing" id="xip-oG-uIX"/>
+                        </constraints>
                     </view>
                     <tabBarItem key="tabBarItem" title="Dropp" id="iYn-ac-70U"/>
                     <toolbarItems/>
                     <connections>
+                        <outlet property="cancelButton" destination="cBs-fZ-dfk" id="QNC-K5-ahS"/>
                         <outlet property="imageView" destination="n13-ev-8BL" id="hSd-Bt-gb8"/>
-                        <outlet property="messageLabel" destination="U0k-ou-Ceg" id="ifA-LY-DHQ"/>
-                        <outlet property="messageTextField" destination="yXd-61-NYL" id="cry-D5-W10"/>
+                        <outlet property="messageView" destination="HvM-05-zDb" id="HTY-eq-9vA"/>
+                        <outlet property="postDroppButton" destination="ou8-md-dWF" id="i2E-Sw-ZdZ"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="dkx-z0-nzr" sceneMemberID="firstResponder"/>
-                <exit id="4ho-Av-ERu" userLabel="Exit" sceneMemberID="exit"/>
             </objects>
-            <point key="canvasLocation" x="3302" y="940"/>
+            <point key="canvasLocation" x="3343.1999999999998" y="1043.9280359820091"/>
         </scene>
         <!--Tab Bar Controller-->
         <scene sceneID="FrM-MN-RnK">
@@ -260,7 +256,10 @@
                     <tabBar key="tabBar" contentMode="scaleToFill" id="1Ie-2o-L9i">
                         <rect key="frame" x="0.0" y="0.0" width="1000" height="1000"/>
                         <autoresizingMask key="autoresizingMask"/>
-                        <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
+                        <color key="backgroundColor" white="0.0" alpha="1" colorSpace="calibratedWhite"/>
+                        <color key="tintColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                        <color key="barTintColor" red="0.91661626100540161" green="0.31078633666038513" blue="0.3830183744430542" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                        <color key="selectedImageTintColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                     </tabBar>
                     <connections>
                         <segue destination="LhH-w5-v8K" kind="relationship" relationship="viewControllers" id="tbo-At-GVs"/>
@@ -277,9 +276,12 @@
                 <navigationController automaticallyAdjustsScrollViewInsets="NO" id="LhH-w5-v8K" sceneMemberID="viewController">
                     <tabBarItem key="tabBarItem" title="Feeds" id="98y-3b-uTv"/>
                     <toolbarItems/>
-                    <navigationBar key="navigationBar" contentMode="scaleToFill" id="ZSv-Rp-DbF">
+                    <navigationBar key="navigationBar" contentMode="scaleToFill" misplaced="YES" id="ZSv-Rp-DbF">
                         <rect key="frame" x="0.0" y="0.0" width="375" height="44"/>
                         <autoresizingMask key="autoresizingMask"/>
+                        <textAttributes key="titleTextAttributes">
+                            <color key="textColor" red="0.91661626100540161" green="0.31078633666038513" blue="0.3830183744430542" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                        </textAttributes>
                     </navigationBar>
                     <nil name="viewControllers"/>
                     <connections>
@@ -292,6 +294,7 @@
         </scene>
     </scenes>
     <resources>
-        <image name="defaultImage" width="540" height="540"/>
+        <image name="Cancel-Red" width="256" height="256"/>
+        <image name="TrashIcon" width="500" height="500"/>
     </resources>
 </document>
