@@ -9,7 +9,15 @@
 import Foundation
 
 class HTTPModule {
-    let apiPath = "http://localhost:8080"
+    
+    // If app is runnign on simulator, let path = localhost
+    #if (arch(i386) || arch(x86_64)) && os(iOS)
+        let apiPath = "http://localhost:8080"
+    #else
+        // Else, app is running on device. Connect it to computer running server locally
+        let apiPath = "http://172.21.1.208:8080"
+    #endif
+    
     
     func sendRequest(request: URLRequest, completion: @escaping (HTTPURLResponse, [String: Any]) -> Void) {
         let task = URLSession.shared.dataTask(with: request) { data, response, error in
@@ -104,6 +112,33 @@ class HTTPModule {
         body.appendString("--".appending(boundary.appending("--")))
         
         return body as Data
+    }
+    
+    func getImage(request: URLRequest, completion: @escaping (HTTPURLResponse, Data?) -> Void) {
+        let task = URLSession.shared.dataTask(with: request) { data, response, error in
+            var httpResponse = HTTPURLResponse()
+            
+            // Catch any error while trying to send the request
+            if error != nil {
+                print(error!.localizedDescription)
+                completion(httpResponse, data)
+                return
+            }
+            
+            // Request went to server, so parse the response JSON
+            do {
+                // Cast response to HTTPURLResponse to get more properties from the response
+                httpResponse = response as! HTTPURLResponse
+            } catch let error as NSError {
+                // Catch errors trying to cast the response or deserialize the response body data
+                print(error)
+            }
+            
+            // Send the results to the caller
+            completion(httpResponse, data)
+        }
+        
+        task.resume()
     }
 }
 

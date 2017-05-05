@@ -120,10 +120,12 @@ class FeedTableViewController: UITableViewController, CLLocationManagerDelegate 
                         let userLocation = nestedDic["location"]!
                         let hasPicture = nestedDic["media"]!
                         
-                        let newUsr = UserObject(pUserId: usernameStr as! String,
+                        let newUsr = UserObject(pDroppId: key,
+                                                pUsername: usernameStr as! String,
                                                 pTimestamp: userTimestamp as! Int,
                                                 pMessage: userText as! String,
-                                                pLoc: userLocation as! String)
+                                                pLoc: userLocation as! String,
+                                                pMedia: hasPicture as! Bool)
                         
                         self.addNewUser(newUser: newUsr)
                     }
@@ -138,16 +140,16 @@ class FeedTableViewController: UITableViewController, CLLocationManagerDelegate 
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
         // If the triggered segue is the "showUser" segue
         switch segue.identifier {
-        case "showUser"?:
-            // Figure out which row was just tapped
-            if let row = tableView.indexPathForSelectedRow?.row {
-                // Get the item associated with this row and pass it along
-                let user = self.userArr[row]
-                let detailVC = segue.destination as! DetailViewController
-                detailVC.userObj = user
-            }
-        default:
-            preconditionFailure("Unexpected segue identifier.")
+            case "showUser"?:
+                // Figure out which row was just tapped
+                if let row = tableView.indexPathForSelectedRow?.row {
+                    // Get the item associated with this row and pass it along
+                    let user = self.userArr[row]
+                    let detailVC = segue.destination as! DetailViewController
+                    detailVC.userObj = user
+                }
+            default:
+                preconditionFailure("Unexpected segue identifier.")
         }
     }
 
@@ -174,7 +176,7 @@ class FeedTableViewController: UITableViewController, CLLocationManagerDelegate 
         // Configure the cell...
 //        let date = user.timestamp!
 //        let loc = user.location!
-        let userId = user.userId!
+        let userId = user.username!
         let message = user.message!
         let sublabel = "\(userId) said '\(message)'\n"
         cell.textLabel?.text = sublabel

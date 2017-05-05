@@ -90,15 +90,28 @@
                                 <nil key="textColor"/>
                                 <nil key="highlightedColor"/>
                             </label>
-                            <textView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" fixedFrame="YES" text="YOLOSWAGGER" textAlignment="natural" translatesAutoresizingMaskIntoConstraints="NO" id="av7-fd-WL2">
-                                <rect key="frame" x="16" y="219" width="343" height="332"/>
+                            <textView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" fixedFrame="YES" editable="NO" textAlignment="natural" translatesAutoresizingMaskIntoConstraints="NO" id="Mnw-Sw-yi7">
+                                <rect key="frame" x="16" y="219" width="343" height="146"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                 <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                                 <fontDescription key="fontDescription" type="system" pointSize="14"/>
                                 <textInputTraits key="textInputTraits" autocapitalizationType="sentences"/>
                             </textView>
+                            <imageView userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="KCH-4W-D7q">
+                                <rect key="frame" x="16" y="373" width="343" height="237"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                            </imageView>
+                            <label hidden="YES" opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" text="Fetching image..." textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="EB8-1c-X1a">
+                                <rect key="frame" x="102" y="481" width="170" height="21"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                <color key="tintColor" red="0.91661626100000004" green="0.3107863367" blue="0.38301837439999997" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                                <fontDescription key="fontDescription" type="system" pointSize="20"/>
+                                <color key="textColor" red="0.91661626100000004" green="0.3107863367" blue="0.38301837439999997" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                                <nil key="highlightedColor"/>
+                            </label>
                         </subviews>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                        <color key="tintColor" red="0.91661626100000004" green="0.3107863367" blue="0.38301837439999997" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                         <constraints>
                             <constraint firstAttribute="leadingMargin" secondItem="XR9-OK-kGX" secondAttribute="leading" id="3EP-fa-R5N"/>
                             <constraint firstItem="XR9-OK-kGX" firstAttribute="top" secondItem="v6t-aL-5Nc" secondAttribute="bottom" constant="8" id="L7t-Nl-Ulf"/>
@@ -112,8 +125,10 @@
                         </constraints>
                     </view>
                     <connections>
+                        <outlet property="imageView" destination="KCH-4W-D7q" id="HtI-T9-bLA"/>
+                        <outlet property="loadingLabel" destination="EB8-1c-X1a" id="R5A-cA-qEO"/>
                         <outlet property="locationLabel" destination="7k5-uH-BJX" id="Fpe-cw-Dh0"/>
-                        <outlet property="messageLabel" destination="av7-fd-WL2" id="jOo-Kd-0Mp"/>
+                        <outlet property="textView" destination="Mnw-Sw-yi7" id="Lce-mC-JKp"/>
                         <outlet property="timestampLabel" destination="1b0-YT-LVJ" id="UaK-jP-PBa"/>
                         <outlet property="userLabel" destination="XR9-OK-kGX" id="34M-as-Gyl"/>
                     </connections>
@@ -276,7 +291,7 @@
                 <navigationController automaticallyAdjustsScrollViewInsets="NO" id="LhH-w5-v8K" sceneMemberID="viewController">
                     <tabBarItem key="tabBarItem" title="Feeds" id="98y-3b-uTv"/>
                     <toolbarItems/>
-                    <navigationBar key="navigationBar" contentMode="scaleToFill" misplaced="YES" id="ZSv-Rp-DbF">
+                    <navigationBar key="navigationBar" contentMode="scaleToFill" id="ZSv-Rp-DbF">
                         <rect key="frame" x="0.0" y="0.0" width="375" height="44"/>
                         <autoresizingMask key="autoresizingMask"/>
                         <textAttributes key="titleTextAttributes">
