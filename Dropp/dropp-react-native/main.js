@@ -83,7 +83,7 @@ constructor(props){
     <TouchableHighlight noDefaultStyles={true} onPress={() => this._onPress(item)} underlayColor ={"lightsalmon"} activeOpacity = {10}>
         <View style = {styles.row}>
             <View style = {styles.textcontainer}>
-                <Text>{item.item.text}</Text>
+                <Text>{item.text}</Text>
             </View>
             <View style = {styles.photocontainer}>
                 {item.media && <Image source = {{uri: item.media}} style ={styles.photo}/>}
@@ -101,6 +101,7 @@ constructor(props){
         this._setModalVisible(true);
     };
 
+
     _msToTime(s) {
         // Pad to 2 or 3 digits, default is 2
         function pad(n, z) {
@@ -117,7 +118,7 @@ constructor(props){
     }
 
     _setModalVisible = (visible) => {
-        this.setState({modalVisible: visible});
+        //this.setState({modalVisible: visible});
     };
 
     _onRefresh = () => {this._getDropps();}
@@ -126,7 +127,6 @@ constructor(props){
         const { params } = this.props.navigation.state;
         console.log( params );
 
-        console.log("entered getdropss");
         let{status} = await Permissions.askAsync(Permissions.LOCATION);
         if(status !== 'granted'){
             this.state({
@@ -135,8 +135,8 @@ constructor(props){
         } 
 
         let locData = await Location.getCurrentPositionAsync({enableHighAccuracy: true});
-        //let curLocation = locData.coords.latitude + "," + locData.coords.longitude;
-        let curLocation = "33.7786396,-118.1139802";
+        let curLocation = locData.coords.latitude + "," + locData.coords.longitude;
+        //let curLocation = "33.7786396,-118.1139802";
         let curTime = locData.timestamp;
 
         var param = {
@@ -163,15 +163,16 @@ constructor(props){
         var feedList = [];
         //parsing the json object into the array
         fetch(feedRequest).then((drp) => {
+            console.log(drp);
             drp.json().then((droppJSON) =>{
                 var dropList = droppJSON.dropps;
-                //for(var d in dropList) {
-                //    var post = dropList[d];
-                //   console.log(d);
-                //   feedList.push(post);
-                //}
+                for(var d in dropList) {
+                    var post = dropList[d];
+                   console.log(d);
+                   feedList.push(post);
+                }
                 //console.log(dropList);
-                this.setState({dropps: dropList});
+                this.setState({dropps: feedList});
             });
         });
     }
