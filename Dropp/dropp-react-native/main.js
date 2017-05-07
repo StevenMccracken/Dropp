@@ -31,7 +31,11 @@ constructor(props){
             sendingMessage: false,
             dropps: null,
             modalVisible: false,
+            transparent: true,
             //modal data
+            modalText: null,
+            modalTimeStamp: null,
+            modalImage: null,
     };
     this._getDropps();
 }
@@ -39,19 +43,25 @@ constructor(props){
     render() {
         const { navigate } = this.props.navigation;
         var modalBackgroundStyle = { backgroundColor: this.state.transparent ? 'rgba(0, 0, 0, 0.5)' : '#f5fcff', };
-        var innerContainerTransparentStyle = this.state.transparent ? {backgroundColor: '#fff', padding: 20}: null;
+        var innerContainerTransparentStyle = this.state.transparent ? {backgroundColor: '#ffff', padding: 20}: null;
         var activeButtonStyle = { backgroundColor: '#ddd' };
         return (
             <View>
                 <Modal 
                     animationType = 'fade' 
-                    transparent = {true} 
+                    transparent = {this.state.transparent} 
                     visible={this.state.modalVisible} 
                     supportedOrientations = {["portrait"]} 
                     onRequestClose={() => this._setModalVisible(false)}>
                     <View style={[styles.modalContainer, modalBackgroundStyle]}>
-                        <View style={[styles.modalInnerContainer, innerContainerTransparentStyle]}>
-                            <Text>TESTSTSTSTSTSTETADFADASDASDASDASDA</Text>
+                        <View style={[styles.modalInnerContainerTop, innerContainerTransparentStyle]}>
+                            <View style = {styles.photocontainer}>
+                                {this.state.modalImage && <Image source = {{uri: this.state.modalImage}} style ={styles.photo}/>}
+                            </View>           
+                        </View>
+                        <View style={[styles.modalInnerContainerBottom, innerContainerTransparentStyle]}>
+                            <Text style = {styles.modaltime}>{this._msToTime(this.state.modalTimeStamp)} </Text>
+                            <Text>{this.state.modalText}</Text>
                             <Button 
                                 onPress={this._setModalVisible.bind(this, false)} 
                                 style={styles.modalButton} 
@@ -73,7 +83,7 @@ constructor(props){
     <TouchableHighlight noDefaultStyles={true} onPress={() => this._onPress(item)} underlayColor ={"lightsalmon"} activeOpacity = {10}>
         <View style = {styles.row}>
             <View style = {styles.textcontainer}>
-                <Text>{item.text}</Text>
+                <Text>{item.item.text}</Text>
             </View>
             <View style = {styles.photocontainer}>
                 {item.media && <Image source = {{uri: item.media}} style ={styles.photo}/>}
@@ -85,8 +95,26 @@ constructor(props){
     _onPress = (item) => {
         console.log("Pressed");
         //set the modal data here with item
+        this.setState({modalText: item.text});
+        this.setState({modalTimeStamp: item.timestamp});
+        this.setState({modalImage: item.photo});
         this._setModalVisible(true);
     };
+
+    _msToTime(s) {
+        // Pad to 2 or 3 digits, default is 2
+        function pad(n, z) {
+            z = z || 2;
+            return ('00' + n).slice(-z);
+        }
+        var ms = s % 1000;
+        s = (s - ms) / 1000;
+        var secs = s % 60;
+        s = (s - secs) / 60;
+        var mins = s % 60;
+        var hrs = (s - mins) / 60;
+        return pad(hrs) + ':' + pad(mins) + ':' + pad(secs) + '.' + pad(ms, 3);
+    }
 
     _setModalVisible = (visible) => {
         this.setState({modalVisible: visible});
@@ -125,7 +153,7 @@ constructor(props){
             method: 'POST',
             headers: new Headers( {
                 'Content-Type': 'application/x-www-form-urlencoded',
-                'Authorization': 'JWT eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6ImpvZWwiLCJkZXRhaWxzIjp7ImVtYWlsIjoiam9lbEBmYWtlbWFpbC5jb20ifSwiaWF0IjoxNDkzNzc5MjIwLCJleHAiOjE0OTYzNzEyMjB9.6PFDs9PuZQQMO5o2qjNShlQ4sSj5dwodz4ar8vWKzhQ',
+                'Authorization': 'JWT eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6InRlc3RlciIsImRldGFpbHMiOnsiZW1haWwiOiJtZS5tZUBtZS5jb20ifSwiaWF0IjoxNDk0MTA5ODAwLCJleHAiOjE0OTY3MDE4MDB9.iZ-VwaPG3XMnx5lJvojFE1fwZXBUzpoBHy4-AGVyE1s',
             }),
             body: formData,
         });
@@ -134,12 +162,13 @@ constructor(props){
         fetch(feedRequest).then((drp) => {
             drp.json().then((droppJSON) =>{
                 var dropList = droppJSON.dropps;
-                for(var d in dropList) {
-                    var post = dropList[d];
-                    feedList.push(post);
-                    console.log(feedList);
-                }
-                this.setState({dropps: feedList});
+                //for(var d in dropList) {
+                //    var post = dropList[d];
+                //   console.log(d);
+                //   feedList.push(post);
+                //}
+                //console.log(dropList);
+                this.setState({dropps: dropList});
             });
         });
     }
@@ -201,16 +230,29 @@ const styles = StyleSheet.create({
   },
   modalButton: {
     marginTop: 10,
+    paddingVertical: 40,
   },
   modalContainer: {
     flex: 1,
     justifyContent: 'center',
-    padding: 20,
+    height: 200,
+    padding: 25,
   },
-  modalInnerContainer: {
-    borderRadius: 10,
+  modalInnerContainerBottom: {
+    borderBottomLeftRadius: 10,
+    borderBottomRightRadius: 10,
+    
     alignItems: 'center',
   },
+  modalInnerContainerTop: {
+    borderTopLeftRadius: 10,
+    borderTopRightRadius: 10,
+    alignItems: 'center',
+  },
+  modaltime: {
+      fontSize: 12,
+      textAlign: 'left',
+  }
 });
 
 Expo.registerRootComponent(App);
