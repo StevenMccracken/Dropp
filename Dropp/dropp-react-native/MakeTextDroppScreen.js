@@ -37,9 +37,7 @@ export class MakeTextDroppScreen extends React.Component {
     
 
     _sendTextMessage = async () => {
-        console.log("entering sendTextMessage");
         const { params } = this.props.navigation.state;
-        console.log(params.token);
 
         this.setState({ sendingMessage: true });
 
@@ -62,9 +60,6 @@ export class MakeTextDroppScreen extends React.Component {
             text: this.state.text,
             media: 'false',
         };
-        console.log("Sending parameters: ");
-        console.log(param);
-        console.log("End of parameters");
 
         var formData = [];
         for (var k in param) {
@@ -82,8 +77,6 @@ export class MakeTextDroppScreen extends React.Component {
             body: formData,
         });
         fetch(request).then((response) => {
-            //convert to JSON
-            console.log(response);
             response.json().then((responseObj) => console.log(responseObj));
 
             //if no errors, set timeout to be 2 seconds, so modal doesn't close immediately.
