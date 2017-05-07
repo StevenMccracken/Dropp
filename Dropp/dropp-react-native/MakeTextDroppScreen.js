@@ -37,7 +37,12 @@ export class MakeTextDroppScreen extends React.Component {
     
 
     _sendTextMessage = async () => {
+        console.log("entering sendTextMessage");
+        const { params } = this.props.navigation.state;
+        console.log(params.token);
+
         this.setState({ sendingMessage: true });
+
         
         //get location
         let { status } = await Permissions.askAsync(Permissions.LOCATION);
@@ -51,34 +56,34 @@ export class MakeTextDroppScreen extends React.Component {
         let currentCoordinates = realWorldData.coords.latitude + ", " + realWorldData.coords.longitude;
         let currentTime = realWorldData.timestamp;
         //create a post request
-        var params = {
-            username: 'aland',
+        var param = {
             location: currentCoordinates,
             timestamp: currentTime,
-            text: 'hello from reactnative',
+            text: this.state.text,
+            media: 'false',
         };
         console.log("Sending parameters: ");
-        console.log(params);
+        console.log(param);
         console.log("End of parameters");
 
         var formData = [];
-        for (var k in params) {
+        for (var k in param) {
             var encodedKey = encodeURIComponent(k);
-            var encodedValue = encodeURIComponent(params[k]);
+            var encodedValue = encodeURIComponent(param[k]);
             formData.push(encodedKey + "=" + encodedValue);
         }
         formData = formData.join("&");
-        //TODO:: make url send to 'https://dropps.me/api/dropps'
-        var request = new Request('https://dropps.me/api/dropps', {
+        var request = new Request('https://dropps.me/dropps', {
             method: 'POST',
             headers: new Headers( {
-                'Content-Type': 'application/x-www-form-urlencoded',
-                'Authorization': 'JWT eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6ImFsYW5kIiwiZGV0YWlscyI6eyJlbWFpbCI6ImFsYW5AZmFrZW1haWwuY29tIn0sImlhdCI6MTQ5MzE1NTQyNiwiZXhwIjoxNDk1NzQ3NDI2fQ.49Z9q22LU1Z-2pRCRs4HjH-BkHi-puys846cvm84MAc',
+                'Content-Type': 'application/json',
+                'Authorization': params.token,
             }),
             body: formData,
         });
         fetch(request).then((response) => {
             //convert to JSON
+            console.log(response);
             response.json().then((responseObj) => console.log(responseObj));
 
             //if no errors, set timeout to be 2 seconds, so modal doesn't close immediately.

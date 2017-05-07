@@ -94,7 +94,10 @@ constructor(props){
 
     _onRefresh = () => {this._getDropps();}
 
-    _getDropps = async() =>{
+    _getDropps = async() => {
+        const { params } = this.props.navigation.state;
+        console.log( params );
+
         console.log("entered getdropss");
         let{status} = await Permissions.askAsync(Permissions.LOCATION);
         if(status !== 'granted'){
@@ -125,7 +128,7 @@ constructor(props){
             method: 'POST',
             headers: new Headers( {
                 'Content-Type': 'application/x-www-form-urlencoded',
-                'Authorization': 'JWT eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6ImpvZWwiLCJkZXRhaWxzIjp7ImVtYWlsIjoiam9lbEBmYWtlbWFpbC5jb20ifSwiaWF0IjoxNDkzNzc5MjIwLCJleHAiOjE0OTYzNzEyMjB9.6PFDs9PuZQQMO5o2qjNShlQ4sSj5dwodz4ar8vWKzhQ',
+                'Authorization': params.token,
             }),
             body: formData,
         });

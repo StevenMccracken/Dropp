@@ -12,13 +12,16 @@ import {
 export class MakeDroppScreen extends React.Component {
     render() {
         const { navigate } = this.props.navigation;
+        const { params } = this.props.navigation.state;
         return (
             <View style={styles.container}>
                 <Button 
-                    onPress={() => navigate('TextDropp')}
+                    onPress={() => navigate('TextDropp', { token : params.token })}
                     title="Make a Text Post"
                 />
-                <Button onPress={() => navigate('PicDropp')} title = "Make a picture post"/>
+                <Button onPress={() => navigate('PicDropp', { token : params.token })} 
+                    title = "Make a Picture post"
+                />
             </View>
         );    }
 }

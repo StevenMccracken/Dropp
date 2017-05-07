@@ -52,7 +52,7 @@ export class CreateAccountScreen extends React.Component {
                     const resetAction = NavigationActions.reset({
                     index: 0,
                     actions: [
-                        NavigationActions.navigate({ routeName: 'Home', params: { token: responseObj.success.token }})
+                        NavigationActions.init({ routeName: 'Home', params: { token: responseObj.success.token }})
                     ]
                     });
                     this.props.navigation.dispatch(resetAction);
