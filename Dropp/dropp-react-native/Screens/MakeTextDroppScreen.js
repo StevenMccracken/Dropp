@@ -12,11 +12,10 @@ import {
     Platform,
 } from 'react-native';
 import { Constants, Location, Permissions } from 'expo';
+import * as HelperFunctions from '../HelperFunctions';
+
 
 export class MakeTextDroppScreen extends React.Component {
-    /*static navigationOptions = ({ navigation }) => ({
-        title: `Chat with ${navigation.state.params.user}`,
-    });*/
     constructor(props){
         super(props);
         this.state = {
@@ -61,13 +60,7 @@ export class MakeTextDroppScreen extends React.Component {
             media: 'false',
         };
 
-        var formData = [];
-        for (var k in param) {
-            var encodedKey = encodeURIComponent(k);
-            var encodedValue = encodeURIComponent(param[k]);
-            formData.push(encodedKey + "=" + encodedValue);
-        }
-        formData = formData.join("&");
+        var formData = HelperFunctions.makeFormData(param);
         var request = new Request('https://dropps.me/dropps', {
             method: 'POST',
             headers: new Headers( {
