@@ -71,13 +71,17 @@ export class MakeTextDroppScreen extends React.Component {
         var request = new Request('https://dropps.me/dropps', {
             method: 'POST',
             headers: new Headers( {
-                'Content-Type': 'application/json',
+                'Content-Type': 'application/x-www-form-urlencoded',
                 'Authorization': params.token,
             }),
             body: formData,
         });
         fetch(request).then((response) => {
-            response.json().then((responseObj) => console.log(responseObj));
+            response.json().then((responseObj) => {
+                if (!responseObj.ok) {
+                    console.log(responseObj);
+                }
+            });
 
             //if no errors, set timeout to be 2 seconds, so modal doesn't close immediately.
             setTimeout(() => {this.setState({ sendingMessage: false})}, 2000);
