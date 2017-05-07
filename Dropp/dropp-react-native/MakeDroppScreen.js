@@ -23,7 +23,8 @@ export class MakeDroppScreen extends React.Component {
                     title = "Make a Picture post"
                 />
             </View>
-        );    }
+        );    
+    }
 }
 
 const styles = StyleSheet.create({
