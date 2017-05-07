@@ -10,5 +10,9 @@
     "react": "16.0.0-alpha.6",
     "react-native": "https://github.com/expo/react-native/archive/sdk-16.0.0.tar.gz",
     "react-navigation": "1.0.0-beta.8"
+  },
+  "devDependencies": {
+    "babel-eslint": "^7.2.3",
+    "eslint-plugin-react": "^7.0.0"
   }
 }
