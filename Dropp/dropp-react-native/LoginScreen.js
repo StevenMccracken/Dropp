@@ -27,9 +27,6 @@ export class LoginScreen extends React.Component {
             username: this.state.username,
             password: this.state.password,
         };
-        console.log("Sending parameters: ");
-        console.log(params);
-        console.log("End of parameters");
 
         var formData = ClientUtil.makeFormData(params);
 
@@ -45,11 +42,8 @@ export class LoginScreen extends React.Component {
         fetch(request).then((response) => {
             //convert to JSON
             response.json().then((responseObj) => {
-                console.log(responseObj);
                 if (responseObj.success) {
                     this.setState({ errorMessage: null })
-                    console.log("returned success");
-                    console.log(responseObj.success.token);
                     const resetAction = NavigationActions.reset({
                     index: 0,
                     actions: [
@@ -61,10 +55,9 @@ export class LoginScreen extends React.Component {
                     Alert.alert(
                         'Login Error',
                         responseObj.error.message,
-                        [ {text: 'Ok', onPress: () => console.log('ok pressed')}, ],
+                        [ {text: 'Ok'}, ],
                         { cancelable: true }
                     );
-                    console.log(responseObj.error.message);
                 }
             });
             

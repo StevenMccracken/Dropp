@@ -27,9 +27,6 @@ export class CreateAccountScreen extends React.Component {
             username: this.state.username,
             password: this.state.password,
         };
-        console.log("Sending parameters: ");
-        console.log(params);
-        console.log("End of parameters");
 
         var formData = ClientUtil.makeFormData(params);
         
@@ -45,10 +42,7 @@ export class CreateAccountScreen extends React.Component {
         fetch(request).then((response) => {
             //convert to JSON
             response.json().then((responseObj) => {
-                console.log(responseObj);
                 if (responseObj.success) {
-                    console.log("returned success");
-                    console.log(responseObj.success.token);
                     const resetAction = NavigationActions.reset({
                     index: 0,
                     actions: [
@@ -60,10 +54,9 @@ export class CreateAccountScreen extends React.Component {
                     Alert.alert(
                         'Login Error',
                         responseObj.error.message,
-                        [ {text: 'Ok', onPress: () => console.log('ok pressed')}, ],
+                        [ {text: 'Ok'}, ],
                         { cancelable: true }
                     );
-                    console.log(responseObj.error.message);
                 }
             });
         });
@@ -76,9 +69,6 @@ export class CreateAccountScreen extends React.Component {
             password: this.state.password,
             email: this.state.email,
         };
-        console.log("Sending parameters: ");
-        console.log(params);
-        console.log("End of parameters");
 
         var formData = [];
         for (var k in params) {
@@ -97,17 +87,16 @@ export class CreateAccountScreen extends React.Component {
         fetch(request).then((response) => {
             //convert to JSON
             response.json().then((responseObj) => {
-                console.log(responseObj);
                 if (responseObj.error) { //error occurred when making an account.
                     Alert.alert(
                         'Account Creation Error',
                         responseObj.error.message,
-                        [ {text: 'Ok', onPress: () => console.log('ok pressed')}, ],
+                        [ {text: 'Ok'}, ],
                         { cancelable: true }
                     );
                 } else { //we successfully made a user!
                     Alert.alert(
-                        'Account Creation Successful',
+                        'Account Creation Successful!',
                         'Click \'Ok\' to go into Dropp.',
                         [ {text: 'Ok', onPress: this._tryLogin}, ],
                         { cancelable: false }
