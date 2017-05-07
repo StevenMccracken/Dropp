@@ -66,7 +66,6 @@ export class LoginScreen extends React.Component {
                     );
                     console.log(responseObj.error.message);
                 }
-                //route to Dropp Feed with our token!
             });
             
         });
