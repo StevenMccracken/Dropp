@@ -1,11 +1,11 @@
 import Expo from 'expo';
 import { TabNavigator, StackNavigator } from 'react-navigation';
-import { MakeTextDroppScreen } from './Screens/MakeTextDroppScreen';
-import { MakeDroppScreen } from './Screens/MakeDroppScreen';
-import { MakePicDroppScreen} from './Screens/MakePicDroppScreen';
-import { LoginScreen } from './Screens/LoginScreen';
-import { CreateAccountScreen } from './Screens/CreateAccountScreen';
-import { FeedScreen } from './Screens/FeedScreen';
+import { MakeTextDroppScreen } from './screens/MakeTextDroppScreen';
+import { MakeDroppScreen } from './screens/MakeDroppScreen';
+import { MakePicDroppScreen} from './screens/MakePicDroppScreen';
+import { LoginScreen } from './screens/LoginScreen';
+import { CreateAccountScreen } from './screens/CreateAccountScreen';
+import { FeedScreen } from './screens/FeedScreen';
 
 const MainScreenNavigator = TabNavigator({
     Feed: { screen: FeedScreen },
