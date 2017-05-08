@@ -4,7 +4,8 @@ import {
     Text,
     TextInput,
     View,
-    Button
+    Button,
+    Alert
 } from 'react-native';
 import { NavigationActions } from 'react-navigation';
 import * as HelperFunctions from '../HelperFunctions';
