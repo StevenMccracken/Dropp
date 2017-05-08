@@ -2,17 +2,19 @@
  * server - Initializes the express server and starts listening
  */
 
- var PORT     	 	= 80;
- const express   	= require('express');
- const app       	= express();
- const router 		= require('./modules/router_mod')(express.Router());
- const bodyParser  	= require('body-parser');
+<<<<<<< HEAD
+var PORT     	 	= 8080;
+const express   	= require('express');
+const app       	= express();
+const router 		= require('./modules/router_mod')(express.Router());
+const bodyParser  	= require('body-parser');
+
 
  var exports = module.exports = {};
 
 // For purpose of checking travis, need to be remove later
-if(process.env.TEST){
-	PORT = 3000;
+if (process.env.TEST) {
+  PORT = 3000;
 }
 
 // Set properties of the express server
@@ -23,8 +25,6 @@ app.use(bodyParser.urlencoded({
 
 // Set the base route path
 app.use('/', router);
-
-// Start the server
 
 /**
  * Listens for all incoming requests
@@ -39,3 +39,4 @@ app.use('/', router);
  exports.closeServer = function(){
  	server.close();
  };
+

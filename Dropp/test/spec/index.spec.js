@@ -6,7 +6,7 @@ var base_url = "http://localhost/"
 // Server will check for TEST env variable and adjust the port according to environment
 
 if(process.env.TEST){
-	base_url = "http://localhost:3000/"
+	base_url = "http://localhost:8080/"
 }
 
 describe("Server", function(){
