@@ -7,24 +7,11 @@ import { LoginScreen } from './Screens/LoginScreen';
 import { CreateAccountScreen } from './Screens/CreateAccountScreen';
 import { FeedScreen } from './Screens/FeedScreen';
 
-const MainScreenNavigator = TabNavigator({
-    Feed: { screen: FeedScreen },
-    Dropp: { screen: MakeDroppScreen },
-    }, {
-        tabBarOptions: {
-            style:{
-                backgroundColor: '#ffa07a',
-                opacity: 100,
-            },
-        },
-    });
-
 const App = StackNavigator({
     Login: { screen: LoginScreen },
     CreateAccount: { screen: CreateAccountScreen },
-    Home: { screen: MainScreenNavigator },
-    TextDropp: { screen: MakeTextDroppScreen },
-    PicDropp: {screen: MakePicDroppScreen },
+    Home: { screen: FeedScreen },
+    MakeDropp: { screen: MakeDroppScreen },
 });
 
 Expo.registerRootComponent(App);

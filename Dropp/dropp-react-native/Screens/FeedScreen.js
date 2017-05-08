@@ -13,6 +13,7 @@ import {
     Modal,
 } from 'react-native';
 import { Constants, Location, Permissions } from 'expo';
+import ActionButton from 'react-native-action-button';
 
 export class FeedScreen extends React.Component {
 constructor(props){
@@ -34,11 +35,13 @@ constructor(props){
     
     render() {
         const { navigate } = this.props.navigation;
+        const { params } = this.props.navigation.state;
+
         var modalBackgroundStyle = { backgroundColor: this.state.transparent ? 'rgba(0, 0, 0, 0.5)' : '#f5fcff', };
         var innerContainerTransparentStyle = this.state.transparent ? {backgroundColor: '#ffff', padding: 20}: null;
         var activeButtonStyle = { backgroundColor: '#ddd' };
         return (
-            <View>
+            <View style={{flex: 1, backgroundColor: '#f3f3f3'}}>
                 <Modal 
                     animationType = 'fade' 
                     transparent = {this.state.transparent} 
@@ -66,6 +69,10 @@ constructor(props){
                     renderItem={this._renderItem}
                     onRefresh = {this._onRefresh}
                     refreshing = {false}
+                />
+                <ActionButton 
+                    buttonColor="rgba(23,76,60,1)"
+                    onPress={() => { navigate('MakeDropp', { token : params.token })}}
                 />
             </View>
         );
