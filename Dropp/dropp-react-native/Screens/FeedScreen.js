@@ -22,7 +22,7 @@ constructor(props){
             text: '',
             errorMessage: null,
             sendingMessage: false,
-            dropps: null,
+            dropps: [],
             modalVisible: false,
             transparent: true,
             //modal data
@@ -69,6 +69,7 @@ constructor(props){
                     renderItem={this._renderItem}
                     onRefresh = {this._onRefresh}
                     refreshing = {false}
+                    keyExtractor = {item => item.d}
                 />
                 <ActionButton 
                     buttonColor="rgba(23,76,60,1)"
@@ -82,10 +83,11 @@ constructor(props){
     <TouchableHighlight noDefaultStyles={true} onPress={() => this._onPress(item)} underlayColor ={"lightsalmon"} activeOpacity = {10}>
         <View style = {styles.row}>
             <View style = {styles.textcontainer}>
-                <Text>{item.text}</Text>
+                <Text>{item.post.text}</Text>
+                {console.log(item.d)}
             </View>
             <View style = {styles.photocontainer}>
-                {item.media && <Image source = {{uri: item.media}} style ={styles.photo}/>}
+                {item.post.media && <Image source = {{uri: item.post.media}} style ={styles.photo}/>}
             </View>
         </View>
     </TouchableHighlight>
@@ -94,9 +96,9 @@ constructor(props){
     _onPress = (item) => {
         console.log("Pressed");
         //set the modal data here with item
-        this.setState({modalText: item.text});
-        this.setState({modalTimeStamp: item.timestamp});
-        this.setState({modalImage: item.photo});
+        this.setState({modalText: item.post.text});
+        this.setState({modalTimeStamp: item.post.timestamp});
+        this.setState({modalImage: item.post.media});
         this._setModalVisible(true);
     };
 
@@ -117,7 +119,7 @@ constructor(props){
     }
 
     _setModalVisible = (visible) => {
-        //this.setState({modalVisible: visible});
+        this.setState({modalVisible: visible});
     };
 
     _onRefresh = () => {this._getDropps();}
@@ -162,15 +164,12 @@ constructor(props){
         var feedList = [];
         //parsing the json object into the array
         fetch(feedRequest).then((drp) => {
-            console.log(drp);
             drp.json().then((droppJSON) =>{
                 var dropList = droppJSON.dropps;
                 for(var d in dropList) {
                     var post = dropList[d];
-                   console.log(d);
-                   feedList.push(post);
+                    feedList.push({d,post});
                 }
-                //console.log(dropList);
                 this.setState({dropps: feedList});
             });
         });

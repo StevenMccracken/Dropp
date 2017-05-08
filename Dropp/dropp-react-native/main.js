@@ -5,6 +5,7 @@ import { LoginScreen } from './Screens/LoginScreen';
 import { CreateAccountScreen } from './Screens/CreateAccountScreen';
 import { FeedScreen } from './Screens/FeedScreen';
 
+
 const App = StackNavigator({
     Login: { screen: LoginScreen },
     CreateAccount: { screen: CreateAccountScreen },
