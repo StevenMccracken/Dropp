@@ -146,7 +146,7 @@ constructor(props){
         }
         formData = formData.join("&");
 
-        var feedRequest = new Request('http://192.168.0.104/location/dropps', {
+        var feedRequest = new Request('https://dropps.me/location/dropps', {
             method: 'POST',
             headers: new Headers( {
                 'Content-Type': 'application/x-www-form-urlencoded',
