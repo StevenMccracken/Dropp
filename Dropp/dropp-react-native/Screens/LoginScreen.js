@@ -5,8 +5,10 @@ import {
     TextInput,
     View,
     Button,
-    Alert
+    Alert,
+    StyleSheet,
 } from 'react-native';
+import { Constants } from 'expo';
 import { NavigationActions } from 'react-navigation';
 import * as HelperFunctions from '../HelperFunctions';
 
@@ -70,7 +72,7 @@ export class LoginScreen extends React.Component {
         let textErrorMessage = this.state.errorMessage ? this.state.errorMessage : ' ';
         const { navigate } = this.props.navigation;
         return (
-            <ScrollView style={{padding: 20}}>
+            <ScrollView style={[styles.container]}>
                 <Text 
                     style={{fontSize: 27}}>
                     Login
@@ -99,3 +101,11 @@ export class LoginScreen extends React.Component {
             )
     }
 }
+
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    padding: 20,
+  },
+});

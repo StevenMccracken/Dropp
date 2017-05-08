@@ -41,7 +41,7 @@ constructor(props){
         var innerContainerTransparentStyle = this.state.transparent ? {backgroundColor: '#ffff', padding: 20}: null;
         var activeButtonStyle = { backgroundColor: '#ddd' };
         return (
-            <View style={{flex: 1, backgroundColor: '#f3f3f3'}}>
+            <View style={[styles.container]}>
                 <Modal 
                     animationType = 'fade' 
                     transparent = {this.state.transparent} 
@@ -182,8 +182,6 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: '#fff',
-    alignItems: 'center',
-    justifyContent: 'center',
   },
   row: {
     flex: 1,
