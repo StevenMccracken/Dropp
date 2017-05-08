@@ -27,7 +27,7 @@ class DetailViewController: UIViewController {
         
         // Remove the back button text
         self.navigationController?.navigationBar.topItem?.title = " "
-        self.title = "Message"
+        self.title = "Dropp"
         
         // Formatting the timestamp
         let userTimestamp = NSDate(timeIntervalSince1970: Double(userObj.timestamp!))

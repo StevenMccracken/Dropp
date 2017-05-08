@@ -14,14 +14,14 @@
         <scene sceneID="aqK-sL-vvL">
             <objects>
                 <tableViewController id="gbA-I4-hNV" customClass="FeedTableViewController" customModule="Dropp" customModuleProvider="target" sceneMemberID="viewController">
-                    <tableView key="view" clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="grouped" separatorStyle="default" rowHeight="44" sectionHeaderHeight="18" sectionFooterHeight="18" id="OGU-pg-e1F">
+                    <tableView key="view" clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="plain" separatorStyle="default" rowHeight="44" sectionHeaderHeight="28" sectionFooterHeight="28" id="OGU-pg-e1F">
                         <rect key="frame" x="0.0" y="0.0" width="375" height="667"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
-                        <color key="backgroundColor" cocoaTouchSystemColor="groupTableViewBackgroundColor"/>
+                        <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                         <color key="tintColor" red="0.91661626100540161" green="0.31078633666038513" blue="0.3830183744430542" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                         <prototypes>
-                            <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" selectionStyle="blue" hidesAccessoryWhenEditing="NO" indentationLevel="1" indentationWidth="0.0" reuseIdentifier="CellIdentifier" textLabel="Yq3-qd-9aq" style="IBUITableViewCellStyleDefault" id="dll-8h-9ta">
-                                <rect key="frame" x="0.0" y="56" width="375" height="44"/>
+                            <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" selectionStyle="blue" hidesAccessoryWhenEditing="NO" indentationWidth="0.0" reuseIdentifier="CellIdentifier" textLabel="Yq3-qd-9aq" style="IBUITableViewCellStyleDefault" id="dll-8h-9ta">
+                                <rect key="frame" x="0.0" y="28" width="375" height="44"/>
                                 <autoresizingMask key="autoresizingMask"/>
                                 <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="dll-8h-9ta" id="0wU-eL-KwI">
                                     <rect key="frame" x="0.0" y="0.0" width="375" height="43.5"/>
@@ -288,6 +288,24 @@
                 <placeholder placeholderIdentifier="IBFirstResponder" id="SoT-Ec-Yjt" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
             <point key="canvasLocation" x="780" y="174.06296851574214"/>
+        </scene>
+        <!--View Controller-->
+        <scene sceneID="NOD-e3-Wgs">
+            <objects>
+                <viewController id="PKt-AI-W6g" sceneMemberID="viewController">
+                    <layoutGuides>
+                        <viewControllerLayoutGuide type="top" id="8uY-SF-Sde"/>
+                        <viewControllerLayoutGuide type="bottom" id="KFo-R8-Zqi"/>
+                    </layoutGuides>
+                    <view key="view" contentMode="scaleToFill" id="xFb-pJ-Kpg">
+                        <rect key="frame" x="0.0" y="0.0" width="375" height="667"/>
+                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                    </view>
+                </viewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="7mT-B4-56L" userLabel="First Responder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="1775" y="184"/>
         </scene>
         <!--Feeds-->
         <scene sceneID="90M-FC-A0G">

@@ -48,6 +48,7 @@ class FeedTableViewController: UITableViewController, CLLocationManagerDelegate 
     
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
+        self.title = "Nearby Dropps"
         navigationController?.navigationBar.tintColor = UIColor(red: 1.0, green: 0.18, blue: 0.33, alpha: 1.0)
         self.tableView.reloadData()
     }
