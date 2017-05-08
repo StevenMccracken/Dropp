@@ -28,13 +28,6 @@ admin.initializeApp({
 const db = admin.database();
 
 
-
-
-
-var test = function(){
-	console.log("test");
-}
-
 var GET = function(_url, callback, errorCallback){
 	log("Get request to firebaes url='" + _url +"'");
 	var ref = db.ref(_url);

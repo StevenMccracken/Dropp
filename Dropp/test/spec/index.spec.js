@@ -169,7 +169,7 @@ describe("Server", function(){
                 it("Get dropps by Location", function(done) {
                     request.post(getDroppByLocation, function(error, response, body) {
                         var data = JSON.parse(body);
-                        log("Get dropps by location", Object.keys(data).length);
+                        log("Get dropps by location", data.count);
                         expect(body).toBeDefined();
                         done();
 						server.closeServer();
