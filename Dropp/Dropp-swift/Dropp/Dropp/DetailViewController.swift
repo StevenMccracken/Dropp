@@ -25,6 +25,10 @@ class DetailViewController: UIViewController {
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         
+        // Remove the back button text
+        self.navigationController?.navigationBar.topItem?.title = " "
+        self.title = "Message"
+        
         // Formatting the timestamp
         let userTimestamp = NSDate(timeIntervalSince1970: Double(userObj.timestamp!))
         let formatter = DateFormatter()
@@ -33,8 +37,13 @@ class DetailViewController: UIViewController {
         
         self.userLabel.text = userObj.username
         self.timestampLabel.text = dateString
-        self.locationLabel.text = "\(distanceFromDropp!) away from Dropp"
+        self.locationLabel.text = "\(distanceFromDropp!) meters away"
         self.textView.text = userObj.message
+        
+//        self.userLabel.text = "stevenmccracken"
+//        self.userLabel.font = UIFont.boldSystemFont(ofSize: 15.0)
+//        self.locationLabel.text = "4.20 meters away"
+//        self.textView.text = "Hello from Fullerton. Dropp fucking rocks. Dropp me a message!"
         
         if userObj.media! {
             self.loadingLabel.isHidden = false
