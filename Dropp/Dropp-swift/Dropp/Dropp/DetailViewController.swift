@@ -19,24 +19,21 @@ class DetailViewController: UIViewController {
     
     let http = HTTPModule()
     var userObj: UserObject!
-    var userCurrentLoc: String!
+    var distanceFromDropp: Double!
    
     
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         
-        print("Printing UserOjbect in Detail:")
-        print(userObj)
-        var userTimestamp = NSDate(timeIntervalSince1970: Double(userObj.timestamp!))
-        
+        // Formatting the timestamp
+        let userTimestamp = NSDate(timeIntervalSince1970: Double(userObj.timestamp!))
         let formatter = DateFormatter()
         formatter.dateFormat = "MMMM dd, yyyy 'at' h:mm a"
         let dateString = formatter.string(from: userTimestamp as Date)
-        print(dateString)
         
         self.userLabel.text = userObj.username
         self.timestampLabel.text = dateString
-        self.locationLabel.text = userObj.location
+        self.locationLabel.text = "\(distanceFromDropp!) away from Dropp"
         self.textView.text = userObj.message
         
         if userObj.media! {
