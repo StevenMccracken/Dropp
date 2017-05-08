@@ -30,7 +30,7 @@ class DetailViewController: UIViewController {
         var userTimestamp = NSDate(timeIntervalSince1970: Double(userObj.timestamp!))
         
         let formatter = DateFormatter()
-        formatter.dateFormat = "yyyy-MM-dd HH:mm:ss"
+        formatter.dateFormat = "MMMM dd, yyyy 'at' h:mm a"
         let dateString = formatter.string(from: userTimestamp as Date)
         print(dateString)
         
