@@ -226,6 +226,13 @@ class ViewController: UIViewController, UITextViewDelegate, UIImagePickerControl
                         })
                     }
                     self.resetUI()
+                    let alert = UIAlertController(title: "Success", message: "Successfully dropped.", preferredStyle: .alert)
+                    self.present(alert, animated: true, completion: nil)
+                    
+                    let when = DispatchTime.now() + 1
+                    DispatchQueue.main.asyncAfter(deadline: when) {
+                        alert.dismiss(animated: true, completion: nil)
+                    }
                 }
             } else {
                 self.alertFailedPost(droppId: "")
