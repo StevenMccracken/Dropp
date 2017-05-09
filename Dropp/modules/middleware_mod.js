@@ -6,9 +6,8 @@ const ERROR 			= require("./error_mod");
 const FIREBASE 			= require("./firebase_mod");
 const Log 				= require("./log_mod");
 const AUTHENTICATION 	= require("./authentication_mod");
-// const bcrypt	= require('bcrypt-nodejs');
-
-
+const MEDIA 			= require("./media_mod");
+const fs 				= require("fs");
 
 
 var auth = function(_request, _response, _callback) {
@@ -238,7 +237,7 @@ var createDropps = function(_request, _response, _callback){
 		timestamp 	: parseInt(_request.body.timestamp),
 		username 	: null,
 		text 		: _request.body.text == null ? '': _request.body.text,
-		media 		: _request.body.media == null ? '': _request.body.media
+		media 		: _request.body.media === 'true' ? true: false
 	}
 
 	// Verify web token
@@ -406,6 +405,147 @@ var getDroppsByLocation = function(_request, _response, _callback) {
 };
 
 
+var uploadImage = function(_request, _response, _callback) {
+
+	const source = 'POST /dropps/' + _request.params.droppId + '/image';
+	var response, serverLog;
+	AUTHENTICATION.verifyToken(_request, _response, (user)=> {
+
+		// Check request parameters
+		if (!isValidId(_request.params.droppId)) {
+
+			serverLog = "Not valid dropp id";
+			response = ERROR.error(source, _request, _response, ERROR.CODE.INVALID_REQUEST_ERROR, serverLog);
+
+			// Remove temp file that multer created
+			if( _request.file !== undefined){
+				removeFile(_request.file.path);
+			}
+			_callback(response);
+		} else {
+
+
+			// Reject this request if droppId does not exist in database
+			FIREBASE.GET('/dropps', dropps => {
+
+
+
+				if( !(_request.params.droppId in dropps)){
+					// DroppId doesn't exist
+					serverLog = "Dropps id doesn't exists";
+					response = ERROR.error(source, _request, _response, ERROR.CODE.INVALID_REQUEST_ERROR, serverLog);
+					_callback(response);
+				} else {
+					// dropp id exist
+
+					// If there is a file in the multi-part form request body, process it
+					if(_request.file !== undefined) {
+
+						// Make sure only specific image files are accepted
+						if(_request.file.mimetype != 'image/jpeg' && _request.file.mimetype != 'image/png') {
+							serverLog = "Invalid mimetype (" + _request.file.mimetype + ')';
+							response = ERROR.error(source, _request, _response, ERROR.CODE.INVALID_REQUEST_ERROR, serverLog);
+							removeFile(_request.file.path);
+							_callback(response);
+						} else {
+
+							    // Access file that multer added to ./temp/uploads/ and stream it to google cloud storage
+							    const filename = _request.params.droppId;
+							    var localReadStream = fs.createReadStream(_request.file.path);
+						        var remoteWriteStream = MEDIA.bucket.file(filename).createWriteStream();
+						        localReadStream.pipe(remoteWriteStream);
+
+						        // Catch error event while uploading
+						        remoteWriteStream.on('error', function(err) {
+						          response = ERROR.error(source, _request, _response, ERROR.CODE.API_ERROR, err);//logError(source, res, errors.API_ERROR, err);
+
+						           // Remove temp file that multer created
+						          removeFile(_request.file.path);
+						          // return res.json(responseJson);
+						          _callback(response);
+						        });
+
+						        // Catch finish event after uploading
+						        remoteWriteStream.on('finish', function() {
+						          response = {
+						            success: {
+						              message: 'Added image to dropp ' + _request.params.droppId,
+						            }
+						          };
+
+						           // Remove temp file that multer created
+						          removeFile(_request.file.path);
+						          // return res.json(responseJson);
+						          _callback(response);
+						        });
+
+							    // _callback(filename);
+						}
+					} else {
+						serverLog = "No file parameter provided";
+						response = ERROR.error(source, _request, _response, ERROR.CODE.INVALID_REQUEST_ERROR, serverLog);
+						_callback(response);
+					}
+				}	
+				// console.log(_request.params.droppId in dropps);
+			}, err => {
+				_callback(err);
+			});
+			// _callback(_request.file);
+		}
+
+	}, err => {
+		_callback(err);
+	});
+}
+
+
+var getImage = function(_request, _response, _callback) {
+	const source = 'GET /dropps/' + _request.params.droppId + '/image';
+
+	var response, serverLog;
+
+	AUTHENTICATION.verifyToken(_request, _response, (user)=> {
+		if( !isValidId(_request.params.droppId) ) {
+			serverLog = "Invalid Dropp id";
+			response = ERROR.error(source, _request, _response, ERROR.CODE.INVALID_REQUEST_ERROR, serverLog);
+			_callback(response);
+		} else {
+
+			// Get google cloud storage reference
+			var filename = _request.params.droppId;
+			var remoteReadStream = MEDIA.bucket.file(filename).createReadStream();
+
+			// Catch error event while downloading
+			remoteReadStream.on('error', function(firebaseError) {
+				if(firebaseError.code === 404) {
+					response = ERROR.error(source, _request, _response, ERROR.CODE.RESOURCE_DNE_ERROR, "Code 404");
+				} else {
+					response = ERROR.error(source, _request, _response, ERROR.CODE.API_ERROR, firebaseError);
+				}
+				_callback(response);
+			});
+
+			// Download bytes from google cloud storage reference to local memeory array
+			var bufs = [];
+			remoteReadStream.on('data', function(d) { bufs.push(d); } );
+
+			// Catch finish event after downloading has finished
+			remoteReadStream.on('end', function() {
+				// Send byte string to client
+				var buf = Buffer.concat(bufs);
+				response = {
+					media : buf
+				};
+				_callback(response);
+			});
+		}
+	}, err => {
+		_callback(err);
+	});
+}
+
+
 
  module.exports = {
 	auth 				: auth,
@@ -415,7 +555,9 @@ var getDroppsByLocation = function(_request, _response, _callback) {
 	getDroppsById 		: getDroppsById,
 	getDroppsByLocation : getDroppsByLocation,
 	createDropps 		: createDropps,
-	getUser 			: getUser
+	getUser 			: getUser,
+	uploadImage 		: uploadImage,
+	getImage			: getImage
 };
 
 
@@ -574,6 +716,21 @@ function isValidTextPost(text) {
 	};
 
 	return response;
+}
+
+
+/**
+ * removeFile - Removes a file from the local filesystem
+ * @param {string} filePath the path to the desired file
+ */
+function removeFile(filePath) {
+  fs.unlink(filePath, function(err) {
+    if (err) {
+      console.log('Failed to remove temp file at %s', filePath);
+    } else {
+      console.log('Removed temp file at %s', filePath);
+    }
+  });
 }
 
 

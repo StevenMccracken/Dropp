@@ -2,7 +2,6 @@
  * server - Initializes the express server and starts listening
  */
 
-<<<<<<< HEAD
 var PORT     	 	= 8080;
 const express   	= require('express');
 const app       	= express();
@@ -17,9 +16,11 @@ if (process.env.TEST) {
   PORT = 3000;
 }
 
-// Set properties of the express server
+// Set properties of the express 
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({
+	parameterLimit: 100000,
+    limit: '5mb',
 	extended: true
 }));
 

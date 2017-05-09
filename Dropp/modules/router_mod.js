@@ -3,9 +3,11 @@
  */
 
 
-var router = null;
 
-var middleware = require('./middleware_mod');
+const MIDDLEWARE 	= require('./middleware_mod');
+const MEDIA 		= require('./media_mod');
+
+var router = null;
 
 var routing = function(_router){
 
@@ -48,7 +50,7 @@ var routing = function(_router){
 
 
 		// Call middleware
-		middleware.auth(req, res, response => {
+		MIDDLEWARE.auth(req, res, response => {
 			res.json(response);
 		});
 	});
@@ -64,7 +66,7 @@ var routing = function(_router){
 	router.route('/users').post((req, res) => {
 
 		// Call Middleware
-		middleware.createUser(req, res, response => {
+		MIDDLEWARE.createUser(req, res, response => {
 			res.json(response);
 		});
 	});
@@ -81,7 +83,7 @@ var routing = function(_router){
 
 		// Call Middleware
 
-		middleware.getUser(req, res, response => {
+		MIDDLEWARE.getUser(req, res, response => {
 			res.json(response);
 			// res.json({ message: "Default Messages "});
 		});
@@ -99,7 +101,7 @@ var routing = function(_router){
 
 		// Call middleware, getAllDropps
 		// res.json({ message: "Default Messages "});
-		middleware.getAllDropps(req, res, response => {
+		MIDDLEWARE.getAllDropps(req, res, response => {
 			res.json(response);
 		});
 	});
@@ -117,7 +119,7 @@ var routing = function(_router){
 
 		// middleware, getDroppsByUser
 		// res.json({ message: "Default Messages "});
-		middleware.getDroppsByUser(req, res, response => {
+		MIDDLEWARE.getDroppsByUser(req, res, response => {
 			res.json(response);
 		});
 	});
@@ -134,10 +136,11 @@ var routing = function(_router){
 
 		// call middleware
 		// res.json({ message: "Default Messages "});
-		middleware.getDroppsById(req, res, response => {
+		MIDDLEWARE.getDroppsById(req, res, response => {
 			res.json(response);
 		});
 	});
+
 
 
 	/**
@@ -152,7 +155,7 @@ var routing = function(_router){
 
 		// call middleware
 		// res.json({ message: "Default Messages "});
-		middleware.getDroppsByLocation(req, res, response => {
+		MIDDLEWARE.getDroppsByLocation(req, res, response => {
 			res.json(response);
 		});
 	});
@@ -166,13 +169,51 @@ var routing = function(_router){
 	 */
 
 	 router.route('/dropps').post(function(req, res) {
-
 	 	// call middleware
 	 	// res.json({ message: "Default Messages "});
-	 	middleware.createDropps(req, res, response => {
+	 	MIDDLEWARE.createDropps(req, res, response => {
 	 		res.json(response);
 	 	});
 	 });
+
+
+
+	/**
+	 * The POST route for uploading an image to link with a dropp.
+	 * The request body Content-Type MUST be multipart/form-data.
+	 * This route does not require token authentication
+	 * @param {Object} req the HTTP request
+	 * @param {Object} res the HTTP response
+	 */
+
+	 router.route('/dropps/:droppId/image').post( MEDIA.upload.single('image'), function(req, res) {
+
+	 	MIDDLEWARE.uploadImage(req, res, response => {
+	 		res.json(response);
+	 	});
+
+	 });
+
+	/**
+	 * The GET route for downloading the image linked to a
+     * dropp. This route does not require token authentication
+     * @param {Object} req the HTTP request
+     * @param {Object} res the HTTP response
+     */
+
+     router.route('/dropps/:droppId/image').get(function(req, res) {
+
+     	MIDDLEWARE.getImage(req, res, response => {
+     		// res.json(response);
+
+     		if(response.media != null){
+	     		res.write(response.media, 'binary');
+	     		res.end(null, 'binary');
+     		} else {
+     			res.json(response);
+     		}
+     	});
+     });
 
 
 	return router;
