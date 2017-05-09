@@ -86,7 +86,7 @@ export class MakeDroppScreen extends React.Component {
             location: currentCoordinates,
             timestamp: currentTime,
             text: this.state.text,
-            media: 'false',
+            media: this.state.image ? 'true': 'false',
         };
 
         var formData = HelperFunctions.makeFormData(param);
