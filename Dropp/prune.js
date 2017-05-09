@@ -1,8 +1,18 @@
 const firebase = require('./modules/firebase_mod.js');
+
+// Global authentication for google cloud storage
+const gcs = require('@google-cloud/storage')({
+  projectId: 'dropp-3a65d',
+  keyFilename: './storageAccountKey.json'
+});
+
+// Initialize cloud storage bucket
+const bucket = gcs.bucket('dropp-3a65d.appspot.com');
+
 var iteration = 0;
 
 // Run the prune function every 60 seconds
-setInterval(prune, 60000);
+setInterval(prune, 10000);
 
 function prune() {
   const start = new Date();
@@ -28,7 +38,29 @@ function prune() {
       if (currentTimestamp - droppTimestamp > 86400000) {
         console.log('Deleting dropp %s because it is older than 24 hours (Post date: %s)', dropp, new Date(droppTimestamp).toISOString());
         firebase.deleteDropp(dropp, dbResult => {
-          if (dbResult.error == null) count++;
+          if (dbResult.error == null) {
+            count++;
+
+            /**
+             * If the dropp we just deleted has media
+             * associated with it, delete it from cloud storage
+             */
+            if (details.media) {
+              console.log('Trying to delete image linked to %s', dropp);
+          		var image = bucket.file(dropp)
+          		if (image != null) {
+          			image.delete().then(function(response) {
+          				console.log('Successfully deleted image linked to %s', dropp);
+          			})
+          			.catch(function(err) {
+          				console.log('Failed deleting image linked to %s because: %s', dropp, err);
+          			});
+          		} else {
+          			console.log('No image exists for %s', dropp);
+          		}
+            }
+          }
+
           console.log(dbResult);
         });
       }

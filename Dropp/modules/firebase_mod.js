@@ -6,7 +6,14 @@ const admin 					= require('firebase-admin');
 const error          	= require('./error_mod.js');
 const bcrypt					= require('bcrypt-nodejs');
 const errorMessages   = require('./errorMessage_mod.js');
-const serviceAccount	= require('../serviceAccountKey.json');
+// const serviceAccount	= require('../serviceAccountKey.json');
+
+var serviceAccount = process.env.TEST;
+if (serviceAccount) {
+	serviceAccount = JSON.parse(serviceAccount);
+} else {
+	serviceAccount = require('../serviceAccountKey.json');
+}
 
 // Authenticate firebase with server admin credentials
 admin.initializeApp({
@@ -359,11 +366,11 @@ module.exports = {
 	createDropp: function(username, req, callback) {
 		// Build dropp JSON for database. TODO: move this to the service layer
 		const dropp = {
-			"location" 	: req.body.location,
-			"timestamp"	: parseInt(req.body.timestamp),
-			"username" 	: username,
-			"text" 			: req.body.text == null ? '' : req.body.text,
-			"media" 		: req.body.media === 'true' ? true : false
+			location 	: req.body.location,
+			timestamp	: parseInt(req.body.timestamp),
+			username 	: username,
+			text 			: req.body.text == null ? '' : req.body.text,
+			media 		: req.body.media === 'true' ? true : false
 		};
 
 		var responseJson;
