@@ -62,6 +62,8 @@ export class LoginScreen extends React.Component {
                         { cancelable: true }
                     );
                 }
+            }).catch((error) => {
+                console.log("Couldn't connect to server.");
             });
             
         });

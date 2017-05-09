@@ -54,7 +54,7 @@ constructor(props){
                     <View style={[styles.modalContainer, modalBackgroundStyle]}>
                         <View style={[styles.modalInnerContainerTop, innerContainerTransparentStyleTop]}>
                             <View style = {styles.photocontainer}>
-                                {this.state.modalImage && <Image source = {{uri: this.state.modalImage}} style ={styles.photo}/>}
+                                {/*this.state.modalImage && <Image source = {{uri: this.state.modalImage}} style ={styles.photo}/>*/}
                             </View>           
                         </View>
                         <View style={[styles.modalInnerContainerBottom, innerContainerTransparentStyleBot]}>

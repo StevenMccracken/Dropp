@@ -84,9 +84,9 @@ export class MakeDroppScreen extends React.Component {
         //create a post request
         var param = {
             location: currentCoordinates,
-            timestamp: currentTime,
+            timestamp: Math.floor(currentTime / 1000), //convert from ms to seconds
             text: this.state.text,
-            media: 'false',
+            media: this.state.image ? 'true': 'false',
         };
 
         var formData = HelperFunctions.makeFormData(param);
@@ -130,7 +130,7 @@ export class MakeDroppScreen extends React.Component {
                         response.json().then((responseObj) => {
                             console.log(responseObj);
                         })
-                    })
+                    }).catch((error) => console.log(error));
                 }
 
             });
@@ -154,21 +154,7 @@ export class MakeDroppScreen extends React.Component {
         return (
             <View>
                 <Modal
-                    animationType={"slide"}
-                    transparent={true}
-                    visible={this.state.sendingMessage}
-                    onRequestClose={() => {
-                        alert("Something went wrong, you might have not dropped a message.");
-                        }}
-                    >
-                    <View style = {[styles.container, modalBackgroundStyle]}>
-                        <View style={[styles.innerContainer, innerContainerTransparentStyle]}>
-                            <Text> Dropping message... </Text>
-                        </View>
-                    </View>
-                </Modal>
-                <Modal
-                    animationType={"slide"}
+                    animationType={"fade"}
                     transparent={true}
                     visible={this.state.uploadingPicture}
                     onRequestClose={() => {
@@ -183,17 +169,23 @@ export class MakeDroppScreen extends React.Component {
                         </View>
                     </View>
                 </Modal>
-                <View style = {[modalBackgroundStyle]}>
-                    <TextInput
-                        style={{ height: 40, borderColor: 'gray', borderWidth: 1 }}
-                        onChangeText={(text) => this.setState({ text })}
-                        value = {this.state.text}
-                        multiline = {true}
-                        numberOfLines = {4}
-                        onSubmitEditing={Keyboard.dismiss}
-                        keyboardType={'default'}
-                    />
-                    {image && <Image source={{ uri: image }} style={{ width: 200, height: 200 }} />}
+                <View>
+                    <View style = {{
+                        borderBottomColor: '#000000',
+                        borderBottomWidth: 1,
+                        }}>
+                        <TextInput
+                            style={{ height: 40, borderColor: 'gray', borderWidth: 1 }}
+                            onChangeText={(text) => this.setState({ text })}
+                            value = {this.state.text}
+                            multiline = {true}
+                            numberOfLines = {4}
+                            onSubmitEditing={Keyboard.dismiss}
+                            keyboardType={'default'}
+                        />
+                    </View>
+                    {image ? <Image source={{ uri: image }} style={{ width: 200, height: 200 }} /> :
+                            <Image source={require('../defaultPhoto.png')} style={{ width: 200, height: 200}} /> }
                     <Button title="Attach image" onPress={() => {this.setState({ uploadingPicture: true })}}/> 
                 </View>       
             </View>
