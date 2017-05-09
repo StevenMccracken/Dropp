@@ -366,7 +366,7 @@ module.exports = {
 	createDropp: function(username, req, callback) {
 		// Build dropp JSON for database. TODO: move this to the service layer
 		const dropp = {
-			location 	: req.body.location,
+			location 	: req.body.location.replace(/\s/g,''),
 			timestamp	: parseInt(req.body.timestamp),
 			username 	: username,
 			text 			: req.body.text == null ? '' : req.body.text,
