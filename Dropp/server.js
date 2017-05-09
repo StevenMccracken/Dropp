@@ -18,7 +18,9 @@ if (process.env.TEST) {
 // Set properties of the express server
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({
-  extended: true
+  parameterLimit: 100000,
+  limit: '5mb',
+  extended: true,
 }));
 
 // Set the base route path
