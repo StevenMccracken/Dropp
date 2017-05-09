@@ -18,6 +18,8 @@ if (process.env.TEST) {
 // Set properties of the express server
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({
+  parameterLimit: 100000,
+  limit: '5mb',
   extended: true
 }));
 
