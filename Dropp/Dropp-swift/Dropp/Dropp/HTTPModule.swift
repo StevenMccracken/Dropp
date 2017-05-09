@@ -16,7 +16,7 @@ class HTTPModule {
         let apiPath = "http://localhost:8080"
     #else
         // Else, app is running on device. Connect it to computer running server locally
-        let apiPath = "http://10.39.11.179:8080"
+        let apiPath = "https://dropps.me"
     #endif
     
     func createImageRequest(droppId: String, token: String, params: [String: String], image: UIImage) -> URLRequest {

@@ -11,6 +11,7 @@
 		1631B0001E96D5BE00820B09 /* FeedTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1631AFFF1E96D5BE00820B09 /* FeedTableViewController.swift */; };
 		16AF6C0B1E9B30270022C051 /* UserObject.swift in Sources */ = {isa = PBXBuildFile; fileRef = 16AF6C0A1E9B30270022C051 /* UserObject.swift */; };
 		16AF6C0D1E9B35B00022C051 /* UserStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = 16AF6C0C1E9B35B00022C051 /* UserStore.swift */; };
+		16CA209D1EC1820200EDA7CC /* SegmentedProgressBar.swift in Sources */ = {isa = PBXBuildFile; fileRef = 16CA209C1EC1820200EDA7CC /* SegmentedProgressBar.swift */; };
 		16F1EAA61EAFE70300AA0108 /* message-7.png in Resources */ = {isa = PBXBuildFile; fileRef = 16F1EAA41EAFE70300AA0108 /* message-7.png */; };
 		16F1EAA71EAFE70300AA0108 /* list-fat-7.png in Resources */ = {isa = PBXBuildFile; fileRef = 16F1EAA51EAFE70300AA0108 /* list-fat-7.png */; };
 		2986B0CE30CF1A30A6B10072 /* Pods_DroppTests.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A89741AD814E44A9F9D24FC3 /* Pods_DroppTests.framework */; };
@@ -41,6 +42,7 @@
 		1631AFFF1E96D5BE00820B09 /* FeedTableViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = FeedTableViewController.swift; path = ../FeedTableViewController.swift; sourceTree = "<group>"; };
 		16AF6C0A1E9B30270022C051 /* UserObject.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = UserObject.swift; path = ../UserObject.swift; sourceTree = "<group>"; };
 		16AF6C0C1E9B35B00022C051 /* UserStore.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = UserStore.swift; sourceTree = "<group>"; };
+		16CA209C1EC1820200EDA7CC /* SegmentedProgressBar.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SegmentedProgressBar.swift; sourceTree = "<group>"; };
 		16F1EAA41EAFE70300AA0108 /* message-7.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "message-7.png"; sourceTree = "<group>"; };
 		16F1EAA51EAFE70300AA0108 /* list-fat-7.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "list-fat-7.png"; sourceTree = "<group>"; };
 		410E488F5CFBA78B82AAED78 /* Pods_Dropp.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_Dropp.framework; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -124,6 +126,7 @@
 				161D6FA41EB974A0008A63FB /* DetailViewController.swift */,
 				16AF6C0A1E9B30270022C051 /* UserObject.swift */,
 				16AF6C0C1E9B35B00022C051 /* UserStore.swift */,
+				16CA209C1EC1820200EDA7CC /* SegmentedProgressBar.swift */,
 				69A43ECF1E5BEEA6003E6420 /* Assets.xcassets */,
 				698C32F31EBDC257008CB718 /* Loading-Fast-Icon-200x200.gif */,
 				16F1EAA41EAFE70300AA0108 /* message-7.png */,
@@ -365,6 +368,7 @@
 				16AF6C0D1E9B35B00022C051 /* UserStore.swift in Sources */,
 				69A43ECB1E5BEEA6003E6420 /* ViewController.swift in Sources */,
 				69A43EC91E5BEEA6003E6420 /* AppDelegate.swift in Sources */,
+				16CA209D1EC1820200EDA7CC /* SegmentedProgressBar.swift in Sources */,
 				69EFB0D11EBBBF3C007E4F90 /* HTTPModule.swift in Sources */,
 				16AF6C0B1E9B30270022C051 /* UserObject.swift in Sources */,
 				1631B0001E96D5BE00820B09 /* FeedTableViewController.swift in Sources */,

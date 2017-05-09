@@ -26,8 +26,11 @@ class ViewController: UIViewController, UITextViewDelegate, UIImagePickerControl
     var token = ""
     var originalPostDropButtonYLoc: CGFloat!
     
+    var spb: SegmentedProgressBar!
+    
     override func viewDidLoad() {
         super.viewDidLoad()
+        
         self.token = UserDefaults.standard.value(forKey: "jwt") as! String
                 
         // Apply border to text view
@@ -213,6 +216,15 @@ class ViewController: UIViewController, UITextViewDelegate, UIImagePickerControl
                     self.uploadImageOnly(droppId: droppId, image: self.imageView.image!)
                 } else {
                     // Dropp was posted, so update the UI
+                    sleep(1)
+                    DispatchQueue.main.async {
+                        self.spb.skip()
+                        UIView.animate(withDuration: 1, delay: 0, options: UIViewAnimationOptions.curveEaseOut, animations: {
+                            self.spb.alpha = CGFloat(0)
+                        }, completion: { _ in
+                            self.spb.removeFromSuperview()
+                        })
+                    }
                     self.resetUI()
                 }
             } else {
@@ -227,6 +239,15 @@ class ViewController: UIViewController, UITextViewDelegate, UIImagePickerControl
         self.sendImage(droppId, image) { imagePosted in
             // If the image was uploaded successfully, reset the post dropp screen
             if imagePosted {
+                sleep(1)
+                DispatchQueue.main.async {
+                    self.spb.skip()
+                    UIView.animate(withDuration: 1, delay: 0, options: UIViewAnimationOptions.curveEaseOut, animations: {
+                        self.spb.alpha = CGFloat(0)
+                    }, completion: { _ in
+                        self.spb.removeFromSuperview()
+                    })
+                }
                 self.resetUI()
             } else {
                 // The image upload failed, display a failure alert
@@ -240,7 +261,11 @@ class ViewController: UIViewController, UITextViewDelegate, UIImagePickerControl
     @IBAction func postMessage(_ sender: UIButton) {
          // Hide the keyboard
         self.messageView.resignFirstResponder()
-        
+        self.spb = SegmentedProgressBar(numberOfSegments: 1, duration: 8)
+        self.spb.frame = CGRect(x: 15, y: 20, width: view.frame.width - 30, height: 4)
+        self.spb.topColor = UIColor(red: 1.0, green: 0.18, blue: 0.33, alpha: 1.0)
+        view.addSubview(self.spb)
+        self.spb.startAnimation()
         // Attempts server upload
         uploadDropp(alert: nil)
     }
