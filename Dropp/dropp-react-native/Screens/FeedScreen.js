@@ -27,7 +27,6 @@ constructor(props){
             transparent: true,
             //modal data
             modalText: null,
-            modalTimeStamp: null,
             modalImage: null,
     };
     this._getDropps();
@@ -38,8 +37,12 @@ constructor(props){
         const { params } = this.props.navigation.state;
 
         var modalBackgroundStyle = { backgroundColor: this.state.transparent ? 'rgba(0, 0, 0, 0.5)' : '#f5fcff', };
-        var innerContainerTransparentStyle = this.state.transparent ? {backgroundColor: '#ffff', padding: 20}: null;
+        var innerContainerTransparentStyleTop = this.state.transparent ? {backgroundColor: '#ffff', padding: 20, height: 325}: null;
+        var innerContainerTransparentStyleBot = this.state.transparent ? {backgroundColor: '#ffff', padding: 20, height: 150}: null;
         var activeButtonStyle = { backgroundColor: '#ddd' };
+
+        var RNFetchBlob = require('react-native-fetch-blob').default;
+        
         return (
             <View style={[styles.container]}>
                 <Modal 
@@ -49,18 +52,18 @@ constructor(props){
                     supportedOrientations = {["portrait"]} 
                     onRequestClose={() => this._setModalVisible(false)}>
                     <View style={[styles.modalContainer, modalBackgroundStyle]}>
-                        <View style={[styles.modalInnerContainerTop, innerContainerTransparentStyle]}>
+                        <View style={[styles.modalInnerContainerTop, innerContainerTransparentStyleTop]}>
                             <View style = {styles.photocontainer}>
                                 {this.state.modalImage && <Image source = {{uri: this.state.modalImage}} style ={styles.photo}/>}
                             </View>           
                         </View>
-                        <View style={[styles.modalInnerContainerBottom, innerContainerTransparentStyle]}>
-                            <Text style = {styles.modaltime}>{this._msToTime(this.state.modalTimeStamp)} </Text>
-                            <Text>{this.state.modalText}</Text>
-                            <Button 
-                                onPress={this._setModalVisible.bind(this, false)} 
-                                style={styles.modalButton} 
-                                title = "close"/>
+                        <View style={[styles.modalInnerContainerBottom, innerContainerTransparentStyleBot]}>
+                            <Text fontSize = '12'>{this.state.modalText}</Text>
+                            <View style = {styles.modalButton}>
+                                <Button 
+                                    onPress={this._setModalVisible.bind(this, false)} 
+                                    title = "close"/>
+                            </View>
                         </View>
                     </View>
                 </Modal>
@@ -79,44 +82,36 @@ constructor(props){
         );
     }
 
-    _renderItem = ({item}) => (
+    _renderItem = ({item}) => {
+        const { params } = this.props.navigation.state;
+        if (item.d){
+        RNFetchBlob.fetch('GET', "https://dropps.me/dropps/" + item.d + "/image", {Authorization: params.token})
+        .then((response) => {
+        let base64Str = response.data;
+        var imageBase64 = 'data:'+mimetype_attachment+';base64,'+base64Str;
+        // Return base64 image
+        RESOLVE(imageBase64)
+     })}
+     return(
     <TouchableHighlight noDefaultStyles={true} onPress={() => this._onPress(item)} underlayColor ={"lightsalmon"} activeOpacity = {10}>
         <View style = {styles.row}>
             <View style = {styles.textcontainer}>
                 <Text>{item.post.text}</Text>
-                {console.log(item.d)}
             </View>
             <View style = {styles.photocontainer}>
-                {item.post.media && <Image source = {{uri: item.post.media}} style ={styles.photo}/>}
+                {item.post.media === "true" && <Image source = {{uri: imageBase64 }} style ={styles.photo}/>}
             </View>
         </View>
     </TouchableHighlight>
-    );
-
+    )};
+    
     _onPress = (item) => {
-        console.log("Pressed");
+        console.log(item.post.media);
         //set the modal data here with item
         this.setState({modalText: item.post.text});
-        this.setState({modalTimeStamp: item.post.timestamp});
-        this.setState({modalImage: item.post.media});
+        this.setState({modalImage: "https://dropps.me/dropps/" + item.d + "/image"});
         this._setModalVisible(true);
     };
-
-
-    _msToTime(s) {
-        // Pad to 2 or 3 digits, default is 2
-        function pad(n, z) {
-            z = z || 2;
-            return ('00' + n).slice(-z);
-        }
-        var ms = s % 1000;
-        s = (s - ms) / 1000;
-        var secs = s % 60;
-        s = (s - secs) / 60;
-        var mins = s % 60;
-        var hrs = (s - mins) / 60;
-        return pad(hrs) + ':' + pad(mins) + ':' + pad(secs) + '.' + pad(ms, 3);
-    }
 
     _setModalVisible = (visible) => {
         this.setState({modalVisible: visible});
@@ -212,18 +207,18 @@ const styles = StyleSheet.create({
   },
   modalButton: {
     marginTop: 10,
-    paddingVertical: 40,
+    height: 30,
+    width: 70,
   },
   modalContainer: {
     flex: 1,
     justifyContent: 'center',
-    height: 200,
+    height: 250,
     padding: 25,
   },
   modalInnerContainerBottom: {
     borderBottomLeftRadius: 10,
     borderBottomRightRadius: 10,
-    
     alignItems: 'center',
   },
   modalInnerContainerTop: {
