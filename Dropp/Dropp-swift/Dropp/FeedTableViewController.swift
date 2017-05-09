@@ -21,6 +21,8 @@ class FeedTableViewController: UITableViewController, CLLocationManagerDelegate 
     override func viewDidLoad() {
         super.viewDidLoad()
         
+        self.tableView.register(UITableViewCell.self, forCellReuseIdentifier: cellIdentifier)
+        
         // Apply the salmon color to the nav bar buttons
         navigationController?.navigationBar.tintColor = self.salmonColor
         
@@ -176,19 +178,49 @@ class FeedTableViewController: UITableViewController, CLLocationManagerDelegate 
         
         let dropp = self.dropps[indexPath.row]
         
-        let cell = tableView.dequeueReusableCell(withIdentifier: cellIdentifier , for: indexPath)
-        cell.configureFlatCell(with: UIColor.white, selectedColor: self.salmonColor, roundingCorners: UIRectCorner(rawValue: 0))
-        cell.textLabel?.textColor = UIColor.black
-        cell.cornerRadius = 5.0
-        cell.separatorHeight = 0
+        // var cell:UITableViewCell? = tableView.dequeueReusableCell(withIdentifier: cellIdentifier , for: indexPath)
+        var cell = tableView.dequeueReusableCell(withIdentifier: cellIdentifier)
+        if cell == nil {
+            cell = UITableViewCell(style: UITableViewCellStyle.subtitle, reuseIdentifier: cellIdentifier)
+        }
+        cell = UITableViewCell(style: UITableViewCellStyle.subtitle, reuseIdentifier: cellIdentifier)
+        cell?.configureFlatCell(with: UIColor.white, selectedColor: self.salmonColor, roundingCorners: UIRectCorner(rawValue: 0))
+        cell?.textLabel?.textColor = UIColor.black
+        cell?.detailTextLabel?.textColor = UIColor.black
+        cell?.cornerRadius = 5.0
+        cell?.separatorHeight = 0
+        if cell == nil {
+            cell = UITableViewCell(style: UITableViewCellStyle.subtitle, reuseIdentifier: cellIdentifier)
+        }
+        
+        
+        var iconImage = UIImage(named: "hello.png")
+        if iconImage == nil {
+            print("Icon image is nil")
+        }
+        let sizeZ = CGSize(width: 50.0, height: 50.0)
+        UIGraphicsBeginImageContextWithOptions(sizeZ, false, 0.0)
+        iconImage?.draw(in: CGRect(origin: CGPoint(x: 0, y: 0), size: sizeZ))
+        iconImage = UIGraphicsGetImageFromCurrentImageContext()!
+        UIGraphicsEndImageContext()
+        
+        cell?.imageView?.image = iconImage
+        cell?.imageView?.layer.cornerRadius = 25
+        cell?.imageView?.layer.masksToBounds = true
+        
         
         // Add data to the cell
         let username = dropp.user
         let message = dropp.message
-        let sublabel = "\(username) " + (message.isEmpty ? "dropped a photo\n" : "said '\(message)'\n")
-        cell.textLabel?.text = sublabel
+        _ = "\(username) " + (message.isEmpty ? "dropped a photo\n" : "said '\(message)'\n")
+        cell?.textLabel?.text = username
+        cell?.textLabel?.font = UIFont.boldSystemFont(ofSize: 15.0)
+        cell?.detailTextLabel?.text = message
 
-        return cell
+        return cell!
     }
     
+    override func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
+        return 85.0
+    }
 }
