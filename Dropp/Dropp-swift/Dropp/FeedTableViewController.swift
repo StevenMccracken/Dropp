@@ -24,7 +24,12 @@ class FeedTableViewController: UITableViewController, CLLocationManagerDelegate 
         self.tableView.register(UITableViewCell.self, forCellReuseIdentifier: cellIdentifier)
         
         // Apply the salmon color to the nav bar buttons
-        navigationController?.navigationBar.tintColor = self.salmonColor
+        navigationController?.navigationBar.tintColor = UIColor.white
+        navigationController?.navigationBar.titleTextAttributes = [NSForegroundColorAttributeName: UIColor.white]
+        navigationController?.navigationBar.barTintColor = self.salmonColor
+        
+        tabBarController?.tabBar.tintColor = self.salmonColor
+        
         
         // Get the token from user defaults
         self.token = UserDefaults.standard.value(forKey: "jwt") as! String
