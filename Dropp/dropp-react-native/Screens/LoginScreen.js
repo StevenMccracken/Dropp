@@ -90,6 +90,7 @@ export class LoginScreen extends React.Component {
                     onChangeText={(password) => this.setState({ password })}
                     value = {this.state.password}
                     style = {styles.loginText}
+                    secureTextEntry = {true}
                 />  
                 <View style={[{margin:15}]} />
                 <View style = {styles.button}>
