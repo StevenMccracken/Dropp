@@ -51,7 +51,7 @@ constructor(props){
                     <View style={[styles.modalContainer, modalBackgroundStyle]}>
                         <View style={[styles.modalInnerContainerTop, innerContainerTransparentStyle]}>
                             <View style = {styles.photocontainer}>
-                                {this.state.modalImage && <Image source = {{uri: this.state.modalImage}} style ={styles.photo}/>}
+                                {/*this.state.modalImage && <Image source = {{uri: this.state.modalImage}} style ={styles.photo}/>*/}
                             </View>           
                         </View>
                         <View style={[styles.modalInnerContainerBottom, innerContainerTransparentStyle]}>
@@ -87,7 +87,7 @@ constructor(props){
                 {console.log(item.d)}
             </View>
             <View style = {styles.photocontainer}>
-                {item.post.media && <Image source = {{uri: item.post.media}} style ={styles.photo}/>}
+                {/*item.post.media && <Image source = {{uri: item.post.media}} style ={styles.photo}/>*/}
             </View>
         </View>
     </TouchableHighlight>
