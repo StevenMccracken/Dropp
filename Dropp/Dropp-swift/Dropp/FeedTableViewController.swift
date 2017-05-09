@@ -11,12 +11,21 @@ import CoreLocation
 
 class FeedTableViewController: UITableViewController, CLLocationManagerDelegate {
     
+    let http = HTTPModule()
     let locationManager = CLLocationManager()
     var userArr: [UserObject] = []
     let cellIdentifier = "CellIdentifier"
+    let salmonColor: UIColor = UIColor(red: 1.0, green: 0.18, blue: 0.33, alpha: 1.0)
+    var token = ""
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        
+        // Apply the salmon color to the nav bar buttons
+        navigationController?.navigationBar.tintColor = self.salmonColor
+        
+        // Get the token from user defaults
+        self.token = UserDefaults.standard.value(forKey: "jwt") as! String
         
         // Ask for Authorisation from the User for location
         self.locationManager.requestAlwaysAuthorization()
@@ -29,92 +38,119 @@ class FeedTableViewController: UITableViewController, CLLocationManagerDelegate 
             locationManager.desiredAccuracy = kCLLocationAccuracyNearestTenMeters
             locationManager.startUpdatingLocation()
         }
-        // After the view is loaded, fetch the data from the server
-        getDropps()
-
+        
+        DispatchQueue.main.async {
+            self.getDropps()
+        }
+        
+        self.tableView.reloadData()
+        
         // Uncomment the following line to preserve selection between presentations
         // self.clearsSelectionOnViewWillAppear = false
 
         // Uncomment the following line to display an Edit button in the navigation bar for this view controller.
         // self.navigationItem.rightBarButtonItem = self.editButtonItem()
-//        let user1 = UserObject(pUserId: "0", pLocation: "USU", pTimestamp: "March 12, 2017", pContent: "Content 1", pText: "Text 1")
-//        let user2 = UserObject(pUserId: "1", pLocation: "USU", pTimestamp: "March 12, 2017", pContent: "Content 1", pText: "Text 1")
-//        let user3 = UserObject(pUserId: "2", pLocation: "USU", pTimestamp: "March 12, 2017", pContent: "Content 1", pText: "Text 1")
-//        let user4 = UserObject(pUserId: "3", pLocation: "USU", pTimestamp: "March 12, 2017", pContent: "Content 1", pText: "Text 1")
-//        let user5 = UserObject(pUserId: "4", pLocation: "USU", pTimestamp: "March 12, 2017", pContent: "Content 1", pText: "Text 1")
-//        userArr.append(user1)
-//        userArr.append(user2)
-//        userArr.append(user3)
-//        userArr.append(user4)
-//        userArr.append(user5)
-        
     }
     
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
-        tableView.reloadData()
+        self.tableView.reloadData()
     }
     
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
     }
     
-    func getDropps() -> String {
-        print("getDropps()")
-        var droppList = ""
-        
-        let maxDistance = 100 // meters
-        let loc = locationManager.location!.coordinate
-        let locString = "\(loc.latitude),\(loc.longitude)"
-        
-        let dict = ["location": locString, "max_distance": maxDistance] as [String: Any]
-        
-        if let jsonData = try? JSONSerialization.data(withJSONObject: dict, options: .prettyPrinted) {
-            //            let url = NSURL(string: "http://138.68.246.136:3000/api/dropps/location")!
-            //let url = NSURL(string: "http://dropped.me:3000/api/dropps/location")!
-            let url = NSURL(string: "http://localhost/api/dropps/location")!
-            let request = NSMutableURLRequest(url: url as URL)
-            request.httpMethod = "POST"
-            
-            request.addValue("application/json", forHTTPHeaderField: "Content-Type")
-            request.httpBody = jsonData
-            
-            let task = URLSession.shared.dataTask(with: request as URLRequest) { (data, response, error) in
-                if error != nil {
-                    print(error)
-                } else {
-                    do {
-                        let parsedData = try JSONSerialization.jsonObject(with: data!, options: []) as! [String:Any]
-                        
-                        for row in parsedData {
-                            // Get the key/value info from the JSON
-                            let dropp = parsedData[row.key] as! [String:Any]
-                            
-                            // Extract specific info from that JSON entry
-                            let user = dropp["user_id"] as! String
-                            let loc = dropp["location"] as! String
-                            
-                            let timestamp = dropp["timestamp"] as! Int
-                            let date = NSDate(timeIntervalSince1970: TimeInterval(timestamp))
-                            
-                            let content = dropp["content"] as! [String:Any]
-                            let message = content["text"] as! String
-                            
-                            let sublabel = "On \(date) at (\(loc)), \(user) said '\(message)'\n"
-                            let newUser = UserObject(pUserId: user, pLocation: loc, pTimestamp: timestamp, pContent: "", pText: message)
-                            print(sublabel)
-                            print("Creating new user")
-                            self.userArr.append(newUser)
-                        }
-                        
-                    } catch let error as NSError {
-                        print(error)
-                    }
+    func addNewUser(newUser: UserObject) {
+        let newUserObj = newUser
+        self.userArr.append(newUserObj)
+        let indexPath = IndexPath(row: userArr.count - 1, section: 0)
+        self.tableView.insertRows(at: [indexPath], with: .automatic)
+    }
+    
+    @IBAction func updateFeed(_ sender: Any) {
+        if self.userArr.count > 0 {
+            let numOfUsersToDelete = self.userArr.count - 1
+            for i in 0...numOfUsersToDelete {
+                print(i)
+                if self.userArr.count > 0 {
+                    self.userArr.remove(at: 0)
+                    let indexPath = IndexPath(row: 0, section: 0)
+                    self.tableView.deleteRows(at: [indexPath], with: .automatic)
                 }
             }
-            task.resume()
+
         }
-        return droppList
+        
+        self.getDropps()
+        self.tableView.reloadData() // TODO: still doesn't make ui reload quicker
+    }
+    
+    func getDropps() {
+        // Set the max distance parameter in meters`
+        let maxDistance = 100
+        
+        // Get the location's current device
+        let loc = locationManager.location!.coordinate
+        let locString = "\(loc.latitude),\(loc.longitude)"
+        let body = ["location": locString, "maxDistance": maxDistance] as [String: Any]
+        
+        let request = self.http.createPostRequest(path: "/location/dropps", token: self.token, body: body)
+        
+        // Send the request and get the response
+        self.http.sendRequest(request: request) { response, json in
+            if response.statusCode == 200 {
+                // Get the dropps from the response json
+                let dropps = json["dropps"] as! [String:Any]
+                
+                // Go through all of the nearby dropps
+                for (key, value) in dropps {
+                    let nestedDic = value as! [String:Any]
+                    let usernameStr = nestedDic["username"]!
+                    let userText = nestedDic["text"]!
+                    let userTimestamp = nestedDic["timestamp"]!
+                    let userLocation = nestedDic["location"]!
+                    let hasPicture = nestedDic["media"]!
+                    
+                    let newUsr = UserObject(pDroppId: key,
+                                            pUsername: usernameStr as! String,
+                                            pTimestamp: userTimestamp as! Int,
+                                            pMessage: userText as! String,
+                                            pLoc: userLocation as! String,
+                                            pMedia: hasPicture as! Bool)
+                    
+                    self.addNewUser(newUser: newUsr)
+                }
+            } else {
+                print("Failed to get nearby dropps")
+                print(json)
+            }
+        }
+    }
+    
+    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
+        // If the triggered segue is the "showUser" segue
+        switch segue.identifier {
+            case "showUser"?:
+                // Figure out which row was just tapped
+                if let row = tableView.indexPathForSelectedRow?.row {
+                    // Get the item associated with this row and pass it along
+                    let user = self.userArr[row]
+                    let detailVC = segue.destination as! DetailViewController
+                    detailVC.userObj = user
+                    
+                    let droppLocArr = user.location!.components(separatedBy: ",")
+                    let droppLat = Double(droppLocArr[0])
+                    let droppLong = Double(droppLocArr[1])
+                    
+                    let droppCoordinate = CLLocation(latitude: droppLat!, longitude: droppLong!)
+                    let currentUserCoordinate = locationManager.location!
+                    let distanceInMeters = droppCoordinate.distance(from: currentUserCoordinate)
+                    detailVC.distanceFromDropp = distanceInMeters
+                }
+            default:
+                preconditionFailure("Unexpected segue identifier.")
+        }
     }
 
     // MARK: - Table view data source
@@ -138,61 +174,12 @@ class FeedTableViewController: UITableViewController, CLLocationManagerDelegate 
         let cell = tableView.dequeueReusableCell(withIdentifier: cellIdentifier , for: indexPath)
 
         // Configure the cell...
-        let date = user.timestamp!
-        let loc = user.location!
-        let userId = user.userId!
-        let message = user.text!
+        let userId = user.username!
+        let message = user.message!
         let sublabel = "\(userId) said '\(message)'\n"
         cell.textLabel?.text = sublabel
 
         return cell
     }
     
-    
-
-    /*
-    // Override to support conditional editing of the table view.
-    override func tableView(_ tableView: UITableView, canEditRowAt indexPath: IndexPath) -> Bool {
-        // Return false if you do not want the specified item to be editable.
-        return true
-    }
-    */
-
-    /*
-    // Override to support editing the table view.
-    override func tableView(_ tableView: UITableView, commit editingStyle: UITableViewCellEditingStyle, forRowAt indexPath: IndexPath) {
-        if editingStyle == .delete {
-            // Delete the row from the data source
-            tableView.deleteRows(at: [indexPath], with: .fade)
-        } else if editingStyle == .insert {
-            // Create a new instance of the appropriate class, insert it into the array, and add a new row to the table view
-        }    
-    }
-    */
-
-    /*
-    // Override to support rearranging the table view.
-    override func tableView(_ tableView: UITableView, moveRowAt fromIndexPath: IndexPath, to: IndexPath) {
-
-    }
-    */
-
-    /*
-    // Override to support conditional rearranging of the table view.
-    override func tableView(_ tableView: UITableView, canMoveRowAt indexPath: IndexPath) -> Bool {
-        // Return false if you do not want the item to be re-orderable.
-        return true
-    }
-    */
-
-    /*
-    // MARK: - Navigation
-
-    // In a storyboard-based application, you will often want to do a little preparation before navigation
-    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
-        // Get the new view controller using segue.destinationViewController.
-        // Pass the selected object to the new view controller.
-    }
-    */
-
 }

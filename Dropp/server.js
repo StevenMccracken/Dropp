@@ -9,11 +9,11 @@ const router 		= require('./modules/router_mod')(express.Router());
 const bodyParser  	= require('body-parser');
 
 
- var exports = module.exports = {};
+var exports = module.exports = {};
 
 // For purpose of checking travis, need to be remove later
 if (process.env.TEST) {
-  PORT = 3000;
+  port = 3000;
 }
 
 // Set properties of the express 
@@ -29,7 +29,7 @@ app.use('/', router);
 
 /**
  * Listens for all incoming requests
- * @param {Number} PORT the port to listen on
+ * @param {Number} port the port to listen on
  * @param {callback} err the callback that handles any errors
  */
  var server = app.listen(PORT, (err) => {
