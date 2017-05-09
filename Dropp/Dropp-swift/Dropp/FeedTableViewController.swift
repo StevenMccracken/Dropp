@@ -172,7 +172,11 @@ class FeedTableViewController: UITableViewController, CLLocationManagerDelegate 
         let user = userArr[indexPath.row]
         
         let cell = tableView.dequeueReusableCell(withIdentifier: cellIdentifier , for: indexPath)
-
+        cell.configureFlatCell(with: UIColor.white, selectedColor: UIColor(red: 1.0, green: 0.18, blue: 0.33, alpha: 1.0), roundingCorners: UIRectCorner(rawValue: 0))
+        cell.textLabel?.textColor = UIColor.black
+        cell.cornerRadius = 5.0
+        cell.separatorHeight = 0
+        
         // Configure the cell...
         let userId = user.username!
         let message = user.message!

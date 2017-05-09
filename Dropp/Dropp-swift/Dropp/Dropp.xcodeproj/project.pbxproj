@@ -12,6 +12,8 @@
 		16AF6C0B1E9B30270022C051 /* UserObject.swift in Sources */ = {isa = PBXBuildFile; fileRef = 16AF6C0A1E9B30270022C051 /* UserObject.swift */; };
 		16AF6C0D1E9B35B00022C051 /* UserStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = 16AF6C0C1E9B35B00022C051 /* UserStore.swift */; };
 		16CA209D1EC1820200EDA7CC /* SegmentedProgressBar.swift in Sources */ = {isa = PBXBuildFile; fileRef = 16CA209C1EC1820200EDA7CC /* SegmentedProgressBar.swift */; };
+		16CA20A11EC19E7600EDA7CC /* UITableViewCell+FlatUI.m in Sources */ = {isa = PBXBuildFile; fileRef = 16CA20A01EC19E7600EDA7CC /* UITableViewCell+FlatUI.m */; };
+		16CA20A61EC1A28000EDA7CC /* FUICellBackgroundView.m in Sources */ = {isa = PBXBuildFile; fileRef = 16CA20A51EC1A28000EDA7CC /* FUICellBackgroundView.m */; };
 		16F1EAA61EAFE70300AA0108 /* message-7.png in Resources */ = {isa = PBXBuildFile; fileRef = 16F1EAA41EAFE70300AA0108 /* message-7.png */; };
 		16F1EAA71EAFE70300AA0108 /* list-fat-7.png in Resources */ = {isa = PBXBuildFile; fileRef = 16F1EAA51EAFE70300AA0108 /* list-fat-7.png */; };
 		2986B0CE30CF1A30A6B10072 /* Pods_DroppTests.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A89741AD814E44A9F9D24FC3 /* Pods_DroppTests.framework */; };
@@ -43,6 +45,12 @@
 		16AF6C0A1E9B30270022C051 /* UserObject.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = UserObject.swift; path = ../UserObject.swift; sourceTree = "<group>"; };
 		16AF6C0C1E9B35B00022C051 /* UserStore.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = UserStore.swift; sourceTree = "<group>"; };
 		16CA209C1EC1820200EDA7CC /* SegmentedProgressBar.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SegmentedProgressBar.swift; sourceTree = "<group>"; };
+		16CA209E1EC19E7600EDA7CC /* Dropp-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "Dropp-Bridging-Header.h"; sourceTree = "<group>"; };
+		16CA209F1EC19E7600EDA7CC /* UITableViewCell+FlatUI.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UITableViewCell+FlatUI.h"; sourceTree = "<group>"; };
+		16CA20A01EC19E7600EDA7CC /* UITableViewCell+FlatUI.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "UITableViewCell+FlatUI.m"; sourceTree = "<group>"; };
+		16CA20A21EC19FBF00EDA7CC /* mybridge.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = mybridge.h; sourceTree = "<group>"; };
+		16CA20A41EC1A28000EDA7CC /* FUICellBackgroundView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FUICellBackgroundView.h; sourceTree = "<group>"; };
+		16CA20A51EC1A28000EDA7CC /* FUICellBackgroundView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = FUICellBackgroundView.m; sourceTree = "<group>"; };
 		16F1EAA41EAFE70300AA0108 /* message-7.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "message-7.png"; sourceTree = "<group>"; };
 		16F1EAA51EAFE70300AA0108 /* list-fat-7.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "list-fat-7.png"; sourceTree = "<group>"; };
 		410E488F5CFBA78B82AAED78 /* Pods_Dropp.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_Dropp.framework; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -86,6 +94,15 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		16CA20A31EC1A1E500EDA7CC /* FlatUIKit */ = {
+			isa = PBXGroup;
+			children = (
+				16CA20A41EC1A28000EDA7CC /* FUICellBackgroundView.h */,
+				16CA20A51EC1A28000EDA7CC /* FUICellBackgroundView.m */,
+			);
+			name = FlatUIKit;
+			sourceTree = "<group>";
+		};
 		525445E01D507BEB3EF50920 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
@@ -127,6 +144,10 @@
 				16AF6C0A1E9B30270022C051 /* UserObject.swift */,
 				16AF6C0C1E9B35B00022C051 /* UserStore.swift */,
 				16CA209C1EC1820200EDA7CC /* SegmentedProgressBar.swift */,
+				16CA209F1EC19E7600EDA7CC /* UITableViewCell+FlatUI.h */,
+				16CA20A01EC19E7600EDA7CC /* UITableViewCell+FlatUI.m */,
+				16CA20A21EC19FBF00EDA7CC /* mybridge.h */,
+				16CA20A31EC1A1E500EDA7CC /* FlatUIKit */,
 				69A43ECF1E5BEEA6003E6420 /* Assets.xcassets */,
 				698C32F31EBDC257008CB718 /* Loading-Fast-Icon-200x200.gif */,
 				16F1EAA41EAFE70300AA0108 /* message-7.png */,
@@ -134,6 +155,7 @@
 				69A43EE81E5BF19C003E6420 /* AppIcon.appiconset */,
 				69A43ED11E5BEEA6003E6420 /* LaunchScreen.storyboard */,
 				69A43ED41E5BEEA6003E6420 /* Info.plist */,
+				16CA209E1EC19E7600EDA7CC /* Dropp-Bridging-Header.h */,
 			);
 			path = Dropp;
 			sourceTree = "<group>";
@@ -215,6 +237,7 @@
 					69A43EC41E5BEEA6003E6420 = {
 						CreatedOnToolsVersion = 8.2.1;
 						DevelopmentTeam = VW2FMQUB95;
+						LastSwiftMigration = 0830;
 						ProvisioningStyle = Automatic;
 					};
 					69A43ED81E5BEEA6003E6420 = {
@@ -368,9 +391,11 @@
 				16AF6C0D1E9B35B00022C051 /* UserStore.swift in Sources */,
 				69A43ECB1E5BEEA6003E6420 /* ViewController.swift in Sources */,
 				69A43EC91E5BEEA6003E6420 /* AppDelegate.swift in Sources */,
+				16CA20A11EC19E7600EDA7CC /* UITableViewCell+FlatUI.m in Sources */,
 				16CA209D1EC1820200EDA7CC /* SegmentedProgressBar.swift in Sources */,
 				69EFB0D11EBBBF3C007E4F90 /* HTTPModule.swift in Sources */,
 				16AF6C0B1E9B30270022C051 /* UserObject.swift in Sources */,
+				16CA20A61EC1A28000EDA7CC /* FUICellBackgroundView.m in Sources */,
 				1631B0001E96D5BE00820B09 /* FeedTableViewController.swift in Sources */,
 				161D6FA51EB974A0008A63FB /* DetailViewController.swift in Sources */,
 			);
@@ -514,12 +539,15 @@
 				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_LAUNCHIMAGE_NAME = LaunchImage;
+				CLANG_ENABLE_MODULES = YES;
 				DEVELOPMENT_TEAM = VW2FMQUB95;
 				EMBED_ASSET_PACKS_IN_PRODUCT_BUNDLE = YES;
 				INFOPLIST_FILE = Dropp/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = com.groub.Dropp;
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_OBJC_BRIDGING_HEADER = "/Users/pongsakorncherngchaosil/csulb-Dropp/DroppProject/Dropp/Dropp/Dropp-swift/Dropp/Dropp/mybridge.h";
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 				SWIFT_VERSION = 3.0;
 			};
 			name = Debug;
@@ -531,12 +559,14 @@
 				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_LAUNCHIMAGE_NAME = LaunchImage;
+				CLANG_ENABLE_MODULES = YES;
 				DEVELOPMENT_TEAM = VW2FMQUB95;
 				EMBED_ASSET_PACKS_IN_PRODUCT_BUNDLE = YES;
 				INFOPLIST_FILE = Dropp/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = com.groub.Dropp;
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_OBJC_BRIDGING_HEADER = "/Users/pongsakorncherngchaosil/csulb-Dropp/DroppProject/Dropp/Dropp/Dropp-swift/Dropp/Dropp/mybridge.h";
 				SWIFT_VERSION = 3.0;
 			};
 			name = Release;

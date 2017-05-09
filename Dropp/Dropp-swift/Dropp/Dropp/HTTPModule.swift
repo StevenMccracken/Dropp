@@ -113,8 +113,8 @@ class HTTPModule {
     }
     
     func getNewToken(completion: @escaping (String) -> Void) {
-        let username = "rich"
-        let password = "1234"
+        let username = "leaf"
+        let password = "password"
         
         // Create the dictionary for the request body
         let body = ["username": username, "password": password] as [String: Any]
