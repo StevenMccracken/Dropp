@@ -2,25 +2,25 @@
  * router_mod - HTTP request routing @module
  */
 
-var 	router 				= null;
-const fs 						= require('fs');
-const jwt						= require('jsonwebtoken');
-const errors				= require('./error_mod.js');
-const config    		= require('../config/secret.js');
-const service 			= require('./service_mod.js');
-const passport			= require('passport');
-const firebase 			= require('./firebase_mod.js');
-const errorMessages	= require('./errorMessage_mod.js');
-const setHttpStatus	= require('./httpStatus_mod.js');
+var router          = null;
+const fs            = require('fs');
+const jwt           = require('jsonwebtoken');
+const errors        = require('./error_mod.js');
+const config        = require('../config/secret.js');
+const service       = require('./service_mod.js');
+const passport      = require('passport');
+const firebase      = require('./firebase_mod.js');
+const errorMessages = require('./errorMessage_mod.js');
+const setHttpStatus = require('./httpStatus_mod.js');
 require('../config/passport')(passport);
 
 // Multer handles multi-part form requests (different from JSON or x-www-form-urlencoded)
-const multer      	= require('multer');
+var multer = require('multer');
 
 // Set the temporary download folder for incoming files and the file size limit
-const upload 				= multer({
-	dest		:	'./temp/uploads/',
-	limits	: { fileSize: '5mb' }
+var upload = multer({
+  dest: './temp/uploads/',
+  limits: { fileSize: '10000kb' }
 }).single('image');
 
 
@@ -50,7 +50,7 @@ module.exports = function(_router) {
 	router.use((req, res, next) => {
     const ip = req.headers['x-forwarded-for'] || req.connection.remoteAddress;
 		console.log('%s: %s request received from IP %s', new Date().toISOString(), req.method, ip);
-    next();
+	 next();
 	});
 
 	/**
