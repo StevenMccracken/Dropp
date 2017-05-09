@@ -7,12 +7,14 @@ const error          	= require('./error_mod.js');
 const bcrypt					= require('bcrypt-nodejs');
 const errorMessages   = require('./errorMessage_mod.js');
 // const serviceAccount	= require('../serviceAccountKey.json');
+
 var serviceAccount = process.env.TEST;
 if (serviceAccount) {
 	serviceAccount = JSON.parse(serviceAccount);
 } else {
 	serviceAccount = require('../serviceAccountKey.json');
 }
+
 // Authenticate firebase with server admin credentials
 admin.initializeApp({
 	credential: admin.credential.cert(serviceAccount),
@@ -34,6 +36,12 @@ module.exports = {
 
 		// Obtain the db reference for the password of the username argument
 		const passwordRef = db.ref('/passwords/' + username);
+		if (passwordRef == null) {
+			serverLog = 'Passwords table does not exist';
+			responseJson = logError('validateCredentials', error.API_ERROR, null, serverLog);
+			return callback(responseJson);
+		}
+
 		passwordRef.once('value', passwordRefSnapshot => {
 			// If the snapshot value is null, no user exists at /passwords/<username>
 			if (passwordRefSnapshot.val() == null) {
@@ -90,6 +98,11 @@ module.exports = {
 
 		// Obtain the db reference for the users records
 		const usersRef = db.ref('/users');
+		if (usersRef == null) {
+			serverLog = 'Users table does not exist';
+			responseJson = logError('createUser', error.API_ERROR, null, serverLog);
+			return callback(responseJson);
+		}
 
 		// First see if a user with the requested username already exists
 		usersRef.orderByKey().equalTo(req.body.username).once('value', userSnapshot => {
@@ -137,6 +150,11 @@ module.exports = {
 							 * records. First obtain the db reference for the passwords records
 							 */
 							const passwordsRef = db.ref('/passwords');
+							if (passwordsRef == null) {
+								serverLog = 'Passwords table does not exist';
+								responseJson = logError('createUser', error.API_ERROR, null, serverLog);
+								return callback(responseJson);
+							}
 
 							/**
 							 * Set password record in the passwords table. The key is
@@ -161,8 +179,15 @@ module.exports = {
 
 									// Removing the user record might not succeed so try multiple times
 									var attemptLimit = 15;
+									const userRef = db.ref('/users/' + req.body.username);
+									if (userRef == null) {
+										serverLog = 'User record does not exist (' + req.body.username + ')';
+										responseJson = logError('createUser', error.API_ERROR, null, serverLog);
+										return callback(responseJson);
+									}
+
 									for (var attempts = 0; attempts < attemptLimit && !userDeleted; attempts++) {
-										db.ref('/users/' + req.body.username).remove()
+										userRef.remove()
 											.then(function() {
 												// Successfully deleted the user record
 												userDeleted = true;
@@ -209,7 +234,7 @@ module.exports = {
     var responseJson;
 
 		// Obtain the db reference for the user record in the users table
-		const userRef = db.ref('/users/' + username);
+		const userRef = db.ref('/users/' + username); //TODO: AY BITCH
 		userRef.once('value', userSnapshot => {
 			// If the snapshot value is null, the user for username does not exist
 			if (userSnapshot.val() == null) {
@@ -234,6 +259,12 @@ module.exports = {
 	getAllDropps: function(callback) {
 		// Obtain the db reference for the dropps records
 		const droppsRef = db.ref('/dropps');
+		if (droppsRef == null) {
+			serverLog = 'Dropps table does not exist';
+			responseJson = logError('getAllDropps', error.API_ERROR, null, serverLog);
+			return callback(responseJson);
+		}
+
 		droppsRef.once('value', droppsSnapshot => {
 			return callback(droppsSnapshot.val());
 		}, droppsRefError => {
@@ -271,6 +302,12 @@ module.exports = {
 			 * db reference to retain all dropp values in the closure
 			 */
 			const droppsRef = db.ref('/dropps');
+			if (droppsRef == null) {
+				serverLog = 'Dropps table does not exist';
+				responseJson = logError('getDroppsByUser', error.API_ERROR, null, serverLog);
+				return callback(responseJson);
+			}
+
 			droppsRef.on('value', droppsSnapshot => {
 				// Get all dropps that have username = <username> argument
 				droppsRef.orderByChild('username').equalTo(username).on('child_added', droppSnapshot => {
@@ -329,11 +366,11 @@ module.exports = {
 	createDropp: function(username, req, callback) {
 		// Build dropp JSON for database. TODO: move this to the service layer
 		const dropp = {
-			"location" 	: req.body.location,
-			"timestamp"	: parseInt(req.body.timestamp),
-			"username" 	: username,
-			"text"		: req.body.text	 == null ? '' : req.body.text,
-			"media"		: req.body.media == null ? '' : req.body.media
+			location 	: req.body.location,
+			timestamp	: parseInt(req.body.timestamp),
+			username 	: username,
+			text 			: req.body.text == null ? '' : req.body.text,
+			media 		: req.body.media === 'true' ? true : false
 		};
 
 		var responseJson;
@@ -352,6 +389,50 @@ module.exports = {
 		// Return the newly created dropp id with the callback
 		responseJson = { droppId: droppRef.key };
 		return callback(responseJson);
+	},
+
+	/**
+	 * Remove a dropp from the database
+	 * @param {string} droppId the id of the dropp to remove
+	 * @param {callback} callback the callback to handle the database response
+	 */
+	deleteDropp: function(droppId, callback) {
+		var responseJson, errorMessage;
+		const droppRef = db.ref('/dropps/' + droppId);
+
+		// Check if a dropp with that id exists
+		droppRef.once('value', droppSnapshot => {
+			// If the snapshot value is null, there is no dropp with that droppId
+			if (droppSnapshot.val() == null) {
+				const serverLog = 'Db was queried for dropp ' + droppId + ' but it does not exist';
+        responseJson = logError('deleteDropp', error.RESOURCE_DNE_ERROR, null, serverLog);
+				return callback(responseJson);
+			} else {
+				// The dropp exists, so remove it
+				droppRef.remove()
+				  .then(function() {
+						// Successfully deleted dropp, so send success JSON
+						responseJson = {
+							success: {
+								message: 'Successfully deleted dropp ' + droppId
+							}
+						};
+
+				    return callback(responseJson);
+				  })
+				  .catch(function(removeDroppError) {
+						// An error occurred with remove() call, so log that message
+						errorMessage = 'Failed to delete ' + droppId;
+						responseJson = logError('deleteDropp', error.API_ERROR, errorMessage, removeDroppError);
+				    return callback(responseJson);
+				  });
+      }
+
+		}, droppRefError => {
+			errorMessage = 'Failed to delete ' + droppId;
+      responseJson = logError('deleteDropp', error.API_ERROR, errorMessage, droppRefError);
+      return callback(responseJson);
+		});
 	}
 };
 

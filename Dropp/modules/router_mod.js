@@ -3,6 +3,7 @@
  */
 
 var 	router 				= null;
+const fs 						= require('fs');
 const jwt						= require('jsonwebtoken');
 const errors				= require('./error_mod.js');
 const config    		= require('../config/secret.js');
@@ -12,6 +13,25 @@ const firebase 			= require('./firebase_mod.js');
 const errorMessages	= require('./errorMessage_mod.js');
 const setHttpStatus	= require('./httpStatus_mod.js');
 require('../config/passport')(passport);
+
+// Multer handles multi-part form requests (different from JSON or x-www-form-urlencoded)
+const multer      	= require('multer');
+
+// Set the temporary download folder for incoming files and the file size limit
+const upload 				= multer({
+	dest		:	'./temp/uploads/',
+	limits	: { fileSize: '5mb' }
+}).single('image');
+
+
+// Global authentication for google cloud storage
+const gcs = require('@google-cloud/storage')({
+  projectId: 'dropp-3a65d',
+  keyFilename: './storageAccountKey.json'
+});
+
+// Initialize cloud storage bucket
+const bucket = gcs.bucket('dropp-3a65d.appspot.com');
 
 /**
  * exports - Defines routing logic to handle HTTP requests
@@ -41,6 +61,160 @@ module.exports = function(_router) {
 	 */
 	router.get('/', (req, res) => {
 		res.json( { message: 'This is the REST API for Dropp' } );
+	});
+
+	/**
+	 * The GET route for downloading the image linked to a
+	 * dropp. This route does not require token authentication
+	 * @param {Object} req the HTTP request
+	 * @param {Object} res the HTTP response
+	 */
+	router.route('/dropps/:droppId/image').get(function(req, res) {
+		const source = 'GET /dropps/' + req.params.droppId + '/image';
+		var responseJson, errorMessage;
+
+		// Verify the client's token
+    passport.authenticate('jwt', { session: false }, function(err, user, info) {
+      if (err) {
+				logErrorWithJson(source, res, err);
+				return res.json(err);
+			}
+
+      if (info != undefined)	errorMessage = determineJwtError(info.message);
+      else if (!user) 				errorMessage = 'User for this token cannot be found';
+
+			if (errorMessage != null) {
+				responseJson = logError(source, res, errors.AUTHENTICATION_ERROR, errorMessage);
+        return res.json(responseJson);
+			}
+
+      // Check request paramters
+      if (!isValidId(req.params.droppId)) {
+				// Get parameter-specific error message
+				errorMessage = errorMessages(errors.INVALID_REQUEST_ERROR, 'droppId');
+				responseJson = logError(source, res, errors.INVALID_REQUEST_ERROR, errorMessage);
+				return res.json(responseJson);
+      }
+
+			// Get google cloud storage reference
+			var filename = req.params.droppId;
+			var remoteReadStream = bucket.file(filename).createReadStream();
+
+			// Catch error event while downloading
+			remoteReadStream.on('error', function(firebaseError) {
+				if (firebaseError.code === 404) {
+					errorMessage = logError(source, res, errors.RESOURCE_DNE_ERROR);
+				} else {
+					errorMessage = logError(source, res, errors.API_ERROR, firebaseError);
+				}
+
+				return res.json(errorMessage);
+			});
+
+			// Download bytes from google cloud storage reference to local memory array
+			var bufs = [];
+			remoteReadStream.on('data', function(d) { bufs.push(d); });
+
+			// Catch finish event after downloading has finished
+			remoteReadStream.on('end', function() {
+				// Send byte string to client
+				var buf = Buffer.concat(bufs);
+				res.write(buf, 'binary');
+				res.end(null, 'binary');
+			});
+		})(req, res);
+	});
+
+	/**
+	 * The POST route for uploading an image to link with a dropp.
+	 * The request body Content-Type MUST be multipart/form-data.
+	 * This route does not require token authentication
+	 * @param {Object} req the HTTP request
+	 * @param {Object} res the HTTP response
+	 */
+	router.route('/dropps/:droppId/image').post(upload, function(req, res) {
+		const source = 'POST /dropps/' + req.params.droppId + '/image';
+		var responseJson, errorMessage;
+
+		// Verify the client's token
+    passport.authenticate('jwt', { session: false }, function(err, user, info) {
+      if (err) {
+				logErrorWithJson(source, res, err);
+
+				 // Remove temp file that multer created
+				if (req.file !== undefined) removeFile(req.file.path);
+				return res.json(err);
+			}
+
+      if (info != undefined)	errorMessage = determineJwtError(info.message);
+      else if (!user) 				errorMessage = 'User for this token cannot be found';
+
+			if (errorMessage != null) {
+				responseJson = logError(source, res, errors.AUTHENTICATION_ERROR, errorMessage);
+
+				 // Remove temp file that multer created
+				if (req.file !== undefined) removeFile(req.file.path);
+        return res.json(responseJson);
+			}
+
+      // Check request paramters
+      if (!isValidId(req.params.droppId)) {
+				// Get parameter-specific error message
+				errorMessage = errorMessages(errors.INVALID_REQUEST_ERROR, 'droppId');
+				responseJson = logError(source, res, errors.INVALID_REQUEST_ERROR, errorMessage);
+
+				 // Remove temp file that multer created
+				if (req.file !== undefined) removeFilie(req.file.path);
+				return res.json(responseJson);
+      }
+
+			// FIXME: Reject this request if droppId does not exist in database
+
+			// If there is a file in the multi-part form request body, process it
+			if (req.file !== undefined) {
+				// Make sure only specific image files are accepted
+				if (req.file.mimetype != 'image/jpeg' && req.file.mimetype != 'image/png') {
+					errorMessage = 'Invalid mimetype (' + req.file.mimetype + ')';
+					responseJson = logError(source, res, errors.INVALID_REQUEST_ERROR, errorMessage);
+
+					 // Remove temp file that multer created
+					removeFile(req.file.path);
+		      return res.json(responseJson);
+				}
+
+				// Access file that multer added to ./temp/uploads/ and stream it to google cloud storage
+				const filename = req.params.droppId;
+				var localReadStream = fs.createReadStream(req.file.path);
+				var remoteWriteStream = bucket.file(filename).createWriteStream();
+				localReadStream.pipe(remoteWriteStream);
+
+				// Catch error event while uploading
+				remoteWriteStream.on('error', function(err) {
+					responseJson = logError(source, res, errors.API_ERROR, err);
+
+					 // Remove temp file that multer created
+					removeFile(req.file.path);
+					return res.json(responseJson);
+				});
+
+				// Catch finish event after uploading
+				remoteWriteStream.on('finish', function() {
+					responseJson = {
+						success: {
+							message: 'Added image to dropp ' + req.params.droppId,
+						}
+					};
+
+					 // Remove temp file that multer created
+					removeFile(req.file.path);
+					return res.json(responseJson);
+			  });
+			} else {
+				errorMessage = 'No file parameter provided';
+				responseJson = logError(source, res, errors.INVALID_REQUEST_ERROR, errorMessage);
+	      return res.json(responseJson);
+			}
+		})(req, res);
 	});
 
 	/**
@@ -122,7 +296,7 @@ module.exports = function(_router) {
 	 * @param {Object} res the HTTP response
 	 */
   router.route('/users/:username').get(function(req, res) {
-		const source = 'GET users/:username';
+		const source = 'GET users/' + req.params.username;
 		var responseJson, errorMessage;
 
 		// Verify the client's token
@@ -203,7 +377,7 @@ module.exports = function(_router) {
 	 * @param {Object} res the HTTP response
 	 */
   router.route('/users/:username/dropps').get(function(req, res) {
-		const source = 'GET users/:username/dropps';
+		const source = 'GET users/' + req.params.username + '/dropps';
 		var responseJson, errorMessage;
 
 		// Verify the client's token
@@ -247,7 +421,7 @@ module.exports = function(_router) {
 	 * @param {Object} res the HTTP response
 	 */
   router.route('/dropps/:droppId').get(function(req, res) {
-		const source = 'GET dropps/:droppId';
+		const source = 'GET dropps/' + req.params.droppId;
 		var responseJson, errorMessage;
 
 		// Verify the client's token
@@ -279,7 +453,7 @@ module.exports = function(_router) {
           logErrorWithJson(source, res, dbResult);
         }
 
-        return res.json(dbResult);
+				return res.json(dbResult);
       });
     })(req, res);
   });
@@ -348,7 +522,7 @@ module.exports = function(_router) {
 	 * @param {Object} req the HTTP request
 	 * @param {Object} res the HTTP response
 	 */
-	router.route('/dropps').post(function(req, res) {
+	router.route('/dropps').post(upload, function(req, res) {
 		const source = 'POST /dropps';
 		var responseJson, errorMessage;
 
@@ -372,7 +546,7 @@ module.exports = function(_router) {
 			if (!isValidLocation(req.body.location)) 			invalidParam = 'location';
 	    else if (!isValidInteger(req.body.timestamp))	invalidParam = 'timestamp';
 			else if (req.body.text != null
-				&& req.body.media == null
+				&& req.body.media === 'false'
 				&& !isValidTextPost(req.body.text))
 			{
 				invalidParam = 'text';
@@ -386,7 +560,7 @@ module.exports = function(_router) {
 			}
 
 			// Reject if there is no content at all in the dropp
-			if (req.body.text == null && req.body.media == null) {
+			if (req.body.text == null && req.body.media === 'false') {
 				errorMessage = 'Your dropp has no content';
 				responseJson = logError(source, res, errors.INVALID_REQUEST_ERROR, errorMessage);
 				return res.json(responseJson);
@@ -404,6 +578,21 @@ module.exports = function(_router) {
   });
 
 	return router;
+}
+
+
+/**
+ * removeFile - Removes a file from the local filesystem
+ * @param {string} filePath the path to the desired file
+ */
+function removeFile(filePath) {
+	fs.unlink(filePath, function(err) {
+		if (err) {
+			console.log('Failed to remove temp file at %s', filePath);
+		} else {
+			console.log('Removed temp file at %s', filePath);
+		}
+	});
 }
 
 /**
