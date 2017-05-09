@@ -363,7 +363,7 @@ module.exports = {
 			"timestamp"	: parseInt(req.body.timestamp),
 			"username" 	: username,
 			"text" 			: req.body.text == null ? '' : req.body.text,
-			"media" 		: req.body.media
+			"media" 		: req.body.media === 'true' ? true : false
 		};
 
 		var responseJson;

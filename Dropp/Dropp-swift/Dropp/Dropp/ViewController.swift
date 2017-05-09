@@ -108,22 +108,7 @@ class ViewController: UIViewController, UITextViewDelegate, UIImagePickerControl
     
     // Sends an image to the server
     func sendImage(_ droppId: String, _ image: UIImage, completion: @escaping (Bool) -> Void) {
-        // Build the HTTP request for sending an image to the server
-        var request  = URLRequest(url: URL(string: "\(self.http.apiPath)/dropps/\(droppId)/image")!)
-        let boundary = "Boundary-\(UUID().uuidString)"
-        
-        // Set properties about the HTTP request
-        request.httpMethod = "POST"
-        request.setValue("multipart/form-data; boundary=\(boundary)", forHTTPHeaderField: "Content-Type")
-        request.addValue(self.token, forHTTPHeaderField: "Authorization")
-        
-        // Add parameters to the HTTP body
-        let params = [:] as [String: String]
-        request.httpBody = self.http.createBody(parameters: params,
-                                                    boundary: boundary,
-                                                    data: UIImageJPEGRepresentation(image, 0.7)!,
-                                                    mimeType: "image/jpeg",
-                                                    filename: "image.jpg")
+        let request = self.http.createImageRequest(droppId: droppId, token: self.token, params: [:], image: image)
         
         // Send the request to post the image and return the server response success or fail
         self.http.sendRequest(request: request) { response, json in
@@ -144,37 +129,19 @@ class ViewController: UIViewController, UITextViewDelegate, UIImagePickerControl
         // Create the dictionary for the request body
         let content = ["location": locString, "timestamp": timestamp, "text": message, "media": hasImage] as [String: Any]
         
-        // Stringify the dictionary to standard JSON format
-        if let jsonBody = try? JSONSerialization.data(withJSONObject: content, options: .prettyPrinted) {
-            // Create the URL request with the path to post a dropp
-            var request  = URLRequest(url: URL(string: "\(self.http.apiPath)/dropps")!)
+        let request = self.http.createPostRequest(path: "/dropps", token: self.token, body: content)
+        
+        // Send the request and receive the response
+        self.http.sendRequest(request: request) { response, json in
+            print(json)
+            var droppId = ""
             
-            // Set method to POST
-            request.httpMethod = "POST"
-            
-            // Specify body type in request headers
-            request.addValue("application/json", forHTTPHeaderField: "Content-Type")
-            
-            // Add token to request headers
-            request.addValue(self.token, forHTTPHeaderField: "Authorization")
-            
-            // Add JSON data to request body
-            request.httpBody = jsonBody
-            
-            // Send the request and receive the response
-            self.http.sendRequest(request: request) { response, json in
-                print(json)
-                var droppId = ""
-                
-                // If the server returns 200, the post was successful and json contains the droppId
-                if response.statusCode == 200 {
-                    droppId = json["droppId"]! as! String
-                }
-                
-                completion(droppId)
+            // If the server returns 200, the post was successful and json contains the droppId
+            if response.statusCode == 200 {
+                droppId = json["droppId"]! as! String
             }
-        } else {
-            completion("")
+            
+            completion(droppId)
         }
     }
     

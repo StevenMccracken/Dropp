@@ -21,53 +21,52 @@ class DetailViewController: UIViewController {
     var userObj: UserObject!
     var distanceFromDropp: Double!
    
-    
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         
         // Remove the back button text
-        self.navigationController?.navigationBar.topItem?.title = " "
+        self.navigationController?.navigationBar.backItem?.setHidesBackButton(true, animated: false)
+        
+        // Set the title in the nav bar of the detail page
         self.title = "Dropp"
         
-        // Formatting the timestamp
+        // Formatting for the timestamp
         let userTimestamp = NSDate(timeIntervalSince1970: Double(userObj.timestamp!))
         let formatter = DateFormatter()
         formatter.dateFormat = "MMMM dd, yyyy 'at' h:mm a"
         let dateString = formatter.string(from: userTimestamp as Date)
         
-        self.userLabel.text = userObj.username
-        self.timestampLabel.text = dateString
-        self.locationLabel.text = "\(distanceFromDropp!) meters away"
-        self.textView.text = userObj.message
+        // Update the detail UI text
+        DispatchQueue.main.async() {
+            self.userLabel.text = self.userObj.username
+            self.timestampLabel.text = dateString
+            self.locationLabel.text = "\(self.distanceFromDropp!) meters away"
+            self.textView.text = self.userObj.message
+        }
         
-//        self.userLabel.text = "stevenmccracken"
-//        self.userLabel.font = UIFont.boldSystemFont(ofSize: 15.0)
-//        self.locationLabel.text = "4.20 meters away"
-//        self.textView.text = "Hello from Fullerton. Dropp fucking rocks. Dropp me a message!"
-        
+        // If there is an image in the database for this dropp, fetch it
         if userObj.media! {
             self.loadingLabel.isHidden = false
             self.fetchImage(droppId: userObj.droppID!)
         }
     }
     
+    // Retrieves an image from the database
     func fetchImage(droppId: String) {
-        // Create the URL request with the path to post a dropp
-        var request  = URLRequest(url: URL(string: "\(self.http.apiPath)/dropps/\(droppId)/image")!)
-        
-        // Set method to POST
-        request.httpMethod = "GET"
-        
-        // Specify body type in request headers
-        request.addValue("application/json", forHTTPHeaderField: "Content-Type")
-        
-        // Add token to request headers
-        request.addValue(UserDefaults.standard.value(forKey: "jwt") as! String, forHTTPHeaderField: "Authorization")
+        let token = UserDefaults.standard.value(forKey: "jwt") as! String
+        let request = self.http.createGetRequest(path: "/dropps/\(droppId)/image", token: token)
         
         self.http.getImage(request: request) { response, data  in
-            guard let data = data else { return }
+            // Test if the data from the response is valid
+            guard let data = data else {
+                self.loadingLabel.text = "Unable to fetch image"
+                return
+            }
             
+            print(response)
+            // If the download worked, update the UI
             if response.statusCode == 200 {
+                // Hide the loading label and update the imageView
                 DispatchQueue.main.async() {
                     self.loadingLabel.isHidden = true
                     self.imageView.image = UIImage(data: data)

@@ -15,10 +15,16 @@ class FeedTableViewController: UITableViewController, CLLocationManagerDelegate 
     let locationManager = CLLocationManager()
     var userArr: [UserObject] = []
     let cellIdentifier = "CellIdentifier"
+    let salmonColor: UIColor = UIColor(red: 1.0, green: 0.18, blue: 0.33, alpha: 1.0)
     var token = ""
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        
+        // Apply the salmon color to the nav bar buttons
+        navigationController?.navigationBar.tintColor = self.salmonColor
+        
+        // Get the token from user defaults
         self.token = UserDefaults.standard.value(forKey: "jwt") as! String
         
         // Ask for Authorisation from the User for location
@@ -33,11 +39,11 @@ class FeedTableViewController: UITableViewController, CLLocationManagerDelegate 
             locationManager.startUpdatingLocation()
         }
         
-        self.getDropps()
-        
         DispatchQueue.main.async {
-            self.tableView.reloadData() // TODO: still doesn't make ui reload quicker
+            self.getDropps()
         }
+        
+        self.tableView.reloadData()
         
         // Uncomment the following line to preserve selection between presentations
         // self.clearsSelectionOnViewWillAppear = false
@@ -48,8 +54,6 @@ class FeedTableViewController: UITableViewController, CLLocationManagerDelegate 
     
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
-        self.title = "Nearby Dropps"
-        navigationController?.navigationBar.tintColor = UIColor(red: 1.0, green: 0.18, blue: 0.33, alpha: 1.0)
         self.tableView.reloadData()
     }
     
@@ -71,70 +75,55 @@ class FeedTableViewController: UITableViewController, CLLocationManagerDelegate 
                 print(i)
                 if self.userArr.count > 0 {
                     self.userArr.remove(at: 0)
-                    var indexPath = IndexPath(row: 0, section: 0)
+                    let indexPath = IndexPath(row: 0, section: 0)
                     self.tableView.deleteRows(at: [indexPath], with: .automatic)
                 }
             }
 
         }
+        
         self.getDropps()
+        self.tableView.reloadData() // TODO: still doesn't make ui reload quicker
     }
     
     func getDropps() {
-        // Set the max distance parameter in meters
+        // Set the max distance parameter in meters`
         let maxDistance = 100
         
         // Get the location's current device
         let loc = locationManager.location!.coordinate
         let locString = "\(loc.latitude),\(loc.longitude)"
-        
         let body = ["location": locString, "maxDistance": maxDistance] as [String: Any]
         
-        if let jsonBody = try? JSONSerialization.data(withJSONObject: body, options: .prettyPrinted) {
-            // Create the URL request with the path to get nearby dropps
-            var request  = URLRequest(url: URL(string: "\(self.http.apiPath)/location/dropps")!)
-            
-            // Set the request type to POST
-            request.httpMethod = "POST"
-            
-            // Set the content type of the body
-            request.addValue("application/json", forHTTPHeaderField: "Content-Type")
-            
-            // Add the token to the request
-            request.addValue(self.token, forHTTPHeaderField: "Authorization")
-            
-            // Add the JSON parameters to the request body
-            request.httpBody = jsonBody
-            
-            // Send the request and get the response
-            self.http.sendRequest(request: request) { response, json in
-                if response.statusCode == 200 {
-                    // Get the dropps from the response json
-                    let dropps = json["dropps"] as! [String:Any]
-                    print(dropps)
+        let request = self.http.createPostRequest(path: "/location/dropps", token: self.token, body: body)
+        
+        // Send the request and get the response
+        self.http.sendRequest(request: request) { response, json in
+            if response.statusCode == 200 {
+                // Get the dropps from the response json
+                let dropps = json["dropps"] as! [String:Any]
+                
+                // Go through all of the nearby dropps
+                for (key, value) in dropps {
+                    let nestedDic = value as! [String:Any]
+                    let usernameStr = nestedDic["username"]!
+                    let userText = nestedDic["text"]!
+                    let userTimestamp = nestedDic["timestamp"]!
+                    let userLocation = nestedDic["location"]!
+                    let hasPicture = nestedDic["media"]!
                     
-                    // Go through all of the nearby dropps
-                    for (key, value) in dropps {
-                        let nestedDic = value as! [String:Any]
-                        let usernameStr = nestedDic["username"]!
-                        let userText = nestedDic["text"]!
-                        let userTimestamp = nestedDic["timestamp"]!
-                        let userLocation = nestedDic["location"]!
-                        let hasPicture = nestedDic["media"]!
-                        
-                        let newUsr = UserObject(pDroppId: key,
-                                                pUsername: usernameStr as! String,
-                                                pTimestamp: userTimestamp as! Int,
-                                                pMessage: userText as! String,
-                                                pLoc: userLocation as! String,
-                                                pMedia: hasPicture as! Bool)
-                        
-                        self.addNewUser(newUser: newUsr)
-                    }
-                } else {
-                    print("Failed to get nearby dropps")
-                    print(json)
+                    let newUsr = UserObject(pDroppId: key,
+                                            pUsername: usernameStr as! String,
+                                            pTimestamp: userTimestamp as! Int,
+                                            pMessage: userText as! String,
+                                            pLoc: userLocation as! String,
+                                            pMedia: hasPicture as! Bool)
+                    
+                    self.addNewUser(newUser: newUsr)
                 }
+            } else {
+                print("Failed to get nearby dropps")
+                print(json)
             }
         }
     }
@@ -185,8 +174,6 @@ class FeedTableViewController: UITableViewController, CLLocationManagerDelegate 
         let cell = tableView.dequeueReusableCell(withIdentifier: cellIdentifier , for: indexPath)
 
         // Configure the cell...
-//        let date = user.timestamp!
-//        let loc = user.location!
         let userId = user.username!
         let message = user.message!
         let sublabel = "\(userId) said '\(message)'\n"
