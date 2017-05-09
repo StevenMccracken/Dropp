@@ -220,6 +220,10 @@ class FeedTableViewController: UITableViewController, CLLocationManagerDelegate 
         return cell!
     }
     
+    override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        performSegue(withIdentifier: "showUser", sender: self)
+    }
+    
     override func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
         return 85.0
     }
