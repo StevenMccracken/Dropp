@@ -6,6 +6,7 @@
 //  Copyright © 2017 Group B. All rights reserved.
 //
 
+import Gifu
 import UIKit
 import Foundation
 import CoreLocation
@@ -16,12 +17,14 @@ class ViewController: UIViewController, UITextViewDelegate, UIImagePickerControl
     @IBOutlet weak var imageView: UIImageView!
     @IBOutlet weak var cancelButton: UIButton!
     @IBOutlet weak var postDroppButton: UIButton!
+    @IBOutlet weak var loadingView: GIFImageView!
+    @IBOutlet weak var trashDroppButton: UIButton!
     
     let http = HTTPModule()
+    let viewModule = ViewModule()
     let keyboardToolbar = UIToolbar()
     let picker = UIImagePickerController()
     let locationManager = CLLocationManager()
-    let salmonColor: UIColor = UIColor(red: 1.0, green: 0.18, blue: 0.33, alpha: 1.0)
     
     var token = ""
     var originalPostDropButtonYLoc: CGFloat!
@@ -31,45 +34,19 @@ class ViewController: UIViewController, UITextViewDelegate, UIImagePickerControl
     override func viewDidLoad() {
         super.viewDidLoad()
         
+        // Get the token from the saved data
         self.token = UserDefaults.standard.value(forKey: "jwt") as! String
                 
         // Apply border to text view
         self.messageView.layer.borderWidth = 0.8
-        self.messageView.layer.borderColor = salmonColor.cgColor
+        self.messageView.layer.borderColor = self.viewModule.salmonColor.cgColor
         self.messageView.layer.cornerRadius = 5.0
         
         // Save original Y location of post drop button for when keyboard appears
         self.originalPostDropButtonYLoc = self.postDroppButton.frame.origin.y
         
-        // Add keyboard toolbar to add custom buttons
-        self.keyboardToolbar.sizeToFit()
-        self.keyboardToolbar.isTranslucent = false
-        self.keyboardToolbar.barTintColor = UIColor.white
-        
-        // Create custom buttons for keyboard toolbar
-        let spacing = UIBarButtonItem(
-            barButtonSystemItem: .flexibleSpace,
-            target: self,
-            action: nil)
-        
-        let clearButton = UIBarButtonItem(
-            barButtonSystemItem: .trash,
-            target: self,
-            action: #selector(clearTextView)
-        )
-        
-        let doneButton = UIBarButtonItem(
-            barButtonSystemItem: .done,
-            target: self,
-            action: #selector(hideKeyboard)
-        )
-        
-        doneButton.tintColor = salmonColor
-        clearButton.tintColor = salmonColor
-        
-        // Add custom buttons to keyboard toolbar
-        self.keyboardToolbar.items = [clearButton, spacing, doneButton]
-        self.messageView.inputAccessoryView = keyboardToolbar
+        // Add custom keyboard toolbar
+        self.addKeyboardToolbar()
         
         // Add listeners to keyboard showing and hiding
         NotificationCenter.default.addObserver(self, selector: #selector(self.keyboardWillShow), name: NSNotification.Name.UIKeyboardWillShow, object: nil)
@@ -90,11 +67,45 @@ class ViewController: UIViewController, UITextViewDelegate, UIImagePickerControl
             locationManager.desiredAccuracy = kCLLocationAccuracyBest
             locationManager.startUpdatingLocation()
         }
+        
+        self.loadingView.prepareForAnimation(withGIFNamed: self.viewModule.loadingIcon)
     }
 
     override func didReceiveMemoryWarning() {
         super.didReceiveMemoryWarning()
         // Dispose of any resources that can be recreated
+    }
+    
+    func addKeyboardToolbar() {
+        // Add keyboard toolbar to add custom buttons
+        self.keyboardToolbar.sizeToFit()
+        self.keyboardToolbar.isTranslucent = false
+        self.keyboardToolbar.barTintColor = UIColor.white
+        
+        // Create custom buttons for keyboard toolbar
+        let spacing = UIBarButtonItem(
+            barButtonSystemItem: .flexibleSpace,
+            target: self,
+            action: nil)
+        
+        let clearButton = UIBarButtonItem(
+            barButtonSystemItem: .trash,
+            target: self,
+            action: #selector(self.clearTextView)
+        )
+        
+        let doneButton = UIBarButtonItem(
+            barButtonSystemItem: .done,
+            target: self,
+            action: #selector(self.hideKeyboard)
+        )
+        
+        doneButton.tintColor = self.viewModule.salmonColor
+        clearButton.tintColor = self.viewModule.salmonColor
+        
+        // Add custom buttons to keyboard toolbar
+        self.keyboardToolbar.items = [clearButton, spacing, doneButton]
+        self.messageView.inputAccessoryView = self.keyboardToolbar
     }
     
     // Clears all content from the text view and dismisses the keyboard
@@ -107,16 +118,16 @@ class ViewController: UIViewController, UITextViewDelegate, UIImagePickerControl
     func hideKeyboard() {
         self.messageView.resignFirstResponder()
         self.postDroppButton.isEnabled = self.imageView.image != nil || !self.messageView.text.isEmpty
+        self.trashDroppButton.isEnabled = self.postDroppButton.isEnabled
     }
     
     // Sends an image to the server
-    func sendImage(_ droppId: String, _ image: UIImage, completion: @escaping (Bool) -> Void) {
-        let request = self.http.createImageRequest(droppId: droppId, token: self.token, params: [:], image: image)
+    func sendImage(_ droppId: String, _ image: UIImage, _ compression: Double, completion: @escaping (Int) -> Void) {
+        let request = self.http.createImageRequest(droppId: droppId, token: self.token, params: [:], image: image, compression: compression)
         
         // Send the request to post the image and return the server response success or fail
         self.http.sendRequest(request: request) { response, json in
-            print(json)
-            completion(response.statusCode == 200)
+            completion(response.statusCode)
         }
     }
     
@@ -129,14 +140,15 @@ class ViewController: UIViewController, UITextViewDelegate, UIImagePickerControl
         // Get the current UNIX timestamp in seconds
         let timestamp = Int(NSDate().timeIntervalSince1970.rounded())
         
+        let media = hasImage ? "true" : "false"
+        
         // Create the dictionary for the request body
-        let content = ["location": locString, "timestamp": timestamp, "text": message, "media": hasImage] as [String: Any]
+        let content = ["location": locString, "timestamp": timestamp, "text": message, "media": media] as [String: Any]
         
         let request = self.http.createPostRequest(path: "/dropps", token: self.token, body: content)
         
         // Send the request and receive the response
         self.http.sendRequest(request: request) { response, json in
-            print(json)
             var droppId = ""
             
             // If the server returns 200, the post was successful and json contains the droppId
@@ -148,33 +160,22 @@ class ViewController: UIViewController, UITextViewDelegate, UIImagePickerControl
         }
     }
     
-    // Fades the image and cancel button to a specified value in a specified duration
-    func fadeImage(value: Double, duration: Double, delay: Double, completion: @escaping () -> Void) {
-        UIView.animate(withDuration: duration, delay: delay, options: UIViewAnimationOptions.curveEaseOut, animations: {
-            self.imageView.alpha = CGFloat(value)
-            self.cancelButton.alpha = CGFloat(value)
-        }, completion: { _ in
-            completion()
-        })
-    }
-    
     // Mark: Actions
     
     // Removes the photo in the ImageView if one is present.
     @IBAction func deletePhoto(_ sender: UIButton) {
         // If an image exists in the image view, remove it and hide the cancel button
         if self.imageView.image != nil {
-            self.fadeImage(value: 0.0, duration: 0.25, delay: 0.0) { faded in
+            self.viewModule.fadeImage(imageView: self.imageView, endValue: 0.0, duration: 0.25, delay: 0.0) { _ in
                 // Once they have faded out, remove the objects and reset the alpha
                 self.imageView.image = nil
                 self.cancelButton.isHidden = true
-                
                 self.imageView.alpha = 1.0
-                self.cancelButton.alpha = 1.0
             }
             
             // If there is also no text in the text field, disable the post button
             self.postDroppButton.isEnabled = !self.messageView.text!.isEmpty
+            self.trashDroppButton.isEnabled = self.postDroppButton.isEnabled
         }
     }
     
@@ -186,23 +187,29 @@ class ViewController: UIViewController, UITextViewDelegate, UIImagePickerControl
     // Resets the posting screen UI to the initial, empty state
     func resetUI() {
         DispatchQueue.main.async {
-            self.fadeImage(value: 0.0, duration: 0.15, delay: 0.0) { faded in
+            self.viewModule.fadeImage(imageView: self.imageView, endValue: 0.0, duration: 0.15, delay: 0.0) { _ in
                 // Once they have faded out, remove the objects and reset the alpha
                 self.imageView.image = nil
                 self.cancelButton.isHidden = true
-                
                 self.imageView.alpha = 1.0
-                self.cancelButton.alpha = 1.0
             }
             
+            self.viewModule.stopLoadingIcon(loadingIconView: self.loadingView, fadeTime: 0.25) { _ in }
             self.messageView.text = ""
             self.postDroppButton.isEnabled = false
+            self.trashDroppButton.isEnabled = false
             self.messageView.resignFirstResponder()
+            
+            if self.spb != nil {
+                self.spb.removeFromSuperview()
+            }
         }
     }
     
     // Captures all data from the dropp screen and tries to send it to the server
     func uploadDropp(alert: UIAlertAction!) {
+        self.viewModule.startLoadingIcon(loadingIconView: self.loadingView, fadeTime: 0.25) { _ in }
+        
         // Determine whether the user has chosen a photo
         let imageExists = self.imageView.image != nil
         
@@ -213,54 +220,108 @@ class ViewController: UIViewController, UITextViewDelegate, UIImagePickerControl
                 // If the user attached an image to their post, try to upload the image
                 if imageExists {
                     // Send an HTTP request to upload the image
-                    self.uploadImageOnly(droppId: droppId, image: self.imageView.image!)
+                    self.uploadImageOnly(droppId: droppId, image: self.imageView.image!, compression: 1.0)
                 } else {
                     // Dropp was posted, so update the UI
                     sleep(1)
+                    
+                    self.viewModule.stopLoadingIcon(loadingIconView: self.loadingView, fadeTime: 1.0) { _ in }
                     DispatchQueue.main.async {
                         self.spb.skip()
-                        UIView.animate(withDuration: 1, delay: 0, options: UIViewAnimationOptions.curveEaseOut, animations: {
-                            self.spb.alpha = CGFloat(0)
-                        }, completion: { _ in
+                        self.fadeUploadProgressBar(duration: 1.0, delay: 0.0, value: 0.0){ _ in
                             self.spb.removeFromSuperview()
-                        })
+                        }
                     }
-                    self.resetUI()
-                    let alert = UIAlertController(title: "Success", message: "Successfully dropped.", preferredStyle: .alert)
-                    self.present(alert, animated: true, completion: nil)
                     
-                    let when = DispatchTime.now() + 1
-                    DispatchQueue.main.asyncAfter(deadline: when) {
-                        alert.dismiss(animated: true, completion: nil)
-                    }
+                    self.alertSuccessfulUpload()
+                    self.resetUI()
                 }
             } else {
-                self.alertFailedPost(droppId: "")
+                self.fadeUploadProgressBar(duration: 0.1, delay: 0.0, value: 0.0) { _ in }
+                self.alertFailedPost(droppId: "", compression: 1.0)
                 print("Failed to post dropp during text upload")
             }
         }
     }
     
-    func uploadImageOnly(droppId: String, image: UIImage) {
+    func alertSuccessfulUpload() {
+        let alert = self.viewModule.createAlert(title: "Dropped!", message: "")
+        
+        // Remove the alert message, it's not necessary
+        alert.message = nil
+        
+        self.present(alert, animated: true, completion: nil)
+        
+        let when = DispatchTime.now() + 1.75
+        DispatchQueue.main.asyncAfter(deadline: when) {
+            alert.dismiss(animated: true, completion: nil)
+        }
+    }
+    
+    func uploadImageOnly(droppId: String, image: UIImage, compression: Double) {
+        if !self.loadingView.isAnimatingGIF {
+            self.viewModule.startLoadingIcon(loadingIconView: self.loadingView, fadeTime: 0.25) { _ in }
+        }
+        
         // Send an HTTP request to upload the image
-        self.sendImage(droppId, image) { imagePosted in
+        self.sendImage(droppId, image, compression) { statusCode in
+
             // If the image was uploaded successfully, reset the post dropp screen
-            if imagePosted {
+            if statusCode == 200 {
+                self.viewModule.stopLoadingIcon(loadingIconView: self.loadingView, fadeTime: 1.0) { _ in }
+                // Delay the completion of the progress bar
                 sleep(1)
-                DispatchQueue.main.async {
-                    self.spb.skip()
-                    UIView.animate(withDuration: 1, delay: 0, options: UIViewAnimationOptions.curveEaseOut, animations: {
-                        self.spb.alpha = CGFloat(0)
-                    }, completion: { _ in
-                        self.spb.removeFromSuperview()
-                    })
+                
+                // Complete the progress bar
+                DispatchQueue.main.async { self.spb.skip() }
+                
+                // Fade out the progress bar and then remove it from the super view
+                self.fadeUploadProgressBar(duration: 1.0, delay: 0.0, value: 0.0) { _ in
+                    DispatchQueue.main.async { self.spb.removeFromSuperview() }
                 }
+                
+                // Reset all other UI components
                 self.resetUI()
+                self.alertSuccessfulUpload()
             } else {
-                // The image upload failed, display a failure alert
-                self.alertFailedPost(droppId: droppId)
                 print("Failed to post dropp during image upload")
+
+                // The upload failed, so remove the progress bar
+                self.fadeUploadProgressBar(duration: 0.25, delay: 0.0, value: 0.0) { _ in
+                    self.spb.removeFromSuperview()
+                }
+                
+                /**
+                 * The image upload failed because the image was too big. Display an alert
+                 * with an attempt to call this method again with a lower quality value, aka
+                 * a higher amount of compression
+                 */
+                if statusCode == 413 {
+                    self.alertFailedPost(droppId: droppId, compression: compression - 0.1)
+                } else {
+                    // The image upload failed for some other reason, so try with the same compression rate
+                    self.alertFailedPost(droppId: droppId, compression: compression)
+                }
             }
+        }
+    }
+    
+    func fadeUploadProgressBar(duration: Double, delay: Double, value: Double, completion: @escaping () -> Void) {
+        UIView.animate(withDuration: duration, delay: delay, options: UIViewAnimationOptions.curveEaseOut, animations: {
+            self.spb.alpha = CGFloat(value)
+        }, completion: { _ in
+            completion()
+        })
+    }
+    
+    func startUploadProgressBar() {
+        self.spb = SegmentedProgressBar(numberOfSegments: 1, duration: 8)
+        self.spb.frame = CGRect(x: -2, y: 20, width: view.frame.width + 2, height: 4)
+        self.spb.topColor = self.viewModule.salmonColor
+        
+        DispatchQueue.main.async {
+            self.view.addSubview(self.spb)
+            self.spb.startAnimation()
         }
     }
 
@@ -268,17 +329,119 @@ class ViewController: UIViewController, UITextViewDelegate, UIImagePickerControl
     @IBAction func postMessage(_ sender: UIButton) {
          // Hide the keyboard
         self.messageView.resignFirstResponder()
-        self.spb = SegmentedProgressBar(numberOfSegments: 1, duration: 8)
-        self.spb.frame = CGRect(x: 15, y: 20, width: view.frame.width - 30, height: 4)
-        self.spb.topColor = UIColor(red: 1.0, green: 0.18, blue: 0.33, alpha: 1.0)
-        view.addSubview(self.spb)
-        self.spb.startAnimation()
+        
+        // Start the upload progress bar
+        self.startUploadProgressBar()
+        
         // Attempts server upload
         uploadDropp(alert: nil)
     }
     
+    // Displays an alert to reset a dropp post
+    @IBAction func trashDropp(_ sender: UIButton) {
+        if self.imageView.image == nil && self.messageView.text.isEmpty {
+            return
+        }
+        
+        // Create action buttons for alert
+        let noAction = UIAlertAction(
+            title: "No",
+            style: .cancel,
+            handler: nil)
+        
+        let yesAction = UIAlertAction(
+            title: "Yes",
+            style: .default,
+            handler: resetUI)
+        
+        // Create the alert
+        let alert = self.viewModule.createAlert(title: "Delete Dropp", message: "Are you sure you want to restart your dropp creation?")
+        
+        // Add the actions to the alert
+        alert.addAction(yesAction)
+        alert.addAction(noAction)
+
+        // Display the alert
+        present(alert, animated: true, completion: nil)
+    }
+    
+    @IBAction func addPhoto(_ sender: UIButton) {
+        let cancelAction = UIAlertAction(
+            title: "Cancel",
+            style: .cancel,
+            handler: nil)
+        
+        let cameraAction = UIAlertAction(
+            title: "Camera",
+            style: .default,
+            handler: self.takePicture)
+        
+        let photoLibraryAction = UIAlertAction(
+            title: "Photo Library",
+            style: .default,
+            handler: self.photoFromLibrary)
+        
+        let sheet = self.viewModule.createActionSheet()
+        
+        sheet.addAction(cameraAction)
+        sheet.addAction(photoLibraryAction)
+        sheet.addAction(cancelAction)
+        
+        present(sheet, animated: true, completion: nil)
+    }
+    
+    // Function handles when text view ends editing
+    func textViewDidEndEditing(_ textView: UITextView) {
+         // Hide the keyboard
+        textView.resignFirstResponder()
+        
+        // Remove leading and trailing whitespace from entered text
+        textView.text = textView.text.trim()
+        
+        // Enable the post button if there is any content in the dropp
+        if !textView.text!.isEmpty || self.imageView.image != nil {
+            DispatchQueue.main.async {
+                self.postDroppButton.isEnabled = true
+                self.trashDroppButton.isEnabled = true
+            }
+        }
+    }
+    
+    // Captures selected or taken image after user presses "Use this photo"
+    func imagePickerController(_ picker: UIImagePickerController,
+                               didFinishPickingMediaWithInfo info: [String : AnyObject]) {
+        let chosenImage = info[UIImagePickerControllerOriginalImage] as! UIImage
+        
+        // Update the image view
+        imageView.image = chosenImage
+        
+        // Hide the image picker
+        dismiss(animated: true, completion: nil)
+        
+        // Reveal the delete image button
+        self.cancelButton.isHidden = false
+        
+        // Enable the post button
+        self.postDroppButton.isEnabled = true
+        self.trashDroppButton.isEnabled = true
+    }
+    
+    // Removes the photo library view when the user presses cancel
+    func imagePickerControllerDidCancel(_ picker: UIImagePickerController) {
+        dismiss(animated: true, completion: nil)
+        
+        // Hide the cancel image button if no image is in the image view
+        self.cancelButton.isHidden = self.imageView.image == nil
+        
+        // Disable the post button if there is no text written or image selected
+        if self.imageView.image == nil && self.messageView.text.isEmpty {
+            self.postDroppButton.isEnabled = false
+            self.trashDroppButton.isEnabled = false
+        }
+    }
+    
     // Opens the camera to take a photo
-    @IBAction func takePicture(_ sender: UIButton) {
+    func takePicture(_ alert: UIAlertAction) {
         // First check if the device has a cmaera
         if UIImagePickerController.isSourceTypeAvailable(.camera) {
             // Set properties about the image picker when taking a photo
@@ -305,6 +468,7 @@ class ViewController: UIViewController, UITextViewDelegate, UIImagePickerControl
             
             // Enable the post button so the user can upload their post
             self.postDroppButton.isEnabled = true
+            self.trashDroppButton.isEnabled = true
         } else {
             // Display an alert because the device does not have a camera
             alertNoCamera()
@@ -312,7 +476,7 @@ class ViewController: UIViewController, UITextViewDelegate, UIImagePickerControl
     }
     
     // Opens the photo library to pick a photo
-    @IBAction func photoFromLibrary(_ sender: UIButton) {
+    func photoFromLibrary(_ alert: UIAlertAction) {
         // Set properties about the image picker when choosing a photo
         
         // Ensures no edited versions of the photos
@@ -326,102 +490,14 @@ class ViewController: UIViewController, UITextViewDelegate, UIImagePickerControl
         present(picker, animated: true, completion: nil)
     }
     
-    // Creates an alert controller object with the Dropp UI styling. Actions must be added to the return object later
-    func createAlert(title: String, message: String) -> UIAlertController {
-        // Create the initial controller object with an empty title to apply a color to it later
-        let alert = UIAlertController(title: "", message: message, preferredStyle: .alert)
-        
-        // Define attribute array for setting the color of a string in the alert
-        let colorAttribute = [ NSForegroundColorAttributeName : self.salmonColor ]
-        
-        // Set the color of the alert buttons
-        alert.view.tintColor = self.salmonColor
-        
-        // Set the color of the title and message of the alert
-        alert.setValue(NSAttributedString(string: title, attributes: colorAttribute), forKey: "attributedTitle")
-        
-        return alert
-    }
-    
-    // Displays an alert to reset a dropp post
-    @IBAction func trashDropp(_ sender: UIButton) {
-        // Create action buttons for alert
-        let noAction = UIAlertAction(
-            title: "No",
-            style: .cancel,
-            handler: nil)
-        
-        let yesAction = UIAlertAction(
-            title: "Yes",
-            style: .default,
-            handler: resetUI)
-        
-        // Create the alert
-        let alert = self.createAlert(title: "Delete Dropp", message: "Are you sure you want to restart your dropp creation?")
-        
-        // Add the actions to the alert
-        alert.addAction(yesAction)
-        alert.addAction(noAction)
-
-        // Display the alert
-        present(alert, animated: true, completion: nil)
-    }
-    
-    // MARK: Delegates
-    
-    // Function handles when text view ends editing
-    func textViewDidEndEditing(_ textView: UITextView) {
-         // Hide the keyboard
-        textView.resignFirstResponder()
-        
-        // Remove leading and trailing whitespace from entered text
-        textView.text = textView.text.trim()
-        
-        // Enable the post button if there is any content in the dropp
-        if !textView.text!.isEmpty || self.imageView.image != nil {
-            DispatchQueue.main.async {
-                self.postDroppButton.isEnabled = true
-            }
-        }
-    }
-    
-    // Captures selected or taken image after user presses "Use this photo"
-    func imagePickerController(_ picker: UIImagePickerController,
-                               didFinishPickingMediaWithInfo info: [String : AnyObject]) {
-        let chosenImage = info[UIImagePickerControllerOriginalImage] as! UIImage
-        
-        // Update the image view
-        imageView.image = chosenImage
-        
-        // Hide the image picker
-        dismiss(animated: true, completion: nil)
-        
-        // Reveal the delete image button
-        self.cancelButton.isHidden = false
-        
-        // Enable the post button
-        self.postDroppButton.isEnabled = true
-    }
-    
-    // Removes the photo library view when the user presses cancel
-    func imagePickerControllerDidCancel(_ picker: UIImagePickerController) {
-        dismiss(animated: true, completion: nil)
-        
-        // Hide the cancel image button if no image is in the image view
-        self.cancelButton.isHidden = self.imageView.image == nil
-        
-        // Disable the post button if there is no text written or image selected
-        if self.imageView.image == nil && self.messageView.text.isEmpty {
-            self.postDroppButton.isEnabled = false
-        }
-    }
-    
-    func alertFailedPost(droppId: String) {
+    func alertFailedPost(droppId: String, compression: Double) {
         // Create action buttons for alert
         let cancelAction = UIAlertAction(
             title: "Cancel",
             style: .default,
-            handler: nil)
+            handler: { action in
+                self.viewModule.stopLoadingIcon(loadingIconView: self.loadingView, fadeTime: 0.5) { _ in }
+            })
         
         var retryAction: AnyObject
         if !droppId.isEmpty {
@@ -429,7 +505,7 @@ class ViewController: UIViewController, UITextViewDelegate, UIImagePickerControl
                 title: "Retry",
                 style: .cancel,
                 handler: { action in
-                    self.uploadImageOnly(droppId: droppId, image: self.imageView.image!)
+                    self.uploadImageOnly(droppId: droppId, image: self.imageView.image!, compression: compression)
                 })
         } else {
             retryAction = UIAlertAction(
@@ -439,7 +515,7 @@ class ViewController: UIViewController, UITextViewDelegate, UIImagePickerControl
         }
         
         // Create the alert controller
-        let alert = self.createAlert(title: "Failed Upload", message: "Sorry, we were unable to post your dropp")
+        let alert = self.viewModule.createAlert(title: "Failed Upload", message: "Sorry, we were unable to post your dropp")
         
         // Add the actions to the alert
         alert.addAction(retryAction as! UIAlertAction)
@@ -458,7 +534,7 @@ class ViewController: UIViewController, UITextViewDelegate, UIImagePickerControl
             handler: nil)
         
         // Create the alert controller
-        let alert = self.createAlert(title: "No Camera", message: "Sorry, this device has no camera")
+        let alert = self.viewModule.createAlert(title: "No Camera", message: "Sorry, this device has no camera")
         
         // Add the action to the alert
         alert.addAction(okAction)
@@ -471,7 +547,8 @@ class ViewController: UIViewController, UITextViewDelegate, UIImagePickerControl
     func keyboardWillShow(notification: NSNotification) {
         if let keyboardSize = (notification.userInfo?[UIKeyboardFrameBeginUserInfoKey] as? NSValue)?.cgRectValue {
             // Fade out the image view and cancel button
-            self.fadeImage(value: 0.0, duration: 1.0, delay: 0.0) { _ in }
+            self.viewModule.fadeImage(imageView: self.imageView, endValue: 0.0, duration: 1.0, delay: 0.0) { _ in }
+            self.cancelButton.isHidden = true
             
             // Push the position of the post button up as the keyboard goes up
             self.postDroppButton.frame.origin.y -= keyboardSize.height
@@ -485,7 +562,8 @@ class ViewController: UIViewController, UITextViewDelegate, UIImagePickerControl
             self.postDroppButton.frame.origin.y = self.originalPostDropButtonYLoc
             
             // Fade in the image view and cancel button. If they are hidden, they will still not be displayed
-            self.fadeImage(value: 1.0, duration: 1.0, delay: 0.0) { _ in }
+            self.viewModule.fadeImage(imageView: self.imageView, endValue: 1.0, duration: 1.0, delay: 0.0) { _ in }
+            self.cancelButton.isHidden = self.imageView.image == nil
         }
     }
 }

@@ -6,8 +6,8 @@
 //  Copyright © 2017 Dylan Marriott. All rights reserved.
 //
 
-import Foundation
 import UIKit
+import Foundation
 
 protocol SegmentedProgressBarDelegate: class {
     func segmentedProgressBarChangedIndex(index: Int)
