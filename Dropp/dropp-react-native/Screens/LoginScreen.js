@@ -74,7 +74,7 @@ export class LoginScreen extends React.Component {
         let textErrorMessage = this.state.errorMessage ? this.state.errorMessage : ' ';
         const { navigate } = this.props.navigation;
         return (
-            <ScrollView style={[styles.container]}>
+            <View style={[styles.container]}>
                 <Text 
                     style={{fontSize: 27}}>
                     Login
@@ -83,23 +83,28 @@ export class LoginScreen extends React.Component {
                     placeholder='Username'
                     onChangeText={(username) => this.setState({ username })}
                     value = {this.state.username}
+                    style = {styles.loginText}
                 />
                 <TextInput 
                     placeholder='Password' 
                     onChangeText={(password) => this.setState({ password })}
                     value = {this.state.password}
-                />
-                <View style={{margin:7}} />
+                    style = {styles.loginText}
+                />  
+                <View style={[{margin:15}]} />
+                <View style = {styles.button}>
                 <Button 
                         onPress={this._tryLogin}
                         title="Log in"
                     />
+                <View style={{margin:5}} />
                 <Button 
                         onPress={() => navigate('CreateAccount')}
                         title="Make an account"
                     />
                 <Text>{textErrorMessage}</Text>
-            </ScrollView>
+                </View>
+            </View>
             )
     }
 }
@@ -109,5 +114,18 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     padding: 20,
+    height: 25,
+    alignItems: 'center',
+    justifyContent: 'center',
   },
+  loginText:{
+    height: 50,
+    width: 150,
+  },
+  button:{
+    flex: 1,
+    height: 75,
+    width: 150,
+    alignItems: 'center',
+  }
 });
