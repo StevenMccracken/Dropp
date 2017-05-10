@@ -102,6 +102,7 @@ constructor(props){
             <TouchableHighlight noDefaultStyles={true} onPress={() => this._onPressDropp(item, imageuri)} underlayColor ={"lightsalmon"} activeOpacity = {10}>
                 <View style = {styles.row}>
                     <View style = {styles.textcontainer}>
+                        <Text>{item.post.username}</Text>
                         <Text>{item.post.text}</Text>
                     </View>
                     <View style = {styles.photocontainer}>
@@ -189,23 +190,19 @@ const styles = StyleSheet.create({
     flexWrap: 'wrap',
     alignItems: 'center',
     borderBottomWidth: 0.5,
-    padding: 25,
+    padding: 5,
     borderBottomColor: '#000000'
   },
-  dropptext:{
-      flex: 2,
-      flexDirection: 'row',
-      padding: 10
-  },
   textcontainer: {
-      flex: 2
+      flex: 2,
+      marginLeft: 30,
   },
   photocontainer:{
       flex: 1,
-      justifyContent: 'center',
-      alignItems:'center',
-      width: 120,
-      height: 120,
+      //justifyContent: 'center',
+      alignItems:'flex-end',
+      width: 60,
+      height: 60,
   },
   photo: {
       width: 120,
