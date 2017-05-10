@@ -52,7 +52,7 @@ constructor(props){
                     <View style={[styles.modalContainer, modalBackgroundStyle]}>
                         <View style={[styles.modalInnerContainerTop, innerContainerTransparentStyleTop]}>
                             <View style = {styles.photocontainer}>
-                                {/*this.state.modalImage && <Image source = {{uri: this.state.modalImage}} style ={styles.photo}/>*/}
+                                {this.state.modalImage && <Image source = {{uri: this.state.modalImage}} style ={styles.photo}/>}
                             </View>           
                         </View>
                         <View style={[styles.modalInnerContainerBottom, innerContainerTransparentStyleBot]}>
@@ -81,23 +81,41 @@ constructor(props){
     }
 
     _renderItem = ({item}) => {
-    <TouchableHighlight noDefaultStyles={true} onPress={() => this._onPress(item)} underlayColor ={"lightsalmon"} activeOpacity = {10}>
-        <View style = {styles.row}>
-            <View style = {styles.textcontainer}>
-                <Text>{item.post.text}</Text>
-            </View>
-            <View style = {styles.photocontainer}>
-                {item.post.media === "true" && <Image source = {{uri: "https://dropps.me/dropps/" + item.d + "/image"}} style ={styles.photo}/>}
-            </View>
-        </View>
-    </TouchableHighlight>
-    };
+        const { params } = this.props.navigation.state;
+        console.log(item);
+        var imageuri = null;
+        if (item.post.media === "true"){
+                var feedRequest = new Request("https://dropps.me/dropps/" + item.d + "/image", {
+                    method: 'GET',
+                    headers: new Headers( {
+                        'Content-Type': 'application/x-www-form-urlencoded',
+                        'Authorization': params.token,
+                        'Platform': 'Android',
+                    }),
+                });
+                fetch(feedRequest)
+                .then((response) => {
+                    imageuri = response;
+                });
+        }
+        return(
+            <TouchableHighlight noDefaultStyles={true} onPress={() => this._onPressDropp(item, imageuri)} underlayColor ={"lightsalmon"} activeOpacity = {10}>
+                <View style = {styles.row}>
+                    <View style = {styles.textcontainer}>
+                        <Text>{item.post.text}</Text>
+                    </View>
+                    <View style = {styles.photocontainer}>
+                        {item.post.media === "true" && imageuri && <Image source = {{uri: imageuri }} style ={styles.photo}/>}
+                    </View>
+                </View>
+            </TouchableHighlight>
+        )};
     
-    _onPress = (item) => {
+    _onPressDropp = (item, imageuri) => {
         console.log(item.post.media);
         //set the modal data here with item
         this.setState({modalText: item.post.text});
-        this.setState({modalImage: "https://dropps.me/dropps/" + item.d + "/image"});
+        this.setState({modalImage: imageuri});
         this._setModalVisible(true);
     };
 
