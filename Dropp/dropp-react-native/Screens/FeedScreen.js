@@ -40,8 +40,6 @@ constructor(props){
         var innerContainerTransparentStyleTop = this.state.transparent ? {backgroundColor: '#ffff', padding: 20, height: 325}: null;
         var innerContainerTransparentStyleBot = this.state.transparent ? {backgroundColor: '#ffff', padding: 20, height: 150}: null;
         var activeButtonStyle = { backgroundColor: '#ddd' };
-
-        var RNFetchBlob = require('react-native-fetch-blob').default;
         
         return (
             <View style={[styles.container]}>
@@ -54,7 +52,7 @@ constructor(props){
                     <View style={[styles.modalContainer, modalBackgroundStyle]}>
                         <View style={[styles.modalInnerContainerTop, innerContainerTransparentStyleTop]}>
                             <View style = {styles.photocontainer}>
-                                {/*this.state.modalImage && <Image source = {{uri: this.state.modalImage}} style ={styles.photo}/>*/}
+                                {this.state.modalImage && <Image source = {{uri: this.state.modalImage}} style ={styles.photo}/>}
                             </View>           
                         </View>
                         <View style={[styles.modalInnerContainerBottom, innerContainerTransparentStyleBot]}>
@@ -84,32 +82,40 @@ constructor(props){
 
     _renderItem = ({item}) => {
         const { params } = this.props.navigation.state;
-        if (item.d){
-        RNFetchBlob.fetch('GET', "https://dropps.me/dropps/" + item.d + "/image", {Authorization: params.token})
-        .then((response) => {
-        let base64Str = response.data;
-        var imageBase64 = 'data:'+mimetype_attachment+';base64,'+base64Str;
-        // Return base64 image
-        RESOLVE(imageBase64)
-     })}
-     return(
-    <TouchableHighlight noDefaultStyles={true} onPress={() => this._onPress(item)} underlayColor ={"lightsalmon"} activeOpacity = {10}>
-        <View style = {styles.row}>
-            <View style = {styles.textcontainer}>
-                <Text>{item.post.text}</Text>
-            </View>
-            <View style = {styles.photocontainer}>
-                {item.post.media === "true" && <Image source = {{uri: imageBase64 }} style ={styles.photo}/>}
-            </View>
-        </View>
-    </TouchableHighlight>
-    )};
+        console.log(item);
+        var imageuri = null;
+        if (item.post.media === "true"){
+                var feedRequest = new Request("https://dropps.me/dropps/" + item.d + "/image", {
+                    method: 'GET',
+                    headers: new Headers( {
+                        'Content-Type': 'application/x-www-form-urlencoded',
+                        'Authorization': params.token,
+                        'Platform': 'Android',
+                    }),
+                });
+                fetch(feedRequest)
+                .then((response) => {
+                    imageuri = response;
+                });
+        }
+        return(
+            <TouchableHighlight noDefaultStyles={true} onPress={() => this._onPressDropp(item, imageuri)} underlayColor ={"lightsalmon"} activeOpacity = {10}>
+                <View style = {styles.row}>
+                    <View style = {styles.textcontainer}>
+                        <Text>{item.post.text}</Text>
+                    </View>
+                    <View style = {styles.photocontainer}>
+                        {item.post.media === "true" && imageuri && <Image source = {{uri: imageuri }} style ={styles.photo}/>}
+                    </View>
+                </View>
+            </TouchableHighlight>
+        )};
     
-    _onPress = (item) => {
+    _onPressDropp = (item, imageuri) => {
         console.log(item.post.media);
         //set the modal data here with item
         this.setState({modalText: item.post.text});
-        this.setState({modalImage: "https://dropps.me/dropps/" + item.d + "/image"});
+        this.setState({modalImage: imageuri});
         this._setModalVisible(true);
     };
 
