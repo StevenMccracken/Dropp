@@ -187,7 +187,7 @@ export class MakeDroppScreen extends React.Component {
                     >
                     <View style = {[styles.modalContainer, modalBackgroundStyle]}>
                         <View style={[styles.innerContainer, innerContainerTransparentStyle]}>
-                            {this.state.errorMessage && <Text>{this.state.errorMessage}</Text> || <Text>Sending Message..</Text>}
+                            {this.state.errorMessage && <Text>{this.state.errorMessage}</Text> || <Text>Dropping your message..</Text>}
                         </View>
                     </View>
                 </Modal>
