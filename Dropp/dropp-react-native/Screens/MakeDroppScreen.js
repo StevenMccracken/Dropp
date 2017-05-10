@@ -14,7 +14,7 @@ import {
 } from 'react-native';
 import { Constants, ImagePicker, Location, Permissions } from 'expo';
 import * as HelperFunctions from '../HelperFunctions';
-
+import { NavigationActions } from 'react-navigation';
 
 export class MakeDroppScreen extends React.Component {
     constructor(props){
@@ -33,7 +33,7 @@ export class MakeDroppScreen extends React.Component {
         title: `Create a Dropp`,
         headerRight: <Button title="Send" onPress={navigation.state.params.sendDropp}/>
     });
-
+ 
     componentWillMount() {
         if (Platform.OS === 'android' && !Constants.isDevice) {
             this.setState({
@@ -41,8 +41,7 @@ export class MakeDroppScreen extends React.Component {
             });
         }
         this.props.navigation.setParams({ sendDropp: this._sendDropp });
-    }
-    
+    }   
     _pickImage = async () => {
         let result = await ImagePicker.launchImageLibraryAsync({
             allowsEditing: true,
@@ -66,7 +65,6 @@ export class MakeDroppScreen extends React.Component {
 
     _sendDropp = async () => {
         const { params } = this.props.navigation.state;
-
         this.setState({ sendingMessage: true });
 
         
@@ -101,43 +99,67 @@ export class MakeDroppScreen extends React.Component {
         //send an HTTP request to upload the text content
         fetch(request).then((response) => {
             response.json().then((responseObj) => {
-                if (!responseObj.ok) {
+                if (!responseObj.droppId) {
                     console.log(responseObj);
+                    this.setState({errorMessage: 'Sorry, we couldn\'t make a Dropp for you at the moment.'});
+                    setTimeout(() => {this.setState({ sendingMessage: false})}, 2000);
+                } else {
+                    console.log(responseObj);
+                    //upon success, get the droppID and send another POST request to the server if we have an image
+                    if (this.state.image) {
+                        const image = {
+                            uri: this.state.image,
+                            type: 'image/jpeg',
+                            name: 'image.jpg',
+                        };
+
+                        const imageBody = new FormData();
+                        imageBody.append('droppId', responseObj.droppId);
+                        imageBody.append('image', image);
+                        var request2 = new Request('https://dropps.me/dropps/' + responseObj.droppId + '/image', {
+                            method: 'POST',
+                            headers: new Headers( {
+                                'Authorization': params.token,
+                                'Content-type': 'multipart/form-data',
+                            }),
+                            body: imageBody,
+                        });
+
+                        fetch(request2).then((response) => {
+                            console.log(response);
+                            this.setState({errorMessage: null});
+                            setTimeout(() => {
+                                this.setState({ sendingMessage: false});
+                                //route back to main screen
+                                const resetAction = NavigationActions.reset({
+                                index: 0,
+                                actions: [
+                                    NavigationActions.init({ routeName: 'Home', params: { token: params.token, updateNeeded: true }})
+                                ]
+                                });
+                                this.props.navigation.dispatch(resetAction);
+                            }, 2000);
+                        }).catch((error) => {
+                            console.log(error);
+                            this.setState({errorMessage: 'Sorry, we couldn\'t send the picture bundled with your Dropp.'});
+                            setTimeout(() => {this.setState({ sendingMessage: false})}, 2000);
+                        });
+                    } else {
+                        setTimeout(() => {
+                            this.setState({ sendingMessage: false});
+                            //route back to main screen
+                            const resetAction = NavigationActions.reset({
+                            index: 0,
+                            actions: [
+                                NavigationActions.init({ routeName: 'Home', params: { token: params.token, updateNeeded: true }})
+                            ]
+                            });
+                            this.props.navigation.dispatch(resetAction);
+                        }, 2000);
+                    }
                 }
-                console.log(responseObj);
-                //upon success, get the droppID and send another POST request to the server if we have an image
-                if (this.state.image) {
-                    const image = {
-                        uri: this.state.image,
-                        type: 'image/jpeg',
-                        name: 'image.jpg',
-                    };
 
-                    const imageBody = new FormData();
-                    imageBody.append('droppId', responseObj.droppId);
-                    imageBody.append('image', image);
-                    var request2 = new Request('https://dropps.me/dropps/' + responseObj.droppId + '/image', {
-                        method: 'POST',
-                        headers: new Headers( {
-                            'Authorization': params.token,
-                            'Content-type': 'multipart/form-data',
-                        }),
-                        body: imageBody,
-                    });
-
-                    fetch(request2).then((response) => {
-                        console.log(response);
-                        response.json().then((responseObj) => {
-                            console.log(responseObj);
-                        })
-                    }).catch((error) => console.log(error));
-                }
-
-            });
-
-            //if no errors, set timeout to be 2 seconds, so modal doesn't close immediately.
-            setTimeout(() => {this.setState({ sendingMessage: false})}, 2000);
-            
+            });            
         });
         
     }
@@ -153,6 +175,21 @@ export class MakeDroppScreen extends React.Component {
 
         return (
             <View>
+                <Modal
+                    animationType={"fade"}
+                    transparent={true}
+                    visible={this.state.sendingMessage}
+                    onRequestClose={() => {
+                        //prevent users from cancelling the modal
+                        console.log("Not allowed to close modal.");
+                        }}
+                    >
+                    <View style = {[styles.container, modalBackgroundStyle]}>
+                        <View style={[styles.innerContainer, innerContainerTransparentStyle]}>
+                            {this.state.errorMessage && <Text>{this.state.errorMessage}</Text> || <Text>Sending Message..</Text>}
+                        </View>
+                    </View>
+                </Modal>
                 <Modal
                     animationType={"fade"}
                     transparent={true}
@@ -187,7 +224,7 @@ export class MakeDroppScreen extends React.Component {
                     {image ? <Image source={{ uri: image }} style={{ width: 200, height: 200 }} /> :
                             <Image source={require('../defaultPhoto.png')} style={{ width: 200, height: 200}} /> }
                     <Button title="Attach image" onPress={() => {this.setState({ uploadingPicture: true })}}/> 
-                </View>       
+                </View>
             </View>
         );
     }

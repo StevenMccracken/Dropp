@@ -16,21 +16,27 @@ import { Constants, Location, Permissions } from 'expo';
 import ActionButton from 'react-native-action-button';
 
 export class FeedScreen extends React.Component {
-constructor(props){
-    super(props);
-    this.state = {
-            text: '',
-            errorMessage: null,
-            sendingMessage: false,
-            dropps: [],
-            modalVisible: false,
-            transparent: true,
-            //modal data
-            modalText: null,
-            modalImage: null,
-    };
-    this._getDropps();
-}
+    constructor(props){
+        super(props);
+        this.state = {
+                text: '',
+                errorMessage: null,
+                sendingMessage: false,
+                dropps: [],
+                modalVisible: false,
+                transparent: true,
+                //modal data
+                modalText: null,
+                modalImage: null,
+        };
+        this._getDropps();
+    }
+    componentWillReceiveProps(nextProps) {
+        console.log(nextProps.navigation.state.params);
+        if (nextProps.navigation.state.params.updateNeeded === true) {
+            this._getDropps();
+        }
+    }
     
     render() {
         const { navigate } = this.props.navigation;
@@ -82,7 +88,6 @@ constructor(props){
 
     _renderItem = ({item}) => {
         const { params } = this.props.navigation.state;
-        console.log(item);
         var imageuri = null;
         if (item.post.media === "true"){
                 var feedRequest = new Request("https://dropps.me/dropps/" + item.d + "/image", {
@@ -102,7 +107,7 @@ constructor(props){
             <TouchableHighlight noDefaultStyles={true} onPress={() => this._onPressDropp(item, imageuri)} underlayColor ={"lightsalmon"} activeOpacity = {10}>
                 <View style = {styles.row}>
                     <View style = {styles.textcontainer}>
-                        <Text>{item.post.username}</Text>
+                        <Text style = {{fontWeight: 'bold'}}>{item.post.username}</Text>
                         <Text>{item.post.text}</Text>
                     </View>
                     <View style = {styles.photocontainer}>
@@ -128,7 +133,6 @@ constructor(props){
 
     _getDropps = async() => {
         const { params } = this.props.navigation.state;
-        console.log( params );
 
         let{status} = await Permissions.askAsync(Permissions.LOCATION);
         if(status !== 'granted'){
@@ -168,10 +172,12 @@ constructor(props){
         fetch(feedRequest).then((drp) => {
             drp.json().then((droppJSON) =>{
                 var dropList = droppJSON.dropps;
+                console.log(dropList);
                 for(var d in dropList) {
                     var post = dropList[d];
                     feedList.push({d,post});
                 }
+                feedList.reverse();
                 this.setState({dropps: feedList});
             });
         });

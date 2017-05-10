@@ -2947,6 +2947,10 @@ react-native-fetch-blob@^0.10.5:
   version "0.12.2"
   resolved "https://github.com/expo/react-native-maps/archive/v0.12.2-exp.1.tar.gz#1984bfe5a8a341dd3b44ad565cfcd1b25a5c2b03"
 
+react-native-message-bar@^1.6.0:
+  version "1.6.0"
+  resolved "https://registry.yarnpkg.com/react-native-message-bar/-/react-native-message-bar-1.6.0.tgz#79623e89655475216927090771b0238616b6f1c7"
+
 react-native-safe-module@^1.1.0:
   version "1.1.1"
   resolved "https://registry.yarnpkg.com/react-native-safe-module/-/react-native-safe-module-1.1.1.tgz#c3eb1d2030661676b075ba8d12c305a31b1d8fb4"
