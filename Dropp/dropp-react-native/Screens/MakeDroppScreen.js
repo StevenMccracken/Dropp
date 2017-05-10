@@ -11,6 +11,7 @@ import {
     Keyboard,
     StyleSheet,
     Platform,
+    TouchableHighlight,
 } from 'react-native';
 import { Constants, ImagePicker, Location, Permissions } from 'expo';
 import * as HelperFunctions from '../HelperFunctions';
@@ -152,19 +153,22 @@ export class MakeDroppScreen extends React.Component {
         let { image } = this.state;
 
         return (
-            <View>
+            <View style = {styles.container}>
                 <Modal
+                    style = {styles.modalContainer}
                     animationType={"fade"}
                     transparent={true}
                     visible={this.state.uploadingPicture}
+                    supportedOrientations = {["portrait"]} 
                     onRequestClose={() => {
                         this.setState({ uploadingPicture: false });
                         console.log("Cancelled image upload.");
                         }}
                     >
-                    <View style = {[styles.container, modalBackgroundStyle]}>
+                    <View style = {[styles.modalContainer, modalBackgroundStyle]}>
                         <View style={[styles.innerContainer, innerContainerTransparentStyle]}>
-                            <Button title="Camera" onPress={this._takePic}/> 
+                            <Button title="Camera" onPress={this._takePic}/>
+                            <View style={{marginTop: 10}}/>
                             <Button title="Library" onPress={this._pickImage}/> 
                         </View>
                     </View>
@@ -175,7 +179,7 @@ export class MakeDroppScreen extends React.Component {
                         borderBottomWidth: 1,
                         }}>
                         <TextInput
-                            style={{ height: 40, borderColor: 'gray', borderWidth: 1 }}
+                            style={{height: 100, borderColor: 'gray', borderWidth: 1, fontSize: 20, alignSelf: 'stretch', textAlignVertical: 'top'}}
                             onChangeText={(text) => this.setState({ text })}
                             value = {this.state.text}
                             multiline = {true}
@@ -183,10 +187,11 @@ export class MakeDroppScreen extends React.Component {
                             onSubmitEditing={Keyboard.dismiss}
                             keyboardType={'default'}
                         />
-                    </View>
-                    {image ? <Image source={{ uri: image }} style={{ width: 200, height: 200 }} /> :
-                            <Image source={require('../defaultPhoto.png')} style={{ width: 200, height: 200}} /> }
-                    <Button title="Attach image" onPress={() => {this.setState({ uploadingPicture: true })}}/> 
+                        </View>
+                    <TouchableHighlight onPress={() => {this.setState({ uploadingPicture: true })}}>
+                        {image ? <Image source={{ uri: image }} style={styles.imageContainer} /> :
+                            <Image source={require('../defaultPhoto.png')} style={styles.imageContainer} /> }
+                    </TouchableHighlight>
                 </View>       
             </View>
         );
@@ -195,12 +200,23 @@ export class MakeDroppScreen extends React.Component {
 
 var styles = StyleSheet.create( {
     container: {
+        alignItems: 'stretch',
         flex: 1,
-        justifyContent: 'center',
-        padding: 20,
     },
     innerContainer: {
         borderRadius: 10,
         alignItems: 'center',
+    },
+    imageContainer: {
+        marginTop: 15,
+        width: 300, 
+        height: 300, 
+        alignSelf: 'center',
+    },
+    modalContainer: {
+        flex: 1,
+        justifyContent: 'center',
+        height: 250,
+        padding: 25,
     },
 });
