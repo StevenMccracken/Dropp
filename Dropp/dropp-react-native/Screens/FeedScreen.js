@@ -129,7 +129,9 @@ export class FeedScreen extends React.Component {
         this.setState({modalVisible: visible});
     };
 
-    _onRefresh = () => {this._getDropps();}
+    _onRefresh = () => {
+        this._getDropps();
+    }
 
     _getDropps = async() => {
         const { params } = this.props.navigation.state;
