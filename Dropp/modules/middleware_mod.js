@@ -695,11 +695,21 @@ var getImage = function(_request, _response, _callback) {
 						// Create buffer object from array of bytes
 						var buffer = Buffer.concat(data);
 
-						response = {
-							media : REACT_NATIVE ? buffer.toString('base64') : buffer
-						};
+						if (REACT_NATIVE) {
+							encodeForReactNative(buffer, string => {
+								response = {
+									media : string
+								};
 
-						_callback(response);
+								_callback(response);
+							});
+						} else {
+							response = {
+								media : buffer
+							};
+
+							_callback(response);
+						}
 					});
 				}
 		}, fbGetDroppErr => {
@@ -730,6 +740,27 @@ module.exports = {
 	getDroppsByUser 		: getDroppsByUser,
 	getDroppsByLocation	: getDroppsByLocation
 };
+
+function encodeForReactNative(buffer, callback) {
+	// Encode buffer data to base-64 string
+	var base64String = buffer.toString('base64');
+
+	// First chunk of buffer data will have the encoding type
+	var filetype;
+	const ENCODED_FILETYPE = base64String.substring(0,14);
+
+	if (ENCODED_FILETYPE === '/9j/4AAQSkZJRg') {
+		filetype = 'jpeg';
+	} else if (ENCODED_FILETYPE === 'iVBORw0KGgoAAA') {
+		filetype = 'png';
+	} else {
+		filetype = 'unknown';
+		// FIXME: throw an error ?
+	}
+
+	const FULL_STRING = 'data:image/' + filetype + ';base64,' + base64String;
+	callback(FULL_STRING);
+}
 
 /**
  * isValidUsername - Validates a username
