@@ -115,7 +115,7 @@ class FeedTableViewController: UITableViewController, CLLocationManagerDelegate 
             var closeDropps: [Dropp] = []
             if response.statusCode == 200 {
                 // Get the dropps from the response json
-                let dropps = json["dropps"] as! [String:Any]
+                let dropps = json["dropps"] as! [String: Any]
                 
                 // Go through all of the nearby dropps
                 for (droppId, droppJson) in dropps {
@@ -125,7 +125,7 @@ class FeedTableViewController: UITableViewController, CLLocationManagerDelegate 
                                       location: content["location"] as! String,
                                       timestamp: content["timestamp"] as! Int,
                                       message: content["text"] as! String,
-                                      hasMedia: content["media"] as! Bool)
+                                      hasMedia: (content["media"] as! String) == "true")
                     
                     closeDropps.append(dropp)
                 }
@@ -198,11 +198,12 @@ class FeedTableViewController: UITableViewController, CLLocationManagerDelegate 
             cell = UITableViewCell(style: UITableViewCellStyle.subtitle, reuseIdentifier: cellIdentifier)
         }
         
-        
-        var iconImage = UIImage(named: "hello.png")
+        // Access Hello icon from Assets
+        var iconImage = UIImage(named: "Hello")
         if iconImage == nil {
             print("Icon image is nil")
         }
+        
         let sizeZ = CGSize(width: 50.0, height: 50.0)
         UIGraphicsBeginImageContextWithOptions(sizeZ, false, 0.0)
         iconImage?.draw(in: CGRect(origin: CGPoint(x: 0, y: 0), size: sizeZ))
@@ -216,8 +217,7 @@ class FeedTableViewController: UITableViewController, CLLocationManagerDelegate 
         
         // Add data to the cell
         let username = dropp.user
-        let message = dropp.message
-        _ = "\(username) " + (message.isEmpty ? "dropped a photo\n" : "said '\(message)'\n")
+        let message = dropp.message.isEmpty ? "Dropped a photo" : "\(dropp.message)"
         cell?.textLabel?.text = username
         cell?.textLabel?.font = UIFont.boldSystemFont(ofSize: 15.0)
         cell?.detailTextLabel?.text = message

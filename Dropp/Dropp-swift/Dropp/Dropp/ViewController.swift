@@ -220,7 +220,7 @@ class ViewController: UIViewController, UITextViewDelegate, UIImagePickerControl
                 // If the user attached an image to their post, try to upload the image
                 if imageExists {
                     // Send an HTTP request to upload the image
-                    self.uploadImageOnly(droppId: droppId, image: self.imageView.image!, compression: 1.0)
+                    self.uploadImageOnly(droppId: droppId, image: self.imageView.image!, compression: 0.7)
                 } else {
                     // Dropp was posted, so update the UI
                     sleep(1)
