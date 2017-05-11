@@ -70,7 +70,7 @@ export class CreateAccountScreen extends React.Component {
             email: this.state.email,
         };
 
-        var formData = ClientUtil.makeFormData(param);
+        var formData = HelperFunctions.makeFormData(param);
 
         var request = new Request('https://dropps.me/users', {
             method: 'POST',
@@ -81,6 +81,7 @@ export class CreateAccountScreen extends React.Component {
         });
         fetch(request).then((response) => {
             //convert to JSON
+            console.log("aaaaaaaaa");
             response.json().then((responseObj) => {
                 if (responseObj.error) { //error occurred when making an account.
                     Alert.alert(
