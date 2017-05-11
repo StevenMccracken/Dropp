@@ -4,6 +4,7 @@ storageAccountKey.json
 
 Dropp/node_modules/*
 npm-debug.log
+npm-debug.log.*
 
 # macOS
 .DS_Store

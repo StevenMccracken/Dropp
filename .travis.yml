@@ -1,0 +1,13 @@
+language: node_js
+node_js:
+- '6'
+before_script:
+- cd Dropp
+- npm install -g grunt-cli
+- npm install
+script: grunt test
+notifications:
+  slack: on_failure:always
+  slack: dropp-team:8Z3VlEFUvptOgxgl0OeeKGME
+  slack:
+    secure: DzYpGSQx+adHsRGnTu9PEM9OygnR/vncDJuhqc1roa84seqVjYVNewXT5x+Zbvz1a0YNQS3GrsfDDN0oGIVa+TNWUiFnYnIvlZ/m6+HyNZFSBFtHUtzpqXV0UaM4TD1uE+hUyQIdJ0Cj4bMuk8Z7JcEwAVJIsDY8wtFcD2W5H/ZhD0EgrT89nQyrbrXbB4yF6wRCRizVcrnS6KKd7risCiF0EhGTeMOzX4sJetUsCgmDbeyyxOH6zRmyZPH/fy0DgOebMECSXbJZ/zm2KlP+rTqrO4I4VpmOZ2tKmnq9teXe1cWw/dNPKRuxwofbonO2GYTZ6QeM8qgEfuDHyPZcQ//DbUn4hX/+LbCxTl5WitMJ6MxyzVO0GTt+NOC/IVSGjUPDMev0+/IVlEzqM7I+BCel5VlsYqyRCE9bX0AQmE58TxIvySdw7btQ/R6iy1BBkntH91RX05gHPc0oMhVmhYE4bATrl+IOwLIxDCtVcDqAX4B7IJcdBSoyqbsM4Hvr/yKNAkgcP3b5YDSRJjaX9ZyNiiU7tE0cJ/DB6igRizPnKwoU/toUlAwXJfBaVJB1jta3ExFqL6Sjy8QO7B4pQ0O8Sl5742RWGXUpGBoXbusftHuqrIbX+UiUZ/vMT28+FKaxbeveovMMRdCCybIAgePXZEC+kxb3dC6S3Q23A6I=
