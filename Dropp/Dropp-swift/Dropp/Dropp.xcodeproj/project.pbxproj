@@ -227,7 +227,7 @@
 				TargetAttributes = {
 					69A43EC41E5BEEA6003E6420 = {
 						CreatedOnToolsVersion = 8.2.1;
-						DevelopmentTeam = MREFAZBH67;
+						DevelopmentTeam = VW2FMQUB95;
 						LastSwiftMigration = 0830;
 						ProvisioningStyle = Automatic;
 					};
@@ -519,13 +519,13 @@
 				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CLANG_ENABLE_MODULES = YES;
-				DEVELOPMENT_TEAM = MREFAZBH67;
+				DEVELOPMENT_TEAM = VW2FMQUB95;
 				EMBED_ASSET_PACKS_IN_PRODUCT_BUNDLE = YES;
 				INFOPLIST_FILE = Dropp/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
-				PRODUCT_BUNDLE_IDENTIFIER = com.groub.Droppz;
+				PRODUCT_BUNDLE_IDENTIFIER = com.groub.Dropp;
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				SWIFT_OBJC_BRIDGING_HEADER = "/Users/pongsakorncherngchaosil/Documents/CSULB/csulb-Dropp/Dropp/Dropp/Dropp-swift/Dropp/Dropp/mybridge.h";
+				SWIFT_OBJC_BRIDGING_HEADER = "/Users/stevenmccracken/GitHub/School/Dropp/Dropp/Dropp-swift/Dropp/Dropp/mybridge.h";
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 				SWIFT_VERSION = 3.0;
 			};
@@ -538,13 +538,13 @@
 				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CLANG_ENABLE_MODULES = YES;
-				DEVELOPMENT_TEAM = MREFAZBH67;
+				DEVELOPMENT_TEAM = VW2FMQUB95;
 				EMBED_ASSET_PACKS_IN_PRODUCT_BUNDLE = YES;
 				INFOPLIST_FILE = Dropp/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
-				PRODUCT_BUNDLE_IDENTIFIER = com.groub.Droppz;
+				PRODUCT_BUNDLE_IDENTIFIER = com.groub.Dropp;
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				SWIFT_OBJC_BRIDGING_HEADER = "/Users/pongsakorncherngchaosil/Documents/CSULB/csulb-Dropp/Dropp/Dropp/Dropp-swift/Dropp/Dropp/mybridge.h";
+				SWIFT_OBJC_BRIDGING_HEADER = "/Users/stevenmccracken/GitHub/School/Dropp/Dropp/Dropp-swift/Dropp/Dropp/mybridge.h";
 				SWIFT_VERSION = 3.0;
 			};
 			name = Release;
