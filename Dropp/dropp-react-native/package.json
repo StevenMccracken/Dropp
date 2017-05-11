@@ -1,26 +1,20 @@
 {
   "name": "dropp-react-native",
-  "version": "0.1.0",
+  "version": "0.0.0",
+  "description": "Hello Expo!",
+  "author": null,
   "private": true,
-  "devDependencies": {
-    "react-native-scripts": "0.0.27",
-    "jest-expo": "^0.3.0",
-    "react-test-renderer": "~15.4.1"
-  },
-  "main": "./node_modules/react-native-scripts/build/bin/crna-entry.js",
-  "scripts": {
-    "start": "react-native-scripts start",
-    "eject": "react-native-scripts eject",
-    "android": "react-native-scripts android",
-    "ios": "react-native-scripts ios",
-    "test": "node node_modules/jest/bin/jest.js --watch"
-  },
-  "jest": {
-    "preset": "jest-expo"
-  },
+  "main": "main.js",
   "dependencies": {
-    "expo": "^15.1.0",
-    "react": "~15.4.0",
-    "react-native": "0.42.3"
+    "expo": "16.0.0",
+    "react": "16.0.0-alpha.6",
+    "react-native": "https://github.com/expo/react-native/archive/sdk-16.0.0.tar.gz",
+    "react-native-action-button": "^2.6.9",
+    "react-native-fetch-blob": "^0.10.5",
+    "react-navigation": "1.0.0-beta.8"
+  },
+  "devDependencies": {
+    "babel-eslint": "^7.2.3",
+    "eslint-plugin-react": "^7.0.0"
   }
 }

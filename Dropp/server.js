@@ -3,25 +3,19 @@
  */
 
 const express     = require('express');
-const app         = express();
+var app           = express();
 const router 	    = require('./modules/router_mod.js')(express.Router());
 const bodyParser  = require('body-parser');
 var port      	  = 8080;
 
 var exports = module.exports = {};
 
-// For purpose of checking travis, need to be remove later
+// For purpose of checking travis. Needs to be removed
 if (process.env.TEST) {
   port = 3000;
 }
 
-// Set properties of the express server
-app.use(bodyParser.json());
-app.use(bodyParser.urlencoded({
-  parameterLimit: 100000,
-  limit: '5mb',
-  extended: true,
-}));
+app.use(bodyParser.urlencoded({ parameterLimit: 100000000, limit: '10000kb', extended: true }));
 
 // Set the base route path
 app.use('/', router);
