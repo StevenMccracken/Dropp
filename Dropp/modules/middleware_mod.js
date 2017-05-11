@@ -294,7 +294,7 @@ var createDropp = function(_request, _response, _callback) {
 		var invalidParam = null;
 		if (!isValidLocation(_request.body.location)) {
 			invalidParam = 'location';
-		} else if (!isValidInteger(_request.body.timestamp)) {
+		} else if (!isValidInteger(_request.body.timestamp) || _request.body.timestamp > (Date.now() / 1000)) {
 			invalidParam = 'timestamp';
 		} else if (_request.body.text == null) {
 			/**
