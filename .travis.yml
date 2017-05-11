@@ -13,7 +13,4 @@ script:
  grunt test # run karma and jamine testing
 
 notifications:
- email: false
- slack:
-    on_success: always
-    dropp-team:8Z3VlEFUvptOgxgl0OeeKGME
+    slack: dropp-team:8Z3VlEFUvptOgxgl0OeeKGME
