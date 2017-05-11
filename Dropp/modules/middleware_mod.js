@@ -330,7 +330,7 @@ var createDropp = function(_request, _response, _callback) {
 			timestamp	: parseInt(_request.body.timestamp),
 			username 	: user.username,
 			text 			: _request.body.text.trim(),
-			media 		: _request.body.media
+			media 		: _request.body.media === 'true'
 		};
 
 		// Add dropp to database
