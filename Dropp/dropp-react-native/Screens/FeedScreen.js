@@ -63,9 +63,9 @@ export class FeedScreen extends React.Component {
                     onRequestClose={() => this._setModalVisible(false)}>
                     <View style={[styles.modalContainer, modalBackgroundStyle]}>
                         <View style={[styles.modalInnerContainerTop, innerContainerTransparentStyleTop]}>
-                            <View style = {styles.photocontainer}>
-                                {this.state.modalImage && <Image source = {{uri: this.state.modalImage}} style ={styles.photo}/>}
-                            </View>           
+                            {this.state.modalImage && <Image source = {{uri: this.state.modalImage}}
+                                style = {{width: 400, height: 400,}} 
+                                resizeMode = {Image.resizeMode.contain}/>}
                         </View>
                         <View style={[styles.modalInnerContainerBottom, innerContainerTransparentStyleBot]}>
                             <Text fontSize = '12'>{this.state.modalText}</Text>
@@ -103,14 +103,15 @@ export class FeedScreen extends React.Component {
                         <Text>{item.post.text}</Text>
                     </View>
                     <View style = {styles.photocontainer}>
-                        {item.post.media === "true" && this.state.droppIDToDataURI[item.d] && <Image source = {{uri: this.state.droppIDToDataURI[item.d] }} style ={styles.photo}/>}
+                        {item.post.media && <Image source = {{uri: this.state.droppIDToDataURI[item.d] }} 
+                            style = {styles.photo} 
+                            resizeMode = {Image.resizeMode.contain}/>}
                     </View>
                 </View>
             </TouchableHighlight>
         )};
     
     _onPressDropp = (item, imageuri) => {
-        console.log(imageuri);
         //set the modal data here with item
         this.setState({modalText: item.post.text});
         this.setState({modalImage: imageuri});
@@ -142,7 +143,7 @@ export class FeedScreen extends React.Component {
 
         var param = {
             location: curLocation,
-            maxDistance: 1000,
+            maxDistance: 100,
         };
 
         var formData = [];
@@ -172,8 +173,9 @@ export class FeedScreen extends React.Component {
                 }
                 feedList.reverse();
                 this.setState({dropps: feedList});
-                for(var i = 0; i < feedList.length; i++){
-                    var dropp = feedList[i];
+                for(let i = 0; i < feedList.length; i++){
+                    let dropp = feedList[i];
+                    console.log(dropp.d);
                     if (dropp.post.media) {
                         console.log("https://dropps.me/dropps/" + dropp.d + "/image");
                         var feedRequest = new Request("https://dropps.me/dropps/" + dropp.d + "/image", {
@@ -187,8 +189,7 @@ export class FeedScreen extends React.Component {
                         fetch(feedRequest)
                         .then((response) => {
                             var newMapping = this.state.droppIDToDataURI;
-                            //console.log(dropp.d);
-                            newMapping[dropp.d] = response;
+                            newMapping[dropp.d] = response._bodyInit;
                             this.setState({droppIDToDataURI: newMapping});
                         }).catch((error) => {
                             console.log(error);
@@ -209,26 +210,26 @@ const styles = StyleSheet.create({
   row: {
     flex: 1,
     flexDirection: 'row',
+    justifyContent: 'space-between',
     flexWrap: 'wrap',
     alignItems: 'center',
     borderBottomWidth: 0.5,
     padding: 5,
-    borderBottomColor: '#000000'
+    borderBottomColor: '#cc2444'
   },
   textcontainer: {
-      flex: 2,
       marginLeft: 30,
   },
   photocontainer:{
-      flex: 1,
-      //justifyContent: 'center',
-      alignItems:'flex-end',
-      width: 60,
-      height: 60,
+    margin: 5,
+    width: 60,
+    height: 60,
+    alignItems: 'flex-end',
+    backgroundColor: '#555555',
   },
   photo: {
-      width: 120,
-      height: 120,
+    width: 60,
+    height: 60,
   },
   modalButton: {
     marginTop: 10,
