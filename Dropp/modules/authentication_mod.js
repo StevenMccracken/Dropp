@@ -1,73 +1,87 @@
-/* Handle Authentication */
+/**
+ * authentication_mod - User authentication @module
+ */
 
-const Log 		= require('./log_mod');
-// const FIREBASE 	= require('./firebase_mod');
-const BCRYPT	= require('bcrypt-nodejs');
-const ERROR 	= require("./error_mod");
 const JWT 		= require('jsonwebtoken');
-const config    = require(process.cwd() + '/config/secret.js'); 
-/* Handle storing of token and verification */
-const PASSPORT			= require('passport');
-require('../config/passport')(PASSPORT); // Library handle token
+const BCRYPT	= require('bcrypt-nodejs');
+const Log 		= require('./log_mod');
+const ERROR 	= require('./error_mod');
+const config  = require(process.cwd() + '/config/secret.js');
 
+// Handles token storage and verification
+const PASSPORT = require('passport');
+require('../config/passport')(PASSPORT);
 
-var auth = function(_request, _response, _hashedPassword, _callback, _errorCallback){
+/**
+ * auth - Authenticates a username and password and generates a JSON web token
+ * @param {Object} _request the HTTP request
+ * @param {Object} _response the HTTP response
+ * @param {string} _hashedPassword a hashed password
+ * @param {callback} _callback the callback to handle success result
+ * @param {type} _errorCallback the callback to handle error result
+ */
+var auth = function(_request, _response, _hashedPassword, _callback, _errorCallback) {
+	const SOURCE = 'auth()';
+	var response, serverLog;
 
-	var response = null, serverLog = null;
-	/* Validate Credentials */
+	log(SOURCE, _request);
 
 	/**
 	 * Username and password exist in the database, so
 	 * compare the password argument to the database record
 	 */
-
-	 BCRYPT.compare(_request.body.password, _hashedPassword, (bcryptCompareError, passwordsMatch)=> {
-	 	log("BCRYPT validating...", _request);
+	BCRYPT.compare(_request.body.password, _hashedPassword, (bcryptCompareError, passwordsMatch) => {
+	 	log(SOURCE + ' - BCRYPT comparing', _request);
 	 	if (bcryptCompareError != null) {
-	 		switch(bcryptCompareError) {
-	 			case 'Not a valid BCrypt hash.': 
+	 		switch (bcryptCompareError) {
+	 			case 'Not a valid BCrypt hash.':
 	 				serverLog = 'Password for ' + _request.body.username + ' is not correctly hashed in the database';
 	 				break;
 	 			default:
 	 				serverLog = bcryptCompareError;
 	 		}
+
 	 		log(serverLog, _request);
-	 		response = ERROR.error("Validate Credentials", _request, _response, ERROR.CODE.API_ERROR, serverLog);
+	 		response = ERROR.error(SOURCE, _request, _response, ERROR.CODE.API_ERROR, serverLog);
 	 		_errorCallback(response);
 	 	} else if (!passwordsMatch) {
 	 		// The comparison result is false so the passwords do not match
 	 		serverLog = _request.body.password + ' does not match ' + _request.body.username + '\'s password';
-	 		response = ERROR.error("BCRYPT, password does not match", _request, _response, ERROR.CODE.LOGIN_ERROR, serverLog);
 	 		log(serverLog, _request);
+
+			response = ERROR.error(SOURCE, _request, _response, ERROR.CODE.LOGIN_ERROR, serverLog);
 	 		_errorCallback(response);
 	 	} else {
-	 		serverLog = 'Valid login Credentials';
+	 		serverLog = 'Valid login credentials';
 	 		response = {
 	 			success : {
-	 				message : 'Valid login Credentials'
+	 				message : serverLog
 	 			}
 	 		};
 
 	 		log(serverLog, _request);
-
 	 		_callback();
 	 	}
+	});
+};
 
+/**
+ * hash - Salts and hashes a password
+ * @param {string} _password the password to hash
+ * @param {callback} _callback the callback to handle success result
+ * @param {type} _errorCallback the callback to handle error result
+ */
+var hash = function(_password, _callback, _errorCallback) {
+	const SOURCE = 'hash()';
+	var response;
 
-	 });
+	log(SOURCE);
 
-}
-
-
-var salt = function( _password, _callback, _errorCallback){
-
-	var response = null;
 	// Generate salt to hash the password, use 5 rounds of salting
 	BCRYPT.genSalt(5, (bcryptGenSaltError, salt) => {
-		if(bcryptGenSaltError != null) {
+		if (bcryptGenSaltError != null) {
 			_errorCallback(bcryptGenSaltError);
 		} else {
-
 			BCRYPT.hash(_password, salt, null, (bcryptHashError, hashedPassword) => {
 				if (bcryptHashError != null) {
 					_errorCallback(bcryptHashError);
@@ -76,70 +90,75 @@ var salt = function( _password, _callback, _errorCallback){
 				}
 			});
 		}
-	})
+	});
 };
 
-var verifyToken = function(_request, _response, _callback, _errorCallback) {
 
-	var source = "Verify Web Token";
-	var response = null, serverLog = null;
+/**
+ * verifyToken - Validates and verifies a JSON web token
+ * @param {Object} _request the HTTP request
+ * @param {Object} _response the HTTP response
+ * @param {callback} _callback the callback to handle success result
+ * @param {callback} _errorCallback the callback to handle error result
+ */
+var verifyToken = function(_request, _response, _callback, _errorCallback) {
+	const SOURCE = 'verifyToken()';
+	var response, serverLog;
+
 	// Verify the client's token
 	PASSPORT.authenticate('jwt', { session: false }, function(err, user, info) {
 		if (err) {
 			serverLog = err;
 			log(err, _request);
-			// _callback(serverLog);
-		} else if ( info != undefined) {
+		} else if (info != undefined) {
 			serverLog = determineJwtError(info.message);
-			// _callback(serverLog);
 		} else if (!user) {
 			serverLog = 'User for this token cannot be found';
-			// _callback(serverLog);
-		} 
+		}
 
 		if (serverLog != null) {
-			console.log(serverLog);
-			// There is error
-			response = ERROR.error(source, _request, _response, ERROR.CODE.AUTHENTICATION_ERROR, serverLog);
+			response = ERROR.error(SOURCE, _request, _response, ERROR.CODE.AUTHENTICATION_ERROR, serverLog);
+
+			// Apply passport authenticate error message to response error message
+			response.error.message = serverLog;
 			_errorCallback(response);
 		} else {
-
-			// Check request paramters
-			// if (!isValidUsername(_request.params.username)) {
-			// 	serverLog = 'Not valid username';
-			// 	log(serverLog, _request);
-			// 	response = ERROR.error(source, _request, _response, ERROR.CODE.INVALID_REQUEST_ERROR, serverLog);
-			// 	_errorCallback(response);
-			// } else {
-
-				// Verified
-				_callback(user);
-
-			// }
+			// Token was valid, so return user info
+			_callback(user);
 		}
 	})(_request, _response);
-}
-
-module.exports = {
-	auth 		: auth,
-	salt 		: salt,
-	genToken 	: generateToken,
-	verifyToken : verifyToken
 };
 
 
-
-function log(_message, _request) {
-	Log.log("Authentication Module", _message, _request);
-}
-
+/**
+ * generateToken - Generates a JSON web token
+ * @param {string} _username username of client
+ * @param {Object} _userData JSON containing extra user information
+ * @returns {string} a JSON web token
+ */
 function generateToken(_username, _userData) {
 	const user = {
 		username : _username,
 		details: _userData
 	}
 
-	return JWT.sign(user, config.secret, { expiresIn: '30d'});
+	return JWT.sign(user, config.secret, { expiresIn: '30d' });
+}
+
+module.exports = {
+	auth 				: auth,
+	hash 				: hash,
+	verifyToken	: verifyToken,
+	genToken 		: generateToken,
+};
+
+/**
+ * log - Logs a message to the server console
+ * @param {string} _message the log message
+ * @param {Object} _request the HTTP request
+ */
+function log(_message, _request) {
+	Log.log('Authentication Module', _message, _request);
 }
 
 /**
