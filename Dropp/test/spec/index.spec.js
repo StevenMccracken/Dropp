@@ -1,12 +1,13 @@
 
 var request = require("request");
 var server = require("../../server.js");
-var base_url = "http://localhost/"
+var base_url = "http://localhost:8080";
 // port 80 require sudo accesss, in order for the test to be done on travis, we have to user other port
 // Server will check for TEST env variable and adjust the port according to environment
 
 if(process.env.TEST){
-	base_url = "http://localhost:8080/"
+	// FIXME: Update base_url to different port??
+	base_url = "http://localhost:8080";
 }
 
 describe("Server", function(){
@@ -21,7 +22,7 @@ describe("Server", function(){
 		it("returns Hello World", function(done){
 			request.get(base_url, function(error, response, body){
 				expect(body).toBe('{"message":"This is the REST API for Dropp"}');
-				
+
 				done();
 			})
 		})
@@ -33,11 +34,10 @@ describe("Server", function(){
         var params = null;
         beforeEach(function() {
             params = {
-                url: base_url + "authenticate",
+                url: base_url + "/authenticate",
                 form: {
-                    username: 'rich',
-                    password: '1234',
-                    email: 'test@gmail.com',
+                    username: 'test',
+                    password: 'test',
                 }
             };
         });
@@ -51,7 +51,7 @@ describe("Server", function(){
                 log("Get Token", JSON.stringify(data));
                 // expect(resp.statusCode).toEqual(200);
                 expect(data.success.token).toBeDefined();
-                
+
                 done();
             });
         });
@@ -61,22 +61,22 @@ describe("Server", function(){
         	var dropp_key = null;
         	beforeEach(function(){
         		getUser = {
-        			url: base_url + "users/rich",
+        			url: base_url + "/users/test",
         			headers : {
         				Authorization: token
         			}
         		};
 
         		postDropp = {
-        			url: base_url + "dropps",
+        			url: base_url + "/dropps",
         			headers : {
         				Authorization: token
         			},
         			form: {
 	                    location : '0,0',
-	                    timestamp: Math.floor(Date.now()),
+	                    timestamp: Math.floor(Date.now() / 1000),
 	                    text: "sample text",
-	                    media: false
+	                    media: 'false'
 	                }
         		}
         	});
@@ -94,7 +94,7 @@ describe("Server", function(){
         		request.post(postDropp, function(error, response, body) {
         			log("Posting dropp" , body);
         			var data = JSON.parse(body)
-        			dropp_key = data.droppId;	
+        			dropp_key = data.droppId;
         			expect(body).toBeDefined();
         			done();
         		})
@@ -105,28 +105,28 @@ describe("Server", function(){
 
         		beforeEach(function(){
         			getDroppById = {
-        				url: base_url + "dropps/"+dropp_key,
+        				url: base_url + "/dropps/"+dropp_key,
 	        			headers : {
 	        				Authorization: token
 	        			}
         			};
 
         			getAllDropp = {
-        				url : base_url + "dropps/",
+        				url : base_url + "/dropps/",
         				headers : {
         					Authorization : token
         				}
         			};
 
                     getDroppByUser = {
-                        url: base_url + 'users/rich/dropps',
+                        url: base_url + '/users/test/dropps',
                         headers : {
                             Authorization: token
                         }
                     };
 
                     getDroppByLocation = {
-                        url: base_url + "location/dropps",
+                        url: base_url + "/location/dropps",
                         headers : {
                             Authorization: token
                         },
@@ -148,7 +148,7 @@ describe("Server", function(){
 
         		it("Get all dropps", function(done) {
         			request.get(getAllDropp, function(error, response, body) {
-        				
+
                         var data = JSON.parse(body);
                         log("Get all dropp", Object.keys(data).length);
 
