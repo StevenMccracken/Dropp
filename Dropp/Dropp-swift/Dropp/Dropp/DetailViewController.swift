@@ -56,6 +56,10 @@ class DetailViewController: UIViewController {
             self.textView.text = self.dropp.message
         }
         
+        if !dropp.hasMedia {
+            self.textView.font = UIFont(name: (self.textView.font?.fontName)!, size: (self.textView.font?.pointSize)!+30)!
+        }
+        
         // If there is an image in the database for this dropp, fetch it
         if dropp.hasMedia && self.imageView.image == nil {
             self.loadingView.prepareForAnimation(withGIFNamed: self.viewModule.loadingIcon)
