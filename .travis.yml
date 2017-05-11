@@ -16,3 +16,4 @@ notifications:
  email: false
  slack:
     on_success: always
+    dropp-team:8Z3VlEFUvptOgxgl0OeeKGME
