@@ -313,35 +313,35 @@ var createDropp = function(_request, _response, _callback) {
 
 			response = ERROR.error(SOURCE, _request, _response, ERROR.CODE.INVALID_REQUEST_ERROR, serverLog);
 			_callback(response);
+		} else {
+			// Parameters are valid. Make sure dropp content is not empty
+			if (_request.body.media === 'false' && isEmptyTextPost(_request.body.text)) {
+				serverLog = 'No dropp content';
+				log(serverLog, _request);
+
+				response = ERROR.error(SOURCE, _request, _response, ERROR.CODE.INVALID_REQUEST_ERROR, serverLog);
+				_callback(response);
+			} else {
+				// All parameters and content are valid, so build dropp JSON
+				var dropp = {
+					location 	: _request.body.location.replace(/\s/g, ''),
+					timestamp	: parseInt(_request.body.timestamp),
+					username 	: user.username,
+					text 			: _request.body.text.trim(),
+					media 		: _request.body.media
+				};
+
+				// Add dropp to database
+				FIREBASE.POST('/dropps', dropp, 'push', key => {
+					var droppKey = key.toString().split('/').pop();
+					response = { droppId: droppKey };
+					_callback(response);
+				}, err => {
+					response = ERROR.error(SOURCE, _request, _response, ERROR.CODE.API_ERROR, err);
+					_callback(response);
+				});
+			}
 		}
-
-		// Make sure dropp content is not empty
-		if (_request.body.media === 'false' && isEmptyTextPost(_request.body.text)) {
-			serverLog = 'No dropp content';
-			log(serverLog, _request);
-
-			response = ERROR.error(SOURCE, _request, _response, ERROR.CODE.INVALID_REQUEST_ERROR, serverLog);
-			_callback(response);
-		}
-
-		// All parameters are valid, so build dropp JSON
-		var dropp = {
-			location 	: _request.body.location.replace(/\s/g, ''),
-			timestamp	: parseInt(_request.body.timestamp),
-			username 	: user.username,
-			text 			: _request.body.text.trim(),
-			media 		: _request.body.media === 'true'
-		};
-
-		// Add dropp to database
-		FIREBASE.POST('/dropps', dropp, 'push', key => {
-			var droppKey = key.toString().split('/').pop();
-			response = { droppId: droppKey };
-			_callback(response);
-		}, err => {
-			response = ERROR.error(SOURCE, _request, _response, ERROR.CODE.API_ERROR, err);
-			_callback(response);
-		});
 	}, authErr => {
 		_callback(authErr);
 	});
@@ -861,7 +861,7 @@ function isValidPositiveFloat(number) {
  */
 function isEmptyTextPost(text) {
 	// Evaluates to true if text is not null and has at least one character
-	return text == null || text.trim().length == 0;
+	return text == null || text.trim().length === 0;
 }
 
 /**
