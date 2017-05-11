@@ -7,7 +7,7 @@ var base_url = "http://localhost:8080";
 
 if(process.env.TEST){
 	// FIXME: Update base_url to different port??
-	base_url = "http://localhost:8080";
+	base_url = "http://localhost:3000";
 }
 
 describe("Server", function(){
