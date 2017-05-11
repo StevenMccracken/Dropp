@@ -84,7 +84,6 @@ class FeedTableViewController: UITableViewController, CLLocationManagerDelegate 
         if self.dropps.count > 0 {
             let numOfUsersToDelete = self.dropps.count - 1
             for i in 0...numOfUsersToDelete {
-                print(i)
                 if self.dropps.count > 0 {
                     self.dropps.remove(at: 0)
                     let indexPath = IndexPath(row: 0, section: 0)
