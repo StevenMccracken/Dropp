@@ -12,10 +12,28 @@ import UIKit
 class AppDelegate: UIResponder, UIApplicationDelegate {
 
     var window: UIWindow?
-
+    let http = HTTPModule()
 
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplicationLaunchOptionsKey: Any]?) -> Bool {
+        
         // Override point for customization after application launch.
+        
+        // Get a fresh token from the server
+        var requestedToken = false
+        
+        self.http.getNewToken() { token in
+            if token.isEmpty {
+                print("Didn't get a token on startup")
+            } else {
+                print("Got a token on startup")
+                UserDefaults.standard.setValue(token, forKey: "jwt")
+            }
+            
+            requestedToken = true
+        }
+        
+        // Wait until the response is done
+        while !requestedToken {}
         return true
     }
 

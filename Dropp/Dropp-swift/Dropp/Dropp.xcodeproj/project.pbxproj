@@ -7,14 +7,23 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		69789C581E8A055500FA0605 /* FeedViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 69789C571E8A055500FA0605 /* FeedViewController.swift */; };
+		161D6FA51EB974A0008A63FB /* DetailViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 161D6FA41EB974A0008A63FB /* DetailViewController.swift */; };
+		1631B0001E96D5BE00820B09 /* FeedTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1631AFFF1E96D5BE00820B09 /* FeedTableViewController.swift */; };
+		16AF6C0B1E9B30270022C051 /* Dropp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 16AF6C0A1E9B30270022C051 /* Dropp.swift */; };
+		16AF6C0D1E9B35B00022C051 /* DroppStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = 16AF6C0C1E9B35B00022C051 /* DroppStore.swift */; };
+		16CA209D1EC1820200EDA7CC /* SegmentedProgressBar.swift in Sources */ = {isa = PBXBuildFile; fileRef = 16CA209C1EC1820200EDA7CC /* SegmentedProgressBar.swift */; };
+		16CA20A11EC19E7600EDA7CC /* UITableViewCell+FlatUI.m in Sources */ = {isa = PBXBuildFile; fileRef = 16CA20A01EC19E7600EDA7CC /* UITableViewCell+FlatUI.m */; };
+		16CA20A61EC1A28000EDA7CC /* FUICellBackgroundView.m in Sources */ = {isa = PBXBuildFile; fileRef = 16CA20A51EC1A28000EDA7CC /* FUICellBackgroundView.m */; };
+		2986B0CE30CF1A30A6B10072 /* Pods_DroppTests.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A89741AD814E44A9F9D24FC3 /* Pods_DroppTests.framework */; };
+		697F24D71EC1F52B005584E3 /* ViewModule.swift in Sources */ = {isa = PBXBuildFile; fileRef = 697F24D61EC1F52B005584E3 /* ViewModule.swift */; };
+		698C32F41EBDC257008CB718 /* Loading-Fast-Icon-200x200.gif in Resources */ = {isa = PBXBuildFile; fileRef = 698C32F31EBDC257008CB718 /* Loading-Fast-Icon-200x200.gif */; };
 		69A43EC91E5BEEA6003E6420 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 69A43EC81E5BEEA6003E6420 /* AppDelegate.swift */; };
 		69A43ECB1E5BEEA6003E6420 /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 69A43ECA1E5BEEA6003E6420 /* ViewController.swift */; };
 		69A43ECE1E5BEEA6003E6420 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 69A43ECC1E5BEEA6003E6420 /* Main.storyboard */; };
 		69A43ED01E5BEEA6003E6420 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 69A43ECF1E5BEEA6003E6420 /* Assets.xcassets */; };
-		69A43ED31E5BEEA6003E6420 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 69A43ED11E5BEEA6003E6420 /* LaunchScreen.storyboard */; };
 		69A43EDE1E5BEEA6003E6420 /* DroppTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 69A43EDD1E5BEEA6003E6420 /* DroppTests.swift */; };
-		69A43EE91E5BF19C003E6420 /* AppIcon.appiconset in Resources */ = {isa = PBXBuildFile; fileRef = 69A43EE81E5BF19C003E6420 /* AppIcon.appiconset */; };
+		69EFB0D11EBBBF3C007E4F90 /* HTTPModule.swift in Sources */ = {isa = PBXBuildFile; fileRef = 69EFB0D01EBBBF3C007E4F90 /* HTTPModule.swift */; };
+		F90F6C907D58F83D394F45C3 /* Pods_Dropp.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 410E488F5CFBA78B82AAED78 /* Pods_Dropp.framework */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -28,18 +37,35 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
-		69789C571E8A055500FA0605 /* FeedViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = FeedViewController.swift; sourceTree = "<group>"; };
+		161D6FA41EB974A0008A63FB /* DetailViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DetailViewController.swift; sourceTree = "<group>"; };
+		1631AFFF1E96D5BE00820B09 /* FeedTableViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = FeedTableViewController.swift; path = ../FeedTableViewController.swift; sourceTree = "<group>"; };
+		16AF6C0A1E9B30270022C051 /* Dropp.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = Dropp.swift; path = ../Dropp.swift; sourceTree = "<group>"; };
+		16AF6C0C1E9B35B00022C051 /* DroppStore.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DroppStore.swift; sourceTree = "<group>"; };
+		16CA209C1EC1820200EDA7CC /* SegmentedProgressBar.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SegmentedProgressBar.swift; sourceTree = "<group>"; };
+		16CA209E1EC19E7600EDA7CC /* Dropp-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "Dropp-Bridging-Header.h"; sourceTree = "<group>"; };
+		16CA209F1EC19E7600EDA7CC /* UITableViewCell+FlatUI.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UITableViewCell+FlatUI.h"; sourceTree = "<group>"; };
+		16CA20A01EC19E7600EDA7CC /* UITableViewCell+FlatUI.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "UITableViewCell+FlatUI.m"; sourceTree = "<group>"; };
+		16CA20A21EC19FBF00EDA7CC /* mybridge.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = mybridge.h; sourceTree = "<group>"; };
+		16CA20A41EC1A28000EDA7CC /* FUICellBackgroundView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FUICellBackgroundView.h; sourceTree = "<group>"; };
+		16CA20A51EC1A28000EDA7CC /* FUICellBackgroundView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = FUICellBackgroundView.m; sourceTree = "<group>"; };
+		410E488F5CFBA78B82AAED78 /* Pods_Dropp.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_Dropp.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		67BE7C9F4619CCF963CC9BF7 /* Pods-Dropp.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Dropp.debug.xcconfig"; path = "Pods/Target Support Files/Pods-Dropp/Pods-Dropp.debug.xcconfig"; sourceTree = "<group>"; };
+		697F24D61EC1F52B005584E3 /* ViewModule.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ViewModule.swift; sourceTree = "<group>"; };
+		698C32F31EBDC257008CB718 /* Loading-Fast-Icon-200x200.gif */ = {isa = PBXFileReference; lastKnownFileType = image.gif; path = "Loading-Fast-Icon-200x200.gif"; sourceTree = "<group>"; };
 		69A43EC51E5BEEA6003E6420 /* Dropp.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Dropp.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		69A43EC81E5BEEA6003E6420 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		69A43ECA1E5BEEA6003E6420 /* ViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewController.swift; sourceTree = "<group>"; };
 		69A43ECD1E5BEEA6003E6420 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
 		69A43ECF1E5BEEA6003E6420 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
-		69A43ED21E5BEEA6003E6420 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		69A43ED41E5BEEA6003E6420 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		69A43ED91E5BEEA6003E6420 /* DroppTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = DroppTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		69A43EDD1E5BEEA6003E6420 /* DroppTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DroppTests.swift; sourceTree = "<group>"; };
 		69A43EDF1E5BEEA6003E6420 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
-		69A43EE81E5BF19C003E6420 /* AppIcon.appiconset */ = {isa = PBXFileReference; lastKnownFileType = folder; name = AppIcon.appiconset; path = ../../Icons/AppIcon.appiconset; sourceTree = "<group>"; };
+		69EFB0D01EBBBF3C007E4F90 /* HTTPModule.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = HTTPModule.swift; sourceTree = "<group>"; };
+		82C32FA3983AA44EA1F10D1D /* Pods-DroppTests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-DroppTests.release.xcconfig"; path = "Pods/Target Support Files/Pods-DroppTests/Pods-DroppTests.release.xcconfig"; sourceTree = "<group>"; };
+		A89741AD814E44A9F9D24FC3 /* Pods_DroppTests.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_DroppTests.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		C8C79D64338806A8EA2434B8 /* Pods-DroppTests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-DroppTests.debug.xcconfig"; path = "Pods/Target Support Files/Pods-DroppTests/Pods-DroppTests.debug.xcconfig"; sourceTree = "<group>"; };
+		EB40742B27E499A97CFB332D /* Pods-Dropp.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Dropp.release.xcconfig"; path = "Pods/Target Support Files/Pods-Dropp/Pods-Dropp.release.xcconfig"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -47,6 +73,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				F90F6C907D58F83D394F45C3 /* Pods_Dropp.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -54,18 +81,39 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				2986B0CE30CF1A30A6B10072 /* Pods_DroppTests.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		16CA20A31EC1A1E500EDA7CC /* FlatUIKit */ = {
+			isa = PBXGroup;
+			children = (
+				16CA20A41EC1A28000EDA7CC /* FUICellBackgroundView.h */,
+				16CA20A51EC1A28000EDA7CC /* FUICellBackgroundView.m */,
+			);
+			name = FlatUIKit;
+			sourceTree = "<group>";
+		};
+		525445E01D507BEB3EF50920 /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				410E488F5CFBA78B82AAED78 /* Pods_Dropp.framework */,
+				A89741AD814E44A9F9D24FC3 /* Pods_DroppTests.framework */,
+			);
+			name = Frameworks;
+			sourceTree = "<group>";
+		};
 		69A43EBC1E5BEEA6003E6420 = {
 			isa = PBXGroup;
 			children = (
 				69A43EC71E5BEEA6003E6420 /* Dropp */,
 				69A43EDC1E5BEEA6003E6420 /* DroppTests */,
 				69A43EC61E5BEEA6003E6420 /* Products */,
+				D86ABCEF644BD2F5A6F4AA4A /* Pods */,
+				525445E01D507BEB3EF50920 /* Frameworks */,
 			);
 			sourceTree = "<group>";
 		};
@@ -82,13 +130,23 @@
 			isa = PBXGroup;
 			children = (
 				69A43EC81E5BEEA6003E6420 /* AppDelegate.swift */,
+				69EFB0D01EBBBF3C007E4F90 /* HTTPModule.swift */,
 				69A43ECA1E5BEEA6003E6420 /* ViewController.swift */,
 				69A43ECC1E5BEEA6003E6420 /* Main.storyboard */,
-				69789C571E8A055500FA0605 /* FeedViewController.swift */,
+				1631AFFF1E96D5BE00820B09 /* FeedTableViewController.swift */,
+				161D6FA41EB974A0008A63FB /* DetailViewController.swift */,
+				16AF6C0A1E9B30270022C051 /* Dropp.swift */,
+				16AF6C0C1E9B35B00022C051 /* DroppStore.swift */,
+				697F24D61EC1F52B005584E3 /* ViewModule.swift */,
+				16CA209C1EC1820200EDA7CC /* SegmentedProgressBar.swift */,
+				16CA209F1EC19E7600EDA7CC /* UITableViewCell+FlatUI.h */,
+				16CA20A01EC19E7600EDA7CC /* UITableViewCell+FlatUI.m */,
+				16CA20A21EC19FBF00EDA7CC /* mybridge.h */,
+				16CA20A31EC1A1E500EDA7CC /* FlatUIKit */,
 				69A43ECF1E5BEEA6003E6420 /* Assets.xcassets */,
-				69A43EE81E5BF19C003E6420 /* AppIcon.appiconset */,
-				69A43ED11E5BEEA6003E6420 /* LaunchScreen.storyboard */,
+				698C32F31EBDC257008CB718 /* Loading-Fast-Icon-200x200.gif */,
 				69A43ED41E5BEEA6003E6420 /* Info.plist */,
+				16CA209E1EC19E7600EDA7CC /* Dropp-Bridging-Header.h */,
 			);
 			path = Dropp;
 			sourceTree = "<group>";
@@ -102,6 +160,17 @@
 			path = DroppTests;
 			sourceTree = "<group>";
 		};
+		D86ABCEF644BD2F5A6F4AA4A /* Pods */ = {
+			isa = PBXGroup;
+			children = (
+				67BE7C9F4619CCF963CC9BF7 /* Pods-Dropp.debug.xcconfig */,
+				EB40742B27E499A97CFB332D /* Pods-Dropp.release.xcconfig */,
+				C8C79D64338806A8EA2434B8 /* Pods-DroppTests.debug.xcconfig */,
+				82C32FA3983AA44EA1F10D1D /* Pods-DroppTests.release.xcconfig */,
+			);
+			name = Pods;
+			sourceTree = "<group>";
+		};
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
@@ -109,9 +178,12 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = 69A43EE21E5BEEA6003E6420 /* Build configuration list for PBXNativeTarget "Dropp" */;
 			buildPhases = (
+				760C871CAC0FADDCAFB3CD32 /* [CP] Check Pods Manifest.lock */,
 				69A43EC11E5BEEA6003E6420 /* Sources */,
 				69A43EC21E5BEEA6003E6420 /* Frameworks */,
 				69A43EC31E5BEEA6003E6420 /* Resources */,
+				5CD574D4E16964A4659C2868 /* [CP] Embed Pods Frameworks */,
+				8647BA9B0B9882B49C048765 /* [CP] Copy Pods Resources */,
 			);
 			buildRules = (
 			);
@@ -126,9 +198,12 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = 69A43EE51E5BEEA6003E6420 /* Build configuration list for PBXNativeTarget "DroppTests" */;
 			buildPhases = (
+				02F0D1FC31D439551786F44D /* [CP] Check Pods Manifest.lock */,
 				69A43ED51E5BEEA6003E6420 /* Sources */,
 				69A43ED61E5BEEA6003E6420 /* Frameworks */,
 				69A43ED71E5BEEA6003E6420 /* Resources */,
+				86B1B40DE2E1E04737F074CC /* [CP] Embed Pods Frameworks */,
+				84FF2534626217C82F73186D /* [CP] Copy Pods Resources */,
 			);
 			buildRules = (
 			);
@@ -153,6 +228,7 @@
 					69A43EC41E5BEEA6003E6420 = {
 						CreatedOnToolsVersion = 8.2.1;
 						DevelopmentTeam = VW2FMQUB95;
+						LastSwiftMigration = 0830;
 						ProvisioningStyle = Automatic;
 					};
 					69A43ED81E5BEEA6003E6420 = {
@@ -186,8 +262,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				69A43EE91E5BF19C003E6420 /* AppIcon.appiconset in Resources */,
-				69A43ED31E5BEEA6003E6420 /* LaunchScreen.storyboard in Resources */,
+				698C32F41EBDC257008CB718 /* Loading-Fast-Icon-200x200.gif in Resources */,
 				69A43ED01E5BEEA6003E6420 /* Assets.xcassets in Resources */,
 				69A43ECE1E5BEEA6003E6420 /* Main.storyboard in Resources */,
 			);
@@ -202,14 +277,115 @@
 		};
 /* End PBXResourcesBuildPhase section */
 
+/* Begin PBXShellScriptBuildPhase section */
+		02F0D1FC31D439551786F44D /* [CP] Check Pods Manifest.lock */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			name = "[CP] Check Pods Manifest.lock";
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "diff \"${PODS_PODFILE_DIR_PATH}/Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n";
+			showEnvVarsInLog = 0;
+		};
+		5CD574D4E16964A4659C2868 /* [CP] Embed Pods Frameworks */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			name = "[CP] Embed Pods Frameworks";
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "\"${SRCROOT}/Pods/Target Support Files/Pods-Dropp/Pods-Dropp-frameworks.sh\"\n";
+			showEnvVarsInLog = 0;
+		};
+		760C871CAC0FADDCAFB3CD32 /* [CP] Check Pods Manifest.lock */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			name = "[CP] Check Pods Manifest.lock";
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "diff \"${PODS_PODFILE_DIR_PATH}/Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n";
+			showEnvVarsInLog = 0;
+		};
+		84FF2534626217C82F73186D /* [CP] Copy Pods Resources */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			name = "[CP] Copy Pods Resources";
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "\"${SRCROOT}/Pods/Target Support Files/Pods-DroppTests/Pods-DroppTests-resources.sh\"\n";
+			showEnvVarsInLog = 0;
+		};
+		8647BA9B0B9882B49C048765 /* [CP] Copy Pods Resources */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			name = "[CP] Copy Pods Resources";
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "\"${SRCROOT}/Pods/Target Support Files/Pods-Dropp/Pods-Dropp-resources.sh\"\n";
+			showEnvVarsInLog = 0;
+		};
+		86B1B40DE2E1E04737F074CC /* [CP] Embed Pods Frameworks */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			name = "[CP] Embed Pods Frameworks";
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "\"${SRCROOT}/Pods/Target Support Files/Pods-DroppTests/Pods-DroppTests-frameworks.sh\"\n";
+			showEnvVarsInLog = 0;
+		};
+/* End PBXShellScriptBuildPhase section */
+
 /* Begin PBXSourcesBuildPhase section */
 		69A43EC11E5BEEA6003E6420 /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				16AF6C0D1E9B35B00022C051 /* DroppStore.swift in Sources */,
+				697F24D71EC1F52B005584E3 /* ViewModule.swift in Sources */,
 				69A43ECB1E5BEEA6003E6420 /* ViewController.swift in Sources */,
-				69789C581E8A055500FA0605 /* FeedViewController.swift in Sources */,
 				69A43EC91E5BEEA6003E6420 /* AppDelegate.swift in Sources */,
+				16CA20A11EC19E7600EDA7CC /* UITableViewCell+FlatUI.m in Sources */,
+				16CA209D1EC1820200EDA7CC /* SegmentedProgressBar.swift in Sources */,
+				69EFB0D11EBBBF3C007E4F90 /* HTTPModule.swift in Sources */,
+				16AF6C0B1E9B30270022C051 /* Dropp.swift in Sources */,
+				16CA20A61EC1A28000EDA7CC /* FUICellBackgroundView.m in Sources */,
+				1631B0001E96D5BE00820B09 /* FeedTableViewController.swift in Sources */,
+				161D6FA51EB974A0008A63FB /* DetailViewController.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -238,14 +414,6 @@
 				69A43ECD1E5BEEA6003E6420 /* Base */,
 			);
 			name = Main.storyboard;
-			sourceTree = "<group>";
-		};
-		69A43ED11E5BEEA6003E6420 /* LaunchScreen.storyboard */ = {
-			isa = PBXVariantGroup;
-			children = (
-				69A43ED21E5BEEA6003E6420 /* Base */,
-			);
-			name = LaunchScreen.storyboard;
 			sourceTree = "<group>";
 		};
 /* End PBXVariantGroup section */
@@ -346,34 +514,44 @@
 		};
 		69A43EE31E5BEEA6003E6420 /* Debug */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = 67BE7C9F4619CCF963CC9BF7 /* Pods-Dropp.debug.xcconfig */;
 			buildSettings = {
+				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
-				ASSETCATALOG_COMPILER_LAUNCHIMAGE_NAME = LaunchImage;
+				CLANG_ENABLE_MODULES = YES;
 				DEVELOPMENT_TEAM = VW2FMQUB95;
+				EMBED_ASSET_PACKS_IN_PRODUCT_BUNDLE = YES;
 				INFOPLIST_FILE = Dropp/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = com.groub.Dropp;
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_OBJC_BRIDGING_HEADER = "/Users/stevenmccracken/GitHub/School/Dropp/Dropp/Dropp-swift/Dropp/Dropp/mybridge.h";
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 				SWIFT_VERSION = 3.0;
 			};
 			name = Debug;
 		};
 		69A43EE41E5BEEA6003E6420 /* Release */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = EB40742B27E499A97CFB332D /* Pods-Dropp.release.xcconfig */;
 			buildSettings = {
+				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
-				ASSETCATALOG_COMPILER_LAUNCHIMAGE_NAME = LaunchImage;
+				CLANG_ENABLE_MODULES = YES;
 				DEVELOPMENT_TEAM = VW2FMQUB95;
+				EMBED_ASSET_PACKS_IN_PRODUCT_BUNDLE = YES;
 				INFOPLIST_FILE = Dropp/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = com.groub.Dropp;
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_OBJC_BRIDGING_HEADER = "/Users/stevenmccracken/GitHub/School/Dropp/Dropp/Dropp-swift/Dropp/Dropp/mybridge.h";
 				SWIFT_VERSION = 3.0;
 			};
 			name = Release;
 		};
 		69A43EE61E5BEEA6003E6420 /* Debug */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = C8C79D64338806A8EA2434B8 /* Pods-DroppTests.debug.xcconfig */;
 			buildSettings = {
 				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				BUNDLE_LOADER = "$(TEST_HOST)";
@@ -388,6 +566,7 @@
 		};
 		69A43EE71E5BEEA6003E6420 /* Release */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = 82C32FA3983AA44EA1F10D1D /* Pods-DroppTests.release.xcconfig */;
 			buildSettings = {
 				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				BUNDLE_LOADER = "$(TEST_HOST)";

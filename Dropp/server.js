@@ -1,20 +1,35 @@
-//var firebase 	= require('./modules/firebase_mod.js');
-var express 	= require('express');
-var app 		= express();
-var PORT 		= 80;
-var bodyParser 	= require('body-parser')
-var router 		= require('./modules/router_mod.js')(express.Router());
+/**
+ * server - Initializes the express server and starts listening
+ */
 
-app.use(bodyParser.json());
-app.use(bodyParser.urlencoded({
-    extended: true
-}));
+const express     = require('express');
+var app           = express();
+const router 	    = require('./modules/router_mod.js')(express.Router());
+const bodyParser  = require('body-parser');
+var port      	  = 8080;
 
-app.use('/api', router);
+var exports = module.exports = {};
 
-// Start listening
-app.listen(PORT, (err) => {
-    if (err) return console.log('Server error', err);
+// For purpose of checking travis. Needs to be removed
+if (process.env.TEST) {
+  port = 3000;
+}
 
-    console.log(`Dropp server is listening on port ${PORT}`);
+app.use(bodyParser.urlencoded({ parameterLimit: 100000000, limit: '10000kb', extended: true }));
+
+// Set the base route path
+app.use('/', router);
+
+/**
+ * Listens for all incoming requests
+ * @param {Number} port the port to listen on
+ * @param {callback} err the callback that handles any errors
+ */
+var server = app.listen(port, (err) => {
+  if (err) console.log('Server connection error', err);
+  else console.log(`Dropp server is listening on port ${port}`);
 });
+
+exports.closeServer = function() {
+  server.close();
+};

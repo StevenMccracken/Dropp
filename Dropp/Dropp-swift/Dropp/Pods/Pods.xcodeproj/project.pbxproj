@@ -1,0 +1,749 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 46;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		029FEA0A71C8756A16BA3B67CF91B645 /* UIImageView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9B4C4A7112A961122F5244F4CDF67EFD /* UIImageView.swift */; };
+		07F3F0595166DDFD0DDDD120915897A6 /* Gifu-dummy.m in Sources */ = {isa = PBXBuildFile; fileRef = 4582481B076287067FA4DE05316934DE /* Gifu-dummy.m */; };
+		0E8C4882CB931CE2AAA6E721ECBDD9A6 /* Gifu.h in Headers */ = {isa = PBXBuildFile; fileRef = 9B2E3394DAFECCA53AFC6895A5FCE946 /* Gifu.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		2A6393E79A01EFFAFBA463E3219DDC73 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 6604A7D69453B4569E4E4827FB9155A9 /* Foundation.framework */; };
+		2C70B93488851760F38406E704207B26 /* Pods-DroppTests-dummy.m in Sources */ = {isa = PBXBuildFile; fileRef = 0784A0422EBD8636AC08098E4B5FF25F /* Pods-DroppTests-dummy.m */; };
+		31507213C4E5A18B1CF9E4D6105520B5 /* Pods-Dropp-dummy.m in Sources */ = {isa = PBXBuildFile; fileRef = 1D0102F50B46F971C96CA4DCAEF47E98 /* Pods-Dropp-dummy.m */; };
+		3A311E6DE59CEA144CFA547D40B9AC9D /* GIFAnimatable.swift in Sources */ = {isa = PBXBuildFile; fileRef = CADA3B45D0ACEC4588D5B23B27E1BCFB /* GIFAnimatable.swift */; };
+		3AD80FD42C6098465368B9C2BD8E3D9E /* Gifu-umbrella.h in Headers */ = {isa = PBXBuildFile; fileRef = F2AF0031C28C73E97A33832422215309 /* Gifu-umbrella.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		72EDBC9736A9E8B4A8BD77485E314F1A /* AnimatedFrame.swift in Sources */ = {isa = PBXBuildFile; fileRef = C6035F45AC16A9CB869C5824D3CA864A /* AnimatedFrame.swift */; };
+		76E889E3A4D2831718C1A96AC697A6EA /* CGSize.swift in Sources */ = {isa = PBXBuildFile; fileRef = 44C02F70FD337B0D44559D912BE9FD1F /* CGSize.swift */; };
+		79AD548BA7CD139132D415C101FDB373 /* Array.swift in Sources */ = {isa = PBXBuildFile; fileRef = C902D08F5FC7B1F5243F140D2C73AE83 /* Array.swift */; };
+		7D08DB66EDD16591EB062414A39E1A29 /* Pods-Dropp-umbrella.h in Headers */ = {isa = PBXBuildFile; fileRef = 6D9CACE4487B5EA0880706A13FC38B5A /* Pods-Dropp-umbrella.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		AF525F0C8F50049EAB9BAFF474FD26E3 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 6604A7D69453B4569E4E4827FB9155A9 /* Foundation.framework */; };
+		B042C44711BC08D8BBB2CF7310BAB9D2 /* GIFImageView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C038077CB31CA08AE65481B4B3832182 /* GIFImageView.swift */; };
+		CC9AE5CB433C5EF65FD7575D2C1BD7E8 /* FrameStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = 51CBA14AE6A454A73019A763AFB114FF /* FrameStore.swift */; };
+		CF5DFAFC4DB9CE7D761D026572E24680 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 6604A7D69453B4569E4E4827FB9155A9 /* Foundation.framework */; };
+		D19565C9B0C3DAFFA963E8236CE3D016 /* Pods-DroppTests-umbrella.h in Headers */ = {isa = PBXBuildFile; fileRef = 3FD5BA729A133D0E5B165C14488758B4 /* Pods-DroppTests-umbrella.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		F0565372F859C91AA2674086A1A682AE /* Animator.swift in Sources */ = {isa = PBXBuildFile; fileRef = D7A1975C8C9FCC512DF8AFDF6E005923 /* Animator.swift */; };
+		F680C5C132ED9CEA943D29A13EA71850 /* UIImage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 10D86BB83E4C183BCBBED35CEA333CD8 /* UIImage.swift */; };
+		FB980D90C8A965F5D0A2D1A59800509C /* ImageSourceHelpers.swift in Sources */ = {isa = PBXBuildFile; fileRef = 900D694D0EEE99F1C4A18ACC84FF1ED3 /* ImageSourceHelpers.swift */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXContainerItemProxy section */
+		A745F5434A4E99D7A47CB39F8EABE180 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = D41D8CD98F00B204E9800998ECF8427E /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 5B9888C33DE4EBFB8177CEA845DEEA74;
+			remoteInfo = Gifu;
+		};
+/* End PBXContainerItemProxy section */
+
+/* Begin PBXFileReference section */
+		0784A0422EBD8636AC08098E4B5FF25F /* Pods-DroppTests-dummy.m */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.objc; path = "Pods-DroppTests-dummy.m"; sourceTree = "<group>"; };
+		10D86BB83E4C183BCBBED35CEA333CD8 /* UIImage.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = UIImage.swift; path = Source/Extensions/UIImage.swift; sourceTree = "<group>"; };
+		198D85225EFB9D4748176367E2AA1A45 /* Info.plist */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		1C7FE2F3C840FE686473300FB28DFE02 /* Gifu.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; name = Gifu.framework; path = Gifu.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		1D0102F50B46F971C96CA4DCAEF47E98 /* Pods-Dropp-dummy.m */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.objc; path = "Pods-Dropp-dummy.m"; sourceTree = "<group>"; };
+		1D71614D1BA1F221842CB3DAF609AF70 /* Info.plist */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		2C5E64AD3A300E16BB6E589C22367691 /* Pods-DroppTests-acknowledgements.plist */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.plist.xml; path = "Pods-DroppTests-acknowledgements.plist"; sourceTree = "<group>"; };
+		2C761861B57C171B09561D8E73FAE0FE /* Gifu-prefix.pch */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; path = "Gifu-prefix.pch"; sourceTree = "<group>"; };
+		33FD153D03A31CC052C556CB4236E749 /* Pods-DroppTests.modulemap */ = {isa = PBXFileReference; includeInIndex = 1; path = "Pods-DroppTests.modulemap"; sourceTree = "<group>"; };
+		3FD5BA729A133D0E5B165C14488758B4 /* Pods-DroppTests-umbrella.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; path = "Pods-DroppTests-umbrella.h"; sourceTree = "<group>"; };
+		44C02F70FD337B0D44559D912BE9FD1F /* CGSize.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = CGSize.swift; path = Source/Extensions/CGSize.swift; sourceTree = "<group>"; };
+		4582481B076287067FA4DE05316934DE /* Gifu-dummy.m */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.objc; path = "Gifu-dummy.m"; sourceTree = "<group>"; };
+		4C33B19CE3923745116DF5D8FB1F536B /* Pods-DroppTests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; path = "Pods-DroppTests.release.xcconfig"; sourceTree = "<group>"; };
+		51CBA14AE6A454A73019A763AFB114FF /* FrameStore.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = FrameStore.swift; path = Source/Classes/FrameStore.swift; sourceTree = "<group>"; };
+		6330D134514C1719EB04AB94CE980725 /* Pods-DroppTests-resources.sh */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.script.sh; path = "Pods-DroppTests-resources.sh"; sourceTree = "<group>"; };
+		6604A7D69453B4569E4E4827FB9155A9 /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS10.3.sdk/System/Library/Frameworks/Foundation.framework; sourceTree = DEVELOPER_DIR; };
+		67368CED00E7F900A87FA0A47D8A8D3B /* Pods-DroppTests-acknowledgements.markdown */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text; path = "Pods-DroppTests-acknowledgements.markdown"; sourceTree = "<group>"; };
+		6D9CACE4487B5EA0880706A13FC38B5A /* Pods-Dropp-umbrella.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; path = "Pods-Dropp-umbrella.h"; sourceTree = "<group>"; };
+		794D8A49D30D09F309C9CB9F19F176B0 /* Pods-Dropp-resources.sh */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.script.sh; path = "Pods-Dropp-resources.sh"; sourceTree = "<group>"; };
+		7EF6429BC57E1729D958C7786D7CFA76 /* Pods-Dropp-frameworks.sh */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.script.sh; path = "Pods-Dropp-frameworks.sh"; sourceTree = "<group>"; };
+		8558ECD16016DE3E1C153A8FCB2D92BB /* Info.plist */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		87D1271FAB89C4120FB54178B46519C0 /* Pods_DroppTests.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; name = Pods_DroppTests.framework; path = "Pods-DroppTests.framework"; sourceTree = BUILT_PRODUCTS_DIR; };
+		8F8A5727A95C16D413C06B0E8F8251B5 /* Pods-DroppTests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; path = "Pods-DroppTests.debug.xcconfig"; sourceTree = "<group>"; };
+		900D694D0EEE99F1C4A18ACC84FF1ED3 /* ImageSourceHelpers.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = ImageSourceHelpers.swift; path = Source/Helpers/ImageSourceHelpers.swift; sourceTree = "<group>"; };
+		906AEA0A7584B5B0B1AD7670E3D802A3 /* Pods-Dropp.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; path = "Pods-Dropp.release.xcconfig"; sourceTree = "<group>"; };
+		9128EB461A46E44568E196599FBF704F /* Pods-Dropp.modulemap */ = {isa = PBXFileReference; includeInIndex = 1; path = "Pods-Dropp.modulemap"; sourceTree = "<group>"; };
+		93A4A3777CF96A4AAC1D13BA6DCCEA73 /* Podfile */ = {isa = PBXFileReference; explicitFileType = text.script.ruby; includeInIndex = 1; lastKnownFileType = text; name = Podfile; path = ../Podfile; sourceTree = SOURCE_ROOT; xcLanguageSpecificationIdentifier = xcode.lang.ruby; };
+		9B2E3394DAFECCA53AFC6895A5FCE946 /* Gifu.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = Gifu.h; path = Source/Gifu.h; sourceTree = "<group>"; };
+		9B4C4A7112A961122F5244F4CDF67EFD /* UIImageView.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = UIImageView.swift; path = Source/Extensions/UIImageView.swift; sourceTree = "<group>"; };
+		AA962FFEF12F8D071B4706A7624CE1C2 /* Gifu.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; path = Gifu.xcconfig; sourceTree = "<group>"; };
+		B22F58712AA253A82C297FB6E75836A7 /* Pods_Dropp.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; name = Pods_Dropp.framework; path = "Pods-Dropp.framework"; sourceTree = BUILT_PRODUCTS_DIR; };
+		B60AC459BD7C6694376BCA7389A18363 /* Pods-DroppTests-frameworks.sh */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.script.sh; path = "Pods-DroppTests-frameworks.sh"; sourceTree = "<group>"; };
+		B9A3D60B4446628DD508EE9092D3C490 /* Pods-Dropp.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; path = "Pods-Dropp.debug.xcconfig"; sourceTree = "<group>"; };
+		C038077CB31CA08AE65481B4B3832182 /* GIFImageView.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = GIFImageView.swift; path = Source/Classes/GIFImageView.swift; sourceTree = "<group>"; };
+		C6035F45AC16A9CB869C5824D3CA864A /* AnimatedFrame.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = AnimatedFrame.swift; path = Source/Classes/AnimatedFrame.swift; sourceTree = "<group>"; };
+		C902D08F5FC7B1F5243F140D2C73AE83 /* Array.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = Array.swift; path = Source/Extensions/Array.swift; sourceTree = "<group>"; };
+		CADA3B45D0ACEC4588D5B23B27E1BCFB /* GIFAnimatable.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = GIFAnimatable.swift; path = Source/Classes/GIFAnimatable.swift; sourceTree = "<group>"; };
+		D31698CBF4CDCBB0BA39E094F37543F8 /* Gifu.modulemap */ = {isa = PBXFileReference; includeInIndex = 1; path = Gifu.modulemap; sourceTree = "<group>"; };
+		D71CE4AB87EE6736EFB678B31F726E41 /* Pods-Dropp-acknowledgements.markdown */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text; path = "Pods-Dropp-acknowledgements.markdown"; sourceTree = "<group>"; };
+		D7A1975C8C9FCC512DF8AFDF6E005923 /* Animator.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = Animator.swift; path = Source/Classes/Animator.swift; sourceTree = "<group>"; };
+		F2AF0031C28C73E97A33832422215309 /* Gifu-umbrella.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; path = "Gifu-umbrella.h"; sourceTree = "<group>"; };
+		F493678EC5BC5D8A9A6E6079DE312C3A /* Pods-Dropp-acknowledgements.plist */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.plist.xml; path = "Pods-Dropp-acknowledgements.plist"; sourceTree = "<group>"; };
+/* End PBXFileReference section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		2DB26387FDA2AD537C2202B16E062539 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				CF5DFAFC4DB9CE7D761D026572E24680 /* Foundation.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		3986E6A1C6032887EB98DBB3BA4992C3 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				2A6393E79A01EFFAFBA463E3219DDC73 /* Foundation.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		D18F23D5EC42BC047EEF3CB5FDAA0022 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				AF525F0C8F50049EAB9BAFF474FD26E3 /* Foundation.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		54BC01B375AD3B277B9BBC4B790CDE94 /* Pods */ = {
+			isa = PBXGroup;
+			children = (
+				B81FB6A253D41DB0A5D72D48C5B468C7 /* Gifu */,
+			);
+			name = Pods;
+			sourceTree = "<group>";
+		};
+		5A30D299C5843BCC45387C94C517BB1C /* Targets Support Files */ = {
+			isa = PBXGroup;
+			children = (
+				AAC8ECE34933EDD840565AF4690049B8 /* Pods-Dropp */,
+				775B8ACA06541AA9304294A91CE24BA2 /* Pods-DroppTests */,
+			);
+			name = "Targets Support Files";
+			sourceTree = "<group>";
+		};
+		775B8ACA06541AA9304294A91CE24BA2 /* Pods-DroppTests */ = {
+			isa = PBXGroup;
+			children = (
+				198D85225EFB9D4748176367E2AA1A45 /* Info.plist */,
+				33FD153D03A31CC052C556CB4236E749 /* Pods-DroppTests.modulemap */,
+				67368CED00E7F900A87FA0A47D8A8D3B /* Pods-DroppTests-acknowledgements.markdown */,
+				2C5E64AD3A300E16BB6E589C22367691 /* Pods-DroppTests-acknowledgements.plist */,
+				0784A0422EBD8636AC08098E4B5FF25F /* Pods-DroppTests-dummy.m */,
+				B60AC459BD7C6694376BCA7389A18363 /* Pods-DroppTests-frameworks.sh */,
+				6330D134514C1719EB04AB94CE980725 /* Pods-DroppTests-resources.sh */,
+				3FD5BA729A133D0E5B165C14488758B4 /* Pods-DroppTests-umbrella.h */,
+				8F8A5727A95C16D413C06B0E8F8251B5 /* Pods-DroppTests.debug.xcconfig */,
+				4C33B19CE3923745116DF5D8FB1F536B /* Pods-DroppTests.release.xcconfig */,
+			);
+			name = "Pods-DroppTests";
+			path = "Target Support Files/Pods-DroppTests";
+			sourceTree = "<group>";
+		};
+		7DB346D0F39D3F0E887471402A8071AB = {
+			isa = PBXGroup;
+			children = (
+				93A4A3777CF96A4AAC1D13BA6DCCEA73 /* Podfile */,
+				BC3CA7F9E30CC8F7E2DD044DD34432FC /* Frameworks */,
+				54BC01B375AD3B277B9BBC4B790CDE94 /* Pods */,
+				CCFA5094F091873E00942AE1180C2376 /* Products */,
+				5A30D299C5843BCC45387C94C517BB1C /* Targets Support Files */,
+			);
+			sourceTree = "<group>";
+		};
+		AAC8ECE34933EDD840565AF4690049B8 /* Pods-Dropp */ = {
+			isa = PBXGroup;
+			children = (
+				1D71614D1BA1F221842CB3DAF609AF70 /* Info.plist */,
+				9128EB461A46E44568E196599FBF704F /* Pods-Dropp.modulemap */,
+				D71CE4AB87EE6736EFB678B31F726E41 /* Pods-Dropp-acknowledgements.markdown */,
+				F493678EC5BC5D8A9A6E6079DE312C3A /* Pods-Dropp-acknowledgements.plist */,
+				1D0102F50B46F971C96CA4DCAEF47E98 /* Pods-Dropp-dummy.m */,
+				7EF6429BC57E1729D958C7786D7CFA76 /* Pods-Dropp-frameworks.sh */,
+				794D8A49D30D09F309C9CB9F19F176B0 /* Pods-Dropp-resources.sh */,
+				6D9CACE4487B5EA0880706A13FC38B5A /* Pods-Dropp-umbrella.h */,
+				B9A3D60B4446628DD508EE9092D3C490 /* Pods-Dropp.debug.xcconfig */,
+				906AEA0A7584B5B0B1AD7670E3D802A3 /* Pods-Dropp.release.xcconfig */,
+			);
+			name = "Pods-Dropp";
+			path = "Target Support Files/Pods-Dropp";
+			sourceTree = "<group>";
+		};
+		B81FB6A253D41DB0A5D72D48C5B468C7 /* Gifu */ = {
+			isa = PBXGroup;
+			children = (
+				C6035F45AC16A9CB869C5824D3CA864A /* AnimatedFrame.swift */,
+				D7A1975C8C9FCC512DF8AFDF6E005923 /* Animator.swift */,
+				C902D08F5FC7B1F5243F140D2C73AE83 /* Array.swift */,
+				44C02F70FD337B0D44559D912BE9FD1F /* CGSize.swift */,
+				51CBA14AE6A454A73019A763AFB114FF /* FrameStore.swift */,
+				CADA3B45D0ACEC4588D5B23B27E1BCFB /* GIFAnimatable.swift */,
+				C038077CB31CA08AE65481B4B3832182 /* GIFImageView.swift */,
+				9B2E3394DAFECCA53AFC6895A5FCE946 /* Gifu.h */,
+				900D694D0EEE99F1C4A18ACC84FF1ED3 /* ImageSourceHelpers.swift */,
+				10D86BB83E4C183BCBBED35CEA333CD8 /* UIImage.swift */,
+				9B4C4A7112A961122F5244F4CDF67EFD /* UIImageView.swift */,
+				D1D78D83808B1EE0BF3A80AF48D31931 /* Support Files */,
+			);
+			name = Gifu;
+			path = Gifu;
+			sourceTree = "<group>";
+		};
+		BC3CA7F9E30CC8F7E2DD044DD34432FC /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				D35AF013A5F0BAD4F32504907A52519E /* iOS */,
+			);
+			name = Frameworks;
+			sourceTree = "<group>";
+		};
+		CCFA5094F091873E00942AE1180C2376 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				1C7FE2F3C840FE686473300FB28DFE02 /* Gifu.framework */,
+				B22F58712AA253A82C297FB6E75836A7 /* Pods_Dropp.framework */,
+				87D1271FAB89C4120FB54178B46519C0 /* Pods_DroppTests.framework */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		D1D78D83808B1EE0BF3A80AF48D31931 /* Support Files */ = {
+			isa = PBXGroup;
+			children = (
+				D31698CBF4CDCBB0BA39E094F37543F8 /* Gifu.modulemap */,
+				AA962FFEF12F8D071B4706A7624CE1C2 /* Gifu.xcconfig */,
+				4582481B076287067FA4DE05316934DE /* Gifu-dummy.m */,
+				2C761861B57C171B09561D8E73FAE0FE /* Gifu-prefix.pch */,
+				F2AF0031C28C73E97A33832422215309 /* Gifu-umbrella.h */,
+				8558ECD16016DE3E1C153A8FCB2D92BB /* Info.plist */,
+			);
+			name = "Support Files";
+			path = "../Target Support Files/Gifu";
+			sourceTree = "<group>";
+		};
+		D35AF013A5F0BAD4F32504907A52519E /* iOS */ = {
+			isa = PBXGroup;
+			children = (
+				6604A7D69453B4569E4E4827FB9155A9 /* Foundation.framework */,
+			);
+			name = iOS;
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXHeadersBuildPhase section */
+		576D39B947165410A3E161628DEB0F63 /* Headers */ = {
+			isa = PBXHeadersBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				D19565C9B0C3DAFFA963E8236CE3D016 /* Pods-DroppTests-umbrella.h in Headers */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		EB34CE6DB264C3FCD56B0C63407D1626 /* Headers */ = {
+			isa = PBXHeadersBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				7D08DB66EDD16591EB062414A39E1A29 /* Pods-Dropp-umbrella.h in Headers */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		ED1FB7FD86784F651B980E9E1F54F907 /* Headers */ = {
+			isa = PBXHeadersBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				3AD80FD42C6098465368B9C2BD8E3D9E /* Gifu-umbrella.h in Headers */,
+				0E8C4882CB931CE2AAA6E721ECBDD9A6 /* Gifu.h in Headers */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXHeadersBuildPhase section */
+
+/* Begin PBXNativeTarget section */
+		5B9888C33DE4EBFB8177CEA845DEEA74 /* Gifu */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 60E5C1973ED954759B0DA9A10C47E504 /* Build configuration list for PBXNativeTarget "Gifu" */;
+			buildPhases = (
+				6B0E1316344487EAC73BD7DA1ABC397C /* Sources */,
+				3986E6A1C6032887EB98DBB3BA4992C3 /* Frameworks */,
+				ED1FB7FD86784F651B980E9E1F54F907 /* Headers */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = Gifu;
+			productName = Gifu;
+			productReference = 1C7FE2F3C840FE686473300FB28DFE02 /* Gifu.framework */;
+			productType = "com.apple.product-type.framework";
+		};
+		6D61E2705058776C4E74A508834FFB35 /* Pods-Dropp */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 1779F0A52F2D6B2BF0A8E3001BCAAE54 /* Build configuration list for PBXNativeTarget "Pods-Dropp" */;
+			buildPhases = (
+				3886067992BC1C73200D1FA050227FD0 /* Sources */,
+				2DB26387FDA2AD537C2202B16E062539 /* Frameworks */,
+				EB34CE6DB264C3FCD56B0C63407D1626 /* Headers */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				1342F455DE22999A1DA1D7A1760CE8A7 /* PBXTargetDependency */,
+			);
+			name = "Pods-Dropp";
+			productName = "Pods-Dropp";
+			productReference = B22F58712AA253A82C297FB6E75836A7 /* Pods_Dropp.framework */;
+			productType = "com.apple.product-type.framework";
+		};
+		CCA1E646FB59F97056AF70D28BBA19EF /* Pods-DroppTests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 825A909DF988AB12648B0A8FC2EE3B49 /* Build configuration list for PBXNativeTarget "Pods-DroppTests" */;
+			buildPhases = (
+				5AE8D37FA5C769019759BF1D956C3167 /* Sources */,
+				D18F23D5EC42BC047EEF3CB5FDAA0022 /* Frameworks */,
+				576D39B947165410A3E161628DEB0F63 /* Headers */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = "Pods-DroppTests";
+			productName = "Pods-DroppTests";
+			productReference = 87D1271FAB89C4120FB54178B46519C0 /* Pods_DroppTests.framework */;
+			productType = "com.apple.product-type.framework";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		D41D8CD98F00B204E9800998ECF8427E /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				LastSwiftUpdateCheck = 0830;
+				LastUpgradeCheck = 0700;
+			};
+			buildConfigurationList = 2D8E8EC45A3A1A1D94AE762CB5028504 /* Build configuration list for PBXProject "Pods" */;
+			compatibilityVersion = "Xcode 3.2";
+			developmentRegion = English;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				en,
+			);
+			mainGroup = 7DB346D0F39D3F0E887471402A8071AB;
+			productRefGroup = CCFA5094F091873E00942AE1180C2376 /* Products */;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				5B9888C33DE4EBFB8177CEA845DEEA74 /* Gifu */,
+				6D61E2705058776C4E74A508834FFB35 /* Pods-Dropp */,
+				CCA1E646FB59F97056AF70D28BBA19EF /* Pods-DroppTests */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXSourcesBuildPhase section */
+		3886067992BC1C73200D1FA050227FD0 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				31507213C4E5A18B1CF9E4D6105520B5 /* Pods-Dropp-dummy.m in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		5AE8D37FA5C769019759BF1D956C3167 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				2C70B93488851760F38406E704207B26 /* Pods-DroppTests-dummy.m in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		6B0E1316344487EAC73BD7DA1ABC397C /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				72EDBC9736A9E8B4A8BD77485E314F1A /* AnimatedFrame.swift in Sources */,
+				F0565372F859C91AA2674086A1A682AE /* Animator.swift in Sources */,
+				79AD548BA7CD139132D415C101FDB373 /* Array.swift in Sources */,
+				76E889E3A4D2831718C1A96AC697A6EA /* CGSize.swift in Sources */,
+				CC9AE5CB433C5EF65FD7575D2C1BD7E8 /* FrameStore.swift in Sources */,
+				3A311E6DE59CEA144CFA547D40B9AC9D /* GIFAnimatable.swift in Sources */,
+				B042C44711BC08D8BBB2CF7310BAB9D2 /* GIFImageView.swift in Sources */,
+				07F3F0595166DDFD0DDDD120915897A6 /* Gifu-dummy.m in Sources */,
+				FB980D90C8A965F5D0A2D1A59800509C /* ImageSourceHelpers.swift in Sources */,
+				F680C5C132ED9CEA943D29A13EA71850 /* UIImage.swift in Sources */,
+				029FEA0A71C8756A16BA3B67CF91B645 /* UIImageView.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin PBXTargetDependency section */
+		1342F455DE22999A1DA1D7A1760CE8A7 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			name = Gifu;
+			target = 5B9888C33DE4EBFB8177CEA845DEEA74 /* Gifu */;
+			targetProxy = A745F5434A4E99D7A47CB39F8EABE180 /* PBXContainerItemProxy */;
+		};
+/* End PBXTargetDependency section */
+
+/* Begin XCBuildConfiguration section */
+		166E2CAC58E8608AD59A6F0B71C9C3E0 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				CODE_SIGNING_REQUIRED = NO;
+				COPY_PHASE_STRIP = NO;
+				ENABLE_TESTABILITY = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu99;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"POD_CONFIGURATION_DEBUG=1",
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 10.2;
+				ONLY_ACTIVE_ARCH = YES;
+				PROVISIONING_PROFILE_SPECIFIER = NO_SIGNING/;
+				STRIP_INSTALLED_PRODUCT = NO;
+				SYMROOT = "${SRCROOT}/../build";
+			};
+			name = Debug;
+		};
+		2B69E6CBB6890CE4A430E5DF22E33B9E /* Debug */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = AA962FFEF12F8D071B4706A7624CE1C2 /* Gifu.xcconfig */;
+			buildSettings = {
+				CODE_SIGN_IDENTITY = "";
+				"CODE_SIGN_IDENTITY[sdk=appletvos*]" = "";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "";
+				"CODE_SIGN_IDENTITY[sdk=watchos*]" = "";
+				CURRENT_PROJECT_VERSION = 1;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				DEFINES_MODULE = YES;
+				DYLIB_COMPATIBILITY_VERSION = 1;
+				DYLIB_CURRENT_VERSION = 1;
+				DYLIB_INSTALL_NAME_BASE = "@rpath";
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_PREFIX_HEADER = "Target Support Files/Gifu/Gifu-prefix.pch";
+				INFOPLIST_FILE = "Target Support Files/Gifu/Info.plist";
+				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
+				IPHONEOS_DEPLOYMENT_TARGET = 9.0;
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
+				MODULEMAP_FILE = "Target Support Files/Gifu/Gifu.modulemap";
+				MTL_ENABLE_DEBUG_INFO = YES;
+				PRODUCT_NAME = Gifu;
+				SDKROOT = iphoneos;
+				SKIP_INSTALL = YES;
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = DEBUG;
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+				SWIFT_VERSION = 3.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				VERSIONING_SYSTEM = "apple-generic";
+				VERSION_INFO_PREFIX = "";
+			};
+			name = Debug;
+		};
+		2C268E740EB2889CC401C0C34A5B24CE /* Release */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = AA962FFEF12F8D071B4706A7624CE1C2 /* Gifu.xcconfig */;
+			buildSettings = {
+				CODE_SIGN_IDENTITY = "";
+				"CODE_SIGN_IDENTITY[sdk=appletvos*]" = "";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "";
+				"CODE_SIGN_IDENTITY[sdk=watchos*]" = "";
+				CURRENT_PROJECT_VERSION = 1;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				DEFINES_MODULE = YES;
+				DYLIB_COMPATIBILITY_VERSION = 1;
+				DYLIB_CURRENT_VERSION = 1;
+				DYLIB_INSTALL_NAME_BASE = "@rpath";
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_PREFIX_HEADER = "Target Support Files/Gifu/Gifu-prefix.pch";
+				INFOPLIST_FILE = "Target Support Files/Gifu/Info.plist";
+				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
+				IPHONEOS_DEPLOYMENT_TARGET = 9.0;
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
+				MODULEMAP_FILE = "Target Support Files/Gifu/Gifu.modulemap";
+				MTL_ENABLE_DEBUG_INFO = NO;
+				PRODUCT_NAME = Gifu;
+				SDKROOT = iphoneos;
+				SKIP_INSTALL = YES;
+				SWIFT_OPTIMIZATION_LEVEL = "-Owholemodule";
+				SWIFT_VERSION = 3.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				VERSIONING_SYSTEM = "apple-generic";
+				VERSION_INFO_PREFIX = "";
+			};
+			name = Release;
+		};
+		5718E178120EB0724A635AD280AA3049 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = B9A3D60B4446628DD508EE9092D3C490 /* Pods-Dropp.debug.xcconfig */;
+			buildSettings = {
+				CODE_SIGN_IDENTITY = "";
+				"CODE_SIGN_IDENTITY[sdk=appletvos*]" = "";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "";
+				"CODE_SIGN_IDENTITY[sdk=watchos*]" = "";
+				CURRENT_PROJECT_VERSION = 1;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				DEFINES_MODULE = YES;
+				DYLIB_COMPATIBILITY_VERSION = 1;
+				DYLIB_CURRENT_VERSION = 1;
+				DYLIB_INSTALL_NAME_BASE = "@rpath";
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				GCC_NO_COMMON_BLOCKS = YES;
+				INFOPLIST_FILE = "Target Support Files/Pods-Dropp/Info.plist";
+				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
+				IPHONEOS_DEPLOYMENT_TARGET = 10.2;
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
+				MACH_O_TYPE = staticlib;
+				MODULEMAP_FILE = "Target Support Files/Pods-Dropp/Pods-Dropp.modulemap";
+				MTL_ENABLE_DEBUG_INFO = YES;
+				OTHER_LDFLAGS = "";
+				OTHER_LIBTOOLFLAGS = "";
+				PODS_ROOT = "$(SRCROOT)";
+				PRODUCT_BUNDLE_IDENTIFIER = "org.cocoapods.${PRODUCT_NAME:rfc1034identifier}";
+				PRODUCT_NAME = Pods_Dropp;
+				SDKROOT = iphoneos;
+				SKIP_INSTALL = YES;
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = DEBUG;
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+				SWIFT_VERSION = 3.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				VERSIONING_SYSTEM = "apple-generic";
+				VERSION_INFO_PREFIX = "";
+			};
+			name = Debug;
+		};
+		7D8D76F4E5395AD3148C820AD87DFC60 /* Release */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = 4C33B19CE3923745116DF5D8FB1F536B /* Pods-DroppTests.release.xcconfig */;
+			buildSettings = {
+				CODE_SIGN_IDENTITY = "";
+				"CODE_SIGN_IDENTITY[sdk=appletvos*]" = "";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "";
+				"CODE_SIGN_IDENTITY[sdk=watchos*]" = "";
+				CURRENT_PROJECT_VERSION = 1;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				DEFINES_MODULE = YES;
+				DYLIB_COMPATIBILITY_VERSION = 1;
+				DYLIB_CURRENT_VERSION = 1;
+				DYLIB_INSTALL_NAME_BASE = "@rpath";
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				GCC_NO_COMMON_BLOCKS = YES;
+				INFOPLIST_FILE = "Target Support Files/Pods-DroppTests/Info.plist";
+				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
+				IPHONEOS_DEPLOYMENT_TARGET = 10.2;
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
+				MACH_O_TYPE = staticlib;
+				MODULEMAP_FILE = "Target Support Files/Pods-DroppTests/Pods-DroppTests.modulemap";
+				MTL_ENABLE_DEBUG_INFO = NO;
+				OTHER_LDFLAGS = "";
+				OTHER_LIBTOOLFLAGS = "";
+				PODS_ROOT = "$(SRCROOT)";
+				PRODUCT_BUNDLE_IDENTIFIER = "org.cocoapods.${PRODUCT_NAME:rfc1034identifier}";
+				PRODUCT_NAME = Pods_DroppTests;
+				SDKROOT = iphoneos;
+				SKIP_INSTALL = YES;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				VERSIONING_SYSTEM = "apple-generic";
+				VERSION_INFO_PREFIX = "";
+			};
+			name = Release;
+		};
+		AA0B5BDEB018901CD8F88AAD05F5B893 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				CODE_SIGNING_REQUIRED = NO;
+				COPY_PHASE_STRIP = YES;
+				ENABLE_NS_ASSERTIONS = NO;
+				GCC_C_LANGUAGE_STANDARD = gnu99;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"POD_CONFIGURATION_RELEASE=1",
+					"$(inherited)",
+				);
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 10.2;
+				PROVISIONING_PROFILE_SPECIFIER = NO_SIGNING/;
+				STRIP_INSTALLED_PRODUCT = NO;
+				SYMROOT = "${SRCROOT}/../build";
+				VALIDATE_PRODUCT = YES;
+			};
+			name = Release;
+		};
+		B509B3CCB228551AE4F8603CEE6314FF /* Release */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = 906AEA0A7584B5B0B1AD7670E3D802A3 /* Pods-Dropp.release.xcconfig */;
+			buildSettings = {
+				CODE_SIGN_IDENTITY = "";
+				"CODE_SIGN_IDENTITY[sdk=appletvos*]" = "";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "";
+				"CODE_SIGN_IDENTITY[sdk=watchos*]" = "";
+				CURRENT_PROJECT_VERSION = 1;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				DEFINES_MODULE = YES;
+				DYLIB_COMPATIBILITY_VERSION = 1;
+				DYLIB_CURRENT_VERSION = 1;
+				DYLIB_INSTALL_NAME_BASE = "@rpath";
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				GCC_NO_COMMON_BLOCKS = YES;
+				INFOPLIST_FILE = "Target Support Files/Pods-Dropp/Info.plist";
+				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
+				IPHONEOS_DEPLOYMENT_TARGET = 10.2;
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
+				MACH_O_TYPE = staticlib;
+				MODULEMAP_FILE = "Target Support Files/Pods-Dropp/Pods-Dropp.modulemap";
+				MTL_ENABLE_DEBUG_INFO = NO;
+				OTHER_LDFLAGS = "";
+				OTHER_LIBTOOLFLAGS = "";
+				PODS_ROOT = "$(SRCROOT)";
+				PRODUCT_BUNDLE_IDENTIFIER = "org.cocoapods.${PRODUCT_NAME:rfc1034identifier}";
+				PRODUCT_NAME = Pods_Dropp;
+				SDKROOT = iphoneos;
+				SKIP_INSTALL = YES;
+				SWIFT_OPTIMIZATION_LEVEL = "-Owholemodule";
+				SWIFT_VERSION = 3.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				VERSIONING_SYSTEM = "apple-generic";
+				VERSION_INFO_PREFIX = "";
+			};
+			name = Release;
+		};
+		DB3E6BBDDED069B0D9331719B7172174 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = 8F8A5727A95C16D413C06B0E8F8251B5 /* Pods-DroppTests.debug.xcconfig */;
+			buildSettings = {
+				CODE_SIGN_IDENTITY = "";
+				"CODE_SIGN_IDENTITY[sdk=appletvos*]" = "";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "";
+				"CODE_SIGN_IDENTITY[sdk=watchos*]" = "";
+				CURRENT_PROJECT_VERSION = 1;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				DEFINES_MODULE = YES;
+				DYLIB_COMPATIBILITY_VERSION = 1;
+				DYLIB_CURRENT_VERSION = 1;
+				DYLIB_INSTALL_NAME_BASE = "@rpath";
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				GCC_NO_COMMON_BLOCKS = YES;
+				INFOPLIST_FILE = "Target Support Files/Pods-DroppTests/Info.plist";
+				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
+				IPHONEOS_DEPLOYMENT_TARGET = 10.2;
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
+				MACH_O_TYPE = staticlib;
+				MODULEMAP_FILE = "Target Support Files/Pods-DroppTests/Pods-DroppTests.modulemap";
+				MTL_ENABLE_DEBUG_INFO = YES;
+				OTHER_LDFLAGS = "";
+				OTHER_LIBTOOLFLAGS = "";
+				PODS_ROOT = "$(SRCROOT)";
+				PRODUCT_BUNDLE_IDENTIFIER = "org.cocoapods.${PRODUCT_NAME:rfc1034identifier}";
+				PRODUCT_NAME = Pods_DroppTests;
+				SDKROOT = iphoneos;
+				SKIP_INSTALL = YES;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				VERSIONING_SYSTEM = "apple-generic";
+				VERSION_INFO_PREFIX = "";
+			};
+			name = Debug;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		1779F0A52F2D6B2BF0A8E3001BCAAE54 /* Build configuration list for PBXNativeTarget "Pods-Dropp" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				5718E178120EB0724A635AD280AA3049 /* Debug */,
+				B509B3CCB228551AE4F8603CEE6314FF /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		2D8E8EC45A3A1A1D94AE762CB5028504 /* Build configuration list for PBXProject "Pods" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				166E2CAC58E8608AD59A6F0B71C9C3E0 /* Debug */,
+				AA0B5BDEB018901CD8F88AAD05F5B893 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		60E5C1973ED954759B0DA9A10C47E504 /* Build configuration list for PBXNativeTarget "Gifu" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				2B69E6CBB6890CE4A430E5DF22E33B9E /* Debug */,
+				2C268E740EB2889CC401C0C34A5B24CE /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		825A909DF988AB12648B0A8FC2EE3B49 /* Build configuration list for PBXNativeTarget "Pods-DroppTests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				DB3E6BBDDED069B0D9331719B7172174 /* Debug */,
+				7D8D76F4E5395AD3148C820AD87DFC60 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+/* End XCConfigurationList section */
+	};
+	rootObject = D41D8CD98F00B204E9800998ECF8427E /* Project object */;
+}
