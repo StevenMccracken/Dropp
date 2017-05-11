@@ -3,7 +3,7 @@
  */
 
 const LOG 	= require('./log_mod');
-const ADMIN = require('firebase-ADMIN');
+const ADMIN = require('firebase-admin');
 
 // Testing Environment will get the key from environment variable
 var serviceAccount = process.env.TEST;
