@@ -23,23 +23,9 @@ module.exports = function(passport) {
    */
   passport.use(new JwtStrategy(options, function(jwt_payload, done) {
     // Try to retrieve the user corresponding to the username in the payload
-    firebase.getUser(jwt_payload.username, response => {
-      // If there was an error retrieving the user, return the error with the callback
-      if (response['error'] != null) {
-        return done(response, false);
-      }
-
-      /**
-       * If the database response is not null and doesn't contain
-       * the key 'error', the user was found and the token is valid.
-       * Send the all of that user's information to the callback
-       */
-      if (response) {
-        /**
-         * Add the username key,value pair because database
-         * record does not contain that information
-         */
-        response['username'] = jwt_payload.username;
+    firebase.GET('/users/' + jwt_payload.username, response => {
+      if (response != null) {
+        response.username = jwt_payload.username;
         done(null, response);
       } else {
         /**
@@ -49,6 +35,8 @@ module.exports = function(passport) {
         console.log('%s not found while authenticating with JWT strategy', jwt_payload.username);
         done(null, null);
       }
+    }, dbErr => {
+        done(dbErr, false);
     });
   }));
 };

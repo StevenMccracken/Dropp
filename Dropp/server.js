@@ -4,13 +4,13 @@
 
 const express     = require('express');
 var app           = express();
-const router 	  = require('./modules/router_mod.js')(express.Router());
+const router 	    = require('./modules/router_mod.js')(express.Router());
 const bodyParser  = require('body-parser');
 var port      	  = 8080;
 
 var exports = module.exports = {};
 
-// For purpose of checking travis, need to be remove later
+// For purpose of checking travis. Needs to be removed
 if (process.env.TEST) {
   port = 3000;
 }

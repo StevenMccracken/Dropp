@@ -1,30 +1,23 @@
-const firebase = require('./modules/firebase_mod.js');
-
-// Global authentication for google cloud storage
-const gcs = require('@google-cloud/storage')({
-  projectId: 'dropp-3a65d',
-  keyFilename: './storageAccountKey.json'
-});
-
-// Initialize cloud storage bucket
-const bucket = gcs.bucket('dropp-3a65d.appspot.com');
+const MEDIA = require('./modules/media_mod.js');
+const FIREBASE = require('./modules/firebase_mod.js');
 
 var iteration = 0;
 
 // Run the prune function every 60 seconds
-setInterval(prune, 10000);
+setInterval(prune, 60000);
 
+/**
+ * prune - Deletes dropps and images that are older than 24 hours
+ */
 function prune() {
-  const start = new Date();
-  console.log('Prune %d started at %s', iteration, start.toISOString());
+  const START = new Date();
+  console.log('Prune %d start: %s', iteration, START.toISOString());
 
   // Query the database for all dropps
-  firebase.getAllDropps(dropps => {
-    if (dropps.error != null) {
-      return console.log('Prune job eniterationered error retrieving all dropps: %s', dropps.error.message);
-    }
+  FIREBASE.GET('/dropps', dropps => {
+    var droppSuccessDeleted = 0, droppFailureDeleted = 0;
+    var imageSuccessDeleted = 0, imageFailureDeleted = 0;
 
-    var count = 0;
     for (var dropp in dropps) {
       const details = dropps[dropp];
 
@@ -36,39 +29,38 @@ function prune() {
 
       // If dropp timestamp is more than 24 hours in the past, delete it
       if (currentTimestamp - droppTimestamp > 86400000) {
-        console.log('Deleting dropp %s because it is older than 24 hours (Post date: %s)', dropp, new Date(droppTimestamp).toISOString());
-        firebase.deleteDropp(dropp, dbResult => {
-          if (dbResult.error == null) {
-            count++;
+        console.log('Pruning dropp \'%s\' (posted: %s)', dropp, new Date(droppTimestamp).toISOString());
 
-            /**
-             * If the dropp we just deleted has media
-             * associated with it, delete it from cloud storage
-             */
-            if (details.media) {
-              console.log('Trying to delete image linked to %s', dropp);
-          		var image = bucket.file(dropp)
-          		if (image != null) {
-          			image.delete().then(function(response) {
-          				console.log('Successfully deleted image linked to %s', dropp);
-          			})
-          			.catch(function(err) {
-          				console.log('Failed deleting image linked to %s because: %s', dropp, err);
-          			});
-          		} else {
-          			console.log('No image exists for %s', dropp);
-          		}
-            }
+        FIREBASE.POST('/dropps/' + dropp, null, 'remove', function() {
+          console.log('Successfully pruned dropp \'%s\'', dropp);
+
+          // Now delete picture linked to dropp if it exists
+          if (details.media) {
+            console.log('Pruning image linked to \'%s\'', dropp);
+
+            MEDIA.deleteImage(dropp, success => {
+              if (success) {
+                console.log('Successfully pruned image \'%s\'', dropp);
+              } else {
+                // Image did not exist. Don't need to do anything
+              }
+            }, err => {
+              console.log('Failed pruning image \'%s\': ', dropp, err);
+            });
           }
-
-          console.log(dbResult);
-        });
+        }, err => {
+          console.log('Failed pruning dropp \'%s\': ', dropp, err);
+       });
       }
     }
 
-    const end = new Date();
-    console.log('Prune %d ended at %s', iteration++, end.toISOString());
-    console.log('Total prune runtime: %d seconds', (end - start) / 1000);
-    console.log('Successfully deleted %d dropps', count);
+    // Print out overall pruning results
+    const END = new Date();
+    console.log('Prune %d finish: %s', iteration, END.toISOString());
+    console.log('Prune %d runtime: %d seconds', iteration, (END - START) / 1000);
+
+    iteration++;
+  }, getDroppsErr => {
+    console.log('Prune %d couldn\'t get all dropps: %s', getDroppsErr);
   });
 }
