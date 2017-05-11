@@ -57,9 +57,9 @@ class HTTPModule {
             
             params += "\(key)=\(value)"
         }
-        
+                
         // Add the body to the request for x-www-form-urlencoded
-        let encodedParams = params.data(using:String.Encoding.ascii, allowLossyConversion: false)
+        let encodedParams = params.data(using:String.Encoding.utf8, allowLossyConversion: false)
         request.httpBody = encodedParams
         
         return request
@@ -123,7 +123,7 @@ class HTTPModule {
     }
     
     func getNewToken(completion: @escaping (String) -> Void) {
-        let username = "steve"
+        let username = "leaf"
         let password = "password"
         
         // Create the dictionary for the request body
