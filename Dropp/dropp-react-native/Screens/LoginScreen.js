@@ -76,14 +76,15 @@ export class LoginScreen extends React.Component {
         return (
             <View style={[styles.container]}>
                 <Text 
-                    style={{fontSize: 27}}>
-                    Login
+                    style={{fontSize: 27, color: '#cc2444'}}>
+                    Login to Dropp
                 </Text>
                 <TextInput 
                     placeholder='Username'
                     onChangeText={(username) => this.setState({ username })}
                     value = {this.state.username}
                     style = {styles.loginText}
+                    underlineColorAndroid={'#cc2444'}
                 />
                 <TextInput 
                     placeholder='Password' 
@@ -91,17 +92,20 @@ export class LoginScreen extends React.Component {
                     value = {this.state.password}
                     style = {styles.loginText}
                     secureTextEntry = {true}
+                    underlineColorAndroid={'#cc2444'}
                 />  
                 <View style={[{margin:15}]} />
                 <View style = {styles.button}>
                 <Button 
                         onPress={this._tryLogin}
                         title="Log in"
+                        color='#cc2444'
                     />
                 <View style={{margin:5}} />
                 <Button 
                         onPress={() => navigate('CreateAccount')}
                         title="Make an account"
+                        color='#cc2444'
                     />
                 <Text>{textErrorMessage}</Text>
                 </View>
@@ -124,7 +128,6 @@ const styles = StyleSheet.create({
     width: 150,
   },
   button:{
-    flex: 1,
     height: 75,
     width: 150,
     alignItems: 'center',

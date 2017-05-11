@@ -106,33 +106,55 @@ export class CreateAccountScreen extends React.Component {
     render() {
         let textErrorMessage = this.state.errorMessage ? this.state.errorMessage : ' ';
         return (
-            <ScrollView style={{padding: 20}}>
+            <View style={{
+                    flex: 1,
+                    padding: 20,
+                    height: 25,
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                }}>
                 <Text 
-                    style={{fontSize: 27}}>
+                    style={{fontSize: 27, color: '#cc2444'}}>
                     Make an Account
                 </Text>
                 <TextInput 
                     placeholder='Username'
                     onChangeText={(username) => this.setState({ username })}
                     value = {this.state.username}
+                    style = {{
+                        height: 50,
+                        width: 150,
+                    }}
+                    underlineColorAndroid={'#cc2444'}
                 />
                 <TextInput 
                     placeholder='Password' 
                     onChangeText={(password) => this.setState({ password })}
                     value = {this.state.password}
+                    style = {{
+                        height: 50,
+                        width: 150,
+                    }}
+                    underlineColorAndroid={'#cc2444'}
                 />
                 <TextInput 
                     placeholder='Email' 
                     onChangeText={(email) => this.setState({ email })}
                     value = {this.state.email}
+                    style = {{
+                        height: 50,
+                        width: 150,
+                    }}
+                    underlineColorAndroid={'#cc2444'}
                 />
                 <View style={{margin:7}} />
                 <Button 
                         onPress={this._sendAccountRequest}
                         title="Start Dropping!"
+                        color='#cc2444'
                     />
                 <Text>{textErrorMessage}</Text>
-            </ScrollView>
+            </View>
         )
     }
 }

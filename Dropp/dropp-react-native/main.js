@@ -11,6 +11,13 @@ const App = StackNavigator({
     CreateAccount: { screen: CreateAccountScreen },
     Home: { screen: FeedScreen },
     MakeDropp: { screen: MakeDroppScreen },
+}, {
+    navigationOptions: {
+        headerTintColor: '#ffffff',
+        headerStyle: {
+            backgroundColor: '#ff2d55',
+        },
+    },
 });
 
 Expo.registerRootComponent(App);

@@ -12,6 +12,7 @@ import {
     StyleSheet,
     Platform,
     TouchableHighlight,
+    TouchableWithoutFeedback,
 } from 'react-native';
 import { Constants, ImagePicker, Location, Permissions } from 'expo';
 import * as HelperFunctions from '../HelperFunctions';
@@ -32,7 +33,6 @@ export class MakeDroppScreen extends React.Component {
 
     static navigationOptions = ({ navigation }) => ({
         title: `Create a Dropp`,
-        headerRight: <Button title="Send" onPress={navigation.state.params.sendDropp}/>
     });
  
     componentWillMount() {
@@ -41,7 +41,7 @@ export class MakeDroppScreen extends React.Component {
                 errorMessage: 'Oops, this will not work on Sketch in an Android emulator. Try it on your device!',
             });
         }
-        this.props.navigation.setParams({ sendDropp: this._sendDropp });
+        //this.props.navigation.setParams({ sendDropp: this._sendDropp });
     }   
     _pickImage = async () => {
         let result = await ImagePicker.launchImageLibraryAsync({
@@ -203,32 +203,48 @@ export class MakeDroppScreen extends React.Component {
                     >
                     <View style = {[styles.modalContainer, modalBackgroundStyle]}>
                         <View style={[styles.innerContainer, innerContainerTransparentStyle]}>
-                            <Button title="Camera" onPress={this._takePic}/>
+                            <Button title="Camera" 
+                                onPress={this._takePic}
+                                color='#cc2444'
+                            />
                             <View style={{marginTop: 10}}/>
-                            <Button title="Library" onPress={this._pickImage}/> 
+                            <Button title="Library" 
+                                onPress={this._pickImage}
+                                color='#cc2444'
+                            /> 
                         </View>
                     </View>
                 </Modal>
                 <View>
                     <View style = {{
-                        borderBottomColor: '#000000',
-                        borderBottomWidth: 1,
+                        borderColor: '#cc2444',
+                        borderRadius: 5,
+                        borderWidth: 1,
+                        padding: 25,
+                        margin: 20,
                         }}>
                         <TextInput
-                            style={{height: 100, borderColor: 'gray', borderWidth: 1, fontSize: 20, alignSelf: 'stretch', textAlignVertical: 'top'}}
+                            style={{height: 100, fontSize: 20, alignSelf: 'stretch', textAlignVertical: 'top'}}
                             onChangeText={(text) => this.setState({ text })}
                             value = {this.state.text}
                             multiline = {true}
+                            placeholder = {'Type something here!'}
                             numberOfLines = {4}
                             onSubmitEditing={Keyboard.dismiss}
                             keyboardType={'default'}
+                            underlineColorAndroid={'transparent'} 
                         />
                         </View>
-                    <TouchableHighlight onPress={() => {this.setState({ uploadingPicture: true })}}>
+                    <TouchableWithoutFeedback onPress={() => {this.setState({ uploadingPicture: true })}}>
                         {image ? <Image source={{ uri: image }} style={styles.imageContainer} /> :
                             <Image source={require('../defaultPhoto.png')} style={styles.imageContainer} /> }
-                    </TouchableHighlight>
-                </View>       
+                    </TouchableWithoutFeedback>
+                </View>
+                <View style = {{
+                    padding: 25,
+                }}>
+                    <Button title="Send" color='#cc2444' onPress={this._sendDropp}/>
+                </View>
             </View>
         );
     }

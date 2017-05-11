@@ -28,9 +28,15 @@ export class FeedScreen extends React.Component {
                 //modal data
                 modalText: null,
                 modalImage: null,
+                droppIDToDataURI: {},
         };
         this._getDropps();
     }
+
+    static navigationOptions = ({ navigation }) => ({
+        title: `Nearby Dropps`,
+    });    
+
     componentWillReceiveProps(nextProps) {
         console.log(nextProps.navigation.state.params);
         if (nextProps.navigation.state.params.updateNeeded === true) {
@@ -65,7 +71,8 @@ export class FeedScreen extends React.Component {
                             <Text fontSize = '12'>{this.state.modalText}</Text>
                             <View style = {styles.modalButton}>
                                 <Button 
-                                    onPress={this._setModalVisible.bind(this, false)} 
+                                    onPress={this._setModalVisible.bind(this, false)}
+                                    color='#cc2444' 
                                     title = "close"/>
                             </View>
                         </View>
@@ -79,7 +86,7 @@ export class FeedScreen extends React.Component {
                     keyExtractor = {item => item.d}
                 />
                 <ActionButton 
-                    buttonColor="rgba(23,76,60,1)"
+                    buttonColor='#cc2444'
                     onPress={() => { navigate('MakeDropp', { token : params.token })}}
                 />
             </View>
@@ -88,37 +95,22 @@ export class FeedScreen extends React.Component {
 
     _renderItem = ({item}) => {
         const { params } = this.props.navigation.state;
-        var imageuri = null;
-        if (item.post.media === "true"){
-                var feedRequest = new Request("https://dropps.me/dropps/" + item.d + "/image", {
-                    method: 'GET',
-                    headers: new Headers( {
-                        'Content-Type': 'application/x-www-form-urlencoded',
-                        'Authorization': params.token,
-                        'Platform': 'Android',
-                    }),
-                });
-                fetch(feedRequest)
-                .then((response) => {
-                    imageuri = response;
-                });
-        }
         return(
-            <TouchableHighlight noDefaultStyles={true} onPress={() => this._onPressDropp(item, imageuri)} underlayColor ={"lightsalmon"} activeOpacity = {10}>
+            <TouchableHighlight noDefaultStyles={true} onPress={() => this._onPressDropp(item, this.state.droppIDToDataURI[item.d])} underlayColor ={"lightsalmon"} activeOpacity = {10}>
                 <View style = {styles.row}>
                     <View style = {styles.textcontainer}>
                         <Text style = {{fontWeight: 'bold'}}>{item.post.username}</Text>
                         <Text>{item.post.text}</Text>
                     </View>
                     <View style = {styles.photocontainer}>
-                        {item.post.media === "true" && imageuri && <Image source = {{uri: imageuri }} style ={styles.photo}/>}
+                        {item.post.media === "true" && this.state.droppIDToDataURI[item.d] && <Image source = {{uri: this.state.droppIDToDataURI[item.d] }} style ={styles.photo}/>}
                     </View>
                 </View>
             </TouchableHighlight>
         )};
     
     _onPressDropp = (item, imageuri) => {
-        console.log(item.post.media);
+        console.log(imageuri);
         //set the modal data here with item
         this.setState({modalText: item.post.text});
         this.setState({modalImage: imageuri});
@@ -174,13 +166,35 @@ export class FeedScreen extends React.Component {
         fetch(feedRequest).then((drp) => {
             drp.json().then((droppJSON) =>{
                 var dropList = droppJSON.dropps;
-                console.log(dropList);
                 for(var d in dropList) {
                     var post = dropList[d];
                     feedList.push({d,post});
                 }
                 feedList.reverse();
                 this.setState({dropps: feedList});
+                for(var i = 0; i < feedList.length; i++){
+                    var dropp = feedList[i];
+                    if (dropp.post.media) {
+                        console.log("https://dropps.me/dropps/" + dropp.d + "/image");
+                        var feedRequest = new Request("https://dropps.me/dropps/" + dropp.d + "/image", {
+                            method: 'GET',
+                            headers: new Headers( {
+                                'Content-Type': 'application/x-www-form-urlencoded',
+                                'Authorization': params.token,
+                                'Platform': 'React-Native',
+                            }),
+                        });
+                        fetch(feedRequest)
+                        .then((response) => {
+                            var newMapping = this.state.droppIDToDataURI;
+                            //console.log(dropp.d);
+                            newMapping[dropp.d] = response;
+                            this.setState({droppIDToDataURI: newMapping});
+                        }).catch((error) => {
+                            console.log(error);
+                        });
+                    }
+                }
             });
         });
     }
@@ -225,7 +239,7 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: 'center',
     height: 250,
-    padding: 25,
+    padding: 5,
   },
   modalInnerContainerBottom: {
     borderBottomLeftRadius: 10,
