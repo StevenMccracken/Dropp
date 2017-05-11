@@ -11,16 +11,10 @@ import Foundation
 
 class HTTPModule {
     
-    // If app is running on simulator, let path = localhost
-    #if (arch(i386) || arch(x86_64)) && os(iOS)
-        let apiPath = "http://localhost:8080"
-    #else
-        // Else, app is running on device. Connect it to computer running server locally
-        let apiPath = "http://10.39.11.179:8080"
-    #endif
+    let apiPath = "https://dropps.me"
     
-    func createImageRequest(droppId: String, token: String, params: [String: String], image: UIImage) -> URLRequest {
-        var request = self.createRequest(path: "\(self.apiPath)/\(droppId)/image", token: token)
+    func createImageRequest(droppId: String, token: String, params: [String: String], image: UIImage, compression: Double) -> URLRequest {
+        var request = self.createRequest(path: "/dropps/\(droppId)/image", token: token)
         request.httpMethod = "POST"
         
         let boundary = "Boundary-\(UUID().uuidString)"
@@ -29,7 +23,7 @@ class HTTPModule {
         // Add parameters to the HTTP body
         request.httpBody = self.createBody(parameters: params,
                                            boundary: boundary,
-                                           data: UIImageJPEGRepresentation(image, 0.7)!,
+                                           data: UIImageJPEGRepresentation(image, CGFloat(compression))!,
                                            mimeType: "image/jpeg",
                                            filename: "image.jpg")
         
@@ -51,12 +45,22 @@ class HTTPModule {
         // Set the request type
         request.httpMethod = "POST"
         
-        // Add the JSON parameters to the request body
-        if let jsonBody = try? JSONSerialization.data(withJSONObject: body, options: .prettyPrinted) {
-            request.httpBody = jsonBody
-        } else {
-            print("Unable to serialize dictionary into JSON object. POST request body is still empty")
+        // Add the parameters in the dictionary to a string as key=value pairs separated by &'s
+        var params = ""
+        var first = true
+        for (key, value) in body {
+            if !first {
+                params += "&"
+            } else {
+                first = false
+            }
+            
+            params += "\(key)=\(value)"
         }
+        
+        // Add the body to the request for x-www-form-urlencoded
+        let encodedParams = params.data(using:String.Encoding.ascii, allowLossyConversion: false)
+        request.httpBody = encodedParams
         
         return request
     }
@@ -66,7 +70,7 @@ class HTTPModule {
         var request  = self.createRequest(path: path, token: token)
         
         // Set the content type of the body
-        request.addValue("application/json", forHTTPHeaderField: "Content-Type")
+        request.addValue("application/x-www-form-urlencoded", forHTTPHeaderField: "Content-Type")
         
         return request
     }
@@ -96,6 +100,12 @@ class HTTPModule {
             // Cast response to HTTPURLResponse to get more properties from the response
             httpResponse = response as! HTTPURLResponse
             
+            if httpResponse.statusCode == 413 {
+                print("Request body is too large, the server denied the request")
+                completion(httpResponse, responseJson)
+                return
+            }
+            
             // Request went to server, so parse the response JSON
             do {
                 // Deserialize the response body data into a JSON dictionary
@@ -113,8 +123,8 @@ class HTTPModule {
     }
     
     func getNewToken(completion: @escaping (String) -> Void) {
-        let username = "rich"
-        let password = "1234"
+        let username = "steve"
+        let password = "password"
         
         // Create the dictionary for the request body
         let body = ["username": username, "password": password] as [String: Any]
