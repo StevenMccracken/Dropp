@@ -1,51 +1,63 @@
 /**
- * media_mod - Media transfer @module
+ * media_mod - @module for media transfer to google cloud storage
  */
 
-const multer = require('multer');
+const LOG = require('./log_mod');
+const Multer = require('multer');
 
 // Verify credentials for google cloud storage
-const gcs = require('@google-cloud/storage')({
+const GCS = require('@google-cloud/storage')({
   projectId: 'dropp-3a65d',
   keyFilename: './storageAccountKey.json'
 });
 
 // Initialize cloud storage bucket
-const bucket = gcs.bucket('dropp-3a65d.appspot.com');
+const BUCKET = GCS.bucket('dropp-3a65d.appspot.com');
 
 // Temporary file download configuration
-const upload_config = multer({
-	dest   :	'./temp/uploads/',
-	limits : { fileSize: '10000kb' }
+const UPLOAD_CONFIG = Multer({
+  dest: './temp/uploads/',
+  limits: { fileSize: '10000kb' }
 });
 
 /**
  * deleteImage - Removes an image from cloud storage
- * @param {string} _filename the name of the file (usually a dropp id)
+ * @param {String} _filename the name of the file (usually a dropp id)
  * @param {callback} _callback the callback to handle finish event
  * @param {callback} _errorCallback the callback to handle error event
  */
 var deleteImage = function(_filename, _callback, _errorCallback) {
-  console.log('Trying to delete image \'%s\'', _filename);
+  const SOURCE = 'deleteImage()';
+  log(SOURCE);
 
-  var image = bucket.file(_filename);
-  if (image != null) {
-    image.delete().then(function(response) {
-      console.log('Successfully deleted image \'%s\'', _filename);
+  log(`${SOURCE}: Trying to delete image '${_filename}'`);
+  let image = BUCKET.file(_filename);
+  if (image !== null) {
+    image.delete().then((response) => {
+      log(`${SOURCE}: Successfully deleted image '${_filename}'`);
       _callback(true);
     })
-    .catch(function(err) {
-      console.log('Failed deleting image \'%s\': %s', _filename, err);
-      _errorCallback(err);
+    .catch((deleteImageError) => {
+      log(`${SOURCE}: Failed deleting image '${_filename}' because: ${deleteImageError}`);
+      _errorCallback(deleteImageError);
     });
   } else {
-    console.log('Image \'%s\' does not exist', _filename);
+    log(`${SOURCE}: Image '${_filename}' does not exist`);
     _callback(false);
   }
-}
+};
 
 module.exports = {
-  bucket      : bucket,
-	upload      : upload_config,
-  deleteImage : deleteImage
+  bucket: BUCKET,
+  upload: UPLOAD_CONFIG,
+  deleteImage: deleteImage,
 };
+
+/**
+ * log - Logs a message to the server console
+ * @param {String} _message the log message
+ * @param {Object} _request the HTTP request
+ */
+function log(_message) {
+  LOG.log('Media Module', _message);
+}

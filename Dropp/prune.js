@@ -1,3 +1,4 @@
+const LOG = require('./modules/log_mod');
 const MEDIA = require('./modules/media_mod.js');
 const FIREBASE = require('./modules/firebase_mod.js');
 
@@ -11,56 +12,62 @@ setInterval(prune, 60000);
  */
 function prune() {
   const START = new Date();
-  console.log('Prune %d start: %s', iteration, START.toISOString());
+  log(`Prune ${iteration} started`);
 
   // Query the database for all dropps
-  FIREBASE.GET('/dropps', dropps => {
-    var droppSuccessDeleted = 0, droppFailureDeleted = 0;
-    var imageSuccessDeleted = 0, imageFailureDeleted = 0;
+  FIREBASE.GET(
+    '/dropps',
+    (dropps) => {
+      for (let dropp in dropps) {
+        const details = dropps[dropp];
 
-    for (var dropp in dropps) {
-      const details = dropps[dropp];
+        // Convert dropp timestamp to unix milliseconds
+        const droppTimestamp = details.timestamp * 1000;
 
-      // Convert dropp timestamp to unix milliseconds
-      const droppTimestamp = details.timestamp * 1000;
+        // Get current unix timestamp in milliseconds
+        const currentTimestamp = new Date();
 
-      // Get current unix timestamp in milliseconds
-      const currentTimestamp = new Date();
+        // If dropp timestamp is more than 24 hours in the past, delete it
+        if (currentTimestamp - droppTimestamp > 86400000) {
+          log(`Pruning dropp '${dropp}' (posted: ${new Date(droppTimestamp).toISOString()})`);
 
-      // If dropp timestamp is more than 24 hours in the past, delete it
-      if (currentTimestamp - droppTimestamp > 86400000) {
-        console.log('Pruning dropp \'%s\' (posted: %s)', dropp, new Date(droppTimestamp).toISOString());
+          FIREBASE.DELETE(
+            `/dropps/${dropp}`,
+            () => {
+              log(`Successfully pruned dropp '${dropp}'`);
 
-        FIREBASE.POST('/dropps/' + dropp, null, 'remove', function() {
-          console.log('Successfully pruned dropp \'%s\'', dropp);
-
-          // Now delete picture linked to dropp if it exists
-          if (details.media) {
-            console.log('Pruning image linked to \'%s\'', dropp);
-
-            MEDIA.deleteImage(dropp, success => {
-              if (success) {
-                console.log('Successfully pruned image \'%s\'', dropp);
-              } else {
-                // Image did not exist. Don't need to do anything
+              // Now delete picture linked to dropp if it exists
+              if (details.media) {
+                log(`Prunign image linked to '${dropp}'`);
+                MEDIA.deleteImage(
+                  dropp,
+                  (success) => {
+                    if (success) log(`Successfully pruned image '${dropp}'`);
+                  },
+                  deleteImageErr => log(`Failed pruning image '${dropp}': ${deleteImageErr}`)
+                );
               }
-            }, err => {
-              console.log('Failed pruning image \'%s\': ', dropp, err);
-            });
-          }
-        }, err => {
-          console.log('Failed pruning dropp \'%s\': ', dropp, err);
-       });
+            },
+            removeDroppErr => log(`Failed prunign dropp '${dropp}': ${removeDroppErr}`)
+          );
+        }
       }
-    }
 
-    // Print out overall pruning results
-    const END = new Date();
-    console.log('Prune %d finish: %s', iteration, END.toISOString());
-    console.log('Prune %d runtime: %d seconds', iteration, (END - START) / 1000);
+      // Print out overall pruning results
+      const END = new Date();
+      log(`Prune ${iteration} finished`);
+      log(`Prune ${iteration} runtime: ${(END - START) / 1000} seconds`);
+      iteration++;
+    },
+    getDroppsErr => log(`Prune ${iteration} failed while fetching all dropps: ${getDroppsErr}`)
+  );
+}
 
-    iteration++;
-  }, getDroppsErr => {
-    console.log('Prune %d couldn\'t get all dropps: %s', getDroppsErr);
-  });
+/**
+ * log - Logs a message to the server console
+ * @param {String} _message the log message
+ * @param {Object} _request the HTTP request
+ */
+function log(_message) {
+  LOG.log('Prune Module', _message);
 }
