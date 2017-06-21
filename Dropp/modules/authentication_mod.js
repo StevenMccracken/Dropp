@@ -4,7 +4,6 @@
 
 const LOG = require('./log_mod');
 const JWT = require('jsonwebtoken');
-const ERROR = require('./error_mod');
 const BCRYPT = require('bcrypt-nodejs');
 const CONFIG = require(process.cwd() + '/config/secret.js');
 
@@ -81,7 +80,11 @@ var generateToken = function(_username, _userData) {
   const SOURCE = 'generateToken()';
   log(SOURCE);
 
-  let userInfo = { username: _username, details: _userData }
+  let userInfo = {
+    details: _userData,
+    username: _username,
+  }
+
   return JWT.sign(userInfo, CONFIG.secret, { expiresIn: '30d' });
 }
 

@@ -38,7 +38,7 @@ function prune() {
 
               // Now delete picture linked to dropp if it exists
               if (details.media) {
-                log(`Prunign image linked to '${dropp}'`);
+                log(`Pruning image linked to '${dropp}'`);
                 MEDIA.deleteImage(
                   dropp,
                   (success) => {

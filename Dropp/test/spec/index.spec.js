@@ -38,7 +38,7 @@ describe('Start server', () => {
           username: user1Name,
           password: password,
           email: `${user1Name}@grunttest.com`,
-        }
+        },
       };
     });
 
@@ -67,7 +67,7 @@ describe('Start server', () => {
           username: user2Name,
           password: password,
           email: `${user2Name}@grunttest.com`,
-        }
+        },
       };
     });
 
@@ -95,7 +95,7 @@ describe('Start server', () => {
         form: {
           username: user1Name,
           password: password,
-        }
+        },
       };
     });
 
@@ -119,7 +119,7 @@ describe('Start server', () => {
     beforeEach(() => {
       requestParams = {
         url: `${baseUrl}/users/${user1Name}`,
-        headers: { Authorization: user1Token }
+        headers: { Authorization: user1Token },
       };
     });
 
@@ -140,7 +140,7 @@ describe('Start server', () => {
       requestParams = {
         url: `${baseUrl}/users/${user1Name}/email`,
         headers: { Authorization: user1Token },
-        form: { newEmail: `${user1Name}_updated@grunttest.com` }
+        form: { newEmail: `${user1Name}_updated@grunttest.com` },
       };
     });
 
@@ -164,7 +164,7 @@ describe('Start server', () => {
         form: {
           oldPassword: password,
           newPassword: `${password}_updated`,
-        }
+        },
       };
     });
 
@@ -191,7 +191,7 @@ describe('Start server', () => {
           timestamp: Math.floor(Date.now() / 1000),
           text: 'grunt test',
           media: 'false',
-        }
+        },
       };
     });
 
@@ -223,7 +223,7 @@ describe('Start server', () => {
           timestamp: Math.floor(Date.now() / 1000),
           text: 'grunt test with image',
           media: 'true',
-        }
+        },
       };
     });
 
@@ -249,7 +249,7 @@ describe('Start server', () => {
       requestParams = {
         url: `${baseUrl}/dropps/${droppWithImageKey}/image`,
         headers: { Authorization: user1Token },
-        formData: { image: FS.createReadStream('./test/spec/test.png') }
+        formData: { image: FS.createReadStream('./test/spec/test.png') },
       };
     });
 
@@ -269,7 +269,7 @@ describe('Start server', () => {
     beforeEach(() => {
       requestParams = {
         url: `${baseUrl}/dropps/${droppWithImageKey}`,
-        headers: { Authorization: user1Token }
+        headers: { Authorization: user1Token },
       };
     });
 
@@ -292,7 +292,7 @@ describe('Start server', () => {
         headers: {
           Authorization: user1Token,
           platform: 'React-Native',
-        }
+        },
       };
     });
 
@@ -318,7 +318,7 @@ describe('Start server', () => {
         form: {
           location : '0,0',
           maxDistance : 100,
-        }
+        },
       };
     });
 
@@ -345,7 +345,7 @@ describe('Start server', () => {
         form: {
           location : '0,0',
           maxDistance : 100,
-        }
+        },
       };
     });
 
@@ -369,7 +369,7 @@ describe('Start server', () => {
     beforeEach(() => {
       requestParams = {
         url: `${baseUrl}/users/${user1Name}/dropps`,
-        headers: { Authorization: user1Token }
+        headers: { Authorization: user1Token },
       };
     });
 
@@ -393,7 +393,7 @@ describe('Start server', () => {
       requestParams = {
         url: `${baseUrl}/dropps/${droppWithImageKey}/text`,
         headers: { Authorization: user1Token },
-        form: { newText: 'grunt test update dropp' }
+        form: { newText: 'grunt test update dropp' },
       };
     });
 
@@ -413,7 +413,7 @@ describe('Start server', () => {
     beforeEach(() => {
       requestParams = {
         url: `${baseUrl}/dropps/${droppWithImageKey}`,
-        headers: { Authorization: user1Token }
+        headers: { Authorization: user1Token },
       };
     });
 
@@ -433,7 +433,7 @@ describe('Start server', () => {
     beforeEach(() => {
       requestParams = {
         url: `${baseUrl}/users/${user2Name}/requests/followers`,
-        headers: { Authorization: user1Token }
+        headers: { Authorization: user1Token },
       };
     });
 
@@ -453,7 +453,7 @@ describe('Start server', () => {
     beforeEach(() => {
       requestParams = {
         url: `${baseUrl}/users/${user1Name}/requests/followers`,
-        headers: { Authorization: user2Token }
+        headers: { Authorization: user2Token },
       };
     });
 
@@ -473,7 +473,7 @@ describe('Start server', () => {
     beforeEach(() => {
       requestParams = {
         url: `${baseUrl}/users/${user1Name}/requests/follows`,
-        headers: { Authorization: user1Token }
+        headers: { Authorization: user1Token },
       };
     });
 
@@ -496,7 +496,7 @@ describe('Start server', () => {
     beforeEach(() => {
       requestParams = {
         url: `${baseUrl}/users/${user1Name}/requests/followers`,
-        headers: { Authorization: user1Token }
+        headers: { Authorization: user1Token },
       };
     });
 
@@ -519,7 +519,7 @@ describe('Start server', () => {
     beforeEach(() => {
       requestParams = {
         url: `${baseUrl}/users/${user1Name}/requests/followers/${user2Name}`,
-        headers: { Authorization: user1Token }
+        headers: { Authorization: user1Token },
       };
     });
 
@@ -539,7 +539,7 @@ describe('Start server', () => {
     beforeEach(() => {
       requestParams = {
         url: `${baseUrl}/users/${user2Name}/requests/followers/${user1Name}`,
-        headers: { Authorization: user2Token }
+        headers: { Authorization: user2Token },
       };
     });
 
@@ -559,7 +559,7 @@ describe('Start server', () => {
     beforeEach(() => {
       requestParams = {
         url: `${baseUrl}/users/${user1Name}/followers`,
-        headers: { Authorization: user2Token }
+        headers: { Authorization: user2Token },
       };
     });
 
@@ -582,7 +582,7 @@ describe('Start server', () => {
     beforeEach(() => {
       requestParams = {
         url: `${baseUrl}/users/${user2Name}/follows`,
-        headers: { Authorization: user1Token }
+        headers: { Authorization: user1Token },
       };
     });
 
@@ -605,7 +605,7 @@ describe('Start server', () => {
     beforeEach(() => {
       requestParams = {
         url: `${baseUrl}/users/${user2Name}/follows/dropps`,
-        headers: { Authorization: user2Token }
+        headers: { Authorization: user2Token },
       };
     });
 
@@ -628,7 +628,7 @@ describe('Start server', () => {
     beforeEach(() => {
       requestParams = {
         url: `${baseUrl}/users/${user2Name}/requests/followers`,
-        headers: { Authorization: user1Token }
+        headers: { Authorization: user1Token },
       };
     });
 
@@ -648,7 +648,7 @@ describe('Start server', () => {
     beforeEach(() => {
       requestParams = {
         url: `${baseUrl}/users/${user1Name}/requests/follows/${user2Name}`,
-        headers: { Authorization: user1Token }
+        headers: { Authorization: user1Token },
       };
     });
 
@@ -668,7 +668,7 @@ describe('Start server', () => {
     beforeEach(() => {
       requestParams = {
         url: `${baseUrl}/users/${user1Name}/followers/${user2Name}`,
-        headers: { Authorization: user1Token }
+        headers: { Authorization: user1Token },
       };
     });
 
@@ -688,7 +688,7 @@ describe('Start server', () => {
     beforeEach(() => {
       requestParams = {
         url: `${baseUrl}/users/${user1Name}/requests/followers`,
-        headers: { Authorization: user2Token }
+        headers: { Authorization: user2Token },
       };
     });
 
@@ -708,7 +708,7 @@ describe('Start server', () => {
     beforeEach(() => {
       requestParams = {
         url: `${baseUrl}/users/${user1Name}/requests/followers/${user2Name}`,
-        headers: { Authorization: user1Token }
+        headers: { Authorization: user1Token },
       };
     });
 
@@ -728,7 +728,7 @@ describe('Start server', () => {
     beforeEach(() => {
       requestParams = {
         url: `${baseUrl}/users/${user2Name}/follows/${user1Name}`,
-        headers: { Authorization: user2Token }
+        headers: { Authorization: user2Token },
       };
     });
 
@@ -748,7 +748,7 @@ describe('Start server', () => {
     beforeEach(() => {
       requestParams = {
         url: `${baseUrl}/users/${user1Name}`,
-        headers: { Authorization: user1Token }
+        headers: { Authorization: user1Token },
       };
     });
 
@@ -768,7 +768,7 @@ describe('Start server', () => {
     beforeEach(() => {
       requestParams = {
         url: `${baseUrl}/users/${user2Name}`,
-        headers: { Authorization: user2Token }
+        headers: { Authorization: user2Token },
       };
     });
 

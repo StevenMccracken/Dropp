@@ -4,13 +4,14 @@ branches:
   - master
 language: node_js
 node_js:
-- '6'
+- '8'
 before_script:
 - cd Dropp
 - npm install -g grunt-cli
 - npm install
 script: grunt test
 notifications:
+  email: false
   slack: on_failure:always
   slack: dropp-team:8Z3VlEFUvptOgxgl0OeeKGME
   slack:

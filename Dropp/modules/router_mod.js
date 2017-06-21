@@ -6,7 +6,7 @@ const LOG = require('./log_mod');
 const MEDIA = require('./media_mod');
 const MIDDLEWARE = require('./middleware_mod');
 
-var router;
+let router;
 var routing = function(_router) {
   router = _router;
 

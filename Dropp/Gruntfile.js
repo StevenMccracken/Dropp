@@ -1,19 +1,18 @@
-module.exports = function(grunt) {
+module.exports = (grunt) => {
   grunt.initConfig({
     pkg: grunt.file.readJSON('package.json'),
-    jasmine_node:{
+    jasmine_node: {
       options: {
         forceExit: true,
         match:'.',
         matchall: false,
         extensions: 'js',
-        specNameMatcher: 'spec'
+        specNameMatcher: 'spec',
       },
-      all:['spec/']
-    }
+      all: ['spec/'],
+    },
   });
 
   grunt.loadNpmTasks('grunt-jasmine-node');
-
   grunt.registerTask('test', 'jasmine_node');
 };

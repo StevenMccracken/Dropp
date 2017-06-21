@@ -14,7 +14,7 @@ else serviceAccount = require('../serviceAccountKey.json');
 // Verify firebase admin credentials
 ADMIN.initializeApp({
   credential: ADMIN.credential.cert(serviceAccount),
-  databaseURL: 'https://dropp-3a65d.firebaseio.com'
+  databaseURL: 'https://dropp-3a65d.firebaseio.com',
 });
 
 // Initialze database object

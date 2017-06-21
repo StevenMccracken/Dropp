@@ -8,7 +8,7 @@ const Multer = require('multer');
 // Verify credentials for google cloud storage
 const GCS = require('@google-cloud/storage')({
   projectId: 'dropp-3a65d',
-  keyFilename: './storageAccountKey.json'
+  keyFilename: './storageAccountKey.json',
 });
 
 // Initialize cloud storage bucket
@@ -17,7 +17,7 @@ const BUCKET = GCS.bucket('dropp-3a65d.appspot.com');
 // Temporary file download configuration
 const UPLOAD_CONFIG = Multer({
   dest: './temp/uploads/',
-  limits: { fileSize: '10000kb' }
+  limits: { fileSize: '10000kb' },
 });
 
 /**
