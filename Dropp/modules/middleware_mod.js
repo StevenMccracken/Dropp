@@ -7,8 +7,11 @@ const FS = require('fs');
 const LOG = require('./log_mod');
 const ERROR = require('./error_mod');
 const MEDIA = require('./media_mod');
+const DROPPS = require('./dropp_mod');
+const SOCIAL = require('./social_mod');
 const FIREBASE = require('./firebase_mod');
 const AUTH = require('./authentication_mod');
+const VALIDATE = require('./validation_mod');
 
 /**
  * authenticate - Authorizes a user and generates a JSON web token for the user
@@ -153,9 +156,9 @@ var createUser = function(_request, _response, _callback) {
 
   // Check request paramerters
   let invalidParams = [];
-  if (!isValidEmail(_request.body.email)) invalidParams.push('password');
-  if (!isValidUsername(_request.body.username)) invalidParams.push('username');
-  if (!isValidPassword(_request.body.password)) invalidParams.push('password');
+  if (!VALIDATE.isValidEmail(_request.body.email)) invalidParams.push('password');
+  if (!VALIDATE.isValidUsername(_request.body.username)) invalidParams.push('username');
+  if (!VALIDATE.isValidPassword(_request.body.password)) invalidParams.push('password');
 
   if (invalidParams.length > 0) {
     let errorDetails = {
@@ -327,7 +330,7 @@ var getUser = function(_request, _response, _callback) {
     _response,
     (client) => {
       // Token is valid, so check request parameters
-      if (!isValidUsername(_request.params.username)) {
+      if (!VALIDATE.isValidUsername(_request.params.username)) {
         let errorDetails = {
           source: SOURCE,
           request: _request,
@@ -410,8 +413,8 @@ var updateUserEmail = function(_request, _response, _callback) {
     (client) => {
       // Token is valid, so check request parameters
       let invalidParams = [];
-      if (!isValidUsername(_request.params.username)) invalidParams.push('username');
-      if (!isValidEmail(_request.body.newEmail)) invalidParams.push('newEmail');
+      if (!VALIDATE.isValidUsername(_request.params.username)) invalidParams.push('username');
+      if (!VALIDATE.isValidEmail(_request.body.newEmail)) invalidParams.push('newEmail');
 
       if (invalidParams.length > 0){
         let errorDetails = {
@@ -536,9 +539,9 @@ var updateUserPassword = function(_request, _response, _callback) {
     (client) => {
       // Token is valid, so check request parameters
       let invalidParams = [];
-      if (!isValidUsername(_request.params.username)) invalidParams.push('username');
-      if (!isValidPassword(_request.body.oldPassword)) invalidParams.push('oldPassword');
-      if (!isValidPassword(_request.body.newPassword)) invalidParams.push('newPassword');
+      if (!VALIDATE.isValidUsername(_request.params.username)) invalidParams.push('username');
+      if (!VALIDATE.isValidPassword(_request.body.oldPassword)) invalidParams.push('oldPassword');
+      if (!VALIDATE.isValidPassword(_request.body.newPassword)) invalidParams.push('newPassword');
 
       if (invalidParams.length > 0){
         let errorDetails = {
@@ -711,7 +714,7 @@ var deleteUser = function(_request, _response, _callback) {
     _response,
     (client) => {
       // Check request parameters
-      if (!isValidUsername(_request.params.username)) {
+      if (!VALIDATE.isValidUsername(_request.params.username)) {
         let errorDetails = {
           source: SOURCE,
           request: _request,
@@ -763,7 +766,7 @@ var deleteUser = function(_request, _response, _callback) {
               // Delete all follower requests for client
               if (userInfo.follower_requests !== undefined) {
                 for (let requester in userInfo.follower_requests) {
-                  removeRequest(
+                  SOCIAL.removeRequest(
                     client.username,
                     'follower',
                     requester,
@@ -777,7 +780,7 @@ var deleteUser = function(_request, _response, _callback) {
               // Delete all follow requests for client
               if (userInfo.follow_requests !== undefined) {
                 for (let requestedUser in userInfo.follow_requests) {
-                  removeRequest(
+                  SOCIAL.removeRequest(
                     client.username,
                     'follow',
                     requestedUser,
@@ -791,7 +794,7 @@ var deleteUser = function(_request, _response, _callback) {
               // Delete all followers
               if (userInfo.followers !== undefined) {
                 for (let follower in userInfo.followers) {
-                  removeConnection(
+                  SOCIAL.removeConnection(
                     client.username,
                     'followers',
                     follower,
@@ -805,7 +808,7 @@ var deleteUser = function(_request, _response, _callback) {
               // Delete all follows
               if (userInfo.follows !== undefined) {
                 for (let followedUser in userInfo.follows) {
-                  removeConnection(
+                  SOCIAL.removeConnection(
                     client.username,
                     'follows',
                     followedUser,
@@ -833,7 +836,7 @@ var deleteUser = function(_request, _response, _callback) {
 
                       // If dropp had image, delete the image
                       if (allDropps[droppKey].media === 'true') {
-                        MEDIA.deleteImage(
+                        MEDIA.DELETE(
                           droppKey,
                           deleted => {},
                           deleteImageError => {}
@@ -937,16 +940,16 @@ var createDropp = function(_request, _response, _callback) {
     (client) => {
       // Check request parameters
       let invalidParams = [];
-      if (!isValidLocation(_request.body.location)) invalidParams.push('location');
+      if (!VALIDATE.isValidLocation(_request.body.location)) invalidParams.push('location');
       if (
-        !isValidInteger(_request.body.timestamp) ||
+        !VALIDATE.isValidInteger(_request.body.timestamp) ||
         _request.body.timestamp > (Date.now() / 1000)
       ) invalidParams.push('timestamp');
-      if (!isValidMedia(_request.body.media)) invalidParams.push('media');
+      if (!VALIDATE.isValidMediaString(_request.body.media)) invalidParams.push('media');
       if (
-        isValidMedia(_request.body.media) &&
+        VALIDATE.isValidMediaString(_request.body.media) &&
         _request.body.media === 'false' &&
-        !isValidTextPost(_request.body.text)
+        !VALIDATE.isValidTextPost(_request.body.text)
       ) invalidParams.push('text');
 
       if (invalidParams.length > 0) {
@@ -1024,16 +1027,20 @@ var addImage = function(_request, _response, _callback) {
     _response,
     (client) => {
       // Check request parameters
-      if (!isValidId(_request.params.droppId)) {
-        // Remove temp file that multer created
-        if (_request.file !== undefined) removeFile(_request.file.path);
+      let invalidParams = [];
+      if (!VALIDATE.isValidId(_request.params.droppId)) invalidParams.push('droppId');
+      if (_request.file === undefined || _request.file === null) invalidParams.push('image');
+
+      if (invalidParams.length > 0) {
+        // Remove temp file that multer created if it existed
+        if (_request.file !== undefined) MEDIA.removeTempFile(_request.file.path);
         let errorDetails = {
           source: SOURCE,
           request: _request,
           response: _response,
           client: client.username,
           error: ERROR.CODE.INVALID_REQUEST_ERROR,
-          customErrorMessage: 'Invalid parameters: droppId',
+          customErrorMessage: `Invalid parameters: ${invalidParams.join()}`,
         };
 
         ERROR.error(errorDetails, error => _callback(error));
@@ -1043,8 +1050,7 @@ var addImage = function(_request, _response, _callback) {
           `/dropps/${_request.params.droppId}`,
           (dropp) => {
             if (dropp === null) {
-              // Remove temp file that multer created
-              if (_request.file !== undefined) removeFile(_request.file.path);
+              MEDIA.removeTempFile(_request.file.path);
               let errorDetails = {
                 source: SOURCE,
                 request: _request,
@@ -1056,6 +1062,7 @@ var addImage = function(_request, _response, _callback) {
               ERROR.error(errorDetails, error => _callback(error));
             } else if (client.username !== dropp.username) {
               // Client attempted to add an image for a user other than themself
+              MEDIA.removeTempFile(_request.file.path);
               let errorDetails = {
                 source: SOURCE,
                 request: _request,
@@ -1070,7 +1077,7 @@ var addImage = function(_request, _response, _callback) {
                * If dropp has media parameter = false, don't allow an
                * image upload. Remove the temp file that multer created
                */
-              if (_request.file !== undefined) removeFile(_request.file.path);
+              MEDIA.removeTempFile(_request.file.path);
               let errorDetails = {
                 source: SOURCE,
                 request: _request,
@@ -1081,77 +1088,88 @@ var addImage = function(_request, _response, _callback) {
 
               ERROR.error(errorDetails, error => _callback(error));
             } else {
-              /**
-               * Dropp exists in database and is supposed to have
-               * media. Check if request body contains file param
-               */
-              if (_request.file !== undefined) {
-                // Make sure only specific image files are in the request body data
-                if (
-                  _request.file.mimetype !== 'image/jpeg' &&
-                  _request.file.mimetype !== 'image/png'
-                ) {
-                  // Delete the temp file that multer created
-                  removeFile(_request.file.path);
-                  let errorDetails = {
-                    source: SOURCE,
-                    request: _request,
-                    response: _response,
-                    error: ERROR.CODE.INVALID_MEDIA_TYPE,
-                    serverMessage: `File received had ${_request.file.mimetype} mimetype`,
-                  };
-
-                  ERROR.error(errorDetails, error => _callback(error));
-                } else {
-                  /**
-                   * Valid file has been sent with request. Access file that multer
-                   * added to temp directory and stream it to google cloud storage
-                   */
-                  let filename = _request.params.droppId;
-                  let localReadStream = FS.createReadStream(_request.file.path);
-                  let remoteWriteStream = MEDIA.bucket.file(filename).createWriteStream();
-                  localReadStream.pipe(remoteWriteStream);
-
-                  // Catch error event while uploading
-                  remoteWriteStream.on('error', (uploadError) => {
-                     // Remove temp file that multer created
-                    removeFile(_request.file.path);
+              // Check cloud storage to see if an image has already been uploaded for this dropp
+              MEDIA.GET(
+                _request.params.droppId,
+                false,
+                (imageData) => {
+                  if (imageData !== null) {
+                    MEDIA.removeTempFile(_request.file.path);
                     let errorDetails = {
                       source: SOURCE,
                       request: _request,
                       response: _response,
-                      serverMessage: uploadError,
-                      error: ERROR.CODE.API_ERROR,
+                      error: ERROR.CODE.INVALID_REQUEST_ERROR,
+                      customErrorMessage: 'That dropp already has media attached',
                     };
 
                     ERROR.error(errorDetails, error => _callback(error));
-                  });
+                  } else {
+                    /**
+                     * Dropp exists in database, is supposed to have media,
+                     * and does not already have an image uploaded. Make sure
+                     * only specific image files are in the request body data
+                     */
+                    if (
+                      _request.file.mimetype !== 'image/jpeg' &&
+                      _request.file.mimetype !== 'image/png'
+                    ) {
+                      // Delete the temp file that multer created
+                      MEDIA.removeTempFile(_request.file.path);
+                      let errorDetails = {
+                        source: SOURCE,
+                        request: _request,
+                        response: _response,
+                        error: ERROR.CODE.INVALID_MEDIA_TYPE,
+                        serverMessage: `File received had ${_request.file.mimetype} mimetype`,
+                      };
 
-                  // Catch finish event after uploading
-                  remoteWriteStream.on('finish', () => {
-                     // Remove temp file that multer created
-                    removeFile(_request.file.path);
-                    let successJson = {
-                      success: {
-                        message: 'Successfully added image',
-                      },
-                    };
+                      ERROR.error(errorDetails, error => _callback(error));
+                    } else {
+                      /**
+                       * Valid file has been sent with request. Access file that multer
+                       * added to temp directory and stream it to google cloud storage
+                       */
+                      MEDIA.ADD(
+                        _request.params.droppId,
+                        _request.file,
+                        () => {
+                          MEDIA.removeTempFile(_request.file.path);
+                          let successJson = {
+                            success: {
+                              message: 'Successfully added image',
+                            },
+                          };
 
-                    _response.status(201);
-                    _callback(successJson);
-                  });
+                          _response.status(201);
+                          _callback(successJson);
+                        },
+                        (addImageError) => {
+                          MEDIA.removeTempFile(_request.file.path);
+                          let errorDetails = {
+                            source: SOURCE,
+                            request: _request,
+                            response: _response,
+                            error: addImageError,
+                          };
+
+                          ERROR.determineMediaError(errorDetails, error => _callback(error));
+                        }
+                      );
+                    }
+                  }
+                },
+                (getImageError) => {
+                  let errorDetails = {
+                    source: SOURCE,
+                    request: _request,
+                    response: _response,
+                    error: getImageError,
+                  };
+
+                  ERROR.determineMediaError(errorDetails, error => _callback(error));
                 }
-              } else {
-                let errorDetails = {
-                  source: SOURCE,
-                  request: _request,
-                  response: _response,
-                  error: ERROR.CODE.INVALID_REQUEST_ERROR,
-                  customErrorMessage: 'Missing parameters: file',
-                };
-
-                ERROR.error(errorDetails, error => _callback(error));
-              }
+              );
             }
           },
           (getDroppError) => {
@@ -1200,7 +1218,7 @@ var getDropp = function(_request, _response, _callback) {
     _response,
     (client) => {
       // Check request parameters
-      if (!isValidId(_request.params.droppId)) {
+      if (!VALIDATE.isValidId(_request.params.droppId)) {
         let errorDetails = {
           source: SOURCE,
           request: _request,
@@ -1275,7 +1293,7 @@ var getImage = function(_request, _response, _callback) {
     _response,
     (client) => {
       // Check request parameters
-      if (!isValidId(_request.params.droppId)) {
+      if (!VALIDATE.isValidId(_request.params.droppId)) {
         let errorDetails = {
           source: SOURCE,
           request: _request,
@@ -1312,50 +1330,38 @@ var getImage = function(_request, _response, _callback) {
 
               ERROR.error(errorDetails, error => _callback(error));
             } else {
-              // Requested dropp has media, so query google cloud storage for image
-              let filename = _request.params.droppId;
-              let remoteReadStream = MEDIA.bucket.file(filename).createReadStream();
-
               // Determine if image should be sent as base-64 string for react-native clients
               let platformIsReactNative = _request.headers !== undefined &&
                 _request.headers.platform === 'React-Native';
 
-              // Catch error event while downloading
-              remoteReadStream.on('error', (downloadError) => {
-                var error, clientMessage, serverLog;
-                if (downloadError.code === 404) {
-                  error = ERROR.CODE.RESOURCE_DNE_ERROR;
-                  clientMessage = 'That image does not exist';
-                } else {
-                  error = ERROR.CODE.API_ERROR;
-                  serverLog = downloadErr;
+              // Requested dropp has media, so query google cloud storage for image
+              MEDIA.GET(
+                _request.params.droppId,
+                platformIsReactNative,
+                (imageData) => {
+                  if (imageData === null) {
+                    let errorDetails = {
+                      source: SOURCE,
+                      request: _request,
+                      response: _response,
+                      error: ERROR.CODE.RESOURCE_DNE_ERROR,
+                      customErrorMessage: 'That image does not exist',
+                    };
+
+                    ERROR.error(errorDetails, error => _callback(error));
+                  } else _callback(imageData);
+                },
+                (getImageError) => {
+                  let errorDetails = {
+                    source: SOURCE,
+                    request: _request,
+                    response: _response,
+                    error: getImageError,
+                  };
+
+                  ERROR.determineMediaError(errorDetails, error => _callback(error));
                 }
-
-                let errorDetails = {
-                  error: error,
-                  source: SOURCE,
-                  request: _request,
-                  response: _response,
-                  serverMessage: serverLog,
-                  customErrorMessage: clientMessage,
-                };
-
-                ERROR.error(errorDetails, error => _callback(error));
-              });
-
-              // Download bytes from google cloud storage reference to local memory array
-              let data = [];
-              remoteReadStream.on('data', datum => data.push(datum));
-
-              // Catch finish event after downloading has finished
-              remoteReadStream.on('end', () => {
-                // Create buffer object from array of bytes
-                let buffer = Buffer.concat(data);
-
-                if (platformIsReactNative) {
-                  encodeForReactNative(buffer, base64String => _callback({ media: base64String }));
-                } else _callback({ media: buffer });
-              });
+              );
             }
           },
           (getDroppError) => {
@@ -1406,8 +1412,10 @@ var getAllDropps = function(_request, _response, _callback) {
     (client) => {
       // Token is valid, so check request parameters
       let invalidParams = [];
-      if (!isValidLocation(_request.body.location)) invalidParams.push('location');
-      if (!isValidPositiveFloat(_request.body.maxDistance)) invalidParams.push('maxDistance');
+      if (!VALIDATE.isValidLocation(_request.body.location)) invalidParams.push('location');
+      if (!VALIDATE.isValidPositiveFloat(_request.body.maxDistance)) {
+        invalidParams.push('maxDistance');
+      }
 
       if (invalidParams.length > 0) {
         let errorDetails = {
@@ -1439,13 +1447,13 @@ var getAllDropps = function(_request, _response, _callback) {
                 // Loop over all the dropps in the dropps JSON
                 for (let droppKey in allDropps) {
                   let dropp = allDropps[droppKey];
-                  if (!isValidLocation(dropp.location)) continue;
+                  if (!VALIDATE.isValidLocation(dropp.location)) continue;
 
                   // Turn the string lat,long coordinates into a number array
                   let droppLocation = dropp.location.split(',').map(Number);
 
                   // Calculate straight-path distance between the points
-                  let distanceFromTarget = distance(targetLocation, droppLocation);
+                  let distanceFromTarget = DROPPS.distance(targetLocation, droppLocation);
 
                   if (usersClientFollows[dropp.username] !== undefined) {
                     if (distanceFromTarget <= maxDistance) dropp.nearby = 'true';
@@ -1518,8 +1526,10 @@ var getDroppsByLocation = function(_request, _response, _callback) {
     (client) => {
       // Check request parameters
       let invalidParams = [];
-      if (!isValidLocation(_request.body.location)) invalidParams.push('location');
-      if (!isValidPositiveFloat(_request.body.maxDistance)) invalidParams.push('maxDistance');
+      if (!VALIDATE.isValidLocation(_request.body.location)) invalidParams.push('location');
+      if (!VALIDATE.isValidPositiveFloat(_request.body.maxDistance)) {
+        invalidParams.push('maxDistance');
+      }
 
       if (invalidParams.length > 0) {
         let errorDetails = {
@@ -1539,7 +1549,7 @@ var getDroppsByLocation = function(_request, _response, _callback) {
           (allDropps) => {
             // Filter out the dropps that are further than the max distance
             try {
-              getCloseDropps(
+              DROPPS.getCloseDropps(
                 allDropps,
                 _request.body.location.trim(),
                 _request.body.maxDistance,
@@ -1550,6 +1560,7 @@ var getDroppsByLocation = function(_request, _response, _callback) {
                 source: SOURCE,
                 request: _request,
                 response: _response,
+                client: client.username,
                 error: ERROR.CODE.API_ERROR,
                 serverMessage: getCloseDroppsError,
               };
@@ -1602,7 +1613,7 @@ var getDroppsByUser = function(_request, _response, _callback) {
     _response,
     (client) => {
       // Check request parameters
-      if (!isValidUsername(_request.params.username)) {
+      if (!VALIDATE.isValidUsername(_request.params.username)) {
         let errorDetails = {
           source: SOURCE,
           request: _request,
@@ -1740,7 +1751,7 @@ var getDroppsByFollows = function(_request, _response, _callback) {
     _response,
     (client) => {
       // Token is valid, so check request parameters
-      if (!isValidUsername(_request.params.username)) {
+      if (!VALIDATE.isValidUsername(_request.params.username)) {
         let errorDetails = {
           source: SOURCE,
           request: _request,
@@ -1846,7 +1857,7 @@ var updateDroppText = function(_request, _response, _callback) {
     (client) => {
       // Check request parameters
       let invalidParams = [];
-      if (!isValidId(_request.params.droppId)) invalidParams.push('droppId');
+      if (!VALIDATE.isValidId(_request.params.droppId)) invalidParams.push('droppId');
       if (_request.body.newText === undefined) invalidParams.push('newText');
 
       if (invalidParams.length > 0) {
@@ -1887,7 +1898,7 @@ var updateDroppText = function(_request, _response, _callback) {
               };
 
               ERROR.error(errorDetails, error => _callback(error));
-            } else if (dropp.media === 'false' && !isValidTextPost(_request.body.newText)) {
+            } else if (dropp.media === 'false' && !VALIDATE.isValidTextPost(_request.body.newText)) {
               // Client attempted to remove text from a dropp with no media
               let errorDetails = {
                 source: SOURCE,
@@ -1986,7 +1997,7 @@ var deleteDropp = function(_request, _response, _callback) {
     _response,
     (client) => {
       // Check request parameters
-      if (!isValidId(_request.params.droppId)) {
+      if (!VALIDATE.isValidId(_request.params.droppId)) {
         let errorDetails = {
           source: SOURCE,
           request: _request,
@@ -2039,7 +2050,7 @@ var deleteDropp = function(_request, _response, _callback) {
                   // Check if the dropp had media
                   if (dropp.media === 'true') {
                     // Attempt to delete media from cloud storage
-                    MEDIA.deleteImage(
+                    MEDIA.DELETE(
                       _request.params.droppId,
                       deleted => _callback(successJson),
                       (deleteImageError) => {
@@ -2112,7 +2123,7 @@ var requestToFollow = function(_request, _response, _callback) {
     _response,
     (client) => {
       // Token is valid, so check request parameters
-      if (!isValidUsername(_request.params.username)) {
+      if (!VALIDATE.isValidUsername(_request.params.username)) {
         let errorDetails = {
           source: SOURCE,
           request: _request,
@@ -2340,7 +2351,7 @@ var getFollowers = function(_request, _response, _callback) {
     _response,
     (client) => {
       // Token is valid, so check request parameters
-      if (!isValidUsername(_request.params.username)) {
+      if (!VALIDATE.isValidUsername(_request.params.username)) {
         let errorDetails = {
           source: SOURCE,
           request: _request,
@@ -2354,7 +2365,7 @@ var getFollowers = function(_request, _response, _callback) {
       } else {
         // Request parameters are valid, so get requested user's followers
         try {
-          getConnections(
+          SOCIAL.getConnections(
             _request.params.username,
             'followers',
             followers => _callback(followers),
@@ -2371,7 +2382,7 @@ var getFollowers = function(_request, _response, _callback) {
             }
           );
         } catch(getConnectionsTypeError) {
-          // Event occurs if type 'followers' is not accepted by getConnections()
+          // Event occurs if type 'followers' is not accepted by SOCIAL.getConnections()
           let errorDetails = {
             source: SOURCE,
             request: _request,
@@ -2415,7 +2426,7 @@ var getFollows = function(_request, _response, _callback) {
     _response,
     (client) => {
       // Token is valid, so check request parameters
-      if (!isValidUsername(_request.params.username)) {
+      if (!VALIDATE.isValidUsername(_request.params.username)) {
         let errorDetails = {
           source: SOURCE,
           request: _request,
@@ -2429,7 +2440,7 @@ var getFollows = function(_request, _response, _callback) {
       } else {
         // Request parameters are valid, so get requested user's follows
         try {
-          getConnections(
+          SOCIAL.getConnections(
             _request.params.username,
             'follows',
             follows => _callback(follows),
@@ -2446,7 +2457,7 @@ var getFollows = function(_request, _response, _callback) {
             }
           );
         } catch(getConnectionsTypeError) {
-          // Event occurs if type 'follows' is not accepted by getConnections()
+          // Event occurs if type 'follows' is not accepted by SOCIAL.getConnections()
           let errorDetails = {
             source: SOURCE,
             request: _request,
@@ -2490,7 +2501,7 @@ var getFollowerRequests = function(_request, _response, _callback) {
     _response,
     (client) => {
       // Token is valid, so check request parameters
-      if (!isValidUsername(_request.params.username)) {
+      if (!VALIDATE.isValidUsername(_request.params.username)) {
         let errorDetails = {
           source: SOURCE,
           request: _request,
@@ -2515,7 +2526,7 @@ var getFollowerRequests = function(_request, _response, _callback) {
       } else {
         // Parameters are valid, so get the client's follower requests
         try {
-          getRequests(
+          SOCIAL.getRequests(
             'follower',
             client.username,
             followerRequests => _callback(followerRequests),
@@ -2532,7 +2543,7 @@ var getFollowerRequests = function(_request, _response, _callback) {
             }
           );
         } catch(getRequestsTypeError) {
-          // Event occurs if type 'follower' is not accepted by getRequests()
+          // Event occurs if type 'follower' is not accepted by SOCIAL.getRequests()
           let errorDetails = {
             source: SOURCE,
             request: _request,
@@ -2576,7 +2587,7 @@ var getFollowRequests = function(_request, _response, _callback) {
     _response,
     (client) => {
       // Token is valid, so check request parameters
-      if (!isValidUsername(_request.params.username)) {
+      if (!VALIDATE.isValidUsername(_request.params.username)) {
         let errorDetails = {
           source: SOURCE,
           request: _request,
@@ -2601,7 +2612,7 @@ var getFollowRequests = function(_request, _response, _callback) {
       } else {
         // Parameters are valid, so get the client's follower requests
         try {
-          getRequests(
+          SOCIAL.getRequests(
             'follow',
             client.username,
             followRequests => _callback(followRequests),
@@ -2618,7 +2629,7 @@ var getFollowRequests = function(_request, _response, _callback) {
             }
           );
         } catch(getRequestsTypeError) {
-          // Event occurs if type 'follow' is not accepted by getRequests()
+          // Event occurs if type 'follow' is not accepted by SOCIAL.getRequests()
           let errorDetails = {
             source: SOURCE,
             request: _request,
@@ -2669,8 +2680,10 @@ var respondToFollowerRequest = function(_request, _response, _callback) {
     (client) => {
       // Token is valid, so check request parameters
       let invalidParams = [];
-      if (!isValidUsername(_request.params.username)) invalidParams.push('username');
-      if (!isValidUsername(_request.params.requestingUser)) invalidParams.push('requestingUser');
+      if (!VALIDATE.isValidUsername(_request.params.username)) invalidParams.push('username');
+      if (!VALIDATE.isValidUsername(_request.params.requestingUser)) {
+        invalidParams.push('requestingUser');
+      }
 
       if (invalidParams.length > 0) {
         let errorDetails = {
@@ -2749,7 +2762,7 @@ var respondToFollowerRequest = function(_request, _response, _callback) {
                     // Requesting user exists
                     if (_request.method === 'PUT') {
                       // Client wants to accept the request
-                      addConnection(
+                      SOCIAL.addConnection(
                         client.username,
                         requestingUserName,
                         () => {
@@ -2757,7 +2770,7 @@ var respondToFollowerRequest = function(_request, _response, _callback) {
                            * The requester now follows the client.
                            * Remove the requests for both users
                            */
-                          removeRequest(
+                          SOCIAL.removeRequest(
                             client.username,
                             'follower',
                             requestingUserName,
@@ -2798,7 +2811,7 @@ var respondToFollowerRequest = function(_request, _response, _callback) {
                       );
                     } else if (_request.method === 'DELETE') {
                       // Client wants to decline the request
-                      removeRequest(
+                      SOCIAL.removeRequest(
                         client.username,
                         'follower',
                         requestingUserName,
@@ -2905,8 +2918,10 @@ var removeFollowRequest = function(_request, _response, _callback) {
     (client) => {
       // Token is valid, so check request parameters
       let invalidParams = [];
-      if (!isValidUsername(_request.params.username)) invalidParams.push('username');
-      if (!isValidUsername(_request.params.requestedUser)) invalidParams.push('requestedUser');
+      if (!VALIDATE.isValidUsername(_request.params.username)) invalidParams.push('username');
+      if (!VALIDATE.isValidUsername(_request.params.requestedUser)) {
+        invalidParams.push('requestedUser');
+      }
 
       if (invalidParams.length > 0) {
         let errorDetails = {
@@ -2981,7 +2996,7 @@ var removeFollowRequest = function(_request, _response, _callback) {
                       }
                     );
                   } else {
-                    removeRequest(
+                    SOCIAL.removeRequest(
                       client.username,
                       'follow',
                       requestedUserName,
@@ -3074,8 +3089,8 @@ var removeFollower = function(_request, _response, _callback) {
     (client) => {
       // Token is valid, so check request parameters
       let invalidParams = [];
-      if (!isValidUsername(_request.params.username)) invalidParams.push('username');
-      if (!isValidUsername(_request.params.follower)) invalidParams.push('follower');
+      if (!VALIDATE.isValidUsername(_request.params.username)) invalidParams.push('username');
+      if (!VALIDATE.isValidUsername(_request.params.follower)) invalidParams.push('follower');
 
       if (invalidParams.length > 0) {
         let errorDetails = {
@@ -3152,7 +3167,7 @@ var removeFollower = function(_request, _response, _callback) {
                       }
                     );
                   } else {
-                    removeConnection(
+                    SOCIAL.removeConnection(
                       client.username,
                       'followers',
                       followerUsername,
@@ -3243,8 +3258,10 @@ var unfollow = function(_request, _response, _callback) {
     (client) => {
       // Token is valid, so check request parameters
       let invalidParams = [];
-      if (!isValidUsername(_request.params.username)) invalidParams.push('username');
-      if (!isValidUsername(_request.params.followedUser)) invalidParams.push('followedUser');
+      if (!VALIDATE.isValidUsername(_request.params.username)) invalidParams.push('username');
+      if (!VALIDATE.isValidUsername(_request.params.followedUser)) {
+        invalidParams.push('followedUser');
+      }
 
       if (invalidParams.length > 0) {
         let errorDetails = {
@@ -3323,7 +3340,7 @@ var unfollow = function(_request, _response, _callback) {
                       }
                     );
                   } else {
-                    removeConnection(
+                    SOCIAL.removeConnection(
                       client.username,
                       'follows',
                       followedUserName,
@@ -3425,171 +3442,6 @@ module.exports = {
   unfollow: unfollow,
 };
 
-/** Other functions */
-
-/**
- * getConnections - Retrieves a user's connections (followers or follows)
- * @param {String} _username the requested username
- * @param {String} _connectionsType the type of connection (followers or follows)
- * @param {callback} _callback the callback to return the result
- * @param {callback} _errorCallback the callback to return any errors
- * @throws an error if _connectionsType is not 'followers' or 'follows'
- */
-function getConnections(_username, _connectionsType, _callback, _errorCallback) {
-  const SOURCE = 'getConnections()';
-  log(SOURCE);
-
-  if (_connectionsType !== 'followers' && _connectionsType !== 'follows') {
-    throw `connectionsType must be 'followers' or 'follows', not '${_connectionsType}'`;
-  } else {
-    // Retrieve connections
-    FIREBASE.GET(
-      `/users/${_username}/${_connectionsType}`,
-      connections => _callback(connections === null ? {} : connections),
-      getConnectionsError => _errorCallback(getConnectionsError)
-    );
-  }
-}
-
-/**
- * getRequests - Retrieves a user's requests (follower or follows)
- * @param {String} _requestsType the type of request (follower or follows)
- * @param {String} _client the requesting client's username
- * @param {callback} _callback the callback to return the result
- * @param {callback} _errorCallback the callback to return any errors
- * @throws an error if _requestsType is not 'follower' or 'follows'
- */
-function getRequests(_requestsType, _client, _callback, _errorCallback) {
-  const SOURCE = 'getRequests()';
-  log(SOURCE);
-
-  if (_requestsType !== 'follower' && _requestsType !== 'follow') {
-    throw `requestsType must be 'follower' or 'follow', not '${_requestsType}'`;
-  } else {
-    // Retrieve requests
-    FIREBASE.GET(
-      `/users/${_client}/${_requestsType}_requests`,
-      requests => _callback(requests === null ? {} : requests),
-      getRequestsError => _errorCallback(getRequestsError)
-    );
-  }
-}
-
-/**
- * addConnection - Connects two users, allowing one to follow
- * the other. The requester will have the recipient in their
- * follows. The recipient will have the requester in the followers
- * @param {String} _recipient the recipient who accepted the follower request
- * @param {String} _requester the user who sent the follow request
- * @param {callback} _callback the callback to return the result
- * @param {callback} _errorCallback the callback to return any errors
- */
-function addConnection(_recipient, _requester, _callback, _errorCallback) {
-  const SOURCE = 'addConnection()';
-  log(SOURCE);
-
-  // Add the requester to the recipient's followers
-  FIREBASE.UPDATE(
-    `/users/${_recipient}/followers/${_requester}`,
-    _requester,
-    (newFollower) => {
-      // Now add the recipient to the requester's follows
-      FIREBASE.UPDATE(
-        `/users/${_requester}/follows/${_recipient}`,
-        _recipient,
-        newFollow => _callback(),
-        (addFollowError) => {
-          /**
-           * Failed while trying to add the recipient to the requester's follows.
-           * Remove the requester from the recipient's followers to maintain consistency
-           */
-          FIREBASE.DELETE(
-            `/users/${_recipient}/followers/${_requester}`,
-            () => _errorCallback(addFollowError),
-            (deleteFollowerError) => {
-              // Failed while removing follower from recipient's followers
-              log(`${SOURCE}: Failed removing '${_requester}' from '${_recipient}'s followers`);
-              _errorCallback(deleteFollowerError);
-            }
-          );
-        }
-      );
-    },
-    addFollowerError => _errorCallback(addFollowerError)
-  );
-}
-
-/**
- * removeRequest - Removes a pending request from one user to another.
- * This could be a follower request or a follow request. Regardless
- * of the type, the request will be removed from both user's requests
- * @param {String} _userA the user who is initiating the removal
- * @param {String} _requestTypeA the type of request that _userA is removing
- * @param {String} _userB the other user associated with the request
- * @param {String} _requestTypeB the opposite of _requestTypeA
- * @param {callback} _callback the callback to return the result
- * @param {callback} _errorCallback the callback to return any errors
- */
-function removeRequest(_userA, _requestTypeA, _userB, _requestTypeB, _callback, _errorCallback) {
-  const SOURCE = 'removeRequest()';
-  log(SOURCE);
-
-  // Remove request from user A
-  FIREBASE.DELETE(
-    `/users/${_userA}/${_requestTypeA}_requests/${_userB}`,
-    () => {
-      FIREBASE.DELETE(
-        `/users/${_userB}/${_requestTypeB}_requests/${_userA}`,
-        () => _callback(),
-        removeUserBRequestError => _errorCallback(removeUserBRequestError)
-      );
-    },
-    removeUserARequestError => _errorCallback(removeUserARequestError)
-  );
-}
-
-/**
- * removeConnection - Removes a connection from one user to another.
- * This could be a follower or a follow. Regardless of the type,
- * the connection will be removed from both user's connections
- * @param {String} _userA the user who is initiating the removal
- * @param {String} _connectionTypeA the type of connection that _userA is removing
- * @param {String} _userB the other user associated with the connection
- * @param {String} _connectionTypeB the opposite of _connectionTypeA
- * @param {callback} _callback the callback to return the result
- * @param {callback} _errorCallback the callback to return any errors
- */
-function removeConnection(
-  _userA,
-  _connectionTypeA,
-  _userB,
-  _connectionTypeB,
-  _callback,
-  _errorCallback
-) {
-  const SOURCE = 'removeConnection()';
-  log(SOURCE);
-
-  // Remove connection from user A
-  FIREBASE.DELETE(
-    `/users/${_userA}/${_connectionTypeA}/${_userB}`,
-    () => {
-      FIREBASE.DELETE(
-        `/users/${_userB}/${_connectionTypeB}/${_userA}`,
-        () => _callback(),
-        (removeUserBConnectionError) => {
-          // Failed while removing user B's connection for user A
-          log(`${SOURCE}: Failed removing '${_userA}' from '${_userB}'s ${_connectionTypeB.toUpperCase()}`);
-          _errorCallback(removeUserBConnectionError);
-        }
-      );
-    },
-    removeUserAConnectionError => _errorCallback(removeUserAConnectionError)
-  );
-}
-
-/** Helper functions */
-
 /**
  * removeUser - Deletes a user from the user's table
  * @param {String} _username the username of the desired user
@@ -3605,235 +3457,6 @@ function removeUser(_username, _callback, _errorCallback) {
     () => _callback(),
     deleteUserError => _errorCallback(deleteUserError)
   );
-}
-
-/**
- * encodeForReactNative - Encodes a buffer of data into base-64 string format
- * @param {Object} _buffer Buffer object containing the data to be encoded
- * @param {_callback} _callback the callback to return the encoded string
- */
-function encodeForReactNative(_buffer, _callback) {
-  const SOURCE = 'encodeForReactNative()';
-  log(SOURCE);
-
-  // Encode buffer data to base-64 string
-  let base64String = _buffer.toString('base64');
-
-  // First chunk of buffer data will have the encoding type
-  let encodedFiletype = base64String.substring(0,14);
-
-  let filetype;
-  if (encodedFiletype === '/9j/4AAQSkZJRg') filetype = 'jpeg';
-  else if (encodedFiletype === 'iVBORw0KGgoAAA') filetype = 'png';
-  else {
-    filetype = 'unknown';
-    log(`${SOURCE}: Unable to determine filetype (${encodedFiletype})`);
-  }
-
-  // Return a string with the image type and encoded image data that can be put in an <img> HTML tag
-  _callback(`data:image/${filetype};base64,${base64String}`);
-}
-
-/**
- * distance - Haversine function to calculate the distance between two GPS coordinates
- * @param {Number[]} loc1 an array of latitude,longitude coordinates
- * @param {Number[]} loc2 an array of latitude,longitude coordinates
- * @returns {Number} the straight-line distance between loc1 and loc2
- */
-function distance(loc1, loc2) {
-  let toRadians = degrees => degrees * Math.PI / 180;
-
-  let dLat = toRadians(loc2[0] - loc1[0]);
-  let dLon = toRadians(loc2[1] - loc1[1]);
-  let lat1 = toRadians(loc1[0])
-  let lat2 = toRadians(loc2[0]);
-
-  let a = Math.sin(dLat / 2) * Math.sin(dLat / 2) + Math.sin(dLon / 2) * Math.sin(dLon / 2)
-    * Math.cos(lat1) * Math.cos(lat2);
-
-  let c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
-
-  // Multiply by the approx radius of the earth (meters)
-  return c * 6371e3;
-}
-
-/**
- * getCloseDropps - Returns the dropps that are near a given location
- * @param {Object} _dropps JSON of dropps
- * @param {String} _targetLocation comma-separated
- * string representing lat,long coordinates
- * @param {Number} _maxDistance the radius extending from targetLocation
- * @param {callback} _callback the callback to return the result
- * @throws {String} _targetLocation must be a comma-separated
- * string with two floats. _maxDistance must be a positive float
- */
-function getCloseDropps(_dropps, _targetLocation, _maxDistance, _callback) {
-  const SOURCE = 'getCloseDropps()';
-  log(SOURCE);
-
-  if (!isValidLocation(_targetLocation)) {
-    throw `Invalid _targetLocation (${_targetLocation}). Must be a string like 'x,y', where x & y are floats`;
-  } else if (!isValidPositiveFloat(_maxDistance)) {
-    throw `Invalid _maxDistance (${_maxDistance}). Must be a positive floating-point number`;
-  }
-
-  let closeDropps = {};
-  let closeDroppsCount = 0;
-  let maxDistance = Number(_maxDistance);
-  let targetLocation = _targetLocation.trim().split(',').map(Number);
-
-  // Loop over all the dropps in the dropps JSON
-  for (let droppKey in _dropps) {
-    let dropp = _dropps[droppKey];
-
-    // If the dropp doesn't have a valid location, don't bother calculating distance
-    if (!isValidLocation(dropp.location)) continue;
-
-    // Turn the string lat,long coordinates into a number array
-    let droppLocation = dropp.location.split(',').map(Number);
-
-    // Calculate straight-path distance between the points
-    let distanceFromTarget = distance(targetLocation, droppLocation);
-    if (distanceFromTarget <= maxDistance) {
-      // The current dropp is within maxDistance so save it to closeDropps
-      closeDropps[droppKey] = dropp;
-      closeDroppsCount++;
-    }
-  }
-
-  // Return JSON with count of close dropps and all the close dropps
-  let results = {
-    count: closeDroppsCount,
-    dropps: closeDropps,
-  };
-
-  _callback(results);
-}
-
-/**
- * removeFile - Removes a file from the local filesystem
- * @param {String} _filePath the path to the desired file
- */
-function removeFile(_filePath) {
-  const SOURCE = 'removeFile()';
-  log(`${SOURCE} ${_filePath}`);
-
-  FS.unlink(_filePath, (unlinkError) => {
-    if (unlinkError) log(`${SOURCE}: Failed to remove temp file at ${_filePath}`);
-    else log(`${SOURCE}: Removed temp file at ${_filePath}`);
-  });
-}
-
-/** Validator functions */
-
-/**
- * isValidUsername - Validates a username
- * @param {String} _username a username
- * @returns {Boolean} validity of _username
- */
-function isValidUsername(_username) {
-  /**
-   * Evaluates to true if _username is not null, not undefined, not
-   * empty, and only contains alphanumeric characters, dashes, or
-   * underscores. It must start with two alphanumeric characters
-   */
-  return _username !== null &&
-    _username !== undefined &&
-    (/^[a-zA-Z0-9]{2,}[\w\-]*$/).test(_username);
-}
-
-/**
- * isValidEmail - Validates an email address
- * @param {String} _email an email
- * @returns {Boolean} validity of _email
- */
-function isValidEmail(_email) {
-  // Evaluates to true if true if _email is not null, not undefined, and matches valid email formats
-  return _email !== null &&
-    _email !== undefined &&
-    (/^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/).test(_email);
-}
-
-/**
- * isValidPassword - Validates a password
- * @param {String} _password a password
- * @returns {Boolean} validity of _password
- */
-function isValidPassword(_password) {
-  /**
-   * Evaluates to true if _password is not null, not undefined, not
-   * empty, and only contains alphanumeric and special characters
-   */
-  return _password !== null && _password !== undefined && (/^[\w\S]+$/).test(_password);
-}
-
-/**
- * isValidId - Validates an id
- * @param {String} _id an id
- * @returns {Boolean} validity of _id
- */
-function isValidId(_id) {
-  /**
-   * Evaluates to true if _id is not null, not undefined, not empty,
-   * and only contains alphanumeric characters, underscores, and dashes
-   */
-  return _id !== null && _id !== undefined && (/^[\w\-]+$/).test(_id);
-}
-
-/**
- * isValidLocation - Validates a location
- * @param {String} _location the location string of the form 'latitude,longitude'
- * @returns {Boolean} validity of _location
- */
-function isValidLocation(_location) {
-  /**
-   * Evaluates to true if _location is not null, not undefined,
-   * not empty, and is two comma separated decimal numbers
-   */
-  return _location !== null &&
-    _location !== undefined &&
-    typeof _location === 'string' &&
-    (/^(\-?\d+(\.\d+)?),\s*(\-?\d+(\.\d+)?)$/).test(_location);
-}
-
-/**
- * isValidMedia - Validates a media text string
- * @param {String} _media the media string
- * @returns {Boolean} validity of _media
- */
-function isValidMedia(_media) {
-  // Evalutes to true if media is not null, not undefined, and a string equal to 'true' or 'false'
-  return _media !== null && _media !== undefined && (_media === 'true' || _media === 'false');
-}
-
-/**
- * isValidInteger - Validates an integer
- * @param {Number} _number a number
- * @returns {Boolean} validity of _number
- */
-function isValidInteger(_number) {
-  // Evalutes to true if _number is not null, not undefined, not empty, and only numeric
-  return _number !== null && _number !== undefined && (/^\d+$/).test(_number);
-}
-
-/**
- * isValidPositiveFloat - Validates a positive floating-point number
- * @param {Number} _number a number
- * @returns {Boolean} validity of _number
- */
-function isValidPositiveFloat(_number) {
-  // Evalutes to true if _number is not null, not undefined, and a non-negative float
-  return _number !== null && _number !== undefined && (/^\d+(\.\d*)?$/).test(_number);
-}
-
-/**
- * isValidTextPost - Validates a text post
- * @param {String} _text a text post
- * @returns {Boolean} validity of _text
- */
-function isValidTextPost(_text) {
-  // Evaluates to true if _text is not null, not undefined, and not empty
-  return _text !== null && _text !== undefined && _text.toString().trim().length !== 0;
 }
 
 /**

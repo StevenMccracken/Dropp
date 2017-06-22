@@ -55,6 +55,9 @@ const ERROR_CODE = {
  * @param {type} _callback the callback to return the result
  */
 var error = function(_info, _callback) {
+  const SOURCE = 'error()';
+  log(SOURCE, _info.request);
+
   let missingKeys = [];
   let error = _info.error === undefined ? null : _info.error;
   let client = _info.client === undefined ? null : _info.client;
@@ -90,10 +93,32 @@ var error = function(_info, _callback) {
   };
 
   // Log the error to the server console
-  log(serverLog, request, (errorLogId) => {
+  logError(serverLog, request, (errorLogId) => {
     clientJson.error.id = errorLogId;
     _callback(clientJson);
   });
+};
+
+/**
+ * determineMediaError - Builds a client error repsonse based on a given cloud storage media error
+ * @param {type} _info the details of the error that occurred
+ * @param {type} _callback the callback to return the result
+ */
+var determineMediaError = function(_info, _callback) {
+  const SOURCE = 'determineMediaError()';
+  log(SOURCE, _info.request);
+
+  var formalError, clientErrorMessage, serverLog;
+  switch (_info.error.code) {
+    default:
+      formalError = ERROR_CODE.API_ERROR;
+      serverLog = _info.error;
+  }
+
+  _info.error = formalError;
+  _info.customErrorMessage = clientErrorMessage;
+  _info.serverMessage = serverLog;
+  error(_info, errorJson => _callback(errorJson));
 };
 
 /**
@@ -103,6 +128,9 @@ var error = function(_info, _callback) {
  * @param {type} _callback the callback to return the result
  */
 var determineAuthenticationError = function(_info, _callback) {
+  const SOURCE = 'determineAuthenticationError()';
+  log(SOURCE, _info.request);
+
   var clientErrorMessage, serverLog;
   if (_info.passportError !== null) {
     // An error occurred during the passport authenticate function call
@@ -128,6 +156,9 @@ var determineAuthenticationError = function(_info, _callback) {
  * @param {type} _callback the callback to return the result
  */
 var determineFirebaseError = function(_info, _callback) {
+  const SOURCE = 'determineFirebaseError()';
+  log(SOURCE, _info.request);
+
   var formalError, clientErrorMessage, serverLog;
   if (_info.error === INVALID_URL_CHAR) {
     // Error is this string when there is an invalid character in the firebase URL
@@ -139,7 +170,7 @@ var determineFirebaseError = function(_info, _callback) {
     // Leave serverLog uninitialized because it isn't needed in ERROR.error()
   } else {
     // Unknown error thrown by firebase
-    serverLog = _error;
+    serverLog = _info.error;
     formalError = ERROR_CODE.API_ERROR;
   }
 
@@ -155,6 +186,9 @@ var determineFirebaseError = function(_info, _callback) {
  * @param {type} _callback the callback to return the result
  */
 var determineBcryptError = function(_info, _callback) {
+  const SOURCE = 'determineBcryptError()';
+  log(SOURCE, _info.request);
+
   var formalError, clientErrorMessage, serverLog;
   switch (_info.error) {
     case 'Not a valid BCrypt hash.':
@@ -177,6 +211,7 @@ module.exports = {
   CODE: ERROR_CODE,
   INVALID_URL_CHAR: INVALID_URL_CHAR,
   PASSPORT_USER_DNE: PASSPORT_USER_DNE,
+  determineMediaError: determineMediaError,
   determineBcryptError: determineBcryptError,
   determineFirebaseError: determineFirebaseError,
   determineAuthenticationError: determineAuthenticationError,
@@ -227,11 +262,20 @@ function determineJwtError(errorMessage) {
 }
 
 /**
+ * log - Logs a message to the server console
+ * @param {String} _message the log message
+ * @param {Object} _request the HTTP request
+ */
+function log(_message, _request) {
+  LOG.log('Error Module', _message, _request);
+}
+
+/**
  * log - Logs an error message to the server console
  * @param {String} _message the log message
  * @param {Object} _request the HTTP request
  * @param {callback} _callback the callback to return the response
  */
-function log(_errorJson, _request, _callback) {
+function logError(_errorJson, _request, _callback) {
   LOG.logError(_errorJson, _request, errorId => _callback(errorId));
 }
