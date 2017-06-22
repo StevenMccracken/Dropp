@@ -166,7 +166,7 @@
   * In the header
     * `Authorization`
   * In the URL
-    * [`username`]
+    * `[username]`
       * Non-empty string containing alphanumeric characters, dashes, or underscores
   * In the request body
     * `newEmail`
@@ -196,7 +196,7 @@
   * In the header
     * `Authorization`
   * In the URL
-    * [`username`]
+    * `[username]`
       * Non-empty string containing alphanumeric characters, dashes, or underscores
   * In the request body
     * `oldPassword`
@@ -228,7 +228,7 @@
   * In the header
     * `Authorization`
   * In the URL
-    * [`username`]
+    * `[username]`
       * Non-empty string containing alphanumeric characters, dashes, or underscores
 * Optional parameters: _none_
 * Successful request returns
@@ -317,7 +317,7 @@
   * In the header
     * `Authorization`
   * In the URL
-    * [`droppId`]
+    * `[droppId]`
       * Non-empty string containing alphanumeric characters, dashes, or underscores
 * Optional parameters: _none_
 * Successful request returns
@@ -343,7 +343,7 @@
   * In the header
     * `Authorization`
   * In the URL
-    * [`droppId`]
+    * `[droppId]`
       * Non-empty string containing alphanumeric characters, dashes, or underscores
 * Optional parameters:
   * In the header
@@ -434,7 +434,7 @@
   * In the header
     * `Authorization`
   * In the URL
-    * [`username`]
+    * `[username]`
       * Non-empty string containing alphanumeric characters, dashes, or underscores
 * Optional parameters: _none_
 * Successful request returns
@@ -463,7 +463,7 @@
   * In the header
     * `Authorization`
   * In the URL
-    * [`username`]
+    * `[username]`
       * Non-empty string containing alphanumeric characters, dashes, or underscores
       * Represents the username of the client
 * Optional parameters: _none_
@@ -494,7 +494,7 @@
   * In the header
     * `Authorization`
   * In the URL
-    * [`droppId`]
+    * `[droppId]`
       * Non-empty string containing alphanumeric characters, dashes, or underscores
   * In the request body
     * `newText`
@@ -524,7 +524,7 @@
   * In the header
     * `Authorization`
   * In the URL
-    * [`droppId`]
+    * `[droppId]`
       * Non-empty string containing alphanumeric characters, dashes, or underscores
 * Optional parameters: _none_
 * Successful request returns
