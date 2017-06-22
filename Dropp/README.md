@@ -3,12 +3,12 @@
 ## Guide Information
 * You can send requests to the API routes below to access the server
 * For almost all requests, you must have a specific token within the request’s Headers
-* There must be a key within the request header called __Authorization__ (capitalization of the first letter is necessary)
+* There must be a key within the request header called `Authorization` (capitalization of the first letter is necessary)
   * The value associated with that key must be a token
     * You can acquire this token in two ways
       * Creating a user
       * Making a request to the /authenticate route with a matching username and password
-* Without the __Authorization__ key in the request header and a valid token value, your requests will be __denied__
+* Without the `Authorization` key in the request header and a valid token value, your requests will be __denied__
 * The only routes that __do not__ require the Authorization token are:
   * Base route (__GET__ https://dropps.me)
   * Authenticate route (__POST__ https://dropps.me/authenticate)
@@ -77,10 +77,10 @@
 * Request body type: `x-www-form-urlencoded`
 * Required parameters
   * In the request body
-  * _username_
-    * Non-empty string containing alphanumeric characters, dashes, or underscores
-  * _password_
-    * Non-empty string containing alphanumeric and special characters
+    * `username`
+      * Non-empty string containing alphanumeric characters, dashes, or underscores
+    * `password`
+      * Non-empty string containing alphanumeric and special characters
 * Optional parameters: _none_
 * Successful request returns
   * Status code: __200__
@@ -106,11 +106,11 @@
 * Request body type: `x-www-form-urlencoded`
 * Required parameters
   * In the request body
-    * _email_
+    * `email`
       * Non-empty string containing a valid email format
-    * _username_
+    * `username`
       * Non-empty string containing alphanumeric characters, dashes, or underscores
-    * _password_
+    * `password`
       * Non-empty string containing alphanumeric and special characters
 * Optional parameters: _none_
 * Successful request returns
@@ -133,9 +133,9 @@
 * Purpose: Get information about a user
 * Required parameters
   * In the header
-    * _Authorization_
+    * `Authorization`
   * In the URL
-    * [_username_]
+    * [`username`]
       * Non-empty string containing alphanumeric characters, dashes, or underscores
 * Optional parameters: _none_
 * Successful request returns
@@ -164,12 +164,12 @@
 * Request body type: `x-www-form-urlencoded`
 * Required parameters
   * In the header
-    * _Authorization_
+    * `Authorization`
   * In the URL
-    * [_username_]
+    * [`username`]
       * Non-empty string containing alphanumeric characters, dashes, or underscores
   * In the request body
-    * _newEmail_
+    * `newEmail`
       * Non-empty string containing a valid email format
 * Optional parameters: _none_
 * Successful request returns
@@ -183,7 +183,7 @@
   }
   ```
 * Notes
-  * The _newEmail_ value must be __different__ from the existing email in the database
+  * The `newEmail` value must be __different__ from the existing email in the database
 
 **[⬆ back to top](#table-of-contents)**
 <a name="update-password"></a>
@@ -194,14 +194,14 @@
 * Request body type: `x-www-form-urlencoded`
 * Required parameters
   * In the header
-    * _Authorization_
+    * `Authorization`
   * In the URL
-    * [_username_]
+    * [`username`]
       * Non-empty string containing alphanumeric characters, dashes, or underscores
   * In the request body
-    * _oldPassword_
+    * `oldPassword`
       * Non-empty string containing alphanumeric and special characters
-    * _newPassword_
+    * `newPassword`
       * Non-empty string containing alphanumeric and special characters
 * Optional parameters: _none_
 * Successful request returns
@@ -215,8 +215,8 @@
   }
   ```
 * Notes
-  * The _oldPassword_ value must be __identical__ to the existing password in the database
-  * The _newPassword_ value must be __different__ from the existing password in the database
+  * The `oldPassword` value must be __identical__ to the existing password in the database
+  * The `newPassword` value must be __different__ from the existing password in the database
 
 **[⬆ back to top](#table-of-contents)**
 <a name="delete-user"></a>
@@ -226,9 +226,9 @@
 * Purpose: Delete a user's account and all their dropps
 * Required parameters
   * In the header
-    * _Authorization_
+    * `Authorization`
   * In the URL
-    * [_username_]
+    * [`username`]
       * Non-empty string containing alphanumeric characters, dashes, or underscores
 * Optional parameters: _none_
 * Successful request returns
@@ -251,22 +251,22 @@
 * Request body type: `x-www-form-urlencoded`
 * Required parameters
   * In the header
-    * _Authorization_
+    * `Authorization`
   * In the request body
-    * _location_
+    * `location`
       * Non-empty string containing two floating-point numbers separated by a comma
       * Represents the latitude and longitude of the current location
-    * _timestamp_
+    * `timestamp`
       * Non-negative integer representing a UNIX timestamp in __seconds__
       * Value __cannot__ be in the future. It must be in the past from the time the server receives the request
-    * _media_
-      * Non-empty string equal to __true__ or __false__
+    * `media`
+      * Non-empty string equal to `true` or `false`
       * Represents whether or not this dropp will have an image attached to it
 * Optional parameters
   * In the request body
-    * _text_
+    * `text`
       * Non-empty string containing alphanumeric characters, special characters, and spaces
-      * If _media_ is __false__, this value is required and __must__ be non-empty
+      * If `media` is `false`, this value is required and __must__ be non-empty
 * Successful request returns
   * Status code: __201__
   * Response body JSON
@@ -276,7 +276,7 @@
   }
   ```
 * Notes
-  * _text_ attribute will be saved as an empty string if it is not included in the request body
+  * `text` attribute will be saved as an empty string if it is not included in the request body
   * Attribute `droppId` is very important to save
     * It is the only unique identifier for a dropp in the database
 
@@ -285,13 +285,13 @@
 ### Add an image for a posted dropp
 
 * Route: __POST__ https://dropps.me/dropps/[droppId]/image
-* Purpose: Upload an image for a dropp that has _media_ = __true__
+* Purpose: Upload an image for a dropp that has `media` equal to `true`
 * Request body type: `form-data`
 * Required parameters
   * In the header
-    * _Authorization_
+    * `Authorization`
   * In the request body
-    * _image_
+    * `image`
       * Binary data of the image file to upload
 * Optional parameters: _none_
 * Successful request returns
@@ -315,9 +315,9 @@
 * Purpose: Retrieve a specific dropp
 * Required parameters
   * In the header
-    * _Authorization_
+    * `Authorization`
   * In the URL
-    * [_droppId_]
+    * [`droppId`]
       * Non-empty string containing alphanumeric characters, dashes, or underscores
 * Optional parameters: _none_
 * Successful request returns
@@ -341,19 +341,19 @@
 * Purpose: Retrieve an image for a specific dropp
 * Required parameters
   * In the header
-    * _Authorization_
+    * `Authorization`
   * In the URL
-    * [_droppId_]
+    * [`droppId`]
       * Non-empty string containing alphanumeric characters, dashes, or underscores
 * Optional parameters:
   * In the header
-    * _platform_
+    * `platform`
       * Non-empty string equal to `React-Native`
 * Successful request returns
   * Status code: __200__
-  * Response if _platform_ is `React-Native`
+  * Response if `platform` is `React-Native`
     * String: `data:image/[image filetype];base64,[image in base-64 string]`
-  * Response if no _platform_ or _platform_ is not `React-Native`
+  * Response if no `platform` key exists, or `platform` is not `React-Native`
     * Binary data of the image
 
 **[⬆ back to top](#table-of-contents)**
@@ -364,12 +364,12 @@
 * Purpose: Retrieve all dropps around a specific location or posted by users who the client follows
 * Required parameters
   * In the header
-    * _Authorization_
+    * `Authorization`
   * In the request body
-    * _location_
+    * `location`
       * Non-empty string containing two floating-point numbers separated by a comma
       * Represents the latitude and longitude of the current location
-    * _maxDistance_
+    * `maxDistance`
       * Positive floating point number
 * Optional parameters: _none_
 * Successful request returns
@@ -389,8 +389,8 @@
   }
   ```
 * Notes
-  * `nearby` attribute is a string equal to __true__ or __false__
-    * Represents whether or not the dropp is within _maxDistance_ of _location_
+  * `nearby` attribute is a string equal to `true` or `false`
+    * Represents whether or not the dropp is within `maxDistance` of `location`
 
 **[⬆ back to top](#table-of-contents)**
 <a name="nearby-dropps"></a>
@@ -400,12 +400,12 @@
 * Purpose: Retrieve all dropps around a specific location
 * Required parameters
   * In the header
-    * _Authorization_
+    * `Authorization`
   * In the request body
-    * _location_
+    * `location`
       * Non-empty string containing two floating-point numbers separated by a comma
       * Represents the latitude and longitude of the current location
-    * _maxDistance_
+    * `maxDistance`
       * Positive floating point number
 * Optional parameters: _none_
 * Successful request returns
@@ -432,9 +432,9 @@
 * Purpose: Retrieve all dropps posted by a specific user
 * Required parameters
   * In the header
-    * _Authorization_
+    * `Authorization`
   * In the URL
-    * [_username_]
+    * [`username`]
       * Non-empty string containing alphanumeric characters, dashes, or underscores
 * Optional parameters: _none_
 * Successful request returns
@@ -461,9 +461,9 @@
 * Purpose: Retrieve all dropps posted by a specific user
 * Required parameters
   * In the header
-    * _Authorization_
+    * `Authorization`
   * In the URL
-    * [_username_]
+    * [`username`]
       * Non-empty string containing alphanumeric characters, dashes, or underscores
       * Represents the username of the client
 * Optional parameters: _none_
@@ -492,14 +492,14 @@
 * Request body type: `x-www-form-urlencoded`
 * Required parameters
   * In the header
-    * _Authorization_
+    * `Authorization`
   * In the URL
-    * [_droppId_]
+    * [`droppId`]
       * Non-empty string containing alphanumeric characters, dashes, or underscores
   * In the request body
-    * _newText_
+    * `newText`
       * String containing alphanumeric characters, special characters, and spaces
-      * If _media_ is __false__ for the dropp, this value __must__ be non-empty
+      * If `media` is `false` for the dropp, this value __must__ be non-empty
 * Optional parameters: _none_
 * Successful request returns
   * Status code: __200__
@@ -512,7 +512,7 @@
   }
   ```
 * Notes
-  * The _newText_ value must be __different__ from the existing text in the database
+  * The `newText` value must be __different__ from the existing text in the database
 
 **[⬆ back to top](#table-of-contents)**
 <a name="delete-dropp"></a>
@@ -522,9 +522,9 @@
 * Purpose: Delete a dropp
 * Required parameters
   * In the header
-    * _Authorization_
+    * `Authorization`
   * In the URL
-    * [_droppId_]
+    * [`droppId`]
       * Non-empty string containing alphanumeric characters, dashes, or underscores
 * Optional parameters: _none_
 * Successful request returns
