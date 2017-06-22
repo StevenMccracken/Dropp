@@ -135,7 +135,7 @@
   * In the header
     * `Authorization`
   * In the URL
-    * [`username`]
+    * `[username]`
       * Non-empty string containing alphanumeric characters, dashes, or underscores
 * Optional parameters: _none_
 * Successful request returns
