@@ -897,3 +897,6 @@
 * Formal type: `resource_error`
 * Default message: _There was an error accessing that resource_
 * Notes: The message will usually contain a more specific explanation of why the request cannot be fulfilled
+
+**[⬆ back to top - errors](#errors-table-of-contents)**
+**[⬆ back to top - main](#table-of-contents)**
