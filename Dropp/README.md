@@ -879,7 +879,7 @@
 * Status code: __404__
 * Formal type: `resource_dne_error`
 * Default message: _That resource does not exist_
-* Notes: The message will usually contain which _type_ of resource does not exist, e.g. _That dropp does not exist_
+* Notes: The message will usually contain which __type__ of resource does not exist, e.g. "That __dropp__ does not exist"
 
 **[⬆ back to top - errors](#errors-table-of-contents)**
 <a name="resource-error"></a>
