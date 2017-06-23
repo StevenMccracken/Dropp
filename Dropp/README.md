@@ -46,7 +46,7 @@
 25. [Cancel pending follow request](#cancel-follow-request)
 26. [Remove a follower](#remove-follower)
 27. [Unfollow a user](#unfollow)
-28. [Error types](#errors)
+28. [Errors](#errors)
 
 ## Routes
 
