@@ -814,7 +814,7 @@
 6. [Resource Does Not Exist Error](#resource-dne-error)
 7. [Resource Error](#resource-error)
 
-**[⬆ back to errors](#errors-table-of-contents)**
+**[⬆ back to top - errors](#errors-table-of-contents)**
 <a name="api-error"></a>
 ### 1. API Error
 
@@ -823,7 +823,7 @@
 * Formal type: `api_error`
 * Default message: _There was a problem with our back-end services_
 
-**[⬆ back to errors](#errors-table-of-contents)**
+**[⬆ back to top - errors](#errors-table-of-contents)**
 <a name="auth-error"></a>
 ### 2. Authentication Error
 
@@ -837,7 +837,7 @@
 * Default message: _There was an error while authenticating_
 * Notes: This error has the same status code as Login errors; however, this error will never occur in the base route (/), /authenticate route, or __POST__ /users route
 
-**[⬆ back to errors](#errors-table-of-contents)**
+**[⬆ back to top - errors](#errors-table-of-contents)**
 <a name="media-error"></a>
 ### 3. Invalid Media Type Error
 
@@ -848,7 +848,7 @@
 * Formal type: `invalid_media_type`
 * Default message: _That type of media file is forbidden_
 
-**[⬆ back to errors](#errors-table-of-contents)**
+**[⬆ back to top - errors](#errors-table-of-contents)**
 <a name="invalid-request-error"></a>
 ### 4. Invalid Request Error
 
@@ -861,7 +861,7 @@
 * Default message: _One of your request parameters is invalid_
 * Notes: The non-default message will be `Invalid parameters: ` or `Unchanged parameters: `, followed by a comma-separated list of the incorrect parameter key names
 
-**[⬆ back to errors](#errors-table-of-contents)**
+**[⬆ back to top - errors](#errors-table-of-contents)**
 <a name="login-error"></a>
 ### 5. Login Error
 
@@ -871,7 +871,7 @@
 * Default message: _The username or password is incorrect_
 * Notes: This error has the same status code as Authentication errors; however, this error will only occur in the /authenticate route
 
-**[⬆ back to errors](#errors-table-of-contents)**
+**[⬆ back to top - errors](#errors-table-of-contents)**
 <a name="resource-dne-error"></a>
 ### 6. Resource Does Not Exist Error
 
@@ -881,7 +881,7 @@
 * Default message: _That resource does not exist_
 * Notes: The message will usually contain which _type_ of resource does not exist, e.g. _That dropp does not exist_
 
-**[⬆ back to errors](#errors-table-of-contents)**
+**[⬆ back to top - errors](#errors-table-of-contents)**
 <a name="resource-error"></a>
 ### 7. Resource Error
 
