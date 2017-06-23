@@ -140,7 +140,7 @@ describe('Start server', () => {
       requestParams = {
         url: `${baseUrl}/users/${user1Name}/email`,
         headers: { Authorization: user1Token },
-        form: { newEmail: `${user1Name}_updated@grunttest.com` },
+        form: { new_email: `${user1Name}_updated@grunttest.com` },
       };
     });
 
@@ -162,8 +162,8 @@ describe('Start server', () => {
         url: `${baseUrl}/users/${user1Name}/password`,
         headers: { Authorization: user1Token },
         form: {
-          oldPassword: password,
-          newPassword: `${password}_updated`,
+          old_password: password,
+          new_password: `${password}_updated`,
         },
       };
     });
@@ -313,17 +313,17 @@ describe('Start server', () => {
     let requestParams;
     beforeEach(() => {
       requestParams = {
-        url: `${baseUrl}/dropps/all`,
-        headers: { Authorization: user1Token },
-        form: {
-          location : '0,0',
-          maxDistance : 100,
+        url: `${baseUrl}/dropps`,
+        headers: {
+          location: '0,0',
+          max_distance: 100,
+          Authorization: user1Token,
         },
       };
     });
 
     it('gets all the dropps and returns status code 200', (done) => {
-      REQUEST.post(requestParams, (error, response, body) => {
+      REQUEST.get(requestParams, (error, response, body) => {
         expect(response.statusCode).toBe(200);
 
         // Parse JSON response for the dropps
@@ -340,17 +340,17 @@ describe('Start server', () => {
     let requestParams;
     beforeEach(() => {
       requestParams = {
-        url: `${baseUrl}/dropps/location`,
-        headers: { Authorization: user1Token },
-        form: {
-          location : '0,0',
-          maxDistance : 100,
+        url: `${baseUrl}/location/dropps`,
+        headers: {
+          location: '0,0',
+          max_distance: 100,
+          Authorization: user1Token
         },
       };
     });
 
     it('gets the dropps around location and returns status code 200', (done) => {
-      REQUEST.post(requestParams, (error, response, body) => {
+      REQUEST.get(requestParams, (error, response, body) => {
         expect(response.statusCode).toBe(200);
 
         // Parse JSON response for the dropps
@@ -393,7 +393,7 @@ describe('Start server', () => {
       requestParams = {
         url: `${baseUrl}/dropps/${droppWithImageKey}/text`,
         headers: { Authorization: user1Token },
-        form: { newText: 'grunt test update dropp' },
+        form: { new_text: 'grunt test update dropp' },
       };
     });
 
@@ -432,7 +432,7 @@ describe('Start server', () => {
     let requestParams;
     beforeEach(() => {
       requestParams = {
-        url: `${baseUrl}/users/${user2Name}/requests/followers`,
+        url: `${baseUrl}/requests/follows/${user2Name}`,
         headers: { Authorization: user1Token },
       };
     });
@@ -452,7 +452,7 @@ describe('Start server', () => {
     let requestParams;
     beforeEach(() => {
       requestParams = {
-        url: `${baseUrl}/users/${user1Name}/requests/followers`,
+        url: `${baseUrl}/requests/follows/${user1Name}`,
         headers: { Authorization: user2Token },
       };
     });
@@ -472,7 +472,7 @@ describe('Start server', () => {
     let requestParams;
     beforeEach(() => {
       requestParams = {
-        url: `${baseUrl}/users/${user1Name}/requests/follows`,
+        url: `${baseUrl}/requests/follows`,
         headers: { Authorization: user1Token },
       };
     });
@@ -495,7 +495,7 @@ describe('Start server', () => {
     let requestParams;
     beforeEach(() => {
       requestParams = {
-        url: `${baseUrl}/users/${user1Name}/requests/followers`,
+        url: `${baseUrl}/requests/followers`,
         headers: { Authorization: user1Token },
       };
     });
@@ -518,7 +518,7 @@ describe('Start server', () => {
     let requestParams;
     beforeEach(() => {
       requestParams = {
-        url: `${baseUrl}/users/${user1Name}/requests/followers/${user2Name}`,
+        url: `${baseUrl}/requests/followers/${user2Name}`,
         headers: { Authorization: user1Token },
       };
     });
@@ -538,7 +538,7 @@ describe('Start server', () => {
     let requestParams;
     beforeEach(() => {
       requestParams = {
-        url: `${baseUrl}/users/${user2Name}/requests/followers/${user1Name}`,
+        url: `${baseUrl}/requests/followers/${user1Name}`,
         headers: { Authorization: user2Token },
       };
     });
@@ -604,7 +604,7 @@ describe('Start server', () => {
     let requestParams;
     beforeEach(() => {
       requestParams = {
-        url: `${baseUrl}/users/${user2Name}/follows/dropps`,
+        url: `${baseUrl}/follows/dropps`,
         headers: { Authorization: user2Token },
       };
     });
@@ -627,7 +627,7 @@ describe('Start server', () => {
     let requestParams;
     beforeEach(() => {
       requestParams = {
-        url: `${baseUrl}/users/${user2Name}/requests/followers`,
+        url: `${baseUrl}/requests/follows/${user2Name}`,
         headers: { Authorization: user1Token },
       };
     });
@@ -647,7 +647,7 @@ describe('Start server', () => {
     let requestParams;
     beforeEach(() => {
       requestParams = {
-        url: `${baseUrl}/users/${user1Name}/requests/follows/${user2Name}`,
+        url: `${baseUrl}/requests/follows/${user2Name}`,
         headers: { Authorization: user1Token },
       };
     });
@@ -667,7 +667,7 @@ describe('Start server', () => {
     let requestParams;
     beforeEach(() => {
       requestParams = {
-        url: `${baseUrl}/users/${user1Name}/followers/${user2Name}`,
+        url: `${baseUrl}/followers/${user2Name}`,
         headers: { Authorization: user1Token },
       };
     });
@@ -687,7 +687,7 @@ describe('Start server', () => {
     let requestParams;
     beforeEach(() => {
       requestParams = {
-        url: `${baseUrl}/users/${user1Name}/requests/followers`,
+        url: `${baseUrl}/requests/follows/${user1Name}`,
         headers: { Authorization: user2Token },
       };
     });
@@ -707,7 +707,7 @@ describe('Start server', () => {
     let requestParams;
     beforeEach(() => {
       requestParams = {
-        url: `${baseUrl}/users/${user1Name}/requests/followers/${user2Name}`,
+        url: `${baseUrl}/requests/followers/${user2Name}`,
         headers: { Authorization: user1Token },
       };
     });
@@ -727,7 +727,7 @@ describe('Start server', () => {
     let requestParams;
     beforeEach(() => {
       requestParams = {
-        url: `${baseUrl}/users/${user2Name}/follows/${user1Name}`,
+        url: `${baseUrl}/follows/${user1Name}`,
         headers: { Authorization: user2Token },
       };
     });

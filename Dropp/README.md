@@ -39,8 +39,8 @@
 18. [Request to follow a user](#send-follow-request)
 19. [Get a user's followers](#get-followers)
 20. [Get a user's follows](#get-follows)
-21. [Get a user's follower requests](#get-follower-requests)
-22. [Get a user's follow requests](#get-follow-requests)
+21. [Get a client's follower requests](#get-follower-requests)
+22. [Get a client's follow requests](#get-follow-requests)
 23. [Accept a follower request](#accept-follower-request)
 24. [Decline a follower request](#decline-follower-request)
 25. [Cancel pending follow request](#cancel-follow-request)
@@ -52,11 +52,10 @@
 
 **[⬆ back to top](#table-of-contents)**
 <a name="base-route"></a>
-### Base route
+### 1. Base route
 
 * Route: __GET__ https://dropps.me
-* Purpose
-  * Test if the server is up and running
+* Purpose: Tests if the server is up and running
 * Required parameters: _none_
 * Optional parameters: _none_
 * Successful request returns
@@ -70,7 +69,7 @@
 
 **[⬆ back to top](#table-of-contents)**
 <a name="authenticate"></a>
-### Authenticate
+### 2. Authenticate
 
 * Route: __POST__ https://dropps.me/authenticate
 * Purpose: Registers the client on the server so that subsequent requests only require a generated token, not their username and password
@@ -99,10 +98,10 @@
 
 **[⬆ back to top](#table-of-contents)**
 <a name="create-user"></a>
-### Create a user
+### 3. Create a user
 
 * Route: __POST__ https://dropps.me/users
-* Purpose: Create a new user
+* Purpose: Creates a new user
 * Request body type: `x-www-form-urlencoded`
 * Required parameters
   * In the request body
@@ -127,10 +126,10 @@
 
 **[⬆ back to top](#table-of-contents)**
 <a name="get-user"></a>
-### Retrieve a user's information
+### 4. Retrieve a user's information
 
 * Route: __GET__ https://dropps.me/users/[username]
-* Purpose: Get information about a user
+* Purpose: Gets information about a user
 * Required parameters
   * In the header
     * `Authorization`
@@ -157,10 +156,10 @@
 
 **[⬆ back to top](#table-of-contents)**
 <a name="update-email"></a>
-### Change a user's email
+### 5. Change a user's email
 
 * Route: __PUT__ https://dropps.me/users/[username]/email
-* Purpose: Update a user's email to a new value
+* Purpose: Updates a user's email to a new value
 * Request body type: `x-www-form-urlencoded`
 * Required parameters
   * In the header
@@ -169,7 +168,7 @@
     * `[username]`
       * Non-empty string containing alphanumeric characters, dashes, or underscores
   * In the request body
-    * `newEmail`
+    * `new_email`
       * Non-empty string containing a valid email format
 * Optional parameters: _none_
 * Successful request returns
@@ -183,14 +182,14 @@
   }
   ```
 * Notes
-  * The `newEmail` value must be __different__ from the existing email in the database
+  * The `new_email` value must be __different__ from the existing email in the database
 
 **[⬆ back to top](#table-of-contents)**
 <a name="update-password"></a>
-### Change a user's password
+### 6. Change a user's password
 
 * Route: __PUT__ https://dropps.me/users/[username]/password
-* Purpose: Update a user's password to a new value
+* Purpose: Updates a user's password to a new value
 * Request body type: `x-www-form-urlencoded`
 * Required parameters
   * In the header
@@ -199,9 +198,9 @@
     * `[username]`
       * Non-empty string containing alphanumeric characters, dashes, or underscores
   * In the request body
-    * `oldPassword`
+    * `old_password`
       * Non-empty string containing alphanumeric and special characters
-    * `newPassword`
+    * `new_password`
       * Non-empty string containing alphanumeric and special characters
 * Optional parameters: _none_
 * Successful request returns
@@ -215,15 +214,15 @@
   }
   ```
 * Notes
-  * The `oldPassword` value must be __identical__ to the existing password in the database
-  * The `newPassword` value must be __different__ from the existing password in the database
+  * The `old_password` value must be __identical__ to the existing password in the database
+  * The `new_password` value must be __different__ from the existing password in the database
 
 **[⬆ back to top](#table-of-contents)**
 <a name="delete-user"></a>
-### Delete a user
+### 6. Delete a user
 
 * Route: __DELETE__ https://dropps.me/users/[username]
-* Purpose: Delete a user's account and all their dropps
+* Purpose: Deletes a user's account and all their dropps
 * Required parameters
   * In the header
     * `Authorization`
@@ -244,10 +243,10 @@
 
 **[⬆ back to top](#table-of-contents)**
 <a name="create-dropp"></a>
-### Create a dropp
+### 8. Create a dropp
 
 * Route: __POST__ https://dropps.me/dropps
-* Purpose: Create a dropp
+* Purpose: Creates a dropp
 * Request body type: `x-www-form-urlencoded`
 * Required parameters
   * In the header
@@ -282,10 +281,10 @@
 
 **[⬆ back to top](#table-of-contents)**
 <a name="add-image"></a>
-### Add an image for a posted dropp
+### 9. Add an image for a posted dropp
 
 * Route: __POST__ https://dropps.me/dropps/[droppId]/image
-* Purpose: Upload an image for a dropp that has `media` equal to `true`
+* Purpose: Uploads an image for a dropp that has `media` equal to `true`
 * Request body type: `form-data`
 * Required parameters
   * In the header
@@ -309,10 +308,10 @@
 
 **[⬆ back to top](#table-of-contents)**
 <a name="get-dropp"></a>
-### Get a dropp
+### 10. Get a dropp
 
 * Route: __GET__ https://dropps.me/dropps/[droppId]
-* Purpose: Retrieve a specific dropp
+* Purpose: Retrieves a specific dropp
 * Required parameters
   * In the header
     * `Authorization`
@@ -335,10 +334,10 @@
 
 **[⬆ back to top](#table-of-contents)**
 <a name="get-image"></a>
-### Get an image for a specific dropp
+### 11. Get an image for a specific dropp
 
 * Route: __GET__ https://dropps.me/dropps/[droppId]/image
-* Purpose: Retrieve an image for a specific dropp
+* Purpose: Retrieves an image for a specific dropp
 * Required parameters
   * In the header
     * `Authorization`
@@ -358,18 +357,18 @@
 
 **[⬆ back to top](#table-of-contents)**
 <a name="all-dropps"></a>
-### Get all relevant dropps
+### 12. Get all relevant dropps
 
-* Route: __POST__ https://dropps.me/dropps/all
-* Purpose: Retrieve all dropps around a specific location or posted by users who the client follows
+* Route: __GET__ https://dropps.me/dropps
+* Purpose: Retrieves all dropps around a specific location or posted by users who the client follows
+* Request header type: `x-www-form-urlencoded`
 * Required parameters
   * In the header
     * `Authorization`
-  * In the request body
     * `location`
       * Non-empty string containing two floating-point numbers separated by a comma
       * Represents the latitude and longitude of the current location
-    * `maxDistance`
+    * `max_distance`
       * Positive floating point number
 * Optional parameters: _none_
 * Successful request returns
@@ -390,22 +389,22 @@
   ```
 * Notes
   * `nearby` attribute is a string equal to `true` or `false`
-    * Represents whether or not the dropp is within `maxDistance` of `location`
+    * Represents whether or not the dropp is within `max_distance` of `location`
 
 **[⬆ back to top](#table-of-contents)**
 <a name="nearby-dropps"></a>
-### Get all dropps around a location
+### 13. Get all dropps around a location
 
-* Route: __POST__ https://dropps.me/dropps/location
-* Purpose: Retrieve all dropps around a specific location
+* Route: __GET__ https://dropps.me/location/dropps
+* Purpose: Retrieves all dropps around a specific location
+* Request header type: `x-www-form-urlencoded`
 * Required parameters
   * In the header
     * `Authorization`
-  * In the request body
     * `location`
       * Non-empty string containing two floating-point numbers separated by a comma
       * Represents the latitude and longitude of the current location
-    * `maxDistance`
+    * `max_distance`
       * Positive floating point number
 * Optional parameters: _none_
 * Successful request returns
@@ -426,10 +425,10 @@
 
 **[⬆ back to top](#table-of-contents)**
 <a name="users-dropps"></a>
-### Get all dropps posted by a user
+### 14. Get all dropps posted by a user
 
 * Route: __GET__ https://dropps.me/users/[username]/dropps
-* Purpose: Retrieve all dropps posted by a specific user
+* Purpose: Retrieves all dropps posted by a specific user
 * Required parameters
   * In the header
     * `Authorization`
@@ -455,17 +454,13 @@
 
 **[⬆ back to top](#table-of-contents)**
 <a name="follows-dropps"></a>
-### Get all dropps posted by client's follows
+### 15. Get all dropps posted by client's follows
 
-* Route: __GET__ https://dropps.me/users/[username]/follows/dropps
-* Purpose: Retrieve all dropps posted by a specific user
+* Route: __GET__ https://dropps.me/follows/dropps
+* Purpose: Retrieves all dropps posted by users who the client follows
 * Required parameters
   * In the header
     * `Authorization`
-  * In the URL
-    * `[username]`
-      * Non-empty string containing alphanumeric characters, dashes, or underscores
-      * Represents the username of the client
 * Optional parameters: _none_
 * Successful request returns
   * Status code: __200__
@@ -485,10 +480,10 @@
 
 **[⬆ back to top](#table-of-contents)**
 <a name="update-text"></a>
-### Change a dropp's text
+### 16. Change a dropp's text
 
 * Route: __PUT__ https://dropps.me/dropps/[droppId]/text
-* Purpose: Update a dropp's text to a new value
+* Purpose: Updates a dropp's text to a new value
 * Request body type: `x-www-form-urlencoded`
 * Required parameters
   * In the header
@@ -497,7 +492,7 @@
     * `[droppId]`
       * Non-empty string containing alphanumeric characters, dashes, or underscores
   * In the request body
-    * `newText`
+    * `new_text`
       * String containing alphanumeric characters, special characters, and spaces
       * If `media` is `false` for the dropp, this value __must__ be non-empty
 * Optional parameters: _none_
@@ -512,14 +507,14 @@
   }
   ```
 * Notes
-  * The `newText` value must be __different__ from the existing text in the database
+  * The `new_text` value must be __different__ from the existing text in the database
 
 **[⬆ back to top](#table-of-contents)**
 <a name="delete-dropp"></a>
-### Delete a dropp
+### 17. Delete a dropp
 
 * Route: __DELETE__ https://dropps.me/dropps/[droppId]
-* Purpose: Delete a dropp
+* Purpose: Deletes a dropp
 * Required parameters
   * In the header
     * `Authorization`
@@ -539,5 +534,257 @@
   ```
 
 **[⬆ back to top](#table-of-contents)**
+<a name="send-follow-request"></a>
+### 18. Request to follow a user
+
+* Route: __POST__ https://dropps.me/requests/follows/[username]
+* Purpose: Sends a follow request
+* Required parameters
+  * In the header
+    * `Authorization`
+  * In the URL
+    * `[username]`
+      * Non-empty string containing alphanumeric characters, dashes, or underscores
+      * Represents the username of the user to send the request to
+* Optional parameters: _none_
+* Successful request returns
+  * Status code: __200__
+  * Response body JSON
+  ```json
+  {
+    "success": {
+      "message": "Successfully sent follow request"
+    }
+  }
+  ```
+* Notes
+  * A client cannot send a follow request to themself
+  * A client cannot send a follow request to a user that they have already requested to follow
+
+**[⬆ back to top](#table-of-contents)**
+<a name="get-followers"></a>
+### 19. Get a user's followers
+
+* Route: __GET__ https://dropps.me/users/[username]/followers
+* Purpose: Retrieves the users who are following a specific user
+* Required parameters
+  * In the header
+    * `Authorization`
+  * In the URL
+    * `[username]`
+      * Non-empty string containing alphanumeric characters, dashes, or underscores
+* Optional parameters: _none_
+* Successful request returns
+  * Status code: __200__
+  * Response body JSON
+  ```json
+  {
+    "[follower 1 username]": "[follower 1 username]",
+    "[and more followers]": "..."
+  }
+  ```
+* Notes
+  * Returned JSON could be empty if user has no followers
+  * The key-value pairs will be __identical__ usernames
+
+**[⬆ back to top](#table-of-contents)**
+<a name="get-follows"></a>
+### 20. Get a user's follows
+
+* Route: __GET__ https://dropps.me/users/[username]/follows
+* Purpose: Retrieves the users who the specific user follows
+* Required parameters
+  * In the header
+    * `Authorization`
+  * In the URL
+    * `[username]`
+      * Non-empty string containing alphanumeric characters, dashes, or underscores
+* Optional parameters: _none_
+* Successful request returns
+  * Status code: __200__
+  * Response body JSON
+  ```json
+  {
+    "[follow 1 username]": "[follow 1 username]",
+    "[and more follows]": "..."
+  }
+  ```
+* Notes
+  * Returned JSON could be empty if user has no follows
+  * The key-value pairs will be __identical__ usernames
+
+**[⬆ back to top](#table-of-contents)**
+<a name="get-follower-requests"></a>
+### 21. Get a client's follower requests
+
+* Route: __GET__ https://dropps.me/requests/followers
+* Purpose: Retrieves the follower requests for the client
+* Required parameters
+  * In the header
+    * `Authorization`
+* Optional parameters: _none_
+* Successful request returns
+  * Status code: __200__
+  * Response body JSON
+  ```json
+  {
+    "[follower request 1 username]": "[follower request 1 username]",
+    "[and more follower requests]": "..."
+  }
+  ```
+* Notes
+  * Returned JSON could be empty if client has no follower requests
+  * The key-value pairs will be __identical__ usernames
+
+**[⬆ back to top](#table-of-contents)**
+<a name="get-follow-requests"></a>
+### 22. Get a client's follow requests
+
+* Route: __GET__ https://dropps.me/requests/follows
+* Purpose: Retrieves the follow requests for the client
+* Required parameters
+  * In the header
+    * `Authorization`
+* Optional parameters: _none_
+* Successful request returns
+  * Status code: __200__
+  * Response body JSON
+  ```json
+  {
+    "[follow request 1 username]": "[follow request 1 username]",
+    "[and more follow requests]": "..."
+  }
+  ```
+* Notes
+  * Returned JSON could be empty if client has no follow requests
+  * The key-value pairs will be __identical__ usernames
+
+**[⬆ back to top](#table-of-contents)**
+<a name="accept-follower-request"></a>
+### 23. Accept a follower request
+
+* Route: __PUT__ https://dropps.me/requests/followers/[username]
+* Purpose: Accepts a pending follower request from another user
+* Required parameters
+  * In the header
+    * `Authorization`
+  * In the URL
+    * `[username]`
+      * Non-empty string containing alphanumeric characters, dashes, or underscores
+      * Represents the username of the follower request to accept
+* Optional parameters: _none_
+* Successful request returns
+  * Status code: __200__
+  * Response body JSON
+  ```json
+  {
+    "success": {
+      "message": "Successfully accepted follower request"
+    }
+  }
+  ```
+
+**[⬆ back to top](#table-of-contents)**
+<a name="decline-follower-request"></a>
+### 24. Decline a follower request
+
+* Route: __DELETE__ https://dropps.me/requests/followers/[username]
+* Purpose: Declines a pending follower request from another user
+* Required parameters
+  * In the header
+    * `Authorization`
+  * In the URL
+    * `[username]`
+      * Non-empty string containing alphanumeric characters, dashes, or underscores
+      * Represents the username of the follower request to decline
+* Optional parameters: _none_
+* Successful request returns
+  * Status code: __200__
+  * Response body JSON
+  ```json
+  {
+    "success": {
+      "message": "Successfully declined follower request"
+    }
+  }
+  ```
+
+**[⬆ back to top](#table-of-contents)**
+<a name="cancel-follow-request"></a>
+### 25. Cancel pending follow request
+
+* Route: __DELETE__ https://dropps.me/requests/followers/[username]
+* Purpose: Removes a pending follow request to another user
+* Required parameters
+  * In the header
+    * `Authorization`
+  * In the URL
+    * `[username]`
+      * Non-empty string containing alphanumeric characters, dashes, or underscores
+      * Represents the username of the follow request to remove
+* Optional parameters: _none_
+* Successful request returns
+  * Status code: __200__
+  * Response body JSON
+  ```json
+  {
+    "success": {
+      "message": "Successfully removed pending follow request"
+    }
+  }
+  ```
+
+**[⬆ back to top](#table-of-contents)**
+<a name="remove-follower"></a>
+### 26. Remove a follower
+
+* Route: __DELETE__ https://dropps.me/followers/[username]
+* Purpose: Removes a specific user from a client's followers
+* Required parameters
+  * In the header
+    * `Authorization`
+  * In the URL
+    * `[username]`
+      * Non-empty string containing alphanumeric characters, dashes, or underscores
+      * Represents the username of the follower to remove
+* Optional parameters: _none_
+* Successful request returns
+  * Status code: __200__
+  * Response body JSON
+  ```json
+  {
+    "success": {
+      "message": "Successfully removed follower"
+    }
+  }
+  ```
+
+**[⬆ back to top](#table-of-contents)**
+<a name="unfollow"></a>
+### 27. Unfollow a user
+
+* Route: __DELETE__ https://dropps.me/follows/[username]
+* Purpose: Removes a specific user from a client's follows
+* Required parameters
+  * In the header
+    * `Authorization`
+  * In the URL
+    * `[username]`
+      * Non-empty string containing alphanumeric characters, dashes, or underscores
+      * Represents the username of the user to unfollow
+* Optional parameters: _none_
+* Successful request returns
+  * Status code: __200__
+  * Response body JSON
+  ```json
+  {
+    "success": {
+      "message": "Successfully unfollowed that user"
+    }
+  }
+  ```
+
+**[⬆ back to top](#table-of-contents)**
+
 <a name="errors"></a>
-### Error types
+## Errors

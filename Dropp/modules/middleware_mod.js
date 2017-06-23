@@ -5,6 +5,7 @@
 
 const FS = require('fs');
 const LOG = require('./log_mod');
+const USERS = require('./user_mod');
 const ERROR = require('./error_mod');
 const MEDIA = require('./media_mod');
 const DROPPS = require('./dropp_mod');
@@ -225,7 +226,7 @@ var createUser = function(_request, _response, _callback) {
                     },
                     (setPasswordError) => {
                       // Failed to add password to database. Remove the user
-                      removeUser(
+                      USERS.remove(
                         _request.body.username,
                         () => {
                           let errorDetails = {
@@ -255,7 +256,7 @@ var createUser = function(_request, _response, _callback) {
                 },
                 (hashError) => {
                   // Failed to hash the password. Remove the user
-                  removeUser(
+                  USERS.remove(
                     _request.body.username,
                     () => {
                       let errorDetails = {
@@ -351,6 +352,7 @@ var getUser = function(_request, _response, _callback) {
                 source: SOURCE,
                 request: _request,
                 response: _response,
+                client: client.username,
                 error: ERROR.CODE.RESOURCE_DNE_ERROR,
                 customErrorMessage: 'That user does not exist',
               };
@@ -414,7 +416,7 @@ var updateUserEmail = function(_request, _response, _callback) {
       // Token is valid, so check request parameters
       let invalidParams = [];
       if (!VALIDATE.isValidUsername(_request.params.username)) invalidParams.push('username');
-      if (!VALIDATE.isValidEmail(_request.body.newEmail)) invalidParams.push('newEmail');
+      if (!VALIDATE.isValidEmail(_request.body.new_email)) invalidParams.push('new_email');
 
       if (invalidParams.length > 0){
         let errorDetails = {
@@ -433,9 +435,10 @@ var updateUserEmail = function(_request, _response, _callback) {
           source: SOURCE,
           request: _request,
           response: _response,
+          client: client.username,
           error: ERROR.CODE.INVALID_REQUEST_ERROR,
           customErrorMessage: 'You cannot update another user\'s email',
-          serverMessage: `${client.username} tried to update ${_request.params.username}'s email`,
+          serverMessage: `Client tried to update ${_request.params.username}'s email`,
         };
 
         ERROR.error(errorDetails, error => _callback(error));
@@ -449,25 +452,27 @@ var updateUserEmail = function(_request, _response, _callback) {
                 source: SOURCE,
                 request: _request,
                 response: _response,
+                client: client.username,
                 error: ERROR.CODE.RESOURCE_DNE_ERROR,
                 customErrorMessage: 'That user does not exist',
               };
 
               ERROR.error(errorDetails, error => _callback(error));
-            } else if (userData.email === _request.body.newEmail.trim()) {
+            } else if (userData.email === _request.body.new_email.trim()) {
               let errorDetails = {
                 source: SOURCE,
                 request: _request,
                 response: _response,
+                client: client.username,
                 error: ERROR.CODE.INVALID_REQUEST_ERROR,
-                customErrorMessage: 'Unchanged parameters: newEmail',
+                customErrorMessage: 'Unchanged parameters: new_email',
               };
 
               ERROR.error(errorDetails, error => _callback(error));
             } else {
               FIREBASE.UPDATE(
                 `/users/${client.username}/email`,
-                _request.body.newEmail.trim(),
+                _request.body.new_email.trim(),
                 () => {
                   let successJson = {
                     success: {
@@ -540,8 +545,8 @@ var updateUserPassword = function(_request, _response, _callback) {
       // Token is valid, so check request parameters
       let invalidParams = [];
       if (!VALIDATE.isValidUsername(_request.params.username)) invalidParams.push('username');
-      if (!VALIDATE.isValidPassword(_request.body.oldPassword)) invalidParams.push('oldPassword');
-      if (!VALIDATE.isValidPassword(_request.body.newPassword)) invalidParams.push('newPassword');
+      if (!VALIDATE.isValidPassword(_request.body.old_password)) invalidParams.push('old_password');
+      if (!VALIDATE.isValidPassword(_request.body.new_password)) invalidParams.push('new_password');
 
       if (invalidParams.length > 0){
         let errorDetails = {
@@ -560,9 +565,10 @@ var updateUserPassword = function(_request, _response, _callback) {
           source: SOURCE,
           request: _request,
           response: _response,
+          client: client.username,
           error: ERROR.CODE.INVALID_REQUEST_ERROR,
           customErrorMessage: 'You cannot update another user\'s password',
-          serverMessage: `${user.username} tried to update ${_request.params.username}'s password`,
+          serverMessage: `Client tried to update ${_request.params.username}'s password`,
         };
 
         ERROR.error(errorDetails, error => _callback(error));
@@ -576,6 +582,7 @@ var updateUserPassword = function(_request, _response, _callback) {
                 source: SOURCE,
                 request: _request,
                 response: _response,
+                client: client.username,
                 error: ERROR.CODE.INVALID_REQUEST_ERROR,
                 customErrorMessage: 'That user does not exist',
               };
@@ -583,7 +590,7 @@ var updateUserPassword = function(_request, _response, _callback) {
               ERROR.error(errorDetails, error => _callback(error));
             } else {
               AUTH.validatePasswords(
-                _request.body.oldPassword.trim(),
+                _request.body.old_password.trim(),
                 existingPassword,
                 (passwordsMatch) => {
                   if (!passwordsMatch) {
@@ -591,27 +598,29 @@ var updateUserPassword = function(_request, _response, _callback) {
                       source: SOURCE,
                       request: _request,
                       response: _response,
+                      client: client.username,
                       error: ERROR.CODE.INVALID_REQUEST_ERROR,
-                      customErrorMessage: 'oldPassword does not match existing password',
+                      customErrorMessage: 'old_password does not match existing password',
                     };
 
                     ERROR.error(errorDetails, error => _callback(error));
                   } else {
                     // Client knows their old password, so check if new password is unchanged
-                    if (_request.body.newPassword.trim() === _request.body.oldPassword.trim()) {
+                    if (_request.body.new_password.trim() === _request.body.old_password.trim()) {
                       let errorDetails = {
                         source: SOURCE,
                         request: _request,
                         response: _response,
+                        client: client.username,
                         error: ERROR.CODE.INVALID_REQUEST_ERROR,
-                        customErrorMessage: 'Unchanged parameters: newPassword',
+                        customErrorMessage: 'Unchanged parameters: new_password',
                       };
 
                       ERROR.error(errorDetails, error => _callback(error));
                     } else {
                       // New password is different from old password
                       AUTH.hash(
-                        _request.body.newPassword.trim(),
+                        _request.body.new_password.trim(),
                         (hashedPassword) => {
                           FIREBASE.UPDATE(
                             `/passwords/${client.username}`,
@@ -731,9 +740,10 @@ var deleteUser = function(_request, _response, _callback) {
           source: SOURCE,
           request: _request,
           response: _response,
+          client: client.username,
           error: ERROR.CODE.INVALID_REQUEST_ERROR,
           customErrorMessage: 'You cannot delete another user',
-          serverMessage: `${client.username} tried to delete ${_request.params.username}`,
+          serverMessage: `Client tried to delete ${_request.params.username}`,
         };
 
         ERROR.error(errorDetails, error => _callback(error));
@@ -752,6 +762,7 @@ var deleteUser = function(_request, _response, _callback) {
                 source: SOURCE,
                 request: _request,
                 response: _response,
+                client: client.username,
                 error: ERROR.CODE.RESOURCE_DNE_ERROR,
                 customErrorMessage: 'That user does not exist',
               };
@@ -859,7 +870,7 @@ var deleteUser = function(_request, _response, _callback) {
               );
 
               // Now delete the username and password
-              removeUser(
+              USERS.remove(
                 client.username,
                 () => {
                   let successJson = {
@@ -1055,6 +1066,7 @@ var addImage = function(_request, _response, _callback) {
                 source: SOURCE,
                 request: _request,
                 response: _response,
+                client: client.username,
                 error: ERROR.CODE.RESOURCE_DNE_ERROR,
                 customErrorMessage: 'That dropp does not exist',
               };
@@ -1067,6 +1079,7 @@ var addImage = function(_request, _response, _callback) {
                 source: SOURCE,
                 request: _request,
                 response: _response,
+                client: client.username,
                 error: ERROR.CODE.INVALID_REQUEST_ERROR,
                 customErrorMessage: 'You cannot add an image for another user',
               };
@@ -1082,6 +1095,7 @@ var addImage = function(_request, _response, _callback) {
                 source: SOURCE,
                 request: _request,
                 response: _response,
+                client: client.username,
                 error: ERROR.CODE.INVALID_REQUEST_ERROR,
                 customErrorMessage: 'That dropp cannot have media attached',
               };
@@ -1099,6 +1113,7 @@ var addImage = function(_request, _response, _callback) {
                       source: SOURCE,
                       request: _request,
                       response: _response,
+                      client: client.username,
                       error: ERROR.CODE.INVALID_REQUEST_ERROR,
                       customErrorMessage: 'That dropp already has media attached',
                     };
@@ -1120,6 +1135,7 @@ var addImage = function(_request, _response, _callback) {
                         source: SOURCE,
                         request: _request,
                         response: _response,
+                        client: client.username,
                         error: ERROR.CODE.INVALID_MEDIA_TYPE,
                         serverMessage: `File received had ${_request.file.mimetype} mimetype`,
                       };
@@ -1151,6 +1167,7 @@ var addImage = function(_request, _response, _callback) {
                             request: _request,
                             response: _response,
                             error: addImageError,
+                            client: client.username,
                           };
 
                           ERROR.determineMediaError(errorDetails, error => _callback(error));
@@ -1165,6 +1182,7 @@ var addImage = function(_request, _response, _callback) {
                     request: _request,
                     response: _response,
                     error: getImageError,
+                    client: client.username,
                   };
 
                   ERROR.determineMediaError(errorDetails, error => _callback(error));
@@ -1239,6 +1257,7 @@ var getDropp = function(_request, _response, _callback) {
                 source: SOURCE,
                 request: _request,
                 response: _response,
+                client: client.username,
                 error: ERROR.CODE.RESOURCE_DNE_ERROR,
                 customErrorMessage: 'That dropp does not exist',
               };
@@ -1314,6 +1333,7 @@ var getImage = function(_request, _response, _callback) {
                 source: SOURCE,
                 request: _request,
                 response: _response,
+                client: client.username,
                 error: ERROR.CODE.RESOURCE_DNE_ERROR,
                 customErrorMessage: 'That dropp does not exist',
               };
@@ -1324,6 +1344,7 @@ var getImage = function(_request, _response, _callback) {
                 source: SOURCE,
                 request: _request,
                 response: _response,
+                client: client.username,
                 error: ERROR.CODE.RESOURCE_DNE_ERROR,
                 customErrorMessage: 'That dropp has no media',
               };
@@ -1331,8 +1352,7 @@ var getImage = function(_request, _response, _callback) {
               ERROR.error(errorDetails, error => _callback(error));
             } else {
               // Determine if image should be sent as base-64 string for react-native clients
-              let platformIsReactNative = _request.headers !== undefined &&
-                _request.headers.platform === 'React-Native';
+              let platformIsReactNative = _request.headers.platform === 'React-Native';
 
               // Requested dropp has media, so query google cloud storage for image
               MEDIA.GET(
@@ -1344,6 +1364,7 @@ var getImage = function(_request, _response, _callback) {
                       source: SOURCE,
                       request: _request,
                       response: _response,
+                      client: client.username,
                       error: ERROR.CODE.RESOURCE_DNE_ERROR,
                       customErrorMessage: 'That image does not exist',
                     };
@@ -1357,6 +1378,7 @@ var getImage = function(_request, _response, _callback) {
                     request: _request,
                     response: _response,
                     error: getImageError,
+                    client: client.username,
                   };
 
                   ERROR.determineMediaError(errorDetails, error => _callback(error));
@@ -1396,7 +1418,7 @@ var getImage = function(_request, _response, _callback) {
 };
 
 /**
- * getAllDropps - Retrieves all dropps from the database
+ * getAllDropps - Retrieves all dropps around the client or posted by the client's follows
  * @param {Object} _request the HTTP request
  * @param {Object} _response the HTTP response
  * @param {callback} _callback the callback to return the reuslt
@@ -1412,9 +1434,9 @@ var getAllDropps = function(_request, _response, _callback) {
     (client) => {
       // Token is valid, so check request parameters
       let invalidParams = [];
-      if (!VALIDATE.isValidLocation(_request.body.location)) invalidParams.push('location');
-      if (!VALIDATE.isValidPositiveFloat(_request.body.maxDistance)) {
-        invalidParams.push('maxDistance');
+      if (!VALIDATE.isValidLocation(_request.headers.location)) invalidParams.push('location');
+      if (!VALIDATE.isValidPositiveFloat(_request.headers.max_distance)) {
+        invalidParams.push('max_distance');
       }
 
       if (invalidParams.length > 0) {
@@ -1439,10 +1461,10 @@ var getAllDropps = function(_request, _response, _callback) {
             FIREBASE.GET(
               '/dropps',
               (allDropps) => {
-                // Save dropps that are within maxDistance of client or if client follows poster
+                // Save dropps that are within max_distance of client or if client follows poster
                 let subsetOfDropps = {};
-                let maxDistance = Number(_request.body.maxDistance);
-                let targetLocation = _request.body.location.trim().split(',').map(Number);
+                let maxDistance = Number(_request.headers.max_distance);
+                let targetLocation = _request.headers.location.trim().split(',').map(Number);
 
                 // Loop over all the dropps in the dropps JSON
                 for (let droppKey in allDropps) {
@@ -1526,9 +1548,9 @@ var getDroppsByLocation = function(_request, _response, _callback) {
     (client) => {
       // Check request parameters
       let invalidParams = [];
-      if (!VALIDATE.isValidLocation(_request.body.location)) invalidParams.push('location');
-      if (!VALIDATE.isValidPositiveFloat(_request.body.maxDistance)) {
-        invalidParams.push('maxDistance');
+      if (!VALIDATE.isValidLocation(_request.headers.location)) invalidParams.push('location');
+      if (!VALIDATE.isValidPositiveFloat(_request.headers.max_distance)) {
+        invalidParams.push('max_distance');
       }
 
       if (invalidParams.length > 0) {
@@ -1551,8 +1573,8 @@ var getDroppsByLocation = function(_request, _response, _callback) {
             try {
               DROPPS.getCloseDropps(
                 allDropps,
-                _request.body.location.trim(),
-                _request.body.maxDistance,
+                _request.headers.location.trim(),
+                _request.headers.max_distance,
                 closeDropps => _callback(closeDropps)
               );
             } catch (getCloseDroppsError) {
@@ -1668,6 +1690,7 @@ var getDroppsByUser = function(_request, _response, _callback) {
                   source: SOURCE,
                   request: _request,
                   response: _response,
+                  client: client.username,
                   error: ERROR.CODE.INVALID_REQUEST_ERROR,
                   customErrorMessage: 'You must follow that user to get their dropps',
                 };
@@ -1750,80 +1773,56 @@ var getDroppsByFollows = function(_request, _response, _callback) {
     _request,
     _response,
     (client) => {
-      // Token is valid, so check request parameters
-      if (!VALIDATE.isValidUsername(_request.params.username)) {
-        let errorDetails = {
-          source: SOURCE,
-          request: _request,
-          response: _response,
-          client: client.username,
-          error: ERROR.CODE.INVALID_REQUEST_ERROR,
-          customErrorMessage: 'Invalid parameters: username',
-        };
+      // Token is valid. Get the users that the client follows
+      FIREBASE.GET(
+        `/users/${client.username}/follows`,
+        (usersClientFollows) => {
+          if (usersClientFollows === null) _callback({});
+          else {
+            // The client follows at least one user, so get all the dropps
+            // FIXME: Stop querying db for ALL dropps. Use firebase filtering
+            FIREBASE.GET(
+              '/dropps',
+              (allDropps) => {
+                let droppsByFollows = {};
 
-        ERROR.error(errorDetails, error => _callback(error));
-      } else if (client.username !== _request.params.username) {
-        let errorDetails = {
-          source: SOURCE,
-          request: _request,
-          response: _response,
-          error: ERROR.CODE.INVALID_REQUEST_ERROR,
-          customErrorMessage: 'You cannot access dropps posted by another user\'s follows',
-        };
-
-        ERROR.error(errorDetails, error => _callback(error));
-      } else {
-        // Request parameters are valid. Get the users that the client follows
-        FIREBASE.GET(
-          `/users/${client.username}/follows`,
-          (usersClientFollows) => {
-            if (usersClientFollows === null) _callback({});
-            else {
-              // The client follows at least one user, so get all the dropps
-              // FIXME: Stop querying db for ALL dropps. Use firebase filtering
-              FIREBASE.GET(
-                '/dropps',
-                (allDropps) => {
-                  let droppsByFollows = {};
-
-                  // Loop over all dropps by their id
-                  for (let droppKey in allDropps) {
-                    // If the user follows the poster of the dropp, save the dropp
-                    let poster = allDropps[droppKey].username;
-                    if (usersClientFollows[poster] !== undefined) {
-                      droppsByFollows[droppKey] = allDropps[droppKey];
-                    }
+                // Loop over all dropps by their id
+                for (let droppKey in allDropps) {
+                  // If the user follows the poster of the dropp, save the dropp
+                  let poster = allDropps[droppKey].username;
+                  if (usersClientFollows[poster] !== undefined) {
+                    droppsByFollows[droppKey] = allDropps[droppKey];
                   }
-
-                  _callback(droppsByFollows);
-                },
-                (getDroppsError) => {
-                  let errorDetails = {
-                    source: SOURCE,
-                    request: _request,
-                    response: _response,
-                    error: getDroppsError,
-                    client: client.username,
-                  };
-
-                  ERROR.determineFirebaseError(errorDetails, error => _callback(error));
                 }
-              );
-            }
-          },
-          (getUsersClientFollowsError) => {
-            let errorDetails = {
-              source: SOURCE,
-              request: _request,
-              response: _response,
-              client: client.username,
-              error: getUsersClientFollowsError,
-            };
 
-            ERROR.determineFirebaseError(errorDetails, error => _callback(error));
+                _callback(droppsByFollows);
+              },
+              (getDroppsError) => {
+                let errorDetails = {
+                  source: SOURCE,
+                  request: _request,
+                  response: _response,
+                  error: getDroppsError,
+                  client: client.username,
+                };
+
+                ERROR.determineFirebaseError(errorDetails, error => _callback(error));
+              }
+            );
           }
-        );
-      }
+        },
+        (getUsersClientFollowsError) => {
+          let errorDetails = {
+            source: SOURCE,
+            request: _request,
+            response: _response,
+            client: client.username,
+            error: getUsersClientFollowsError,
+          };
+
+          ERROR.determineFirebaseError(errorDetails, error => _callback(error));
+        }
+      );
     },
     (passportError, tokenError, userInfoMissing) => {
       let errorDetails = {
@@ -1858,7 +1857,7 @@ var updateDroppText = function(_request, _response, _callback) {
       // Check request parameters
       let invalidParams = [];
       if (!VALIDATE.isValidId(_request.params.droppId)) invalidParams.push('droppId');
-      if (_request.body.newText === undefined) invalidParams.push('newText');
+      if (_request.body.new_text === undefined) invalidParams.push('new_text');
 
       if (invalidParams.length > 0) {
         let errorDetails = {
@@ -1881,6 +1880,7 @@ var updateDroppText = function(_request, _response, _callback) {
                 source: SOURCE,
                 request: _request,
                 response: _response,
+                client: client.username,
                 error: ERROR.CODE.RESOURCE_DNE_ERROR,
                 customErrorMessage: 'That dropp does not exist',
               };
@@ -1892,31 +1892,37 @@ var updateDroppText = function(_request, _response, _callback) {
                 source: SOURCE,
                 request: _request,
                 response: _response,
+                client: client.username,
                 error: ERROR.CODE.INVALID_REQUEST_ERROR,
                 customErrorMessage: 'You cannot update another user\'s dropp',
-                serverMessage: `${client.username} tried to update ${dropp.username}'s dropp (${_request.params.droppId})`,
+                serverMessage: `Client tried to update ${dropp.username}'s dropp (${_request.params.droppId})`,
               };
 
               ERROR.error(errorDetails, error => _callback(error));
-            } else if (dropp.media === 'false' && !VALIDATE.isValidTextPost(_request.body.newText)) {
+            } else if (
+              dropp.media === 'false' &&
+              !VALIDATE.isValidTextPost(_request.body.new_text)
+            ) {
               // Client attempted to remove text from a dropp with no media
               let errorDetails = {
                 source: SOURCE,
                 request: _request,
                 response: _response,
+                client: client.username,
                 error: ERROR.CODE.INVALID_REQUEST_ERROR,
                 customErrorMessage: 'Text cannot be empty for this dropp',
               };
 
               ERROR.error(errorDetails, error => _callback(error));
-            } else if (dropp.text === _request.body.newText.trim()) {
+            } else if (dropp.text === _request.body.new_text.trim()) {
               // Useless update to the text because they are identical
               let errorDetails = {
                 source: SOURCE,
                 request: _request,
                 response: _response,
+                client: client.username,
                 error: ERROR.CODE.INVALID_REQUEST_ERROR,
-                customErrorMessage: 'Unchanged parameters: newText',
+                customErrorMessage: 'Unchanged parameters: new_text',
               };
 
               ERROR.error(errorDetails, error => _callback(error));
@@ -1924,7 +1930,7 @@ var updateDroppText = function(_request, _response, _callback) {
               // Update is valid, so update dropp in the database
               FIREBASE.UPDATE(
                 `/dropps/${_request.params.droppId}/text`,
-                _request.body.newText.trim(),
+                _request.body.new_text.trim(),
                 () => {
                   let successJson = {
                     success: {
@@ -2018,6 +2024,7 @@ var deleteDropp = function(_request, _response, _callback) {
                 source: SOURCE,
                 request: _request,
                 response: _response,
+                client: client.username,
                 error: ERROR.CODE.RESOURCE_DNE_ERROR,
                 customErrorMessage: 'That dropp does not exist',
               };
@@ -2029,9 +2036,10 @@ var deleteDropp = function(_request, _response, _callback) {
                 source: SOURCE,
                 request: _request,
                 response: _response,
+                client: client.username,
                 error: ERROR.CODE.INVALID_REQUEST_ERROR,
                 customErrorMessage: 'You cannot delete another user\'s dropp',
-                serverMessage: `${client.username} tried to delete ${dropp.username}'s dropp (${_request.params.droppId})`,
+                serverMessage: `Client tried to delete ${dropp.username}'s dropp (${_request.params.droppId})`,
               };
 
               ERROR.error(errorDetails, error => _callback(error));
@@ -2140,6 +2148,7 @@ var requestToFollow = function(_request, _response, _callback) {
           source: SOURCE,
           request: _request,
           response: _response,
+          client: client.username,
           error: ERROR.CODE.INVALID_REQUEST_ERROR,
           customErrorMessage: 'You cannot follow yourself',
         };
@@ -2156,6 +2165,7 @@ var requestToFollow = function(_request, _response, _callback) {
                 source: SOURCE,
                 request: _request,
                 response: _response,
+                client: client.username,
                 error: ERROR.CODE.RESOURCE_DNE_ERROR,
                 customErrorMessage: 'That user does not exist',
               };
@@ -2172,6 +2182,7 @@ var requestToFollow = function(_request, _response, _callback) {
                       source: SOURCE,
                       request: _request,
                       response: _response,
+                      client: client.username,
                       error: ERROR.CODE.INVALID_REQUEST_ERROR,
                       customErrorMessage: 'You already follow that user',
                     };
@@ -2191,6 +2202,7 @@ var requestToFollow = function(_request, _response, _callback) {
                              source: SOURCE,
                              request: _request,
                              response: _response,
+                             client: client.username,
                              error: ERROR.CODE.INVALID_REQUEST_ERROR,
                              customErrorMessage: 'You still have an active follow request for that user',
                            };
@@ -2387,6 +2399,7 @@ var getFollowers = function(_request, _response, _callback) {
             source: SOURCE,
             request: _request,
             response: _response,
+            client: client.username,
             error: ERROR.CODE.API_ERROR,
             serverMessage: getConnectionsTypeError,
           };
@@ -2462,6 +2475,7 @@ var getFollows = function(_request, _response, _callback) {
             source: SOURCE,
             request: _request,
             response: _response,
+            client: client.username,
             error: ERROR.CODE.API_ERROR,
             serverMessage: getConnectionsTypeError,
           };
@@ -2500,60 +2514,36 @@ var getFollowerRequests = function(_request, _response, _callback) {
     _request,
     _response,
     (client) => {
-      // Token is valid, so check request parameters
-      if (!VALIDATE.isValidUsername(_request.params.username)) {
+      // Token is valid, so get the client's follower requests
+      try {
+        SOCIAL.getRequests(
+          'follower',
+          client.username,
+          followerRequests => _callback(followerRequests),
+          (getRequestsError) => {
+            let errorDetails = {
+              source: SOURCE,
+              request: _request,
+              response: _response,
+              error: getRequestsError,
+              client: client.username,
+            };
+
+            ERROR.determineFirebaseError(errorDetails, error => _callback(error));
+          }
+        );
+      } catch(getRequestsTypeError) {
+        // Event occurs if type 'follower' is not accepted by SOCIAL.getRequests()
         let errorDetails = {
           source: SOURCE,
           request: _request,
           response: _response,
           client: client.username,
-          error: ERROR.CODE.INVALID_REQUEST_ERROR,
-          customErrorMessage: 'Invalid parameters: username',
+          error: ERROR.CODE.API_ERROR,
+          serverMessage: getRequestsTypeError,
         };
 
         ERROR.error(errorDetails, error => _callback(error));
-      } else if (_request.params.username !== client.username) {
-        // Client attempted to view requests of a different profile
-        let errorDetails = {
-          source: SOURCE,
-          request: _request,
-          response: _response,
-          error: ERROR.CODE.INVALID_REQUEST_ERROR,
-          customErrorMessage: 'You cannot view another user\'s follower requests',
-        };
-
-        ERROR.error(errorDetails, error => _callback(error));
-      } else {
-        // Parameters are valid, so get the client's follower requests
-        try {
-          SOCIAL.getRequests(
-            'follower',
-            client.username,
-            followerRequests => _callback(followerRequests),
-            (getRequestsError) => {
-              let errorDetails = {
-                source: SOURCE,
-                request: _request,
-                response: _response,
-                error: getRequestsError,
-                client: client.username,
-              };
-
-              ERROR.determineFirebaseError(errorDetails, error => _callback(error));
-            }
-          );
-        } catch(getRequestsTypeError) {
-          // Event occurs if type 'follower' is not accepted by SOCIAL.getRequests()
-          let errorDetails = {
-            source: SOURCE,
-            request: _request,
-            response: _response,
-            error: ERROR.CODE.API_ERROR,
-            serverMessage: getRequestsTypeError,
-          };
-
-          ERROR.error(errorDetails, error => _callback(error));
-        }
       }
     },
     (passportError, tokenError, userInfoMissing) => {
@@ -2586,60 +2576,36 @@ var getFollowRequests = function(_request, _response, _callback) {
     _request,
     _response,
     (client) => {
-      // Token is valid, so check request parameters
-      if (!VALIDATE.isValidUsername(_request.params.username)) {
+      // Token is valid, so get the client's follower requests
+      try {
+        SOCIAL.getRequests(
+          'follow',
+          client.username,
+          followRequests => _callback(followRequests),
+          (getRequestsError) => {
+            let errorDetails = {
+              source: SOURCE,
+              request: _request,
+              response: _response,
+              error: getRequestsError,
+              client: client.username,
+            };
+
+            ERROR.determineFirebaseError(errorDetails, error => _callback(error));
+          }
+        );
+      } catch(getRequestsTypeError) {
+        // Event occurs if type 'follow' is not accepted by SOCIAL.getRequests()
         let errorDetails = {
           source: SOURCE,
           request: _request,
           response: _response,
           client: client.username,
-          error: ERROR.CODE.INVALID_REQUEST_ERROR,
-          customErrorMessage: 'Invalid parameters: username',
+          error: ERROR.CODE.API_ERROR,
+          serverMessage: getRequestsTypeError,
         };
 
         ERROR.error(errorDetails, error => _callback(error));
-      } else if (_request.params.username !== client.username) {
-        // Client attempted to view requests of a different profile
-        let errorDetails = {
-          source: SOURCE,
-          request: _request,
-          response: _response,
-          error: ERROR.CODE.INVALID_REQUEST_ERROR,
-          customErrorMessage: 'You cannot view another user\'s follower requests',
-        };
-
-        ERROR.error(errorDetails, error => _callback(error));
-      } else {
-        // Parameters are valid, so get the client's follower requests
-        try {
-          SOCIAL.getRequests(
-            'follow',
-            client.username,
-            followRequests => _callback(followRequests),
-            (getRequestsError) => {
-              let errorDetails = {
-                source: SOURCE,
-                request: _request,
-                response: _response,
-                error: getRequestsError,
-                client: client.username,
-              };
-
-              ERROR.determineFirebaseError(errorDetails, error => _callback(error));
-            }
-          );
-        } catch(getRequestsTypeError) {
-          // Event occurs if type 'follow' is not accepted by SOCIAL.getRequests()
-          let errorDetails = {
-            source: SOURCE,
-            request: _request,
-            response: _response,
-            error: ERROR.CODE.API_ERROR,
-            serverMessage: getRequestsTypeError,
-          };
-
-          ERROR.error(errorDetails, error => _callback(error));
-        }
       }
     },
     (passportError, tokenError, userInfoMissing) => {
@@ -2678,39 +2644,22 @@ var respondToFollowerRequest = function(_request, _response, _callback) {
     _request,
     _response,
     (client) => {
-      // Token is valid, so check request parameters
-      let invalidParams = [];
-      if (!VALIDATE.isValidUsername(_request.params.username)) invalidParams.push('username');
-      if (!VALIDATE.isValidUsername(_request.params.requestingUser)) {
-        invalidParams.push('requestingUser');
-      }
-
-      if (invalidParams.length > 0) {
+      // Token is valid, so check request parameter
+      if (!VALIDATE.isValidUsername(_request.params.username)) {
         let errorDetails = {
           source: SOURCE,
           request: _request,
           response: _response,
           client: client.username,
           error: ERROR.CODE.INVALID_REQUEST_ERROR,
-          customErrorMessage: `Invalid parameters: ${invalidParams.join()}`,
-        };
-
-        ERROR.error(errorDetails, error => _callback(error));
-      } else if (_request.params.username !== client.username) {
-        // Client is trying to respond to a request on behalf of another user
-        let errorDetails = {
-          source: SOURCE,
-          request: _request,
-          response: _response,
-          error: ERROR.CODE.INVALID_REQUEST_ERROR,
-          customErrorMessage: 'You cannot access another user\'s follower requests',
+          customErrorMessage: 'Invalid parameters: username',
         };
 
         ERROR.error(errorDetails, error => _callback(error));
       } else {
         // Parameters are valid, so query database for follower request
         FIREBASE.GET(
-          `/users/${client.username}/follower_requests/${_request.params.requestingUser}`,
+          `/users/${client.username}/follower_requests/${_request.params.username}`,
           (requestingUserName) => {
             // If requestingUserName is null, there is no follower request for that user
             if (requestingUserName === null) {
@@ -2718,6 +2667,7 @@ var respondToFollowerRequest = function(_request, _response, _callback) {
                 source: SOURCE,
                 request: _request,
                 response: _response,
+                client: client.username,
                 error: ERROR.CODE.RESOURCE_DNE_ERROR,
                 customErrorMessage: 'That follower request does not exist',
               };
@@ -2740,6 +2690,7 @@ var respondToFollowerRequest = function(_request, _response, _callback) {
                           source: SOURCE,
                           request: _request,
                           response: _response,
+                          client: client.username,
                           error: ERROR.CODE.RESOURCE_DNE_ERROR,
                           customErrorMessage: 'The user for that follower request no longer exists',
                         };
@@ -2846,6 +2797,7 @@ var respondToFollowerRequest = function(_request, _response, _callback) {
                         source: SOURCE,
                         request: _request,
                         response: _response,
+                        client: client.username,
                         error: ERROR.CODE.INVALID_REQUEST_ERROR,
                         customErrorMessage: 'Invalid method type. Must be PUT or DELETE',
                       };
@@ -2916,39 +2868,22 @@ var removeFollowRequest = function(_request, _response, _callback) {
     _request,
     _response,
     (client) => {
-      // Token is valid, so check request parameters
-      let invalidParams = [];
-      if (!VALIDATE.isValidUsername(_request.params.username)) invalidParams.push('username');
-      if (!VALIDATE.isValidUsername(_request.params.requestedUser)) {
-        invalidParams.push('requestedUser');
-      }
-
-      if (invalidParams.length > 0) {
+      // Token is valid, so check request parameter
+      if (!VALIDATE.isValidUsername(_request.params.username)) {
         let errorDetails = {
           source: SOURCE,
           request: _request,
           response: _response,
           client: client.username,
           error: ERROR.CODE.INVALID_REQUEST_ERROR,
-          customErrorMessage: `Invalid parameters: ${invalidParams.join()}`,
-        };
-
-        ERROR.error(errorDetails, error => _callback(error));
-      } else if (_request.params.username !== client.username) {
-        // Client is trying to respond to a request on behalf of another user
-        let errorDetails = {
-          source: SOURCE,
-          request: _request,
-          response: _response,
-          error: ERROR.CODE.INVALID_REQUEST_ERROR,
-          customErrorMessage: 'You cannot access another user\'s requests',
+          customErrorMessage: 'Invalid parameters: username',
         };
 
         ERROR.error(errorDetails, error => _callback(error));
       } else {
         // Parameters are valid, so query database for the follow request
         FIREBASE.GET(
-          `/users/${client.username}/follow_requests/${_request.params.requestedUser}`,
+          `/users/${client.username}/follow_requests/${_request.params.username}`,
           (requestedUserName) => {
             if (requestedUserName === null) {
               // Request id for that follow does not exist
@@ -2956,6 +2891,7 @@ var removeFollowRequest = function(_request, _response, _callback) {
                 source: SOURCE,
                 request: _request,
                 response: _response,
+                client: client.username,
                 error: ERROR.CODE.RESOURCE_DNE_ERROR,
                 customErrorMessage: 'That follow request does not exist',
               };
@@ -3048,7 +2984,7 @@ var removeFollowRequest = function(_request, _response, _callback) {
               response: _response,
               client: client.username,
               error: getFollowRequestError,
-              invalidParameter: 'requestedUser',
+              invalidParameter: 'username',
             };
 
             ERROR.determineFirebaseError(errorDetails, error => _callback(error));
@@ -3087,37 +3023,22 @@ var removeFollower = function(_request, _response, _callback) {
     _request,
     _response,
     (client) => {
-      // Token is valid, so check request parameters
-      let invalidParams = [];
-      if (!VALIDATE.isValidUsername(_request.params.username)) invalidParams.push('username');
-      if (!VALIDATE.isValidUsername(_request.params.follower)) invalidParams.push('follower');
-
-      if (invalidParams.length > 0) {
+      // Token is valid, so check request parameter
+      if (!VALIDATE.isValidUsername(_request.params.username)) {
         let errorDetails = {
           source: SOURCE,
           request: _request,
           response: _response,
           client: client.username,
           error: ERROR.CODE.INVALID_REQUEST_ERROR,
-          customErrorMessage: `Invalid parameters: ${invalidParams.join()}`,
-        };
-
-        ERROR.error(errorDetails, error => _callback(error));
-      } else if (_request.params.username !== client.username) {
-        // Client is trying to remove follower on behalf of another user
-        let errorDetails = {
-          source: SOURCE,
-          request: _request,
-          response: _response,
-          error: ERROR.CODE.INVALID_REQUEST_ERROR,
-          customErrorMessage: 'You cannot remove another user\'s followers',
+          customErrorMessage: 'Invalid parameters: username',
         };
 
         ERROR.error(errorDetails, error => _callback(error));
       } else {
         // Parameters are valid, so see if the client has that followerId
         FIREBASE.GET(
-          `/users/${client.username}/followers/${_request.params.follower}`,
+          `/users/${client.username}/followers/${_request.params.username}`,
           (followerUsername) => {
             if (followerUsername === null) {
               // That follower does not exist for the client
@@ -3125,6 +3046,7 @@ var removeFollower = function(_request, _response, _callback) {
                 source: SOURCE,
                 request: _request,
                 response: _response,
+                client: client.username,
                 error: ERROR.CODE.RESOURCE_DNE_ERROR,
                 customErrorMessage: 'That follower does not exist',
               };
@@ -3256,45 +3178,29 @@ var unfollow = function(_request, _response, _callback) {
     _request,
     _response,
     (client) => {
-      // Token is valid, so check request parameters
-      let invalidParams = [];
-      if (!VALIDATE.isValidUsername(_request.params.username)) invalidParams.push('username');
-      if (!VALIDATE.isValidUsername(_request.params.followedUser)) {
-        invalidParams.push('followedUser');
-      }
-
-      if (invalidParams.length > 0) {
+      // Token is valid, so check request parameter
+      if (!VALIDATE.isValidUsername(_request.params.username)) {
         let errorDetails = {
           source: SOURCE,
           request: _request,
           response: _response,
           client: client.username,
           error: ERROR.CODE.INVALID_REQUEST_ERROR,
-          customErrorMessage: `Invalid parameters: ${invalidParams.join()}`,
-        };
-
-        ERROR.error(errorDetails, error => _callback(error));
-      } else if (_request.params.username !== client.username) {
-        // Client is trying to unfollow another user on behalf of someone else
-        let errorDetails = {
-          source: SOURCE,
-          request: _request,
-          response: _response,
-          error: ERROR.CODE.INVALID_REQUEST_ERROR,
-          customErrorMessage: 'You cannot remove another user\'s follows',
+          customErrorMessage: 'Invalid parameters: username',
         };
 
         ERROR.error(errorDetails, error => _callback(error));
       } else {
         // Parameters are valid, so query database for the follow
         FIREBASE.GET(
-          `/users/${client.username}/follows/${_request.params.followedUser}`,
+          `/users/${client.username}/follows/${_request.params.username}`,
           (followedUserName) => {
             if (followedUserName === null) {
               let errorDetails = {
                 source: SOURCE,
                 request: _request,
                 response: _response,
+                client: client.username,
                 error: ERROR.CODE.RESOURCE_DNE_ERROR,
                 customErrorMessage: 'That follow does not exist',
               };
@@ -3391,7 +3297,7 @@ var unfollow = function(_request, _response, _callback) {
               response: _response,
               client: client.username,
               error: getFollowedUserError,
-              invalidParameter: 'followedUser',
+              invalidParameter: 'username',
             };
 
             ERROR.determineFirebaseError(errorDetails, error => _callback(error));
@@ -3441,23 +3347,6 @@ module.exports = {
   removeFollower: removeFollower,
   unfollow: unfollow,
 };
-
-/**
- * removeUser - Deletes a user from the user's table
- * @param {String} _username the username of the desired user
- * @param {callback} _callback the callback to return the result
- * @param {callback} _errorCallback the callback to return any errors
- */
-function removeUser(_username, _callback, _errorCallback) {
-  const SOURCE = 'removeUser()';
-  log(SOURCE);
-
-  FIREBASE.DELETE(
-    `/users/${_username}`,
-    () => _callback(),
-    deleteUserError => _errorCallback(deleteUserError)
-  );
-}
 
 /**
  * log - Logs a message to the server console

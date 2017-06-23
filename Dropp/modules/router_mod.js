@@ -11,7 +11,7 @@ var routing = function(_router) {
   router = _router;
 
   /**
-   * Middleware to log metadata about incoming requests
+   * Middleware to log the request type and full API route
    * @param {Object} _request the HTTP request
    * @param {Object} _response the HTTP response
    * @param {callback} _next the callback to execute after metadata has been logged
@@ -32,8 +32,8 @@ var routing = function(_router) {
 
   /**
    * The POST route for validating login credentials. Sends
-   * an error JSON or a JSON web token for the requesting
-   * client. This route does not require token authentication
+   * an error JSON or a JSON web token for the client.
+   * This route does not require token authentication
    * @param {Object} _request the HTTP request
    * @param {Object} _response the HTTP response
    */
@@ -42,8 +42,8 @@ var routing = function(_router) {
   ));
 
   /**
-   * The POST route for creating a user. Sends an error JSON or a JSON of
-   * the created user. This route does not require token authentication
+   * The POST route for creating a user. Sends an error JSON or a JSON web
+   * token for new client. This route does not require token authentication
    * @param {Object} _request the HTTP request
    * @param {Object} _response the HTTP response
    */
@@ -82,8 +82,9 @@ var routing = function(_router) {
   ));
 
   /**
-   * The DELETE route for removing a user by their username. Sends an error JSON
-   * or a JSON of the requested user. This route requires token authentication
+   * The DELETE route for removing a user by their username.
+   * Sends an error JSON or a JSON of the successful
+   * deletion. This route requires token authentication
    * @param {Object} _request the HTTP request
    * @param {Object} _response the HTTP response
    */
@@ -137,11 +138,9 @@ var routing = function(_router) {
       // There was an error retrieving media, so send the error result as a JSON
       if (result.media === undefined) _response.json(result);
       else {
-        // There was no error retrieving the media. Check if the platform is for React-Native
-        if (_request.headers !== undefined && _request.headers.platform === 'React-Native') {
-          // Send the base-64 string encoded image
-          _response.send(result.media);
-        } else {
+        // Send the image-encoded string directly if the platform is React-Native
+        if (_request.headers.platform === 'React-Native') _response.send(result.media);
+        else {
           // Send the binary data image file
           _response.write(result.media, 'binary');
           _response.end(null, 'binary');
@@ -151,24 +150,24 @@ var routing = function(_router) {
   });
 
   /**
-   * The POST route for retrieving dropps near a specific location
+   * The GET route for retrieving dropps near a specific location
    * or posted by a specific user's follows. Sends an error JSON or
    * a JSON of the dropps. This route requires token authentication
    * @param {Object} _request the HTTP request
    * @param {Object} _response the HTTP response
    */
-  router.route('/dropps/all').post((_request, _response) => (
+  router.route('/dropps').get((_request, _response) => (
     MIDDLEWARE.getAllDropps(_request, _response, result => _response.json(result))
   ));
 
   /**
-   * The POST route for retrieving dropps near a specific location.
+   * The GET route for retrieving dropps near a specific location.
    * Sends an error JSON or a JSON of the dropps near that
    * specific location. This route requires token authentication
    * @param {Object} _request the HTTP request
    * @param {Object} _response the HTTP response
    */
-  router.route('/dropps/location').post((_request, _response) => (
+  router.route('/location/dropps').get((_request, _response) => (
     MIDDLEWARE.getDroppsByLocation(_request, _response, result => _response.json(result))
   ));
 
@@ -184,13 +183,13 @@ var routing = function(_router) {
   ));
 
   /**
-   * The GET route for retrieving all dropps posted by a specific user's
+   * The GET route for retrieving all dropps posted by a client's
    * follows. Sends an error JSON or a JSON of the dropps posted by the
    * requested user's follows. This route requires token authentication
    * @param {Object} _request the HTTP request
    * @param {Object} _response the HTTP response
    */
-  router.route('/users/:username/follows/dropps').get((_request, _response) => (
+  router.route('/follows/dropps').get((_request, _response) => (
     MIDDLEWARE.getDroppsByFollows(_request, _response, result => _response.json(result))
   ));
 
@@ -220,7 +219,7 @@ var routing = function(_router) {
    * @param {Object} _request the HTTP request
    * @param {Object} _response the HTTP response
    */
-  router.route('/users/:username/requests/followers').post((_request, _response) => (
+  router.route('/requests/follows/:username').post((_request, _response) => (
     MIDDLEWARE.requestToFollow(_request, _response, result => _response.json(result))
   ));
 
@@ -252,7 +251,7 @@ var routing = function(_router) {
    * @param {Object} _request the HTTP request
    * @param {Object} _response the HTTP response
    */
-  router.route('/users/:username/requests/followers').get((_request, _response) => (
+  router.route('/requests/followers').get((_request, _response) => (
     MIDDLEWARE.getFollowerRequests(_request, _response, result => _response.json(result))
   ));
 
@@ -263,7 +262,7 @@ var routing = function(_router) {
    * @param {Object} _request the HTTP request
    * @param {Object} _response the HTTP response
    */
-  router.route('/users/:username/requests/follows').get((_request, _response) => (
+  router.route('/requests/follows').get((_request, _response) => (
     MIDDLEWARE.getFollowRequests(_request, _response, result => _response.json(result))
   ));
 
@@ -273,7 +272,7 @@ var routing = function(_router) {
    * @param {Object} _request the HTTP request
    * @param {Object} _response the HTTP response
    */
-  router.route('/users/:username/requests/followers/:requestingUser').put((_request, _response) => (
+  router.route('/requests/followers/:username').put((_request, _response) => (
     MIDDLEWARE.respondToFollowerRequest(_request, _response, result => _response.json(result))
   ));
 
@@ -283,10 +282,9 @@ var routing = function(_router) {
    * @param {Object} _request the HTTP request
    * @param {Object} _response the HTTP response
    */
-  router.route('/users/:username/requests/followers/:requestingUser')
-    .delete((_request, _response) => (
-      MIDDLEWARE.respondToFollowerRequest(_request, _response, result => _response.json(result))
-    ));
+  router.route('/requests/followers/:username').delete((_request, _response) => (
+    MIDDLEWARE.respondToFollowerRequest(_request, _response, result => _response.json(result))
+  ));
 
   /**
    * The DELETE route for removing a pending follow request. Sends an
@@ -294,7 +292,7 @@ var routing = function(_router) {
    * @param {Object} _request the HTTP request
    * @param {Object} _response the HTTP response
    */
-  router.route('/users/:username/requests/follows/:requestedUser').delete((_request, _response) => (
+  router.route('/requests/follows/:username').delete((_request, _response) => (
     MIDDLEWARE.removeFollowRequest(_request, _response, result => _response.json(result))
   ));
 
@@ -304,7 +302,7 @@ var routing = function(_router) {
    * @param {Object} _request the HTTP request
    * @param {Object} _response the HTTP response
    */
-  router.route('/users/:username/followers/:follower').delete((_request, _response) => (
+  router.route('/followers/:username').delete((_request, _response) => (
     MIDDLEWARE.removeFollower(_request, _response, result => _response.json(result))
   ));
 
@@ -314,7 +312,7 @@ var routing = function(_router) {
    * @param {Object} _request the HTTP request
    * @param {Object} _response the HTTP response
    */
-  router.route('/users/:username/follows/:followedUser').delete((_request, _response) => (
+  router.route('/follows/:username').delete((_request, _response) => (
     MIDDLEWARE.unfollow(_request, _response, result => _response.json(result))
   ));
 
