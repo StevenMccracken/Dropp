@@ -814,7 +814,7 @@
 6. [Resource Does Not Exist Error](#resource-dne-error)
 7. [Resource Error](#resource-error)
 
-**[⬆ back to top - errors](#errors-table-of-contents)**
+**[⬆ back to top - main](#table-of-contents)**
 <a name="api-error"></a>
 ### 1. API Error
 
