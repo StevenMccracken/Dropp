@@ -436,7 +436,7 @@ var updateUserEmail = function(_request, _response, _callback) {
           request: _request,
           response: _response,
           client: client.username,
-          error: ERROR.CODE.INVALID_REQUEST_ERROR,
+          error: ERROR.CODE.RESOURCE_ERROR,
           customErrorMessage: 'You cannot update another user\'s email',
           serverMessage: `Client tried to update ${_request.params.username}'s email`,
         };
@@ -566,7 +566,7 @@ var updateUserPassword = function(_request, _response, _callback) {
           request: _request,
           response: _response,
           client: client.username,
-          error: ERROR.CODE.INVALID_REQUEST_ERROR,
+          error: ERROR.CODE.RESOURCE_ERROR,
           customErrorMessage: 'You cannot update another user\'s password',
           serverMessage: `Client tried to update ${_request.params.username}'s password`,
         };
@@ -583,7 +583,7 @@ var updateUserPassword = function(_request, _response, _callback) {
                 request: _request,
                 response: _response,
                 client: client.username,
-                error: ERROR.CODE.INVALID_REQUEST_ERROR,
+                error: ERROR.CODE.RESOURCE_DNE_ERROR,
                 customErrorMessage: 'That user does not exist',
               };
 
@@ -599,7 +599,7 @@ var updateUserPassword = function(_request, _response, _callback) {
                       request: _request,
                       response: _response,
                       client: client.username,
-                      error: ERROR.CODE.INVALID_REQUEST_ERROR,
+                      error: ERROR.CODE.RESOURCE_ERROR,
                       customErrorMessage: 'old_password does not match existing password',
                     };
 
@@ -741,7 +741,7 @@ var deleteUser = function(_request, _response, _callback) {
           request: _request,
           response: _response,
           client: client.username,
-          error: ERROR.CODE.INVALID_REQUEST_ERROR,
+          error: ERROR.CODE.RESOURCE_ERROR,
           customErrorMessage: 'You cannot delete another user',
           serverMessage: `Client tried to delete ${_request.params.username}`,
         };
@@ -1080,7 +1080,7 @@ var addImage = function(_request, _response, _callback) {
                 request: _request,
                 response: _response,
                 client: client.username,
-                error: ERROR.CODE.INVALID_REQUEST_ERROR,
+                error: ERROR.CODE.RESOURCE_ERROR,
                 customErrorMessage: 'You cannot add an image for another user',
               };
 
@@ -1096,7 +1096,7 @@ var addImage = function(_request, _response, _callback) {
                 request: _request,
                 response: _response,
                 client: client.username,
-                error: ERROR.CODE.INVALID_REQUEST_ERROR,
+                error: ERROR.CODE.RESOURCE_ERROR,
                 customErrorMessage: 'That dropp cannot have media attached',
               };
 
@@ -1114,7 +1114,7 @@ var addImage = function(_request, _response, _callback) {
                       request: _request,
                       response: _response,
                       client: client.username,
-                      error: ERROR.CODE.INVALID_REQUEST_ERROR,
+                      error: ERROR.CODE.RESOURCE_ERROR,
                       customErrorMessage: 'That dropp already has media attached',
                     };
 
@@ -1691,7 +1691,7 @@ var getDroppsByUser = function(_request, _response, _callback) {
                   request: _request,
                   response: _response,
                   client: client.username,
-                  error: ERROR.CODE.INVALID_REQUEST_ERROR,
+                  error: ERROR.CODE.RESOURCE_ERROR,
                   customErrorMessage: 'You must follow that user to get their dropps',
                 };
 
@@ -1893,7 +1893,7 @@ var updateDroppText = function(_request, _response, _callback) {
                 request: _request,
                 response: _response,
                 client: client.username,
-                error: ERROR.CODE.INVALID_REQUEST_ERROR,
+                error: ERROR.CODE.RESOURCE_ERROR,
                 customErrorMessage: 'You cannot update another user\'s dropp',
                 serverMessage: `Client tried to update ${dropp.username}'s dropp (${_request.params.droppId})`,
               };
@@ -1909,7 +1909,7 @@ var updateDroppText = function(_request, _response, _callback) {
                 request: _request,
                 response: _response,
                 client: client.username,
-                error: ERROR.CODE.INVALID_REQUEST_ERROR,
+                error: ERROR.CODE.RESOURCE_ERROR,
                 customErrorMessage: 'Text cannot be empty for this dropp',
               };
 
@@ -2037,7 +2037,7 @@ var deleteDropp = function(_request, _response, _callback) {
                 request: _request,
                 response: _response,
                 client: client.username,
-                error: ERROR.CODE.INVALID_REQUEST_ERROR,
+                error: ERROR.CODE.RESOURCE_ERROR,
                 customErrorMessage: 'You cannot delete another user\'s dropp',
                 serverMessage: `Client tried to delete ${dropp.username}'s dropp (${_request.params.droppId})`,
               };
@@ -2149,7 +2149,7 @@ var requestToFollow = function(_request, _response, _callback) {
           request: _request,
           response: _response,
           client: client.username,
-          error: ERROR.CODE.INVALID_REQUEST_ERROR,
+          error: ERROR.CODE.RESOURCE_ERROR,
           customErrorMessage: 'You cannot follow yourself',
         };
 
@@ -2183,7 +2183,7 @@ var requestToFollow = function(_request, _response, _callback) {
                       request: _request,
                       response: _response,
                       client: client.username,
-                      error: ERROR.CODE.INVALID_REQUEST_ERROR,
+                      error: ERROR.CODE.RESOURCE_ERROR,
                       customErrorMessage: 'You already follow that user',
                     };
 
@@ -2203,7 +2203,7 @@ var requestToFollow = function(_request, _response, _callback) {
                              request: _request,
                              response: _response,
                              client: client.username,
-                             error: ERROR.CODE.INVALID_REQUEST_ERROR,
+                             error: ERROR.CODE.RESOURCE_ERROR,
                              customErrorMessage: 'You still have an active follow request for that user',
                            };
 

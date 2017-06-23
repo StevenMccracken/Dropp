@@ -27,13 +27,8 @@ const ERROR_CODE = {
     type: 'invalid_request_error',
     message: 'One of your request parameters is invalid',
   },
-  INVALID_URL_ERROR: {
-    status: 400,
-    type: 'invalid_url_error',
-    message: 'There is an unacceptable character in your URL',
-  },
   LOGIN_ERROR: {
-    status: 403,
+    status: 401,
     type: 'login_error',
     message: 'The username or password is incorrect',
   },

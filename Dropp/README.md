@@ -788,3 +788,112 @@
 
 <a name="errors"></a>
 ## Errors
+* These are the error responses that will be sent when API requests fail in any way
+* Any response that has a status code other than 200 or 201 has failed in some way
+* To determine whether or not your request succeeded or failed, you can check the status code of the HTTP response or check for the existence of the key `error` in the response body JSON
+* Each error will have a specific ID that we save. You can inquire about the error with the ID to possibly get more information about the error details
+* All error responses follow this format:
+```json
+{
+  "error": {
+    "type": "[error type]",
+    "message": "[default error message or more detailed error explanation]",
+    "id": "[specific error id]"
+  }
+}
+```
+
+<a name="errors-table-of-contents"></a>
+## Errors Table of Contents
+
+1. [API Error](#api-error)
+2. [Authentication Error](#auth-error)
+3. [Invalid Media Type Error](#media-error)
+4. [Invalid Request Error](#invalid-request-error)
+5. [Login Error](#login-error)
+6. [Resource Does Not Exist Error](#resource-dne-error)
+7. [Resource Error](#resource-error)
+
+**[⬆ back to errors](#errors-table-of-contents)**
+<a name="api-error"></a>
+### 1. API Error
+
+* Explanation: An unexpected error occurred on the server that we were unable to more clearly identify and explain
+* Status code: __500__
+* Formal type: `api_error`
+* Default message: _There was a problem with our back-end services_
+
+**[⬆ back to errors](#errors-table-of-contents)**
+<a name="auth-error"></a>
+### 2. Authentication Error
+
+* Explanation: An error occurred while verifying the client's `Authorization` JSON web token
+* Common causes
+  * Missing `Authorization` token
+  * Malformed `Authorization` token
+  * Expired `Authorization` token
+* Status code: __401__
+* Formal type: `authentication_error`
+* Default message: _There was an error while authenticating_
+* Notes: This error has the same status code as Login errors; however, this error will never occur in the base route (/), /authenticate route, or __POST__ /users route
+
+**[⬆ back to errors](#errors-table-of-contents)**
+<a name="media-error"></a>
+### 3. Invalid Media Type Error
+
+* Explanation: An error occurred while receiving an image upload for a dropp
+* Common causes
+  * Uploading an image type other than `jpeg` or `png`
+* Status code: __415__
+* Formal type: `invalid_media_type`
+* Default message: _That type of media file is forbidden_
+
+**[⬆ back to errors](#errors-table-of-contents)**
+<a name="invalid-request-error"></a>
+### 4. Invalid Request Error
+
+* Explanation: An error occurred while checking the parameters in the request header or body
+* Common causes
+  * A request parameter does not follow the syntax rules prescribed for the route
+  * A request parameter to update data for a resource is identical to the existing data for that resource
+* Status code: __400__
+* Formal type: `invalid_request_error`
+* Default message: _One of your request parameters is invalid_
+* Notes: The non-default message will be `Invalid parameters: ` or `Unchanged parameters: `, followed by a comma-separated list of the incorrect parameter key names
+
+**[⬆ back to errors](#errors-table-of-contents)**
+<a name="login-error"></a>
+### 5. Login Error
+
+* Explanation: An error occurred while attempting to match the given password for the given username
+* Status code: __401__
+* Formal type: `login_error`
+* Default message: _The username or password is incorrect_
+* Notes: This error has the same status code as Authentication errors; however, this error will only occur in the /authenticate route
+
+**[⬆ back to errors](#errors-table-of-contents)**
+<a name="resource-dne-error"></a>
+### 6. Resource Does Not Exist Error
+
+* Explanation: An error occurred while attempting to retrieve the requested resource
+* Status code: __404__
+* Formal type: `resource_dne_error`
+* Default message: _That resource does not exist_
+* Notes: The message will usually contain which _type_ of resource does not exist, e.g. _That dropp does not exist_
+
+**[⬆ back to errors](#errors-table-of-contents)**
+<a name="resource-error"></a>
+### 7. Resource Error
+
+* Explanation: An error occurred while attempting to access and interact with the requested resource(s). The request would cause the data/application to enter an invalid state
+* Common causes
+  * Trying to update another user's data
+  * Trying to add an image for a dropp that has `media` = `false`
+  * Trying to add an image for a dropp that already has an image added to it
+  * Trying to get all the dropps of a user that the client does not follow
+  * Updating a dropp to have no text when `media` = `false`
+  * Sending a follow request when the requested user has not yet accepted or declined an outstanding follow request
+* Status code: __403__
+* Formal type: `resource_error`
+* Default message: _There was an error accessing that resource_
+* Notes: The message will usually contain a more specific explanation of why the request cannot be fulfilled
