@@ -1,128 +1,169 @@
 /**
- * firebase_mod - Database @module
+ * firebase_mod - @module for database interaction
  */
 
-const LOG 	= require('./log_mod');
+const LOG = require('./log_mod');
+const ERROR = require('./error_mod');
 const ADMIN = require('firebase-admin');
 
 // Testing Environment will get the key from environment variable
-var serviceAccount = process.env.TEST;
-if (serviceAccount) {
-	serviceAccount = JSON.parse(serviceAccount);
-} else {
-	// If enviroment variable doesn't exists, get the key from the file
-	serviceAccount = require('../serviceAccountKey.json');
-}
+let serviceAccount = process.env.TEST;
+if (serviceAccount) serviceAccount = JSON.parse(serviceAccount);
+else serviceAccount = require('../serviceAccountKey.json');
 
 // Verify firebase admin credentials
 ADMIN.initializeApp({
-	credential: ADMIN.credential.cert(serviceAccount),
-	databaseURL: 'https://dropp-3a65d.firebaseio.com'
+  credential: ADMIN.credential.cert(serviceAccount),
+  databaseURL: 'https://dropp-3a65d.firebaseio.com',
 });
 
 // Initialze database object
 const DB = ADMIN.database();
 
 /**
- * GET - Retrieves data from the database
- * @param {string} _url the path to the data in firebase
- * @param {callback} callback the callback to handle success result
- * @param {callback} errorCallback the callback to handle error result
+ * FILTER - Filters data from firebase
+ * @param {String} _url the path to the data in firebase
+ * @param {String} _attribute the key in the data structure
+ * @param {String} _value the value associated with keys
+ * @param {callback} _callback the callback to handle successful filtering
+ * @param {callback} _errorCallback the callback to handle any errors
  */
-var GET = function(_url, callback, errorCallback) {
-	log('Firebase GET: ' + _url);
+var FILTER = function(_url, _attribute, _value, _callback, _errorCallback) {
+  const SOURCE = 'FILTER';
+  log(`${SOURCE} (${_url})`);
 
-	if (validateUrl(_url)) {
-		var ref = DB.ref(_url);
+  GET(
+    _url,
+    (data) => {
+      // Loop over data and remove keys that don't have attributes = value
+      for (let key in data) {
+        if (data[key][_attribute] !== _value) delete data[key];
+      }
 
-		ref.once('value').then(snapshot => {
-			// Reference call was successful
-			callback(snapshot.val());
-		}, err => {
-			// Reference call failed
-			log('Problem with firebase module\'s GET');
-			log(err);
-			errorCallback(err);
-		});
-	} else {
-		errorCallback(-1);
-	}
+      _callback(data);
+    },
+    (getAllDataError) => {
+      log('Problem filtering data from firebase');
+      _errorCallback(getAllDataError);
+    }
+  );
 };
 
 /**
- * POST - Changes data in the firebase by adding, updating, or removing data
- * @param {string} _url the path to the data in firebase
- * @param {Object} _post the data to add or update
- * @param {string} _operation the add, update, or delete operation
- * @param {callback} callback the callback to handle success result
- * @param {callback} errorCallback the callback to handle error result
+ * GET - Retrieves data from firebase
+ * @param {String} _url the path to the data in firebase
+ * @param {callback} _callback the callback to handle successful retrieval
+ * @param {callback} _errorCallback the callback to handle any errors
  */
-var POST = function(_url, _post, _operation, callback, errorCallback) {
-	log('Firebase POST: ' + _url);
+var GET = function(_url, _callback, _errorCallback) {
+  const SOURCE = 'GET';
+  log(`${SOURCE} (${_url})`);
 
-	if (validateUrl(_url)) {
-		var ref = DB.ref(_url);
+  if (isValidUrl(_url)) {
+    let ref = DB.ref(_url);
+    ref.once('value').then(
+      snapshot => _callback(snapshot.val()),
+      (refError) => {
+        log('Problem getting data from firebase');
+        _errorCallback(refError);
+      }
+    );
+  } else _errorCallback(ERROR.INVALID_URL_CHAR);
+};
 
-		switch (_operation) {
-			case 'push':
-				ref.push(_post).then(key => {
-					callback(key);
-				}, err => {
-					log('Problem pushing data to firebase');
-					log(err);
-					errorCallback(err);
-				});
+/**
+ * ADD - Adds new data in firebase
+ * @param {String} _url the path where the new data will exist in firebase
+ * @param {*} _data the data to save in firebase
+ * @param {callback} _callback the callback to handle successful addition
+ * @param {callback} _errorCallback the callback to handle any errors
+ */
+var ADD = function(_url, _data, _callback, _errorCallback) {
+  const SOURCE = 'ADD';
+  log(`${SOURCE} (${_url})`);
 
-				break;
-			case 'set':
-				ref.set(_post).then(() => {
-					callback();
-				}, err => {
-					log('Problem setting data in firebase');
-					log(err);
-					errorCallback(err);
-				});
+  if (isValidUrl(_url)) {
+    let ref = DB.ref(_url);
+    ref.push(_data).then(
+      key => _callback(key),
+      (pushError) => {
+        log('Problem pushing data to firebase');
+        _errorCallback(pushError);
+      }
+    );
+  } else _errorCallback(ERROR.INVALID_URL_CHAR);
+};
 
-				break;
-			case 'remove':
-				ref.remove().then(() => {
-					callback();
-				}, err => {
-					errorCallback(err);
-				});
+/**
+ * UPDATE - Updates existing data in firebase
+ * @param {String} _url the path to the data in firebase
+ * @param {*} _newData the new value for the specified database url path
+ * @param {callback} _callback the callback to handle successful updates
+ * @param {callback} _errorCallback the callback to handle any errors
+ */
+var UPDATE = function(_url, _newData, _callback, _errorCallback) {
+  const SOURCE = 'UPDATE';
+  log(`${SOURCE} (${_url})`);
 
-				break;
-			default:
-				log('Unknown firebase POST type: ' + _operation)
-		}
-	} else {
-		errorCallback(-1);
-	}
+  if (isValidUrl(_url)) {
+    let ref = DB.ref(_url);
+    ref.set(_newData).then(
+      () => _callback(),
+      (updateError) => {
+        log('Problem setting data in firebase');
+        _errorCallback(updateError);
+      }
+    );
+  } else _errorCallback(ERROR.INVALID_URL_CHAR);
+};
+
+/**
+ * DELETE - Removes data from firebase
+ * @param {String} _url the path to the data in firebase
+ * @param {callback} _callback the callback to handle successful deletion
+ * @param {callback} _errorCallback the callback to handle any errors
+ */
+var DELETE = function(_url, _callback, _errorCallback) {
+  const SOURCE = 'DELETE';
+  log(`${SOURCE} (${_url})`);
+
+  if (isValidUrl(_url)) {
+    let ref = DB.ref(_url);
+    ref.remove().then(
+      () => _callback(),
+      (removeError) => {
+        log('Problem removing data from firebase');
+        _errorCallback(removeError);
+      }
+    );
+  } else _errorCallback(ERROR.INVALID_URL_CHAR);
 };
 
 module.exports = {
-	GET		: GET,
-	POST	: POST
+  GET: GET,
+  ADD: ADD,
+  UPDATE: UPDATE,
+  DELETE: DELETE,
+  FILTER: FILTER,
 };
 
 /**
- * log - Logs a message to the server console
- * @param {string} _message the log message
- * @param {Object} _request the HTTP request
+ * isValidUrl - Validates a firebase reference URL
+ * @param {String} _url the firebase URL
+ * @returns {Boolean} validity of url
  */
-function log(_message) {
-	LOG.log('Firebase Module', _message);
+function isValidUrl(_url) {
+  /**
+   * Evaluates to true if url is not null, not undefined, and
+   * doesn't contain any of the following characters: . # $ [ ]
+   */
+  return _url !== null && _url !== undefined && !(/[\.#\$\[\]]/).test(_url);
 }
 
 /**
- * validateUrl - Validates a firebase reference URL
- * @param {string} url the firebase URL
- * @returns {Boolean} validity of url
+ * log - Logs a message to the server console
+ * @param {String} _message the log message
  */
-function validateUrl(url) {
-	/**
-	 * Evaluates to true if url is not null and doesn't
-	 * contain any of the following characters: . # $ [ ]
-	 */
-	return url != null && (/^[^\.#\$\[\]]*$/).test(url);
+function log(_message) {
+  LOG.log('Firebase Module', _message);
 }

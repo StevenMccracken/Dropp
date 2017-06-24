@@ -1,173 +1,331 @@
 /**
- * router_mod - HTTP request routing @module
+ * router_mod - @module for HTTP request routing
  */
 
-const MIDDLEWARE 	= require('./middleware_mod');
-const MEDIA 		  = require('./media_mod');
-var router        = null;
+const LOG = require('./log_mod');
+const MEDIA = require('./media_mod');
+const MIDDLEWARE = require('./middleware_mod');
 
+let router;
 var routing = function(_router) {
-	router = _router;
+  router = _router;
 
   /**
-	 * Middleware to log metadata about incoming requests
-   * @param {Object} request the HTTP request
-   * @param {Object} response the HTTP response
-   * @param {callback} next the callback to execute after metadata has been logged
+   * Middleware to log the request type and full API route
+   * @param {Object} _request the HTTP request
+   * @param {Object} _response the HTTP response
+   * @param {callback} _next the callback to execute after metadata has been logged
    */
-	router.use((request, response, next) => {
-	  const IP = request.headers['x-forwarded-for'] || request.connection.remoteAddress;
-		console.log('%s: %s request received from IP %s', new Date().toISOString(), request.method, IP);
-    next()
-	});
-
-	/**
-	 * The base GET route for the API. This route
-	 * does not require token authentication
-	 * @param {Object} request the HTTP request
-	 * @param {Object} response the HTTP response
-	 */
-	router.get('/', (request, response) => {
-    response.json( { message: 'This is the REST API for Dropp' } );
-	});
-
-	/**
-	 * The POST route for validating login credentials. Sends
-	 * an error JSON or a JSON web token for the requesting
-	 * client. This route does not require token authentication
-	 * @param {Object} request the HTTP request
-	 * @param {Object} response the HTTP response
-	 */
-	router.route('/authenticate').post((request, response) => {
-	   MIDDLEWARE.auth(request, response, result => {
-       response.json(result);
-     });
-   });
-
-	/**
-	 * The POST route for creating a user. Sends an error JSON or a JSON of
-	 * the created user. This route does not require token authentication
-	 * @param {Object} request the HTTP request
-	 * @param {Object} response the HTTP response
-	 */
-	router.route('/users').post((request, response) => {
-    MIDDLEWARE.createUser(request, response, result => {
-      response.json(result);
-    });
-	});
-
-	/**
-	 * The GET route for retrieving a user by their username. Sends an error JSON
-	 * or a JSON of the requested user. This route requires token authentication
-	 * @param {Object} request the HTTP request
-	 * @param {Object} response the HTTP response
-	 */
-	router.route('/users/:username').get((request, response) => {
-    MIDDLEWARE.getUser(request, response, result => {
-      response.json(result);
-		});
-	});
-
-	/**
-	 * The GET route for retrieving all dropps. Sends an error JSON or a
-	 * JSON of all the dropps. This route requires token authentication
-	 * @param {Object} request the HTTP request
-	 * @param {Object} response the HTTP response
-	 */
-	router.route('/dropps').get(function(request, response) {
-    MIDDLEWARE.getAllDropps(request, response, result => {
-      response.json(result);
-		});
+  router.use((_request, _response, _next) => {
+    log(`${_request.method} ${_request.url}`, _request);
+    _next();
   });
 
-	/**
-	 * The GET route for retrieving all dropps posted by a specific
-	 * user. Sends an error JSON or a JSON of the dropps posted by
-	 * the requested user. This route requires token authentication
-	 * @param {Object} request the HTTP request
-	 * @param {Object} response the HTTP response
-	 */
-	router.route('/users/:username/dropps').get(function(request, response) {
-		MIDDLEWARE.getDroppsByUser(request, response, result => {
-      response.json(result);
-		});
-	});
-
-	/**
-	 * The GET route for retrieving a dropp by its id. Sends an error JSON or
-	 * a JSON of the requested dropp. This route requires token authentication
-	 * @param {Object} request the HTTP request
-	 * @param {Object} response the HTTP response
-	 */
-	router.route('/dropps/:droppId').get(function(request, response) {
-		MIDDLEWARE.getDropp(request, response, result => {
-			response.json(result);
-		});
-	});
-
-	/**
-	 * The POST route for retrieving dropps near a specific location.
-	 * Sends an error JSON or a JSON of the dropps near that
-	 * specific location. This route requires token authentication
-	 * @param {Object} request the HTTP request
-	 * @param {Object} response the HTTP response
-	 */
-	router.route('/location/dropps').post(function(request, response) {
-    MIDDLEWARE.getDroppsByLocation(request, response, result => {
-      response.json(result);
-		});
-	});
-
-	/**
-	 * The POST route for creating a dropp. Sends an error JSON or a JSON
-	 * of the created dropp's id. This route requires token authentication
-	 * @param {Object} request the HTTP request
-	 * @param {Object} response the HTTP response
-	 */
-	router.route('/dropps').post(function(request, response) {
-    MIDDLEWARE.createDropp(request, response, result => {
-      response.json(result);
-    });
-  });
-
-	/**
-	 * The POST route for uploading an image to link with a dropp.
-	 * The request body Content-Type MUST be multipart/form-data.
-	 * This route requires token authentication
-	 * @param {Object} request the HTTP request
-	 * @param {Object} response the HTTP response
-	 */
-	router.route('/dropps/:droppId/image')
-    .post(MEDIA.upload.single('image'), function(request, response) {
-      MIDDLEWARE.addImage(request, response, result => {
-        response.json(result);
-      });
-    });
-
-	/**
-	 * The GET route for downloading the image linked to a
-   * dropp. This route requires token authentication
-   * @param {Object} request the HTTP request
-   * @param {Object} response the HTTP response
+  /**
+   * The base GET route for the API. This route does not require token authentication
+   * @param {Object} _request the HTTP request
+   * @param {Object} _response the HTTP response
    */
-  router.route('/dropps/:droppId/image').get(function(request, response) {
-   	MIDDLEWARE.getImage(request, response, result => {
-			// There was no error retrieving media, so write the data to the request
-      if (result.media != null) {
-				if (request.headers != null && request.headers.platform === 'React-Native') {
-					response.send(result.media);
-				} else {
-					response.write(result.media, 'binary');
-	     		response.end(null, 'binary');
-				}
-   		} else {
-				// There was an error retrieving the image, so send a regular JSON
-   			response.json(result);
-   		}
+  router.route('/').get((_request, _response) => (
+    _response.json({ message: 'This is the REST API for Dropp' })
+  ));
+
+  /**
+   * The POST route for validating login credentials. Sends
+   * an error JSON or a JSON web token for the client.
+   * This route does not require token authentication
+   * @param {Object} _request the HTTP request
+   * @param {Object} _response the HTTP response
+   */
+  router.route('/authenticate').post((_request, _response) => (
+    MIDDLEWARE.authenticate(_request, _response, result => _response.json(result))
+  ));
+
+  /**
+   * The POST route for creating a user. Sends an error JSON or a JSON web
+   * token for new client. This route does not require token authentication
+   * @param {Object} _request the HTTP request
+   * @param {Object} _response the HTTP response
+   */
+  router.route('/users').post((_request, _response) => (
+    MIDDLEWARE.createUser(_request, _response, result => _response.json(result))
+  ));
+
+  /**
+   * The GET route for retrieving a user by their username. Sends an error JSON
+   * or a JSON of the requested user. This route requires token authentication
+   * @param {Object} _request the HTTP request
+   * @param {Object} _response the HTTP response
+   */
+  router.route('/users/:username').get((_request, _response) => (
+    MIDDLEWARE.getUser(_request, _response, result => _response.json(result))
+  ));
+
+  /**
+   * The PUT route for updating a user's email. Sends an error JSON or a JSON
+   * of the successful update. This route does not require token authentication
+   * @param {Object} _request the HTTP request
+   * @param {Object} _response the HTTP response
+   */
+  router.route('/users/:username/email').put((_request, _response) => (
+    MIDDLEWARE.updateUserEmail(_request, _response, result => _response.json(result))
+  ));
+
+  /**
+   * The PUT route for updating a user's password. Sends an error JSON or a JSON
+   * of the successful update. This route does not require token authentication
+   * @param {Object} _request the HTTP request
+   * @param {Object} _response the HTTP response
+   */
+  router.route('/users/:username/password').put((_request, _response) => (
+    MIDDLEWARE.updateUserPassword(_request, _response, result => _response.json(result))
+  ));
+
+  /**
+   * The DELETE route for removing a user by their username.
+   * Sends an error JSON or a JSON of the successful
+   * deletion. This route requires token authentication
+   * @param {Object} _request the HTTP request
+   * @param {Object} _response the HTTP response
+   */
+  router.route('/users/:username').delete((_request, _response) => (
+    MIDDLEWARE.deleteUser(_request, _response, result => _response.json(result))
+  ));
+
+  /**
+   * The POST route for creating a dropp. Sends an error JSON or a JSON
+   * of the created dropp's id. This route requires token authentication
+   * @param {Object} _request the HTTP request
+   * @param {Object} _response the HTTP response
+   */
+  router.route('/dropps').post((_request, _response) => (
+    MIDDLEWARE.createDropp(_request, _response, result => _response.json(result))
+  ));
+
+  /**
+   * The POST route for uploading an image to link with
+   * a dropp. The request body Content-Type MUST be
+   * multipart/form-data. This route requires token authentication
+   * @param {Object} _request the HTTP request
+   * @param {Object} _response the HTTP response
+   */
+  router.route('/dropps/:droppId/image').post(
+    MEDIA.upload.single('image'),
+    (_request, _response) => (
+      MIDDLEWARE.addImage(_request, _response, result => _response.json(result))
+  ));
+
+  /**
+   * The GET route for retrieving a dropp by its id. Sends an error JSON or
+   * a JSON of the requested dropp. This route requires token authentication
+   * @param {Object} _request the HTTP request
+   * @param {Object} _response the HTTP response
+   */
+  router.route('/dropps/:droppId').get((_request, _response) => (
+    MIDDLEWARE.getDropp(_request, _response, result => _response.json(result))
+  ));
+
+  /**
+   * The GET route for downloading the image linked to a dropp. Sends
+   * an error JSON or the image. The image will be sent as binary data.
+   * However, the image will be sent as a base-64 string if the client
+   * platform is React-Native. This route requires token authentication
+   * @param {Object} _request the HTTP request
+   * @param {Object} _response the HTTP response
+   */
+  router.route('/dropps/:droppId/image').get((_request, _response) => {
+     MIDDLEWARE.getImage(_request, _response, (result) => {
+      // There was an error retrieving media, so send the error result as a JSON
+      if (result.media === undefined) _response.json(result);
+      else {
+        // Send the image-encoded string directly if the platform is React-Native
+        if (_request.headers.platform === 'React-Native') _response.send(result.media);
+        else {
+          // Send the binary data image file
+          _response.write(result.media, 'binary');
+          _response.end(null, 'binary');
+        }
+      }
     });
   });
 
-	return router;
+  /**
+   * The GET route for retrieving dropps near a specific location
+   * or posted by a specific user's follows. Sends an error JSON or
+   * a JSON of the dropps. This route requires token authentication
+   * @param {Object} _request the HTTP request
+   * @param {Object} _response the HTTP response
+   */
+  router.route('/dropps').get((_request, _response) => (
+    MIDDLEWARE.getAllDropps(_request, _response, result => _response.json(result))
+  ));
+
+  /**
+   * The GET route for retrieving dropps near a specific location.
+   * Sends an error JSON or a JSON of the dropps near that
+   * specific location. This route requires token authentication
+   * @param {Object} _request the HTTP request
+   * @param {Object} _response the HTTP response
+   */
+  router.route('/location/dropps').get((_request, _response) => (
+    MIDDLEWARE.getDroppsByLocation(_request, _response, result => _response.json(result))
+  ));
+
+  /**
+   * The GET route for retrieving all dropps posted by a specific
+   * user. Sends an error JSON or a JSON of the dropps posted by
+   * the requested user. This route requires token authentication
+   * @param {Object} _request the HTTP request
+   * @param {Object} _response the HTTP response
+   */
+  router.route('/users/:username/dropps').get((_request, _response) => (
+    MIDDLEWARE.getDroppsByUser(_request, _response, result => _response.json(result))
+  ));
+
+  /**
+   * The GET route for retrieving all dropps posted by a client's
+   * follows. Sends an error JSON or a JSON of the dropps posted by the
+   * requested user's follows. This route requires token authentication
+   * @param {Object} _request the HTTP request
+   * @param {Object} _response the HTTP response
+   */
+  router.route('/follows/dropps').get((_request, _response) => (
+    MIDDLEWARE.getDroppsByFollows(_request, _response, result => _response.json(result))
+  ));
+
+  /**
+   * The PUT route for updating a dropp's text content. Sends an error JSON or a
+   * JSON indicating successful update. This route requires token authentication
+   * @param {Object} _request the HTTP request
+   * @param {Object} _response the HTTP response
+   */
+  router.route('/dropps/:droppId/text').put((_request, _response) => (
+    MIDDLEWARE.updateDroppText(_request, _response, result => _response.json(result))
+  ));
+
+  /**
+   * The DELETE route for deleting a dropp by its id. Sends an error JSON or a
+   * JSON indicating successful deletion. This route requires token authentication
+   * @param {Object} _request the HTTP request
+   * @param {Object} _response the HTTP response
+   */
+  router.route('/dropps/:droppId').delete((_request, _response) => (
+    MIDDLEWARE.deleteDropp(_request, _response, result => _response.json(result))
+  ));
+
+  /**
+   * The POST route for requesting to follow a user. Sends an error
+   * or success JSON. This route requires token authentication
+   * @param {Object} _request the HTTP request
+   * @param {Object} _response the HTTP response
+   */
+  router.route('/requests/follows/:username').post((_request, _response) => (
+    MIDDLEWARE.requestToFollow(_request, _response, result => _response.json(result))
+  ));
+
+  /**
+   * The GET route for retrieving a user's followers. Sends an error JSON or
+   * a JSON with the user's follower. This route requires token authentication
+   * @param {Object} _request the HTTP request
+   * @param {Object} _response the HTTP response
+   */
+  router.route('/users/:username/followers').get((_request, _response) => (
+    MIDDLEWARE.getFollowers(_request, _response, result => _response.json(result))
+  ));
+
+  /**
+   * The GET route for retrieving the users that another user
+   * follows. Sends an error JSON or a JSON with the user's
+   * follower equests. This route requires token authentication
+   * @param {Object} _request the HTTP request
+   * @param {Object} _response the HTTP response
+   */
+  router.route('/users/:username/follows').get((_request, _response) => (
+    MIDDLEWARE.getFollows(_request, _response, result => _response.json(result))
+  ));
+
+  /**
+   * The GET route for retrieving a user's follower requests.
+   * Sends an error JSON or a JSON with the user's follower
+   * requests. This route requires token authentication
+   * @param {Object} _request the HTTP request
+   * @param {Object} _response the HTTP response
+   */
+  router.route('/requests/followers').get((_request, _response) => (
+    MIDDLEWARE.getFollowerRequests(_request, _response, result => _response.json(result))
+  ));
+
+  /**
+   * The GET route for retrieving a user's follow requests.
+   * Sends an error JSON or a JSON with the user's follower
+   * requests. This route requires token authentication
+   * @param {Object} _request the HTTP request
+   * @param {Object} _response the HTTP response
+   */
+  router.route('/requests/follows').get((_request, _response) => (
+    MIDDLEWARE.getFollowRequests(_request, _response, result => _response.json(result))
+  ));
+
+  /**
+   * The PUT route for accepting a follower request. Sends an error
+   * or success JSON. This route requires token authentication
+   * @param {Object} _request the HTTP request
+   * @param {Object} _response the HTTP response
+   */
+  router.route('/requests/followers/:username').put((_request, _response) => (
+    MIDDLEWARE.respondToFollowerRequest(_request, _response, result => _response.json(result))
+  ));
+
+  /**
+   * The DELETE route for declining a pending follower request. Sends
+   * an error or success JSON. This route requires token authentication
+   * @param {Object} _request the HTTP request
+   * @param {Object} _response the HTTP response
+   */
+  router.route('/requests/followers/:username').delete((_request, _response) => (
+    MIDDLEWARE.respondToFollowerRequest(_request, _response, result => _response.json(result))
+  ));
+
+  /**
+   * The DELETE route for removing a pending follow request. Sends an
+   * error or success JSON. This route requires token authentication
+   * @param {Object} _request the HTTP request
+   * @param {Object} _response the HTTP response
+   */
+  router.route('/requests/follows/:username').delete((_request, _response) => (
+    MIDDLEWARE.removeFollowRequest(_request, _response, result => _response.json(result))
+  ));
+
+  /**
+   * The DELETE route for removing a follower. Sends an error
+   * or success JSON. This route requires token authentication
+   * @param {Object} _request the HTTP request
+   * @param {Object} _response the HTTP response
+   */
+  router.route('/followers/:username').delete((_request, _response) => (
+    MIDDLEWARE.removeFollower(_request, _response, result => _response.json(result))
+  ));
+
+  /**
+   * The DELETE route for unfollowing a user. Sends an error
+   * or success JSON. This route requires token authentication
+   * @param {Object} _request the HTTP request
+   * @param {Object} _response the HTTP response
+   */
+  router.route('/follows/:username').delete((_request, _response) => (
+    MIDDLEWARE.unfollow(_request, _response, result => _response.json(result))
+  ));
+
+  return router;
 }
 
 module.exports = routing;
+
+/**
+ * log - Logs a message to the server console
+ * @param {String} _message the log message
+ * @param {Object} _request the HTTP request
+ */
+function log(_message, _request) {
+  LOG.log('Router Module', _message, _request);
+}

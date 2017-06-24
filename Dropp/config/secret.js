@@ -1,10 +1,10 @@
 /**
- * secret - JSON web token secret @module
+ * secret - JSON web token secret configuration
  */
 
-const uuidV4 = require('uuid/v4');
+const Uuidv4 = require('uuid/v4');
 
+// secret is a random UUID string for the seed of web token authentication
 module.exports = {
-  // A random UUID string for the seed of our web token authentication
-  'secret': uuidV4(),
+  secret: Uuidv4(),
 };
