@@ -26,7 +26,6 @@ class ViewController: UIViewController, UITextViewDelegate, UIImagePickerControl
     let picker = UIImagePickerController()
     let locationManager = CLLocationManager()
     
-    var token = ""
     var originalPostDropButtonYLoc: CGFloat!
     
     var spb: SegmentedProgressBar!
@@ -34,9 +33,6 @@ class ViewController: UIViewController, UITextViewDelegate, UIImagePickerControl
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        // Get the token from the saved data
-        self.token = UserDefaults.standard.value(forKey: "jwt") as! String
-                
         // Apply border to text view
         self.messageView.layer.borderWidth = 0.8
         self.messageView.layer.borderColor = self.viewModule.salmonColor.cgColor
@@ -123,7 +119,7 @@ class ViewController: UIViewController, UITextViewDelegate, UIImagePickerControl
     
     // Sends an image to the server
     func sendImage(_ droppId: String, _ image: UIImage, _ compression: Double, completion: @escaping (Int) -> Void) {
-        let request = self.http.createImageRequest(droppId: droppId, token: self.token, params: [:], image: image, compression: compression)
+        let request = self.http.createImageRequest(droppId: droppId, params: [:], image: image, compression: compression)
         
         // Send the request to post the image and return the server response success or fail
         self.http.sendRequest(request: request) { response, json in
@@ -134,8 +130,7 @@ class ViewController: UIViewController, UITextViewDelegate, UIImagePickerControl
     // Sends text and metadata to the server
     func sendContent(_ message: String, _ hasImage: Bool, completion: @escaping (String) -> Void) {
         // Get the current location of the device
-        let loc = locationManager.location!.coordinate
-        let locString = "\(loc.latitude),\(loc.longitude)"
+        let locationString = locationManager.location!.coordinate.toString
         
         // Get the current UNIX timestamp in seconds
         let timestamp = Int(NSDate().timeIntervalSince1970.rounded())
@@ -143,16 +138,16 @@ class ViewController: UIViewController, UITextViewDelegate, UIImagePickerControl
         let media = hasImage ? "true" : "false"
         
         // Create the dictionary for the request body
-        let content = ["location": locString, "timestamp": timestamp, "text": message, "media": media] as [String: Any]
+        let content = ["location": locationString, "timestamp": timestamp, "text": message, "media": media] as [String: Any]
         
-        let request = self.http.createPostRequest(path: "/dropps", token: self.token, body: content)
+        let request = self.http.createPostRequest(path: "/dropps", body: content)
         
         // Send the request and receive the response
         self.http.sendRequest(request: request) { response, json in
             var droppId = ""
             
             // If the server returns 200, the post was successful and json contains the droppId
-            if response.statusCode == 200 {
+            if response.statusCode == 201 {
                 droppId = json["droppId"]! as! String
             }
             
@@ -265,9 +260,8 @@ class ViewController: UIViewController, UITextViewDelegate, UIImagePickerControl
         
         // Send an HTTP request to upload the image
         self.sendImage(droppId, image, compression) { statusCode in
-
             // If the image was uploaded successfully, reset the post dropp screen
-            if statusCode == 200 {
+            if statusCode == 201 {
                 self.viewModule.stopLoadingIcon(loadingIconView: self.loadingView, fadeTime: 1.0) { _ in }
                 // Delay the completion of the progress bar
                 sleep(1)
@@ -565,13 +559,5 @@ class ViewController: UIViewController, UITextViewDelegate, UIImagePickerControl
             self.viewModule.fadeImage(imageView: self.imageView, endValue: 1.0, duration: 1.0, delay: 0.0) { _ in }
             self.cancelButton.isHidden = self.imageView.image == nil
         }
-    }
-}
-
-// MARK: Extensions
-
-extension String {
-    func trim() -> String {
-        return self.trimmingCharacters(in: CharacterSet.whitespacesAndNewlines)
     }
 }

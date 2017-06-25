@@ -13,8 +13,8 @@ class HTTPModule {
     
     let apiPath = "https://dropps.me"
     
-    func createImageRequest(droppId: String, token: String, params: [String: String], image: UIImage, compression: Double) -> URLRequest {
-        var request = self.createRequest(path: "/dropps/\(droppId)/image", token: token)
+    func createImageRequest(droppId: String, params: [String: String], image: UIImage, compression: Double) -> URLRequest {
+        var request = self.createRequest(path: "/dropps/\(droppId)/image")
         request.httpMethod = "POST"
         
         let boundary = "Boundary-\(UUID().uuidString)"
@@ -30,44 +30,51 @@ class HTTPModule {
         return request
     }
     
-    func createGetRequest(path: String, token: String) -> URLRequest {
-        var request = self.createJsonRequest(path: path, token: token)
+    func createGetRequest(path: String, params: [String: Any]) -> URLRequest {
+        var request = self.createJsonRequest(path: path)
         
         // Set the request type
         request.httpMethod = "GET"
         
+        // Add each parameter key-value to the request headers
+        for (key, value) in params {
+            request.addValue("\(value)", forHTTPHeaderField: key)
+        }
+        
         return request
     }
     
-    func createPostRequest(path: String, token: String, body: [String: Any]) -> URLRequest {
-        var request = self.createJsonRequest(path: path, token: token)
+    func createPostRequest(path: String, body: [String: Any]) -> URLRequest {
+        var request = self.createJsonRequest(path: path)
         
         // Set the request type
         request.httpMethod = "POST"
+                
+        // Add the body to the request for x-www-form-urlencoded
+        request.httpBody = self.createParamsData(params: body)
         
-        // Add the parameters in the dictionary to a string as key=value pairs separated by &'s
-        var params = ""
+        return request
+    }
+    
+    func createParamsData(params: [String: Any]) -> Data {
+        let paramsData = NSMutableData()
         var first = true
-        for (key, value) in body {
+        for (key, value) in params {
             if !first {
-                params += "&"
+                paramsData.appendString("&")
             } else {
                 first = false
             }
             
-            params += "\(key)=\(value)"
+            paramsData.appendString("\(key)=\(value)")
         }
-                
-        // Add the body to the request for x-www-form-urlencoded
-        let encodedParams = params.data(using:String.Encoding.utf8, allowLossyConversion: false)
-        request.httpBody = encodedParams
         
-        return request
+        return paramsData as Data
     }
     
-    private func createJsonRequest(path: String, token: String) -> URLRequest {
+    private func createJsonRequest(path: String) -> URLRequest {
         // Create the URL request with the given path
-        var request  = self.createRequest(path: path, token: token)
+        var request  = self.createRequest(path: path)
         
         // Set the content type of the body
         request.addValue("application/x-www-form-urlencoded", forHTTPHeaderField: "Content-Type")
@@ -75,12 +82,18 @@ class HTTPModule {
         return request
     }
     
-    private func createRequest(path: String, token: String) -> URLRequest {
+    private func createRequest(path: String) -> URLRequest {
         // Create the URL request with the given path
         var request  = URLRequest(url: URL(string: "\(self.apiPath)\(path)")!)
         
         // Add the token to the request
-        request.addValue(token, forHTTPHeaderField: "Authorization")
+        if UserDefaults.standard.value(forKey: "jwt") != nil {
+            let jwt = UserDefaults.standard.value(forKey: "jwt") as! String
+            request.addValue(jwt, forHTTPHeaderField: "Authorization")
+        } else {
+            // No token for request
+        }
+        
         
         return request
     }
@@ -104,6 +117,10 @@ class HTTPModule {
                 print("Request body is too large, the server denied the request")
                 completion(httpResponse, responseJson)
                 return
+            } else if httpResponse.statusCode != 200 && httpResponse.statusCode != 201 {
+                print("Request was denied")
+            } else {
+                print("Request succeeded")
             }
             
             // Request went to server, so parse the response JSON
@@ -123,13 +140,13 @@ class HTTPModule {
     }
     
     func getNewToken(completion: @escaping (String) -> Void) {
-        let username = "steve"
-        let password = "password"
+        let username = UserDefaults.standard.value(forKey: "username") as! String
+        let password = UserDefaults.standard.value(forKey: "password") as! String
         
         // Create the dictionary for the request body
-        let body = ["username": username, "password": password] as [String: Any]
+        let body = ["username": username, "password": password]
         
-        let request = self.createPostRequest(path: "/authenticate", token: "", body: body)
+        let request = self.createPostRequest(path: "/authenticate", body: body)
         
         self.sendRequest(request: request) { response, json in
             var token = ""
@@ -192,12 +209,5 @@ class HTTPModule {
         }
         
         task.resume()
-    }
-}
-
-extension NSMutableData {
-    func appendString(_ string: String) {
-        let data = string.data(using: String.Encoding.utf8, allowLossyConversion: false)
-        append(data!)
     }
 }

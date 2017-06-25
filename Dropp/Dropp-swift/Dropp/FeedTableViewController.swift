@@ -12,11 +12,11 @@ import CoreLocation
 class FeedTableViewController: UITableViewController, CLLocationManagerDelegate {
     
     let http = HTTPModule()
+    let viewModule = ViewModule()
     let locationManager = CLLocationManager()
-    var dropps: [Dropp] = []
     let cellIdentifier = "CellIdentifier"
+    var dropps: [Dropp] = []
     let salmonColor: UIColor = UIColor(red: 1.0, green: 0.18, blue: 0.33, alpha: 1.0)
-    var token = ""
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -26,13 +26,9 @@ class FeedTableViewController: UITableViewController, CLLocationManagerDelegate 
         // Apply the salmon color to the nav bar buttons
         navigationController?.navigationBar.tintColor = UIColor.white
         navigationController?.navigationBar.titleTextAttributes = [NSForegroundColorAttributeName: UIColor.white]
-        navigationController?.navigationBar.barTintColor = self.salmonColor
+        navigationController?.navigationBar.barTintColor = self.viewModule.salmonColor
         
-        tabBarController?.tabBar.tintColor = self.salmonColor
-        
-        
-        // Get the token from user defaults
-        self.token = UserDefaults.standard.value(forKey: "jwt") as! String
+        tabBarController?.tabBar.tintColor = self.viewModule.salmonColor
         
         // Ask for Authorisation from the User for location
         self.locationManager.requestAlwaysAuthorization()
@@ -46,11 +42,7 @@ class FeedTableViewController: UITableViewController, CLLocationManagerDelegate 
             locationManager.startUpdatingLocation()
         }
         
-        DispatchQueue.main.async {
-            self.getDropps()
-        }
-        
-        self.tableView.reloadData()
+        self.getDropps()
         
         // Uncomment the following line to preserve selection between presentations
         // self.clearsSelectionOnViewWillAppear = false
@@ -78,6 +70,10 @@ class FeedTableViewController: UITableViewController, CLLocationManagerDelegate 
         for dropp in dropps {
             self.addDroppToFeed(dropp: dropp)
         }
+        
+        DispatchQueue.main.async {
+            self.tableView.reloadData()
+        }
     }
     
     @IBAction func updateFeed(_ sender: Any) {
@@ -98,24 +94,20 @@ class FeedTableViewController: UITableViewController, CLLocationManagerDelegate 
     }
     
     func getDropps() {
-        // Set the max distance parameter in meters`
+        // Set the max distance parameter in meters
         let maxDistance = 100
         
         // Get the location's current device
-        let loc = locationManager.location!.coordinate
-        let locString = "\(loc.latitude),\(loc.longitude)"
+        let location = locationManager.location!.coordinate.toString
         
         // Create request with parameters
-        let body = ["location": locString, "maxDistance": maxDistance] as [String: Any]
-        let request = self.http.createPostRequest(path: "/location/dropps", token: self.token, body: body)
+        let params = ["location": location, "max_distance": maxDistance] as [String: Any]
+        let request = self.http.createGetRequest(path: "/dropps", params: params)
         
         // Send the request and get the response
-        self.http.sendRequest(request: request) { response, json in
+        self.http.sendRequest(request: request) { response, dropps in
             var closeDropps: [Dropp] = []
             if response.statusCode == 200 {
-                // Get the dropps from the response json
-                let dropps = json["dropps"] as! [String: Any]
-                
                 // Go through all of the nearby dropps
                 for (droppId, droppJson) in dropps {
                     let content = droppJson as! [String: Any]
@@ -152,11 +144,7 @@ class FeedTableViewController: UITableViewController, CLLocationManagerDelegate 
                     let detailViewController = segue.destination as! DetailViewController
                     detailViewController.dropp = dropp
                     
-                    let coordinates = dropp.location.components(separatedBy: ",")
-                    let droppLocation = CLLocation(latitude: Double(coordinates[0])!, longitude: Double(coordinates[1])!)
-                    let deviceLocation = locationManager.location!
-                    
-                    let distance = droppLocation.distance(from: deviceLocation)
+                    let distance = dropp.distance(from: locationManager.location!)
                     detailViewController.distanceFromDropp = distance
                 }
             default:
@@ -177,8 +165,7 @@ class FeedTableViewController: UITableViewController, CLLocationManagerDelegate 
     }
 
     
-    override func tableView(_ tableView: UITableView,
-                            cellForRowAt indexPath: IndexPath) -> UITableViewCell {
+    override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         
         let dropp = self.dropps[indexPath.row]
         
@@ -187,8 +174,9 @@ class FeedTableViewController: UITableViewController, CLLocationManagerDelegate 
         if cell == nil {
             cell = UITableViewCell(style: UITableViewCellStyle.subtitle, reuseIdentifier: cellIdentifier)
         }
+        
         cell = UITableViewCell(style: UITableViewCellStyle.subtitle, reuseIdentifier: cellIdentifier)
-        cell?.configureFlatCell(with: UIColor.white, selectedColor: self.salmonColor, roundingCorners: UIRectCorner(rawValue: 0))
+        cell?.configureFlatCell(with: UIColor.white, selectedColor: self.viewModule.salmonColor, roundingCorners: UIRectCorner(rawValue: 0))
         cell?.textLabel?.textColor = UIColor.black
         cell?.detailTextLabel?.textColor = UIColor.black
         cell?.cornerRadius = 5.0

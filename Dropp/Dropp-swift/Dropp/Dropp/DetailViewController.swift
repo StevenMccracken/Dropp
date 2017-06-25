@@ -45,19 +45,26 @@ class DetailViewController: UIViewController {
             self.userLabel.text = self.dropp.user
             self.timestampLabel.text = dateString
             
-            if self.distanceFromDropp < 1.0 {
-                self.locationLabel.text = "Less than a meter away"
+            if self.distanceFromDropp > 304.8 {
+                // Distance is further than 1000 feet away. Convert to miles
+                let distanceMiles = self.distanceFromDropp.metersToMiles
+                let roundedDistance = Int((distanceMiles * 4.0).rounded() / 4)
+                let quantifier = roundedDistance == 1 ? "mile" : "miles"
+                self.locationLabel.text = "About \(roundedDistance) \(quantifier) away"
+            } else if self.distanceFromDropp <= 304.8 && self.distanceFromDropp >= 1.524 {
+                // Distance is between 5 feet and 1000 feet. Convert to feet
+                let distanceFeet = self.distanceFromDropp.metersToFeet
+                let roundedDistance = Int(distanceFeet.rounded())
+                self.locationLabel.text = "\(roundedDistance) feet away"
             } else {
-                let roundedDistance = Int(self.distanceFromDropp!.rounded())
-                let quantifier = roundedDistance == 1 ? "meter" : "meters"
-                self.locationLabel.text = "\(roundedDistance) \(quantifier) away"
+                self.locationLabel.text = "Less than 5 feet away"
             }
             
             self.textView.text = self.dropp.message
         }
         
         if !dropp.hasMedia {
-            self.textView.font = UIFont(name: (self.textView.font?.fontName)!, size: (self.textView.font?.pointSize)!+30)!
+            self.textView.font = UIFont(name: (self.textView.font?.fontName)!, size: (self.textView.font?.pointSize)! + 30)!
         }
         
         // If there is an image in the database for this dropp, fetch it
@@ -70,8 +77,7 @@ class DetailViewController: UIViewController {
     
     // Retrieves an image from the database
     func fetchImage(droppId: String) {
-        let token = UserDefaults.standard.value(forKey: "jwt") as! String
-        let request = self.http.createGetRequest(path: "/dropps/\(droppId)/image", token: token)
+        let request = self.http.createGetRequest(path: "/dropps/\(droppId)/image", params: [:])
         
         self.http.getImage(request: request) { response, data  in
             // Test if the data from the response is valid
@@ -98,13 +104,5 @@ class DetailViewController: UIViewController {
                 }
             }
         }
-    }
-}
-
-extension Double {
-    /// Rounds the double to decimal places value
-    func roundTo(places:Int) -> Double {
-        let divisor = pow(10.0, Double(places))
-        return (self * divisor).rounded() / divisor
     }
 }

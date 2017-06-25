@@ -17,6 +17,8 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplicationLaunchOptionsKey: Any]?) -> Bool {
         
         // Override point for customization after application launch.
+        UserDefaults.standard.setValue("steve", forKey: "username")
+        UserDefaults.standard.setValue("password", forKey: "password")
         
         // Get a fresh token from the server
         var requestedToken = false
@@ -34,7 +36,8 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         
         // Wait until the response is done
         while !requestedToken {}
-        return true
+        let token = UserDefaults.standard.value(forKey: "jwt") as! String
+        return token.substring(with: 0..<3) == "JWT"
     }
 
     func applicationWillResignActive(_ application: UIApplication) {
@@ -59,6 +62,4 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         // Called when the application is about to terminate. Save data if appropriate. See also applicationDidEnterBackground:.
     }
 
-
 }
-
