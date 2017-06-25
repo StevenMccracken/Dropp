@@ -168,7 +168,7 @@
     * `[username]`
       * Non-empty string containing alphanumeric characters, dashes, or underscores
   * In the request body
-    * `new_email`
+    * `new-email`
       * Non-empty string containing a valid email format
 * Optional parameters: _none_
 * Successful request returns
@@ -182,7 +182,7 @@
   }
   ```
 * Notes
-  * The `new_email` value must be __different__ from the existing email in the database
+  * The `new-email` value must be __different__ from the existing email in the database
 
 **[⬆ back to top](#table-of-contents)**
 <a name="update-password"></a>
@@ -198,9 +198,9 @@
     * `[username]`
       * Non-empty string containing alphanumeric characters, dashes, or underscores
   * In the request body
-    * `old_password`
+    * `old-password`
       * Non-empty string containing alphanumeric and special characters
-    * `new_password`
+    * `new-password`
       * Non-empty string containing alphanumeric and special characters
 * Optional parameters: _none_
 * Successful request returns
@@ -214,8 +214,8 @@
   }
   ```
 * Notes
-  * The `old_password` value must be __identical__ to the existing password in the database
-  * The `new_password` value must be __different__ from the existing password in the database
+  * The `old-password` value must be __identical__ to the existing password in the database
+  * The `new-password` value must be __different__ from the existing password in the database
 
 **[⬆ back to top](#table-of-contents)**
 <a name="delete-user"></a>
@@ -368,7 +368,7 @@
     * `location`
       * Non-empty string containing two floating-point numbers separated by a comma
       * Represents the latitude and longitude of the current location
-    * `max_distance`
+    * `max-distance`
       * Positive floating point number
 * Optional parameters: _none_
 * Successful request returns
@@ -389,7 +389,7 @@
   ```
 * Notes
   * `nearby` attribute is a string equal to `true` or `false`
-    * Represents whether or not the dropp is within `max_distance` of `location`
+    * Represents whether or not the dropp is within `max-distance` of `location`
 
 **[⬆ back to top](#table-of-contents)**
 <a name="nearby-dropps"></a>
@@ -404,7 +404,7 @@
     * `location`
       * Non-empty string containing two floating-point numbers separated by a comma
       * Represents the latitude and longitude of the current location
-    * `max_distance`
+    * `max-distance`
       * Positive floating point number
 * Optional parameters: _none_
 * Successful request returns
@@ -492,7 +492,7 @@
     * `[droppId]`
       * Non-empty string containing alphanumeric characters, dashes, or underscores
   * In the request body
-    * `new_text`
+    * `new-text`
       * String containing alphanumeric characters, special characters, and spaces
       * If `media` is `false` for the dropp, this value __must__ be non-empty
 * Optional parameters: _none_
@@ -507,7 +507,7 @@
   }
   ```
 * Notes
-  * The `new_text` value must be __different__ from the existing text in the database
+  * The `new-text` value must be __different__ from the existing text in the database
 
 **[⬆ back to top](#table-of-contents)**
 <a name="delete-dropp"></a>

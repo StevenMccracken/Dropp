@@ -101,7 +101,7 @@ class FeedTableViewController: UITableViewController, CLLocationManagerDelegate 
         let location = locationManager.location!.coordinate.toString
         
         // Create request with parameters
-        let params = ["location": location, "max_distance": maxDistance] as [String: Any]
+        let params = ["location": location, "max-distance": maxDistance] as [String: Any]
         let request = self.http.createGetRequest(path: "/dropps", params: params)
         
         // Send the request and get the response

@@ -140,7 +140,7 @@ describe('Start server', () => {
       requestParams = {
         url: `${baseUrl}/users/${user1Name}/email`,
         headers: { Authorization: user1Token },
-        form: { new_email: `${user1Name}_updated@grunttest.com` },
+        form: { 'new-email': `${user1Name}_updated@grunttest.com` },
       };
     });
 
@@ -162,8 +162,8 @@ describe('Start server', () => {
         url: `${baseUrl}/users/${user1Name}/password`,
         headers: { Authorization: user1Token },
         form: {
-          old_password: password,
-          new_password: `${password}_updated`,
+          'old-password': password,
+          'new-password': `${password}_updated`,
         },
       };
     });
@@ -316,7 +316,7 @@ describe('Start server', () => {
         url: `${baseUrl}/dropps`,
         headers: {
           location: '0,0',
-          max_distance: 100,
+          'max-distance': 100,
           Authorization: user1Token,
         },
       };
@@ -343,7 +343,7 @@ describe('Start server', () => {
         url: `${baseUrl}/location/dropps`,
         headers: {
           location: '0,0',
-          max_distance: 100,
+          'max-distance': 100,
           Authorization: user1Token
         },
       };
@@ -393,7 +393,7 @@ describe('Start server', () => {
       requestParams = {
         url: `${baseUrl}/dropps/${droppWithImageKey}/text`,
         headers: { Authorization: user1Token },
-        form: { new_text: 'grunt test update dropp' },
+        form: { 'new-text': 'grunt test update dropp' },
       };
     });
 

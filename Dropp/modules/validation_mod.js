@@ -102,7 +102,7 @@ var isValidPositiveFloat = function(_number) {
   return _number !== null &&
     _number !== undefined &&
     (/^\d+(\.\d*)?$/).test(_number) &&
-    _number > 0.0;
+    Number(_number) > 0.0;
 };
 
 /**
