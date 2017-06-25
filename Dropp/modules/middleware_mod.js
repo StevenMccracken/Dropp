@@ -416,7 +416,7 @@ var updateUserEmail = function(_request, _response, _callback) {
       // Token is valid, so check request parameters
       let invalidParams = [];
       if (!VALIDATE.isValidUsername(_request.params.username)) invalidParams.push('username');
-      if (!VALIDATE.isValidEmail(_request.body.new_email)) invalidParams.push('new_email');
+      if (!VALIDATE.isValidEmail(_request.body['new-email'])) invalidParams.push('new-email');
 
       if (invalidParams.length > 0){
         let errorDetails = {
@@ -458,21 +458,21 @@ var updateUserEmail = function(_request, _response, _callback) {
               };
 
               ERROR.error(errorDetails, error => _callback(error));
-            } else if (userData.email === _request.body.new_email.trim()) {
+            } else if (userData.email === _request.body['new-email'].trim()) {
               let errorDetails = {
                 source: SOURCE,
                 request: _request,
                 response: _response,
                 client: client.username,
                 error: ERROR.CODE.INVALID_REQUEST_ERROR,
-                customErrorMessage: 'Unchanged parameters: new_email',
+                customErrorMessage: 'Unchanged parameters: new-email',
               };
 
               ERROR.error(errorDetails, error => _callback(error));
             } else {
               FIREBASE.UPDATE(
                 `/users/${client.username}/email`,
-                _request.body.new_email.trim(),
+                _request.body['new-email'].trim(),
                 () => {
                   let successJson = {
                     success: {
@@ -545,8 +545,13 @@ var updateUserPassword = function(_request, _response, _callback) {
       // Token is valid, so check request parameters
       let invalidParams = [];
       if (!VALIDATE.isValidUsername(_request.params.username)) invalidParams.push('username');
-      if (!VALIDATE.isValidPassword(_request.body.old_password)) invalidParams.push('old_password');
-      if (!VALIDATE.isValidPassword(_request.body.new_password)) invalidParams.push('new_password');
+      if (!VALIDATE.isValidPassword(_request.body['old-password'])) {
+        invalidParams.push('old-password');
+      }
+
+      if (!VALIDATE.isValidPassword(_request.body['new-password'])) {
+        invalidParams.push('new-password');
+      }
 
       if (invalidParams.length > 0){
         let errorDetails = {
@@ -590,7 +595,7 @@ var updateUserPassword = function(_request, _response, _callback) {
               ERROR.error(errorDetails, error => _callback(error));
             } else {
               AUTH.validatePasswords(
-                _request.body.old_password.trim(),
+                _request.body['old-password'].trim(),
                 existingPassword,
                 (passwordsMatch) => {
                   if (!passwordsMatch) {
@@ -600,27 +605,27 @@ var updateUserPassword = function(_request, _response, _callback) {
                       response: _response,
                       client: client.username,
                       error: ERROR.CODE.RESOURCE_ERROR,
-                      customErrorMessage: 'old_password does not match existing password',
+                      customErrorMessage: 'old-password does not match existing password',
                     };
 
                     ERROR.error(errorDetails, error => _callback(error));
                   } else {
                     // Client knows their old password, so check if new password is unchanged
-                    if (_request.body.new_password.trim() === _request.body.old_password.trim()) {
+                    if (_request.body['new-password'].trim() === _request.body['old-password'].trim()) {
                       let errorDetails = {
                         source: SOURCE,
                         request: _request,
                         response: _response,
                         client: client.username,
                         error: ERROR.CODE.INVALID_REQUEST_ERROR,
-                        customErrorMessage: 'Unchanged parameters: new_password',
+                        customErrorMessage: 'Unchanged parameters: new-password',
                       };
 
                       ERROR.error(errorDetails, error => _callback(error));
                     } else {
                       // New password is different from old password
                       AUTH.hash(
-                        _request.body.new_password.trim(),
+                        _request.body['new-password'].trim(),
                         (hashedPassword) => {
                           FIREBASE.UPDATE(
                             `/passwords/${client.username}`,
@@ -1435,8 +1440,8 @@ var getAllDropps = function(_request, _response, _callback) {
       // Token is valid, so check request parameters
       let invalidParams = [];
       if (!VALIDATE.isValidLocation(_request.headers.location)) invalidParams.push('location');
-      if (!VALIDATE.isValidPositiveFloat(_request.headers.max_distance)) {
-        invalidParams.push('max_distance');
+      if (!VALIDATE.isValidPositiveFloat(_request.headers['max-distance'])) {
+        invalidParams.push('max-distance');
       }
 
       if (invalidParams.length > 0) {
@@ -1461,9 +1466,9 @@ var getAllDropps = function(_request, _response, _callback) {
             FIREBASE.GET(
               '/dropps',
               (allDropps) => {
-                // Save dropps that are within max_distance of client or if client follows poster
+                // Save dropps that are within max-distance of client or if client follows poster
                 let subsetOfDropps = {};
-                let maxDistance = Number(_request.headers.max_distance);
+                let maxDistance = Number(_request.headers['max-distance']);
                 let targetLocation = _request.headers.location.trim().split(',').map(Number);
 
                 // Loop over all the dropps in the dropps JSON
@@ -1549,8 +1554,8 @@ var getDroppsByLocation = function(_request, _response, _callback) {
       // Check request parameters
       let invalidParams = [];
       if (!VALIDATE.isValidLocation(_request.headers.location)) invalidParams.push('location');
-      if (!VALIDATE.isValidPositiveFloat(_request.headers.max_distance)) {
-        invalidParams.push('max_distance');
+      if (!VALIDATE.isValidPositiveFloat(_request.headers['max-distance'])) {
+        invalidParams.push('max-distance');
       }
 
       if (invalidParams.length > 0) {
@@ -1574,7 +1579,7 @@ var getDroppsByLocation = function(_request, _response, _callback) {
               DROPPS.getCloseDropps(
                 allDropps,
                 _request.headers.location.trim(),
-                _request.headers.max_distance,
+                _request.headers['max-distance'],
                 closeDropps => _callback(closeDropps)
               );
             } catch (getCloseDroppsError) {
@@ -1857,7 +1862,7 @@ var updateDroppText = function(_request, _response, _callback) {
       // Check request parameters
       let invalidParams = [];
       if (!VALIDATE.isValidId(_request.params.droppId)) invalidParams.push('droppId');
-      if (_request.body.new_text === undefined) invalidParams.push('new_text');
+      if (_request.body['new-text'] === undefined) invalidParams.push('new-text');
 
       if (invalidParams.length > 0) {
         let errorDetails = {
@@ -1901,7 +1906,7 @@ var updateDroppText = function(_request, _response, _callback) {
               ERROR.error(errorDetails, error => _callback(error));
             } else if (
               dropp.media === 'false' &&
-              !VALIDATE.isValidTextPost(_request.body.new_text)
+              !VALIDATE.isValidTextPost(_request.body['new-text'])
             ) {
               // Client attempted to remove text from a dropp with no media
               let errorDetails = {
@@ -1914,7 +1919,7 @@ var updateDroppText = function(_request, _response, _callback) {
               };
 
               ERROR.error(errorDetails, error => _callback(error));
-            } else if (dropp.text === _request.body.new_text.trim()) {
+            } else if (dropp.text === _request.body['new-text'].trim()) {
               // Useless update to the text because they are identical
               let errorDetails = {
                 source: SOURCE,
@@ -1922,7 +1927,7 @@ var updateDroppText = function(_request, _response, _callback) {
                 response: _response,
                 client: client.username,
                 error: ERROR.CODE.INVALID_REQUEST_ERROR,
-                customErrorMessage: 'Unchanged parameters: new_text',
+                customErrorMessage: 'Unchanged parameters: new-text',
               };
 
               ERROR.error(errorDetails, error => _callback(error));
@@ -1930,7 +1935,7 @@ var updateDroppText = function(_request, _response, _callback) {
               // Update is valid, so update dropp in the database
               FIREBASE.UPDATE(
                 `/dropps/${_request.params.droppId}/text`,
-                _request.body.new_text.trim(),
+                _request.body['new-text'].trim(),
                 () => {
                   let successJson = {
                     success: {
