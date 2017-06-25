@@ -15,6 +15,12 @@
 		16CA20A11EC19E7600EDA7CC /* UITableViewCell+FlatUI.m in Sources */ = {isa = PBXBuildFile; fileRef = 16CA20A01EC19E7600EDA7CC /* UITableViewCell+FlatUI.m */; };
 		16CA20A61EC1A28000EDA7CC /* FUICellBackgroundView.m in Sources */ = {isa = PBXBuildFile; fileRef = 16CA20A51EC1A28000EDA7CC /* FUICellBackgroundView.m */; };
 		2986B0CE30CF1A30A6B10072 /* Pods_DroppTests.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A89741AD814E44A9F9D24FC3 /* Pods_DroppTests.framework */; };
+		695CF3A11EFF2263007D07A7 /* Int+Conversions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 695CF3A01EFF2263007D07A7 /* Int+Conversions.swift */; };
+		695CF3A51EFF22DE007D07A7 /* String+Shortcuts.swift in Sources */ = {isa = PBXBuildFile; fileRef = 695CF3A41EFF22DE007D07A7 /* String+Shortcuts.swift */; };
+		695CF3A71EFF230E007D07A7 /* NsMutableData+Shortcuts.swift in Sources */ = {isa = PBXBuildFile; fileRef = 695CF3A61EFF230E007D07A7 /* NsMutableData+Shortcuts.swift */; };
+		695CF3A91EFF234F007D07A7 /* Double+Shortcuts.swift in Sources */ = {isa = PBXBuildFile; fileRef = 695CF3A81EFF234F007D07A7 /* Double+Shortcuts.swift */; };
+		695CF3AC1EFF2438007D07A7 /* Collections+Shortcuts.swift in Sources */ = {isa = PBXBuildFile; fileRef = 695CF3AB1EFF2438007D07A7 /* Collections+Shortcuts.swift */; };
+		695CF3AE1EFF298D007D07A7 /* CLLocationCoordinate2D+Conversions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 695CF3AD1EFF298D007D07A7 /* CLLocationCoordinate2D+Conversions.swift */; };
 		697F24D71EC1F52B005584E3 /* ViewModule.swift in Sources */ = {isa = PBXBuildFile; fileRef = 697F24D61EC1F52B005584E3 /* ViewModule.swift */; };
 		698C32F41EBDC257008CB718 /* Loading-Fast-Icon-200x200.gif in Resources */ = {isa = PBXBuildFile; fileRef = 698C32F31EBDC257008CB718 /* Loading-Fast-Icon-200x200.gif */; };
 		69A43EC91E5BEEA6003E6420 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 69A43EC81E5BEEA6003E6420 /* AppDelegate.swift */; };
@@ -50,6 +56,12 @@
 		16CA20A51EC1A28000EDA7CC /* FUICellBackgroundView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = FUICellBackgroundView.m; sourceTree = "<group>"; };
 		410E488F5CFBA78B82AAED78 /* Pods_Dropp.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_Dropp.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		67BE7C9F4619CCF963CC9BF7 /* Pods-Dropp.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Dropp.debug.xcconfig"; path = "Pods/Target Support Files/Pods-Dropp/Pods-Dropp.debug.xcconfig"; sourceTree = "<group>"; };
+		695CF3A01EFF2263007D07A7 /* Int+Conversions.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "Int+Conversions.swift"; sourceTree = "<group>"; };
+		695CF3A41EFF22DE007D07A7 /* String+Shortcuts.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "String+Shortcuts.swift"; sourceTree = "<group>"; };
+		695CF3A61EFF230E007D07A7 /* NsMutableData+Shortcuts.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "NsMutableData+Shortcuts.swift"; sourceTree = "<group>"; };
+		695CF3A81EFF234F007D07A7 /* Double+Shortcuts.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "Double+Shortcuts.swift"; sourceTree = "<group>"; };
+		695CF3AB1EFF2438007D07A7 /* Collections+Shortcuts.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "Collections+Shortcuts.swift"; sourceTree = "<group>"; };
+		695CF3AD1EFF298D007D07A7 /* CLLocationCoordinate2D+Conversions.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "CLLocationCoordinate2D+Conversions.swift"; sourceTree = "<group>"; };
 		697F24D61EC1F52B005584E3 /* ViewModule.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ViewModule.swift; sourceTree = "<group>"; };
 		698C32F31EBDC257008CB718 /* Loading-Fast-Icon-200x200.gif */ = {isa = PBXFileReference; lastKnownFileType = image.gif; path = "Loading-Fast-Icon-200x200.gif"; sourceTree = "<group>"; };
 		69A43EC51E5BEEA6003E6420 /* Dropp.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Dropp.app; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -106,6 +118,19 @@
 			name = Frameworks;
 			sourceTree = "<group>";
 		};
+		695CF39F1EFF2241007D07A7 /* Extensions */ = {
+			isa = PBXGroup;
+			children = (
+				695CF3A01EFF2263007D07A7 /* Int+Conversions.swift */,
+				695CF3A41EFF22DE007D07A7 /* String+Shortcuts.swift */,
+				695CF3A61EFF230E007D07A7 /* NsMutableData+Shortcuts.swift */,
+				695CF3A81EFF234F007D07A7 /* Double+Shortcuts.swift */,
+				695CF3AB1EFF2438007D07A7 /* Collections+Shortcuts.swift */,
+				695CF3AD1EFF298D007D07A7 /* CLLocationCoordinate2D+Conversions.swift */,
+			);
+			name = Extensions;
+			sourceTree = "<group>";
+		};
 		69A43EBC1E5BEEA6003E6420 = {
 			isa = PBXGroup;
 			children = (
@@ -129,6 +154,7 @@
 		69A43EC71E5BEEA6003E6420 /* Dropp */ = {
 			isa = PBXGroup;
 			children = (
+				695CF39F1EFF2241007D07A7 /* Extensions */,
 				69A43EC81E5BEEA6003E6420 /* AppDelegate.swift */,
 				69EFB0D01EBBBF3C007E4F90 /* HTTPModule.swift */,
 				69A43ECA1E5BEEA6003E6420 /* ViewController.swift */,
@@ -376,9 +402,13 @@
 			buildActionMask = 2147483647;
 			files = (
 				16AF6C0D1E9B35B00022C051 /* DroppStore.swift in Sources */,
+				695CF3A51EFF22DE007D07A7 /* String+Shortcuts.swift in Sources */,
 				697F24D71EC1F52B005584E3 /* ViewModule.swift in Sources */,
 				69A43ECB1E5BEEA6003E6420 /* ViewController.swift in Sources */,
+				695CF3AC1EFF2438007D07A7 /* Collections+Shortcuts.swift in Sources */,
 				69A43EC91E5BEEA6003E6420 /* AppDelegate.swift in Sources */,
+				695CF3A91EFF234F007D07A7 /* Double+Shortcuts.swift in Sources */,
+				695CF3AE1EFF298D007D07A7 /* CLLocationCoordinate2D+Conversions.swift in Sources */,
 				16CA20A11EC19E7600EDA7CC /* UITableViewCell+FlatUI.m in Sources */,
 				16CA209D1EC1820200EDA7CC /* SegmentedProgressBar.swift in Sources */,
 				69EFB0D11EBBBF3C007E4F90 /* HTTPModule.swift in Sources */,
@@ -386,6 +416,8 @@
 				16CA20A61EC1A28000EDA7CC /* FUICellBackgroundView.m in Sources */,
 				1631B0001E96D5BE00820B09 /* FeedTableViewController.swift in Sources */,
 				161D6FA51EB974A0008A63FB /* DetailViewController.swift in Sources */,
+				695CF3A71EFF230E007D07A7 /* NsMutableData+Shortcuts.swift in Sources */,
+				695CF3A11EFF2263007D07A7 /* Int+Conversions.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

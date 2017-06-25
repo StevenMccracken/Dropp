@@ -954,7 +954,7 @@ var createDropp = function(_request, _response, _callback) {
       if (!VALIDATE.isValidLocation(_request.body.location)) invalidParams.push('location');
       if (
         !VALIDATE.isValidInteger(_request.body.timestamp) ||
-        _request.body.timestamp > (Date.now() / 1000)
+        _request.body.timestamp > Math.ceil(Date.now() / 1000)
       ) invalidParams.push('timestamp');
       if (!VALIDATE.isValidMediaString(_request.body.media)) invalidParams.push('media');
       if (
