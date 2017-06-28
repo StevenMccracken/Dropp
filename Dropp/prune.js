@@ -19,13 +19,13 @@ function prune() {
     '/dropps',
     (dropps) => {
       for (let dropp in dropps) {
-        const details = dropps[dropp];
+        let details = dropps[dropp];
 
         // Convert dropp timestamp to unix milliseconds
-        const droppTimestamp = details.timestamp * 1000;
+        let droppTimestamp = details.timestamp * 1000;
 
         // Get current unix timestamp in milliseconds
-        const currentTimestamp = new Date();
+        let currentTimestamp = new Date();
 
         // If dropp timestamp is more than 24 hours in the past, delete it
         if (currentTimestamp - droppTimestamp > 86400000) {
@@ -39,7 +39,7 @@ function prune() {
               // Now delete picture linked to dropp if it exists
               if (details.media) {
                 log(`Pruning image linked to '${dropp}'`);
-                MEDIA.deleteImage(
+                MEDIA.DELETE(
                   dropp,
                   (success) => {
                     if (success) log(`Successfully pruned image '${dropp}'`);
