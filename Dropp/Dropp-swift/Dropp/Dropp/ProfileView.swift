@@ -53,17 +53,17 @@ class ProfileView: UIViewController, UITableViewDataSource, UITableViewDelegate 
             var dropps: [Dropp] = []
             if response.statusCode == 200 {
                 // Go through all of the nearby dropps
-                for (droppId, droppJson) in json {
-                    let content = droppJson as! [String: Any]
-                    let dropp = Dropp(id: droppId,
-                                      user: content["username"] as! String,
-                                      location: content["location"] as! String,
-                                      timestamp: content["timestamp"] as! Int,
-                                      message: content["text"] as! String,
-                                      hasMedia: (content["media"] as! String) == "true")
-                    
-                    dropps.append(dropp)
-                }
+//                for (droppId, droppJson) in json {
+//                    let content = droppJson as! [String: Any]
+//                    let dropp = Dropp(id: droppId,
+//                                      user: content["username"] as! String,
+//                                      location: content["location"] as! String,
+//                                      timestamp: content["timestamp"] as! Int,
+//                                      message: content["text"] as! String,
+//                                      hasMedia: (content["media"] as! String) == "true")
+//                    
+//                    dropps.append(dropp)
+//                }
                 
                 // Sort the dropps in descending order based on their timestamp
                 dropps = dropps.sorted(by: { (a: Dropp, b: Dropp) -> Bool in

@@ -25,7 +25,7 @@ class FeedTableViewController: UITableViewController, CLLocationManagerDelegate 
         
         // Apply the salmon color to the nav bar buttons
         navigationController?.navigationBar.tintColor = UIColor.white
-        navigationController?.navigationBar.titleTextAttributes = [NSForegroundColorAttributeName: UIColor.white]
+      navigationController?.navigationBar.titleTextAttributes = [NSAttributedStringKey.foregroundColor: UIColor.white]
         navigationController?.navigationBar.barTintColor = self.viewModule.salmonColor
         
         tabBarController?.tabBar.tintColor = self.viewModule.salmonColor
@@ -109,17 +109,17 @@ class FeedTableViewController: UITableViewController, CLLocationManagerDelegate 
             var closeDropps: [Dropp] = []
             if response.statusCode == 200 {
                 // Go through all of the nearby dropps
-                for (droppId, droppJson) in dropps {
-                    let content = droppJson as! [String: Any]
-                    let dropp = Dropp(id: droppId,
-                                      user: content["username"] as! String,
-                                      location: content["location"] as! String,
-                                      timestamp: content["timestamp"] as! Int,
-                                      message: content["text"] as! String,
-                                      hasMedia: (content["media"] as! String) == "true")
-                    
-                    closeDropps.append(dropp)
-                }
+//                for (droppId, droppJson) in dropps {
+//                    let content = droppJson as! [String: Any]
+//                    let dropp = Dropp(id: droppId,
+//                                      user: content["username"] as! String,
+//                                      location: content["location"] as! String,
+//                                      timestamp: content["timestamp"] as! Int,
+//                                      message: content["text"] as! String,
+//                                      hasMedia: (content["media"] as! String) == "true")
+//                    
+//                    closeDropps.append(dropp)
+//                }
                 
                 // Sort the dropps in descending order based on their timestamp
                 closeDropps = closeDropps.sorted(by: { (a: Dropp, b: Dropp) -> Bool in

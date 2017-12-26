@@ -58,17 +58,17 @@ class HTTPModule {
     
     func createParamsData(params: [String: Any]) -> Data {
         let paramsData = NSMutableData()
-        var first = true
-        for (key, value) in params {
-            if !first {
-                paramsData.appendString("&")
-            } else {
-                first = false
-            }
-            
-            paramsData.appendString("\(key)=\(value)")
-        }
-        
+//        var first = true
+//        for (key, value) in params {
+//            if !first {
+//                paramsData.appendString("&")
+//            } else {
+//                first = false
+//            }
+//
+//            paramsData.appendString("\(key)=\(value)")
+//        }
+      
         return paramsData as Data
     }
     
@@ -172,20 +172,20 @@ class HTTPModule {
                     filename: String) -> Data {
         let body = NSMutableData()
         
-        let boundaryPrefix = "--\(boundary)\r\n"
-        
-        for (key, value) in parameters {
-            body.appendString(boundaryPrefix)
-            body.appendString("Content-Disposition: form-data; name=\"\(key)\"\r\n\r\n")
-            body.appendString("\(value)\r\n")
-        }
-        
-        body.appendString(boundaryPrefix)
-        body.appendString("Content-Disposition: form-data; name=\"image\"; filename=\"\(filename)\"\r\n")
-        body.appendString("Content-Type: \(mimeType)\r\n\r\n")
-        body.append(data)
-        body.appendString("\r\n")
-        body.appendString("--".appending(boundary.appending("--")))
+//        let boundaryPrefix = "--\(boundary)\r\n"
+//        
+//        for (key, value) in parameters {
+//            body.appendString(boundaryPrefix)
+//            body.appendString("Content-Disposition: form-data; name=\"\(key)\"\r\n\r\n")
+//            body.appendString("\(value)\r\n")
+//        }
+//        
+//        body.appendString(boundaryPrefix)
+//        body.appendString("Content-Disposition: form-data; name=\"image\"; filename=\"\(filename)\"\r\n")
+//        body.appendString("Content-Type: \(mimeType)\r\n\r\n")
+//        body.append(data)
+//        body.appendString("\r\n")
+//        body.appendString("--".appending(boundary.appending("--")))
         
         return body as Data
     }

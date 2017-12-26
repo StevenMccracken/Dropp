@@ -15,11 +15,11 @@ class ViewModule {
     let loadingIcon: String = "Loading-Fast-Icon-200x200"
     
     // Fades the image and cancel button to a specified value in a specified duration
-    func fadeImage(imageView: UIImageView, endValue: Double, duration: Double, delay: Double, completion: @escaping () -> Void) {
+    func fadeImage(imageView: UIImageView, endValue: Double, duration: Double, delay: Double, completion: (() -> Void)? = nil) {
         UIView.animate(withDuration: duration, delay: delay, options: UIViewAnimationOptions.curveEaseOut, animations: {
             imageView.alpha = CGFloat(endValue)
         }, completion: { _ in
-            completion()
+            completion?()
         })
     }
     
@@ -29,7 +29,7 @@ class ViewModule {
         let alert = UIAlertController(title: "", message: message, preferredStyle: .alert)
         
         // Define attribute array for setting the color of a string in the alert
-        let colorAttribute = [ NSForegroundColorAttributeName : self.salmonColor ]
+      let colorAttribute = [ NSAttributedStringKey.foregroundColor : self.salmonColor ]
         
         // Set the color of the alert buttons
         alert.view.tintColor = self.salmonColor
@@ -50,22 +50,22 @@ class ViewModule {
     }
     
     // Starts animating the loading icon gif and fades it in
-    func startLoadingIcon(loadingIconView: GIFImageView, fadeTime: Double, completion: @escaping () -> Void) {
+    func startLoadingIcon(loadingIconView: GIFImageView, fadeTime: Double, completion: (() -> Void)? = nil) {
         loadingIconView.startAnimatingGIF()
         if loadingIconView.alpha != CGFloat(1.0) {
             DispatchQueue.main.async {
-                self.fadeImage(imageView: loadingIconView, endValue: 1.0, duration: fadeTime, delay: 0.0) { _ in }
+              self.fadeImage(imageView: loadingIconView, endValue: 1.0, duration: fadeTime, delay: 0.0, completion: completion)
             }
         }
     }
     
     // Fades out the loading icon gif and then stops animating it
-    func stopLoadingIcon(loadingIconView: GIFImageView, fadeTime: Double, completion: @escaping () -> Void) {
+    func stopLoadingIcon(loadingIconView: GIFImageView, fadeTime: Double, completion: (() -> Void)? = nil) {
         if loadingIconView.alpha != CGFloat(0.0) {
             DispatchQueue.main.async {
-                self.fadeImage(imageView: loadingIconView, endValue: 0.0, duration: fadeTime, delay: 0.0) { _ in
+              self.fadeImage(imageView: loadingIconView, endValue: 0.0, duration: fadeTime, delay: 0.0) { 
                     loadingIconView.stopAnimatingGIF()
-                    completion()
+                    completion?()
                 }
             }
         }
