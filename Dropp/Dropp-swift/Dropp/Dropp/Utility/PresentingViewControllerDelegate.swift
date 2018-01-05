@@ -6,6 +6,7 @@
 //  Copyright © 2017 Group B. All rights reserved.
 //
 
+import UIKit
 import Foundation
 
 protocol PresentingViewControllerDelegate: class {

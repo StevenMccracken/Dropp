@@ -120,10 +120,11 @@ class HttpUtil {
     return request
   }
   
-  class func send(request: URLRequest, success: ((HTTPURLResponse, Data) -> Void)? = nil, failure: ((Error) -> Void)? = nil) {
+  class func send(request: URLRequest, success: ((HTTPURLResponse, Data) -> Void)? = nil, failure: ((NSError) -> Void)? = nil) {
     let task = URLSession.shared.dataTask(with: request, completionHandler: { (data: Data?, response: URLResponse?, error: Error?) in
       guard error == nil else {
-        failure?(error!)
+        let error = NSError(userInfo: ["error": error!])
+        failure?(error)
         return
       }
       
@@ -133,7 +134,7 @@ class HttpUtil {
       }
       
       guard case 200...299 = response.statusCode else {
-        failure?(NSError(domain: "", code: 0, userInfo: ["reason": "Status code was not success", "details": response]))
+        failure?(NSError(domain: "", code: response.statusCode, userInfo: ["reason": "Status code was not success", "details": response]))
         return
       }
       
@@ -148,7 +149,7 @@ class HttpUtil {
     task.resume()
   }
   
-  class func send(request: URLRequest, checkSuccessField: Bool = true, success: ((JSON) -> Void)? = nil, failure: ((Error) -> Void)? = nil) {
+  class func send(request: URLRequest, checkSuccessField: Bool = true, success: ((JSON) -> Void)? = nil, failure: ((NSError) -> Void)? = nil) {
     send(request: request, success: { (response: HTTPURLResponse, data: Data) in
       let json = JSON(data: data)
       guard checkSuccessField else {

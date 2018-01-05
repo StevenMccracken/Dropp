@@ -11,7 +11,7 @@ import SwiftyJSON
 
 class UserService {
   
-  class func getNewJwt(success: ((String) -> Void)? = nil, failure: ((Error) -> Void)? = nil) {
+  class func getNewJwt(success: ((String) -> Void)? = nil, failure: ((NSError) -> Void)? = nil) {
     guard let username = UserDefaults.standard.value(forKey: "username") as? String else {
       failure?(NSError(domain: "", code: 0, userInfo: ["reason": "Username does not exist in user defaults"]))
       return
@@ -25,7 +25,7 @@ class UserService {
     authenticate(username: username, password: password, success: success, failure: failure)
   }
   
-  class func authenticate(username: String, password: String, success: ((String) -> Void)? = nil, failure: ((Error) -> Void)? = nil) {
+  class func authenticate(username: String, password: String, success: ((String) -> Void)? = nil, failure: ((NSError) -> Void)? = nil) {
     let credentials = ["username": username, "password": password]
     guard let request = HttpUtil.postRequest("\(Constants.apiUrl)/authenticate", parameters: credentials) else {
       failure?(NSError(domain: "", code: 0, userInfo: ["reason": "Request to authenticate was not created"]))

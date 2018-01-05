@@ -7,13 +7,8 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		161D6FA51EB974A0008A63FB /* DetailViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 161D6FA41EB974A0008A63FB /* DetailViewController.swift */; };
-		1631B0001E96D5BE00820B09 /* FeedTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1631AFFF1E96D5BE00820B09 /* FeedTableViewController.swift */; };
 		16AF6C0B1E9B30270022C051 /* Dropp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 16AF6C0A1E9B30270022C051 /* Dropp.swift */; };
-		16AF6C0D1E9B35B00022C051 /* DroppStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = 16AF6C0C1E9B35B00022C051 /* DroppStore.swift */; };
 		16CA209D1EC1820200EDA7CC /* SegmentedProgressBar.swift in Sources */ = {isa = PBXBuildFile; fileRef = 16CA209C1EC1820200EDA7CC /* SegmentedProgressBar.swift */; };
-		16CA20A11EC19E7600EDA7CC /* UITableViewCell+FlatUI.m in Sources */ = {isa = PBXBuildFile; fileRef = 16CA20A01EC19E7600EDA7CC /* UITableViewCell+FlatUI.m */; };
-		16CA20A61EC1A28000EDA7CC /* FUICellBackgroundView.m in Sources */ = {isa = PBXBuildFile; fileRef = 16CA20A51EC1A28000EDA7CC /* FUICellBackgroundView.m */; };
 		2986B0CE30CF1A30A6B10072 /* Pods_DroppTests.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A89741AD814E44A9F9D24FC3 /* Pods_DroppTests.framework */; };
 		6910835E1FE4B8890030C34D /* Home.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 6910835D1FE4B8890030C34D /* Home.storyboard */; };
 		691083601FE4BB500030C34D /* MapKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 6910835F1FE4BB500030C34D /* MapKit.framework */; };
@@ -28,6 +23,10 @@
 		691B1ABB1FEF3D240043EBA0 /* DroppTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 691B1AB91FEF3D240043EBA0 /* DroppTableViewCell.swift */; };
 		693483221FE5D92800A0B381 /* Gifu.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 693483241FE5D92800A0B381 /* Gifu.framework */; };
 		693483231FE5D92800A0B381 /* SwiftyJSON.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 693483251FE5D92800A0B381 /* SwiftyJSON.framework */; };
+		693AFB4B1FFF5E8E008901A0 /* Event.swift in Sources */ = {isa = PBXBuildFile; fileRef = 693AFB4A1FFF5E8E008901A0 /* Event.swift */; };
+		693AFB4C1FFF5E8E008901A0 /* Event.swift in Sources */ = {isa = PBXBuildFile; fileRef = 693AFB4A1FFF5E8E008901A0 /* Event.swift */; };
+		693AFB4E1FFF69E9008901A0 /* NSError+Shortcuts.swift in Sources */ = {isa = PBXBuildFile; fileRef = 693AFB4D1FFF69E9008901A0 /* NSError+Shortcuts.swift */; };
+		693AFB4F1FFF69E9008901A0 /* NSError+Shortcuts.swift in Sources */ = {isa = PBXBuildFile; fileRef = 693AFB4D1FFF69E9008901A0 /* NSError+Shortcuts.swift */; };
 		694F2A751FE5DFB900E23D7E /* DroppService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 694F2A741FE5DFB900E23D7E /* DroppService.swift */; };
 		694F2A771FE5E5B700E23D7E /* LocationManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 694F2A761FE5E5B700E23D7E /* LocationManager.swift */; };
 		695CF3A11EFF2263007D07A7 /* Int+Conversions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 695CF3A01EFF2263007D07A7 /* Int+Conversions.swift */; };
@@ -36,12 +35,9 @@
 		695CF3A91EFF234F007D07A7 /* Double+Shortcuts.swift in Sources */ = {isa = PBXBuildFile; fileRef = 695CF3A81EFF234F007D07A7 /* Double+Shortcuts.swift */; };
 		695CF3AC1EFF2438007D07A7 /* Collections+Shortcuts.swift in Sources */ = {isa = PBXBuildFile; fileRef = 695CF3AB1EFF2438007D07A7 /* Collections+Shortcuts.swift */; };
 		695CF3AE1EFF298D007D07A7 /* CLLocationCoordinate2D+Conversions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 695CF3AD1EFF298D007D07A7 /* CLLocationCoordinate2D+Conversions.swift */; };
-		697F24D71EC1F52B005584E3 /* ViewModule.swift in Sources */ = {isa = PBXBuildFile; fileRef = 697F24D61EC1F52B005584E3 /* ViewModule.swift */; };
 		6980016F1F021B3E00B8DE9E /* ProfileView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6980016E1F021B3E00B8DE9E /* ProfileView.swift */; };
 		698C32F41EBDC257008CB718 /* Loading-Fast-Icon-200x200.gif in Resources */ = {isa = PBXBuildFile; fileRef = 698C32F31EBDC257008CB718 /* Loading-Fast-Icon-200x200.gif */; };
 		69A43EC91E5BEEA6003E6420 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 69A43EC81E5BEEA6003E6420 /* AppDelegate.swift */; };
-		69A43ECB1E5BEEA6003E6420 /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 69A43ECA1E5BEEA6003E6420 /* ViewController.swift */; };
-		69A43ECE1E5BEEA6003E6420 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 69A43ECC1E5BEEA6003E6420 /* Main.storyboard */; };
 		69A43ED01E5BEEA6003E6420 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 69A43ECF1E5BEEA6003E6420 /* Assets.xcassets */; };
 		69A43EDE1E5BEEA6003E6420 /* DroppTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 69A43EDD1E5BEEA6003E6420 /* DroppTests.swift */; };
 		69C3BAEE1FE7B8DA00537C99 /* UserService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 69C3BAED1FE7B8DA00537C99 /* UserService.swift */; };
@@ -51,10 +47,10 @@
 		69C3BAFA1FE7CC6500537C99 /* Utils.swift in Sources */ = {isa = PBXBuildFile; fileRef = 69C3BAF91FE7CC6500537C99 /* Utils.swift */; };
 		69C3BAFC1FE7CF4600537C99 /* LogInManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 69C3BAFB1FE7CF4600537C99 /* LogInManager.swift */; };
 		69C3BAFE1FE7E0CF00537C99 /* Placeholder.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 69C3BAFD1FE7E0CF00537C99 /* Placeholder.storyboard */; };
-		69EFB0D11EBBBF3C007E4F90 /* HTTPModule.swift in Sources */ = {isa = PBXBuildFile; fileRef = 69EFB0D01EBBBF3C007E4F90 /* HTTPModule.swift */; };
 		69F14DA41FF21F8100D784EC /* PresentingViewControllerDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 69F14DA31FF21F8100D784EC /* PresentingViewControllerDelegate.swift */; };
 		69F14DA61FF22EAE00D784EC /* UnicodeScalar+Shortcuts.swift in Sources */ = {isa = PBXBuildFile; fileRef = 69F14DA51FF22EAE00D784EC /* UnicodeScalar+Shortcuts.swift */; };
 		69F14DA81FF2440700D784EC /* UIViewController+Shortcuts.swift in Sources */ = {isa = PBXBuildFile; fileRef = 69F14DA71FF2440700D784EC /* UIViewController+Shortcuts.swift */; };
+		69FB3ECF1FF9BF760008F355 /* DroppDetailViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 69FB3ECE1FF9BF760008F355 /* DroppDetailViewController.swift */; };
 		F90F6C907D58F83D394F45C3 /* Pods_Dropp.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 410E488F5CFBA78B82AAED78 /* Pods_Dropp.framework */; };
 /* End PBXBuildFile section */
 
@@ -69,17 +65,9 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
-		161D6FA41EB974A0008A63FB /* DetailViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DetailViewController.swift; sourceTree = "<group>"; };
-		1631AFFF1E96D5BE00820B09 /* FeedTableViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = FeedTableViewController.swift; path = ../FeedTableViewController.swift; sourceTree = "<group>"; };
 		16AF6C0A1E9B30270022C051 /* Dropp.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Dropp.swift; sourceTree = "<group>"; };
-		16AF6C0C1E9B35B00022C051 /* DroppStore.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DroppStore.swift; sourceTree = "<group>"; };
 		16CA209C1EC1820200EDA7CC /* SegmentedProgressBar.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SegmentedProgressBar.swift; sourceTree = "<group>"; };
 		16CA209E1EC19E7600EDA7CC /* Dropp-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = "Dropp-Bridging-Header.h"; path = "Dropp/Dropp-Bridging-Header.h"; sourceTree = SOURCE_ROOT; };
-		16CA209F1EC19E7600EDA7CC /* UITableViewCell+FlatUI.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UITableViewCell+FlatUI.h"; sourceTree = "<group>"; };
-		16CA20A01EC19E7600EDA7CC /* UITableViewCell+FlatUI.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "UITableViewCell+FlatUI.m"; sourceTree = "<group>"; };
-		16CA20A21EC19FBF00EDA7CC /* mybridge.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = mybridge.h; sourceTree = "<group>"; };
-		16CA20A41EC1A28000EDA7CC /* FUICellBackgroundView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FUICellBackgroundView.h; sourceTree = "<group>"; };
-		16CA20A51EC1A28000EDA7CC /* FUICellBackgroundView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = FUICellBackgroundView.m; sourceTree = "<group>"; };
 		410E488F5CFBA78B82AAED78 /* Pods_Dropp.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_Dropp.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		67BE7C9F4619CCF963CC9BF7 /* Pods-Dropp.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Dropp.debug.xcconfig"; path = "Pods/Target Support Files/Pods-Dropp/Pods-Dropp.debug.xcconfig"; sourceTree = "<group>"; };
 		6910835D1FE4B8890030C34D /* Home.storyboard */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; path = Home.storyboard; sourceTree = "<group>"; };
@@ -96,6 +84,8 @@
 		691B1AB91FEF3D240043EBA0 /* DroppTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DroppTableViewCell.swift; sourceTree = "<group>"; };
 		693483241FE5D92800A0B381 /* Gifu.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = Gifu.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		693483251FE5D92800A0B381 /* SwiftyJSON.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = SwiftyJSON.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		693AFB4A1FFF5E8E008901A0 /* Event.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Event.swift; sourceTree = "<group>"; };
+		693AFB4D1FFF69E9008901A0 /* NSError+Shortcuts.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "NSError+Shortcuts.swift"; sourceTree = "<group>"; };
 		694F2A741FE5DFB900E23D7E /* DroppService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DroppService.swift; sourceTree = "<group>"; };
 		694F2A761FE5E5B700E23D7E /* LocationManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LocationManager.swift; sourceTree = "<group>"; };
 		695CF3A01EFF2263007D07A7 /* Int+Conversions.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "Int+Conversions.swift"; sourceTree = "<group>"; };
@@ -104,13 +94,10 @@
 		695CF3A81EFF234F007D07A7 /* Double+Shortcuts.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "Double+Shortcuts.swift"; sourceTree = "<group>"; };
 		695CF3AB1EFF2438007D07A7 /* Collections+Shortcuts.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "Collections+Shortcuts.swift"; sourceTree = "<group>"; };
 		695CF3AD1EFF298D007D07A7 /* CLLocationCoordinate2D+Conversions.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "CLLocationCoordinate2D+Conversions.swift"; sourceTree = "<group>"; };
-		697F24D61EC1F52B005584E3 /* ViewModule.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ViewModule.swift; sourceTree = "<group>"; };
 		6980016E1F021B3E00B8DE9E /* ProfileView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ProfileView.swift; sourceTree = "<group>"; };
 		698C32F31EBDC257008CB718 /* Loading-Fast-Icon-200x200.gif */ = {isa = PBXFileReference; lastKnownFileType = image.gif; path = "Loading-Fast-Icon-200x200.gif"; sourceTree = "<group>"; };
 		69A43EC51E5BEEA6003E6420 /* Dropp.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Dropp.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		69A43EC81E5BEEA6003E6420 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
-		69A43ECA1E5BEEA6003E6420 /* ViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewController.swift; sourceTree = "<group>"; };
-		69A43ECD1E5BEEA6003E6420 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
 		69A43ECF1E5BEEA6003E6420 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		69A43ED41E5BEEA6003E6420 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		69A43ED91E5BEEA6003E6420 /* DroppTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = DroppTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -123,10 +110,10 @@
 		69C3BAF91FE7CC6500537C99 /* Utils.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Utils.swift; sourceTree = "<group>"; };
 		69C3BAFB1FE7CF4600537C99 /* LogInManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LogInManager.swift; sourceTree = "<group>"; };
 		69C3BAFD1FE7E0CF00537C99 /* Placeholder.storyboard */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; path = Placeholder.storyboard; sourceTree = "<group>"; };
-		69EFB0D01EBBBF3C007E4F90 /* HTTPModule.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = HTTPModule.swift; sourceTree = "<group>"; };
 		69F14DA31FF21F8100D784EC /* PresentingViewControllerDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PresentingViewControllerDelegate.swift; sourceTree = "<group>"; };
 		69F14DA51FF22EAE00D784EC /* UnicodeScalar+Shortcuts.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UnicodeScalar+Shortcuts.swift"; sourceTree = "<group>"; };
 		69F14DA71FF2440700D784EC /* UIViewController+Shortcuts.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIViewController+Shortcuts.swift"; sourceTree = "<group>"; };
+		69FB3ECE1FF9BF760008F355 /* DroppDetailViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DroppDetailViewController.swift; sourceTree = "<group>"; };
 		82C32FA3983AA44EA1F10D1D /* Pods-DroppTests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-DroppTests.release.xcconfig"; path = "Pods/Target Support Files/Pods-DroppTests/Pods-DroppTests.release.xcconfig"; sourceTree = "<group>"; };
 		A89741AD814E44A9F9D24FC3 /* Pods_DroppTests.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_DroppTests.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		C8C79D64338806A8EA2434B8 /* Pods-DroppTests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-DroppTests.debug.xcconfig"; path = "Pods/Target Support Files/Pods-DroppTests/Pods-DroppTests.debug.xcconfig"; sourceTree = "<group>"; };
@@ -156,15 +143,6 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
-		16CA20A31EC1A1E500EDA7CC /* FlatUIKit */ = {
-			isa = PBXGroup;
-			children = (
-				16CA20A41EC1A28000EDA7CC /* FUICellBackgroundView.h */,
-				16CA20A51EC1A28000EDA7CC /* FUICellBackgroundView.m */,
-			);
-			name = FlatUIKit;
-			sourceTree = "<group>";
-		};
 		525445E01D507BEB3EF50920 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
@@ -202,6 +180,7 @@
 				6910836A1FE52C540030C34D /* CreateDroppViewController.swift */,
 				691B1AB51FEF3C7C0043EBA0 /* FeedViewController.swift */,
 				691B1AB91FEF3D240043EBA0 /* DroppTableViewCell.swift */,
+				69FB3ECE1FF9BF760008F355 /* DroppDetailViewController.swift */,
 			);
 			path = Controllers;
 			sourceTree = "<group>";
@@ -237,6 +216,7 @@
 				6918F1D71FEE4A3600041010 /* UIAlertController+CustomInit.swift */,
 				69F14DA51FF22EAE00D784EC /* UnicodeScalar+Shortcuts.swift */,
 				69F14DA71FF2440700D784EC /* UIViewController+Shortcuts.swift */,
+				693AFB4D1FFF69E9008901A0 /* NSError+Shortcuts.swift */,
 			);
 			name = Extensions;
 			sourceTree = "<group>";
@@ -274,21 +254,9 @@
 				69A43EC81E5BEEA6003E6420 /* AppDelegate.swift */,
 				69C3BAFB1FE7CF4600537C99 /* LogInManager.swift */,
 				694F2A761FE5E5B700E23D7E /* LocationManager.swift */,
-				69C3BAEF1FE7B91A00537C99 /* Constants.swift */,
 				69C3BAFD1FE7E0CF00537C99 /* Placeholder.storyboard */,
-				69EFB0D01EBBBF3C007E4F90 /* HTTPModule.swift */,
-				69A43ECA1E5BEEA6003E6420 /* ViewController.swift */,
-				69A43ECC1E5BEEA6003E6420 /* Main.storyboard */,
-				1631AFFF1E96D5BE00820B09 /* FeedTableViewController.swift */,
 				6980016E1F021B3E00B8DE9E /* ProfileView.swift */,
-				161D6FA41EB974A0008A63FB /* DetailViewController.swift */,
-				16AF6C0C1E9B35B00022C051 /* DroppStore.swift */,
-				697F24D61EC1F52B005584E3 /* ViewModule.swift */,
 				16CA209C1EC1820200EDA7CC /* SegmentedProgressBar.swift */,
-				16CA209F1EC19E7600EDA7CC /* UITableViewCell+FlatUI.h */,
-				16CA20A01EC19E7600EDA7CC /* UITableViewCell+FlatUI.m */,
-				16CA20A21EC19FBF00EDA7CC /* mybridge.h */,
-				16CA20A31EC1A1E500EDA7CC /* FlatUIKit */,
 				69A43ECF1E5BEEA6003E6420 /* Assets.xcassets */,
 				698C32F31EBDC257008CB718 /* Loading-Fast-Icon-200x200.gif */,
 				6910836C1FE59BF00030C34D /* Background-Strip-2000x500.png */,
@@ -319,8 +287,10 @@
 		69C3BAF61FE7CB9100537C99 /* Utility */ = {
 			isa = PBXGroup;
 			children = (
+				69C3BAEF1FE7B91A00537C99 /* Constants.swift */,
 				69C3BAF91FE7CC6500537C99 /* Utils.swift */,
 				69F14DA31FF21F8100D784EC /* PresentingViewControllerDelegate.swift */,
+				693AFB4A1FFF5E8E008901A0 /* Event.swift */,
 			);
 			path = Utility;
 			sourceTree = "<group>";
@@ -445,7 +415,6 @@
 				69C3BAFE1FE7E0CF00537C99 /* Placeholder.storyboard in Resources */,
 				69C3BAF51FE7BEFA00537C99 /* Login.storyboard in Resources */,
 				6910836D1FE59BF10030C34D /* Background-Strip-2000x500.png in Resources */,
-				69A43ECE1E5BEEA6003E6420 /* Main.storyboard in Resources */,
 				6910835E1FE4B8890030C34D /* Home.storyboard in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -568,13 +537,10 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				16AF6C0D1E9B35B00022C051 /* DroppStore.swift in Sources */,
 				69C3BAEE1FE7B8DA00537C99 /* UserService.swift in Sources */,
 				695CF3A51EFF22DE007D07A7 /* String+Shortcuts.swift in Sources */,
 				69C3BAFA1FE7CC6500537C99 /* Utils.swift in Sources */,
 				69F14DA41FF21F8100D784EC /* PresentingViewControllerDelegate.swift in Sources */,
-				697F24D71EC1F52B005584E3 /* ViewModule.swift in Sources */,
-				69A43ECB1E5BEEA6003E6420 /* ViewController.swift in Sources */,
 				6918F1901FE8F4C600041010 /* UIColor+CustomColors.swift in Sources */,
 				695CF3AC1EFF2438007D07A7 /* Collections+Shortcuts.swift in Sources */,
 				69C3BAF01FE7B91A00537C99 /* Constants.swift in Sources */,
@@ -582,25 +548,23 @@
 				695CF3A91EFF234F007D07A7 /* Double+Shortcuts.swift in Sources */,
 				695CF3AE1EFF298D007D07A7 /* CLLocationCoordinate2D+Conversions.swift in Sources */,
 				69F14DA81FF2440700D784EC /* UIViewController+Shortcuts.swift in Sources */,
-				16CA20A11EC19E7600EDA7CC /* UITableViewCell+FlatUI.m in Sources */,
 				6910836B1FE52C540030C34D /* CreateDroppViewController.swift in Sources */,
+				693AFB4B1FFF5E8E008901A0 /* Event.swift in Sources */,
 				691083671FE4BF3C0030C34D /* HomeViewController.swift in Sources */,
 				16CA209D1EC1820200EDA7CC /* SegmentedProgressBar.swift in Sources */,
 				694F2A751FE5DFB900E23D7E /* DroppService.swift in Sources */,
 				6980016F1F021B3E00B8DE9E /* ProfileView.swift in Sources */,
-				69EFB0D11EBBBF3C007E4F90 /* HTTPModule.swift in Sources */,
 				16AF6C0B1E9B30270022C051 /* Dropp.swift in Sources */,
 				69F14DA61FF22EAE00D784EC /* UnicodeScalar+Shortcuts.swift in Sources */,
 				6918F1D81FEE4A3600041010 /* UIAlertController+CustomInit.swift in Sources */,
-				16CA20A61EC1A28000EDA7CC /* FUICellBackgroundView.m in Sources */,
 				69C3BAF31FE7BED300537C99 /* LogInViewController.swift in Sources */,
+				693AFB4E1FFF69E9008901A0 /* NSError+Shortcuts.swift in Sources */,
 				691B1ABB1FEF3D240043EBA0 /* DroppTableViewCell.swift in Sources */,
-				1631B0001E96D5BE00820B09 /* FeedTableViewController.swift in Sources */,
-				161D6FA51EB974A0008A63FB /* DetailViewController.swift in Sources */,
 				691B1AB61FEF3C7C0043EBA0 /* FeedViewController.swift in Sources */,
 				694F2A771FE5E5B700E23D7E /* LocationManager.swift in Sources */,
 				695CF3A71EFF230E007D07A7 /* NsMutableData+Shortcuts.swift in Sources */,
 				695CF3A11EFF2263007D07A7 /* Int+Conversions.swift in Sources */,
+				69FB3ECF1FF9BF760008F355 /* DroppDetailViewController.swift in Sources */,
 				691083701FE5BF080030C34D /* HttpUtil.swift in Sources */,
 				69C3BAFC1FE7CF4600537C99 /* LogInManager.swift in Sources */,
 			);
@@ -610,6 +574,8 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				693AFB4F1FFF69E9008901A0 /* NSError+Shortcuts.swift in Sources */,
+				693AFB4C1FFF5E8E008901A0 /* Event.swift in Sources */,
 				69A43EDE1E5BEEA6003E6420 /* DroppTests.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -623,17 +589,6 @@
 			targetProxy = 69A43EDA1E5BEEA6003E6420 /* PBXContainerItemProxy */;
 		};
 /* End PBXTargetDependency section */
-
-/* Begin PBXVariantGroup section */
-		69A43ECC1E5BEEA6003E6420 /* Main.storyboard */ = {
-			isa = PBXVariantGroup;
-			children = (
-				69A43ECD1E5BEEA6003E6420 /* Base */,
-			);
-			name = Main.storyboard;
-			sourceTree = "<group>";
-		};
-/* End PBXVariantGroup section */
 
 /* Begin XCBuildConfiguration section */
 		69A43EE01E5BEEA6003E6420 /* Debug */ = {
@@ -758,7 +713,7 @@
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = com.groub.Dropp;
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				SWIFT_OBJC_BRIDGING_HEADER = "/Users/stevenmccracken/GitHub/Dropp/Dropp/Dropp-swift/Dropp/Dropp/mybridge.h";
+				SWIFT_OBJC_BRIDGING_HEADER = "/Users/stevenmccracken/GitHub/Dropp/Dropp/Dropp-swift/Dropp/Dropp/Dropp-Bridging-Header.h";
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 				SWIFT_VERSION = 4.0;
 			};
@@ -779,7 +734,7 @@
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = com.groub.Dropp;
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				SWIFT_OBJC_BRIDGING_HEADER = "/Users/stevenmccracken/GitHub/Dropp/Dropp/Dropp-swift/Dropp/Dropp/mybridge.h";
+				SWIFT_OBJC_BRIDGING_HEADER = "/Users/stevenmccracken/GitHub/Dropp/Dropp/Dropp-swift/Dropp/Dropp/Dropp-Bridging-Header.h";
 				SWIFT_VERSION = 4.0;
 			};
 			name = Release;
@@ -794,7 +749,7 @@
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = com.groub.DroppTests;
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				SWIFT_SWIFT3_OBJC_INFERENCE = On;
+				SWIFT_SWIFT3_OBJC_INFERENCE = Off;
 				SWIFT_VERSION = 4.0;
 				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/Dropp.app/Dropp";
 			};
@@ -810,7 +765,7 @@
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = com.groub.DroppTests;
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				SWIFT_SWIFT3_OBJC_INFERENCE = On;
+				SWIFT_SWIFT3_OBJC_INFERENCE = Off;
 				SWIFT_VERSION = 4.0;
 				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/Dropp.app/Dropp";
 			};

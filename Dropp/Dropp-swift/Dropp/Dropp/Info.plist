@@ -26,15 +26,15 @@
 		<true/>
 	</dict>
 	<key>NSCameraUsageDescription</key>
-	<string>Take a photo for your Dropp</string>
+	<string>Take photos</string>
 	<key>NSLocationAlwaysAndWhenInUseUsageDescription</key>
-	<string>Do you allow Dropp to always know your location, whether in the background or foreground?</string>
+	<string>Do you allow Dropp to know your location, whether you are using the app or not?</string>
 	<key>NSLocationAlwaysUsageDescription</key>
-	<string>Will you allow Dropp to always know your location?</string>
+	<string>Do you allow Dropp to know your location, even when you are not using the app?</string>
 	<key>NSLocationWhenInUseUsageDescription</key>
-	<string>Do you allow Dropp to know your current location?</string>
+	<string>Do you allow Dropp to know your location while using the app?</string>
 	<key>NSPhotoLibraryUsageDescription</key>
-	<string>Upload a photo for your Dropp</string>
+	<string>Access photos</string>
 	<key>UIBackgroundModes</key>
 	<array>
 		<string>location</string>

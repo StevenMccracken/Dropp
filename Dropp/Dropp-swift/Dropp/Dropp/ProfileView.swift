@@ -6,6 +6,7 @@
 //  Copyright © 2017 Group B. All rights reserved.
 //
 
+import UIKit
 import Foundation
 
 class ProfileView: UIViewController, UITableViewDataSource, UITableViewDelegate {
@@ -16,8 +17,8 @@ class ProfileView: UIViewController, UITableViewDataSource, UITableViewDelegate 
     @IBOutlet weak var followsButton: UIButton!
     @IBOutlet weak var tableView: UITableView!
     
-    let http = HTTPModule()
-    let viewModule = ViewModule()
+//    let http = HTTPModule()
+//    let viewModule = ViewModule()
     var dropps: [Dropp] = []
     var profileUsername = "User"
     let cellIdentifier = "CellIdentifier"
@@ -46,35 +47,35 @@ class ProfileView: UIViewController, UITableViewDataSource, UITableViewDelegate 
     
     func getDropps() {
         let path = "/users/\(self.profileUsername)/dropps"
-        let request = self.http.createGetRequest(path: path, params: [:])
-        
-        // Send the request and get the response
-        self.http.sendRequest(request: request) { response, json in
-            var dropps: [Dropp] = []
-            if response.statusCode == 200 {
-                // Go through all of the nearby dropps
-//                for (droppId, droppJson) in json {
-//                    let content = droppJson as! [String: Any]
-//                    let dropp = Dropp(id: droppId,
-//                                      user: content["username"] as! String,
-//                                      location: content["location"] as! String,
-//                                      timestamp: content["timestamp"] as! Int,
-//                                      message: content["text"] as! String,
-//                                      hasMedia: (content["media"] as! String) == "true")
-//                    
-//                    dropps.append(dropp)
-//                }
-                
-                // Sort the dropps in descending order based on their timestamp
-                dropps = dropps.sorted(by: { (a: Dropp, b: Dropp) -> Bool in
-                    return a > b
-                })
-            } else {
-                print("Failed to get nearby dropps")
-            }
-            
-            self.addDroppsToFeed(dropps: dropps)
-        }
+//        let request = self.http.createGetRequest(path: path, params: [:])
+//
+//        // Send the request and get the response
+//        self.http.sendRequest(request: request) { response, json in
+//            var dropps: [Dropp] = []
+//            if response.statusCode == 200 {
+//                // Go through all of the nearby dropps
+////                for (droppId, droppJson) in json {
+////                    let content = droppJson as! [String: Any]
+////                    let dropp = Dropp(id: droppId,
+////                                      user: content["username"] as! String,
+////                                      location: content["location"] as! String,
+////                                      timestamp: content["timestamp"] as! Int,
+////                                      message: content["text"] as! String,
+////                                      hasMedia: (content["media"] as! String) == "true")
+////
+////                    dropps.append(dropp)
+////                }
+//
+//                // Sort the dropps in descending order based on their timestamp
+//                dropps = dropps.sorted(by: { (a: Dropp, b: Dropp) -> Bool in
+//                    return a > b
+//                })
+//            } else {
+//                print("Failed to get nearby dropps")
+//            }
+//
+//            self.addDroppsToFeed(dropps: dropps)
+//        }
     }
     
     func addDroppToFeed(dropp: Dropp) {
@@ -96,21 +97,21 @@ class ProfileView: UIViewController, UITableViewDataSource, UITableViewDelegate 
     
     func getConnections(type: String, completion: @escaping ([String]) -> Void) {
         let path = "/users/\(self.profileUsername)/\(type)"
-        let request = self.http.createGetRequest(path: path, params: [:])
-        
-        self.http.sendRequest(request: request) { response, json in
-            print(json)
-            var connections: [String] = []
-            if response.statusCode == 200 {
-                for (connectionKey, _) in json {
-                    connections.append(connectionKey)
-                }
-            } else {
-                print("Failed getting connections: \(response.statusCode)")
-            }
-            
-            completion(connections)
-        }
+//        let request = self.http.createGetRequest(path: path, params: [:])
+//
+//        self.http.sendRequest(request: request) { response, json in
+//            print(json)
+//            var connections: [String] = []
+//            if response.statusCode == 200 {
+//                for (connectionKey, _) in json {
+//                    connections.append(connectionKey)
+//                }
+//            } else {
+//                print("Failed getting connections: \(response.statusCode)")
+//            }
+//
+//            completion(connections)
+//        }
     }
     
     func getFollowers() {
@@ -149,11 +150,11 @@ class ProfileView: UIViewController, UITableViewDataSource, UITableViewDelegate 
         }
         
         cell = UITableViewCell(style: UITableViewCellStyle.subtitle, reuseIdentifier: cellIdentifier)
-        cell?.configureFlatCell(with: UIColor.white, selectedColor: self.viewModule.salmonColor, roundingCorners: UIRectCorner(rawValue: 0))
-        cell?.textLabel?.textColor = UIColor.black
-        cell?.detailTextLabel?.textColor = UIColor.black
-        cell?.cornerRadius = 5.0
-        cell?.separatorHeight = 0
+//        cell?.configureFlatCell(with: UIColor.white, selectedColor: self.viewModule.salmonColor, roundingCorners: UIRectCorner(rawValue: 0))
+//        cell?.textLabel?.textColor = UIColor.black
+//        cell?.detailTextLabel?.textColor = UIColor.black
+//        cell?.cornerRadius = 5.0
+//        cell?.separatorHeight = 0
         if cell == nil {
             cell = UITableViewCell(style: UITableViewCellStyle.subtitle, reuseIdentifier: cellIdentifier)
         }

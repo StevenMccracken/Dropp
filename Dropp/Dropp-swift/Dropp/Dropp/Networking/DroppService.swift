@@ -12,9 +12,9 @@ import CoreLocation
 
 class DroppService {
   
-  class func getDropps(near location: CLLocationCoordinate2D?, withRange radius: Double = 100.0, sorted: Bool = true, success: (([Dropp]) -> Void)? = nil, failure: ((Error) -> Void)? = nil) {
+  class func getDropps(near location: CLLocationCoordinate2D?, withRange radius: Double = 100.0, sorted: Bool = true, success: (([Dropp]) -> Void)? = nil, failure: ((NSError) -> Void)? = nil) {
     guard let location = location else {
-      failure?(NSError(domain: "", code: 0, userInfo: ["reason": "Location was nil"]))
+      failure?(NSError(domain: "", code: Constants.locationNotEnabled, userInfo: ["reason": "Location was nil"]))
       return
     }
     
@@ -48,7 +48,7 @@ class DroppService {
     }, failure: failure)
   }
   
-  class func getImage(forDropp dropp: Dropp, success: ((UIImage) -> Void)? = nil, failure: ((Error) -> Void)? = nil) {
+  class func getImage(forDropp dropp: Dropp, success: ((UIImage) -> Void)? = nil, failure: ((NSError) -> Void)? = nil) {
     guard dropp.hasMedia else {
       failure?(NSError(domain: "", code: 0, userInfo: ["reason": "Dropp does not have media associated with it", "details": dropp]))
       return
@@ -69,9 +69,9 @@ class DroppService {
     }, failure: failure)
   }
   
-  class func createDropp(at location: CLLocationCoordinate2D?, on date: Date, withMessage message: String?, hasMedia: Bool, success: ((String) -> Void)? = nil, failure: ((Error) -> Void)? = nil) {
+  class func createDropp(at location: CLLocationCoordinate2D?, on date: Date, withMessage message: String?, hasMedia: Bool, success: ((String) -> Void)? = nil, failure: ((NSError) -> Void)? = nil) {
     guard let location = location else {
-      failure?(NSError(domain: "", code: 0, userInfo: ["reason": "Location was nil"]))
+      failure?(NSError(domain: "", code: Constants.locationNotEnabled, userInfo: ["reason": "Location was nil"]))
       return
     }
     
@@ -107,7 +107,7 @@ class DroppService {
     }, failure: failure)
   }
   
-  class func upload(image: UIImage, forDropp droppId: String, withCompression compression: Double = 0.6, success: (() -> Void)? = nil, failure: ((Error) -> Void)? = nil) {
+  class func upload(image: UIImage, forDropp droppId: String, withCompression compression: Double = 0.6, success: (() -> Void)? = nil, failure: ((NSError) -> Void)? = nil) {
     guard let request = HttpUtil.dataRequest(image: image, toUrl: "\(Constants.apiUrl)/dropps/\(droppId)/image", compressionRate: compression) else {
       failure?(NSError(domain: "", code: 0, userInfo: ["reason": "Request to upload image for dropp was not created"]))
       return

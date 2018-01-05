@@ -39,4 +39,14 @@ extension String {
     let endIndex = index(from: r.upperBound)
     return String(self[startIndex ..< endIndex])
   }
+  
+  func truncate(toLimit limit: Int, addElipses: Bool = true) -> String {
+    var truncated = self
+    if self.count > limit {
+      let maxIndex = self.index(self.endIndex, offsetBy: limit - self.count)
+      truncated = String(self[..<maxIndex]) + (addElipses ? "..." : "")
+    }
+    
+    return truncated
+  }
 }

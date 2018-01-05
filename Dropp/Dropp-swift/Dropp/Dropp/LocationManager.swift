@@ -9,30 +9,72 @@
 import Foundation
 import CoreLocation
 
-class LocationManager: NSObject, CLLocationManagerDelegate {
+class LocationManager: NSObject {
   
   // Singleton instance
   static let shared = LocationManager()
-  private var locationManager: CLLocationManager!
+  private var locationManager: CLLocationManager
+  private(set) var locationUpdatedEvent: Event<CLLocation>
+  private(set) var authorizationUpdatedEvent: Event<Bool>
+  var canGetLocation: Bool {
+    let status: CLAuthorizationStatus = CLLocationManager.authorizationStatus()
+    return (status == .authorizedAlways || status == .authorizedWhenInUse) && CLLocationManager.locationServicesEnabled()
+  }
   
   var currentLocation: CLLocation? {
+    guard canGetLocation else {
+      return nil
+    }
+    
     return locationManager.location
   }
   
-  var userCoordinates: CLLocationCoordinate2D? {
+  var currentCoordinates: CLLocationCoordinate2D? {
+    guard canGetLocation else {
+      return nil
+    }
+    
     return locationManager.location?.coordinate
   }
   
   private override init() {
     locationManager = CLLocationManager()
+    locationUpdatedEvent = Event<CLLocation>()
+    authorizationUpdatedEvent = Event<Bool>()
     super.init()
     
+    locationManager.delegate = self
+    locationManager.desiredAccuracy = kCLLocationAccuracyNearestTenMeters
+    
+    requestAuthorization()
+  }
+  
+  @discardableResult
+  func requestAuthorization() -> Event<Bool> {
     locationManager.requestAlwaysAuthorization()
     locationManager.requestWhenInUseAuthorization()
-    if CLLocationManager.locationServicesEnabled() {
-      locationManager.delegate = self
-      locationManager.desiredAccuracy = kCLLocationAccuracyNearestTenMeters
-      locationManager.startUpdatingLocation()
+    return authorizationUpdatedEvent
+  }
+}
+
+extension LocationManager: CLLocationManagerDelegate {
+  
+  func locationManager(_ manager: CLLocationManager, didChangeAuthorization status: CLAuthorizationStatus) {
+    if canGetLocation {
+      manager.startUpdatingLocation()
+    } else {
+      manager.stopUpdatingLocation()
     }
+    
+    authorizationUpdatedEvent.raise(data: canGetLocation)
+  }
+  
+  func locationManager(_ manager: CLLocationManager, didUpdateLocations locations: [CLLocation]) {
+    guard let newestLocation = locations.last else {
+      return
+    }
+    
+    debugPrint("User location was updated", newestLocation)
+    locationUpdatedEvent.raise(data: newestLocation)
   }
 }

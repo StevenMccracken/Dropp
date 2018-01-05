@@ -6,18 +6,23 @@
 //  Copyright © 2017 Group B. All rights reserved.
 //
 
+import UIKit
 import Foundation
 
 extension UIAlertController {
   
   public convenience init(title: String?, message: String?, preferredStyle: UIAlertControllerStyle, color: UIColor) {
     self.init(title: title, message: message, preferredStyle: preferredStyle)
-    self.view.tintColor = color
+    view.tintColor = color
     guard let title = title else {
       return
     }
     
     let colorDictionary = [NSAttributedStringKey.foregroundColor: UIColor.salmon]
-    self.setValue(NSAttributedString(string: title, attributes: colorDictionary), forKey: "attributedTitle")
+    setValue(NSAttributedString(string: title, attributes: colorDictionary), forKey: "attributedTitle")
+  }
+  
+  public func addDefaultAction() {
+    addAction(UIAlertAction(title: "OK", style: .default, handler: nil))
   }
 }

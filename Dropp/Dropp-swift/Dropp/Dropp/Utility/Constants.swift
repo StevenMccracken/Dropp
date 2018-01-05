@@ -11,4 +11,6 @@ import Foundation
 class Constants {
   
   static let apiUrl = "https://dropps.me"
+  static let activityIndicatorFileName = "Loading-Fast-Icon-200x200"
+  static let locationNotEnabled = 666
 }
