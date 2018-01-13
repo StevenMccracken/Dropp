@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="13529" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" launchScreen="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES" initialViewController="jSQ-Px-9T0">
+    <device id="retina4_7" orientation="portrait">
+        <adaptation id="fullscreen"/>
+    </device>
+    <dependencies>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="13527"/>
+        <capability name="Safe area layout guides" minToolsVersion="9.0"/>
+        <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
+    </dependencies>
+    <scenes>
+        <!--View Controller-->
+        <scene sceneID="9cB-Cf-6wg">
+            <objects>
+                <viewController id="jSQ-Px-9T0" sceneMemberID="viewController">
+                    <view key="view" contentMode="scaleToFill" id="Lip-aY-VZw">
+                        <rect key="frame" x="0.0" y="0.0" width="375" height="667"/>
+                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <subviews>
+                            <imageView userInteractionEnabled="NO" contentMode="redraw" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="Background-Strip-2000x500.png" translatesAutoresizingMaskIntoConstraints="NO" id="m5L-rg-uLM">
+                                <rect key="frame" x="0.0" y="-30" width="375" height="747"/>
+                                <viewLayoutGuide key="safeArea" id="9o0-MI-C6j"/>
+                            </imageView>
+                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Dropp" textAlignment="center" lineBreakMode="tailTruncation" numberOfLines="0" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="Ymj-Od-HgG">
+                                <rect key="frame" x="100" y="170" width="176.5" height="72"/>
+                                <fontDescription key="fontDescription" type="system" weight="heavy" pointSize="60"/>
+                                <color key="textColor" red="0.99999600649999998" green="1" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                                <nil key="highlightedColor"/>
+                            </label>
+                        </subviews>
+                        <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                        <constraints>
+                            <constraint firstItem="Ymj-Od-HgG" firstAttribute="top" secondItem="TQd-19-Nbd" secondAttribute="top" constant="150" id="2ws-Ie-dEH"/>
+                            <constraint firstItem="TQd-19-Nbd" firstAttribute="bottom" secondItem="m5L-rg-uLM" secondAttribute="bottom" constant="-50" id="92K-b7-nuY"/>
+                            <constraint firstItem="TQd-19-Nbd" firstAttribute="trailing" secondItem="m5L-rg-uLM" secondAttribute="trailing" id="kbi-32-ZjT"/>
+                            <constraint firstItem="m5L-rg-uLM" firstAttribute="top" secondItem="TQd-19-Nbd" secondAttribute="top" constant="-50" id="mOl-E0-Awb"/>
+                            <constraint firstItem="m5L-rg-uLM" firstAttribute="leading" secondItem="TQd-19-Nbd" secondAttribute="leading" id="oNb-Ao-OCO"/>
+                            <constraint firstItem="Ymj-Od-HgG" firstAttribute="centerX" secondItem="Lip-aY-VZw" secondAttribute="centerX" id="vAE-uj-pHi"/>
+                        </constraints>
+                        <viewLayoutGuide key="safeArea" id="TQd-19-Nbd"/>
+                    </view>
+                </viewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="Ug8-Ur-V9e" userLabel="First Responder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="-137" y="180"/>
+        </scene>
+    </scenes>
+    <resources>
+        <image name="Background-Strip-2000x500.png" width="2000" height="500"/>
+    </resources>
+</document>

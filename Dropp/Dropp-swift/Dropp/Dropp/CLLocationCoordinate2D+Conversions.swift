@@ -10,6 +10,8 @@ import Foundation
 import CoreLocation
 
 extension CLLocationCoordinate2D {
-    var toString: String { return "\(self.latitude),\(self.longitude)" }
-
+  
+  var toString: String {
+    return "\(self.latitude),\(self.longitude)"
+  }
 }

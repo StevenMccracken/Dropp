@@ -168,7 +168,7 @@ describe('Start server', () => {
       };
     });
 
-    it('returns status code 200 on successful update', (done) => {
+    it('updates user\'s password and returns status code 200', (done) => {
       REQUEST.put(requestParams, (error, response, body) => {
         expect(response.statusCode).toBe(200);
         log(updateUser1Password, body);

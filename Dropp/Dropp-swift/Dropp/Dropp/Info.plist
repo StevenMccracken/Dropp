@@ -26,24 +26,36 @@
 		<true/>
 	</dict>
 	<key>NSCameraUsageDescription</key>
-	<string>Take a photo for your Dropp</string>
+	<string>Take photos</string>
+	<key>NSLocationAlwaysAndWhenInUseUsageDescription</key>
+	<string>Post dropps, see nearby dropps, and get updates about nearby dropps when you are not using the app</string>
 	<key>NSLocationAlwaysUsageDescription</key>
-	<string>Will you allow Dropp to always know your location?</string>
+	<string>Get updates about nearby dropps when you are not using the app</string>
 	<key>NSLocationWhenInUseUsageDescription</key>
-	<string>Do you allow Dropp to know your current location?</string>
+	<string>Post dropps and see nearby dropps</string>
+	<key>NSMicrophoneUsageDescription</key>
+	<string>Record videos</string>
 	<key>NSPhotoLibraryUsageDescription</key>
-	<string>Upload a photo for your Dropp</string>
+	<string>Access photos</string>
+	<key>UIBackgroundModes</key>
+	<array>
+		<string>location</string>
+	</array>
 	<key>UILaunchStoryboardName</key>
 	<string>LaunchScreen</string>
 	<key>UIMainStoryboardFile</key>
-	<string>Main</string>
+	<string>Placeholder</string>
 	<key>UIRequiredDeviceCapabilities</key>
 	<array>
 		<string>armv7</string>
 	</array>
+	<key>UIStatusBarStyle</key>
+	<string>UIStatusBarStyleDefault</string>
 	<key>UISupportedInterfaceOrientations</key>
 	<array>
 		<string>UIInterfaceOrientationPortrait</string>
+		<string>UIInterfaceOrientationLandscapeLeft</string>
+		<string>UIInterfaceOrientationLandscapeRight</string>
 	</array>
 	<key>UISupportedInterfaceOrientations~ipad</key>
 	<array>

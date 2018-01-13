@@ -46,8 +46,8 @@ const ERROR_CODE = {
 
 /**
  * error - Provides default verbose messages for given error types
- * @param {type} _info the details of the error that occurred
- * @param {type} _callback the callback to return the result
+ * @param {Object} _info JSON of the details of the error that occurred
+ * @param {callback} _callback the callback to return the result
  */
 var error = function(_info, _callback) {
   const SOURCE = 'error()';
@@ -96,8 +96,8 @@ var error = function(_info, _callback) {
 
 /**
  * determineMediaError - Builds a client error repsonse based on a given cloud storage media error
- * @param {type} _info the details of the error that occurred
- * @param {type} _callback the callback to return the result
+ * @param {Object} _info JSON of the details of the error that occurred
+ * @param {callback} _callback the callback to return the result
  */
 var determineMediaError = function(_info, _callback) {
   const SOURCE = 'determineMediaError()';
@@ -119,8 +119,8 @@ var determineMediaError = function(_info, _callback) {
 /**
  * determineAuthenticationError - Builds a client
  * error repsonse based on a given authentication error
- * @param {type} _info the details of the error that occurred
- * @param {type} _callback the callback to return the result
+ * @param {Object} _info JSON of the details of the error that occurred
+ * @param {callback} _callback the callback to return the result
  */
 var determineAuthenticationError = function(_info, _callback) {
   const SOURCE = 'determineAuthenticationError()';
@@ -147,8 +147,8 @@ var determineAuthenticationError = function(_info, _callback) {
 
 /**
  * determineFirebaseError - Builds a client error repsonse based on a given firebase error
- * @param {type} _info the details of the error that occurred
- * @param {type} _callback the callback to return the result
+ * @param {Object} _info JSON of the details of the error that occurred
+ * @param {callback} _callback the callback to return the result
  */
 var determineFirebaseError = function(_info, _callback) {
   const SOURCE = 'determineFirebaseError()';
@@ -177,8 +177,8 @@ var determineFirebaseError = function(_info, _callback) {
 
 /**
  * determineBcryptError - Builds a client error repsonse based on a given bcrypt error
- * @param {type} _info the details of the error that occurred
- * @param {type} _callback the callback to return the result
+ * @param {Object} _info JSON of the details of the error that occurred
+ * @param {callback} _callback the callback to return the result
  */
 var determineBcryptError = function(_info, _callback) {
   const SOURCE = 'determineBcryptError()';
