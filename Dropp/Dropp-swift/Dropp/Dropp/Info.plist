@@ -28,11 +28,13 @@
 	<key>NSCameraUsageDescription</key>
 	<string>Take photos</string>
 	<key>NSLocationAlwaysAndWhenInUseUsageDescription</key>
-	<string>Do you allow Dropp to know your location, whether you are using the app or not?</string>
+	<string>Post dropps, see nearby dropps, and get updates about nearby dropps when you are not using the app</string>
 	<key>NSLocationAlwaysUsageDescription</key>
-	<string>Do you allow Dropp to know your location, even when you are not using the app?</string>
+	<string>Get updates about nearby dropps when you are not using the app</string>
 	<key>NSLocationWhenInUseUsageDescription</key>
-	<string>Do you allow Dropp to know your location while using the app?</string>
+	<string>Post dropps and see nearby dropps</string>
+	<key>NSMicrophoneUsageDescription</key>
+	<string>Record videos</string>
 	<key>NSPhotoLibraryUsageDescription</key>
 	<string>Access photos</string>
 	<key>UIBackgroundModes</key>

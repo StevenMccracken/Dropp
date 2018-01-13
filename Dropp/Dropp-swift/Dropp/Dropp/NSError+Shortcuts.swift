@@ -14,7 +14,7 @@ extension NSError {
     self.init(domain: "", code: 0, userInfo: userInfo)
   }
   
-  convenience init(reason: String, details: [String: Any]? = nil) {
+  convenience init(reason: String, details: Any? = nil) {
     var userInfo: [String: Any] = ["reason": reason]
     if let details = details {
       userInfo["details"] = details

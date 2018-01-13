@@ -29,4 +29,12 @@ class Utils {
       rootViewController.present(viewController, animated: animated, completion: completion)
     }
   }
+  
+  class func isPhone() -> Bool {
+    return UIDevice.current.userInterfaceIdiom == .phone
+  }
+  
+  class func isPad() -> Bool {
+    return UIDevice.current.userInterfaceIdiom == .pad
+  }
 }

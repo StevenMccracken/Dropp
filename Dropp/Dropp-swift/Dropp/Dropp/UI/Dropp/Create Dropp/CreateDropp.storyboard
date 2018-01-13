@@ -1,0 +1,104 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="13529" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES" initialViewController="bdf-84-O9q">
+    <device id="retina4_7" orientation="portrait">
+        <adaptation id="fullscreen"/>
+    </device>
+    <dependencies>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="13527"/>
+        <capability name="Alignment constraints with different attributes" minToolsVersion="5.1"/>
+        <capability name="Aspect ratio constraints" minToolsVersion="5.1"/>
+        <capability name="Safe area layout guides" minToolsVersion="9.0"/>
+        <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
+    </dependencies>
+    <scenes>
+        <!--Create Dropp-->
+        <scene sceneID="Tla-EK-8vx">
+            <objects>
+                <viewController title="Create Dropp" id="bdf-84-O9q" customClass="CreateDroppViewController" customModule="Dropp" customModuleProvider="target" sceneMemberID="viewController">
+                    <view key="view" contentMode="scaleToFill" id="z2O-lG-6aT">
+                        <rect key="frame" x="0.0" y="0.0" width="375" height="667"/>
+                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <subviews>
+                            <textView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" showsHorizontalScrollIndicator="NO" translatesAutoresizingMaskIntoConstraints="NO" id="l1O-ho-IOc">
+                                <rect key="frame" x="10" y="30" width="355" height="213.5"/>
+                                <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                                <fontDescription key="fontDescription" type="system" pointSize="17"/>
+                                <textInputTraits key="textInputTraits" autocapitalizationType="sentences"/>
+                            </textView>
+                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Say something" textAlignment="natural" lineBreakMode="tailTruncation" numberOfLines="0" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="U1g-8G-S0P">
+                                <rect key="frame" x="15" y="38" width="345" height="21"/>
+                                <fontDescription key="fontDescription" type="system" pointSize="17"/>
+                                <color key="textColor" white="0.33333333333333331" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                                <nil key="highlightedColor"/>
+                            </label>
+                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="bKF-1R-e8E">
+                                <rect key="frame" x="10" y="248.5" width="355" height="40"/>
+                                <color key="backgroundColor" red="0.91661626100000004" green="0.3107863367" blue="0.38301837439999997" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                                <constraints>
+                                    <constraint firstAttribute="height" constant="40" id="6IU-M0-AZM"/>
+                                </constraints>
+                                <fontDescription key="fontDescription" type="system" weight="semibold" pointSize="17"/>
+                                <state key="normal" title="Add a photo">
+                                    <color key="titleColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                                </state>
+                                <connections>
+                                    <action selector="didTapAddPhotoButton:" destination="bdf-84-O9q" eventType="touchUpInside" id="l96-83-WFX"/>
+                                </connections>
+                            </button>
+                            <imageView userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" translatesAutoresizingMaskIntoConstraints="NO" id="7BQ-2k-eZd">
+                                <rect key="frame" x="10" y="298.5" width="355" height="358.5"/>
+                                <gestureRecognizers/>
+                            </imageView>
+                            <view hidden="YES" alpha="0.59999999999999998" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="9Cm-4q-C2u">
+                                <rect key="frame" x="-50" y="20" width="475" height="697"/>
+                                <color key="backgroundColor" white="0.33333333333333331" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                            </view>
+                            <imageView hidden="YES" userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" translatesAutoresizingMaskIntoConstraints="NO" id="BI7-ar-4un" userLabel="Activity Indicator View" customClass="GIFImageView" customModule="Gifu">
+                                <rect key="frame" x="149.5" y="281" width="75" height="75"/>
+                                <constraints>
+                                    <constraint firstAttribute="width" secondItem="BI7-ar-4un" secondAttribute="height" multiplier="1:1" id="1Dp-HA-f9R"/>
+                                    <constraint firstAttribute="width" constant="75" id="bE4-Kx-SZ7"/>
+                                </constraints>
+                            </imageView>
+                        </subviews>
+                        <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                        <constraints>
+                            <constraint firstItem="BI7-ar-4un" firstAttribute="centerX" secondItem="9Cm-4q-C2u" secondAttribute="centerX" id="21v-dN-6jg"/>
+                            <constraint firstItem="9Cm-4q-C2u" firstAttribute="trailing" secondItem="00D-OA-gmU" secondAttribute="trailing" constant="50" id="2x3-1V-1CP"/>
+                            <constraint firstItem="7BQ-2k-eZd" firstAttribute="leading" secondItem="00D-OA-gmU" secondAttribute="leading" constant="10" id="BDs-8q-HD2"/>
+                            <constraint firstItem="00D-OA-gmU" firstAttribute="trailing" secondItem="l1O-ho-IOc" secondAttribute="trailing" constant="10" id="I2E-oC-FlV"/>
+                            <constraint firstItem="00D-OA-gmU" firstAttribute="trailing" secondItem="7BQ-2k-eZd" secondAttribute="trailing" constant="10" id="L7o-JI-rHg"/>
+                            <constraint firstItem="00D-OA-gmU" firstAttribute="bottom" secondItem="7BQ-2k-eZd" secondAttribute="bottom" constant="10" id="OCY-qj-KP8"/>
+                            <constraint firstItem="l1O-ho-IOc" firstAttribute="leading" secondItem="00D-OA-gmU" secondAttribute="leading" constant="10" id="XVI-RP-SlL"/>
+                            <constraint firstItem="bKF-1R-e8E" firstAttribute="trailing" secondItem="00D-OA-gmU" secondAttribute="trailing" constant="-10" id="ZSX-9B-do5"/>
+                            <constraint firstItem="7BQ-2k-eZd" firstAttribute="top" secondItem="bKF-1R-e8E" secondAttribute="bottom" constant="10" id="aqW-EF-buP"/>
+                            <constraint firstItem="9Cm-4q-C2u" firstAttribute="bottom" secondItem="00D-OA-gmU" secondAttribute="bottom" constant="50" id="cuv-Fk-Z9f"/>
+                            <constraint firstItem="U1g-8G-S0P" firstAttribute="leading" secondItem="l1O-ho-IOc" secondAttribute="leading" constant="5" id="gZA-8q-ynf"/>
+                            <constraint firstItem="00D-OA-gmU" firstAttribute="centerY" secondItem="l1O-ho-IOc" secondAttribute="bottom" constant="100" id="ghX-dK-M56"/>
+                            <constraint firstItem="bKF-1R-e8E" firstAttribute="top" secondItem="l1O-ho-IOc" secondAttribute="bottom" constant="5" id="lct-32-6zj"/>
+                            <constraint firstItem="9Cm-4q-C2u" firstAttribute="top" secondItem="00D-OA-gmU" secondAttribute="top" id="mH0-wj-vip"/>
+                            <constraint firstItem="l1O-ho-IOc" firstAttribute="top" secondItem="00D-OA-gmU" secondAttribute="top" constant="10" id="pqa-2w-MtV"/>
+                            <constraint firstItem="bKF-1R-e8E" firstAttribute="leading" secondItem="00D-OA-gmU" secondAttribute="leading" constant="10" id="rOy-V9-oNj"/>
+                            <constraint firstItem="BI7-ar-4un" firstAttribute="centerY" secondItem="9Cm-4q-C2u" secondAttribute="centerY" constant="-50" id="tXg-dY-0Ht"/>
+                            <constraint firstItem="U1g-8G-S0P" firstAttribute="trailing" secondItem="l1O-ho-IOc" secondAttribute="trailing" constant="-5" id="tjY-gV-mdi"/>
+                            <constraint firstItem="9Cm-4q-C2u" firstAttribute="leading" secondItem="00D-OA-gmU" secondAttribute="leading" constant="-50" id="uhz-Ff-zUA"/>
+                            <constraint firstItem="U1g-8G-S0P" firstAttribute="top" secondItem="l1O-ho-IOc" secondAttribute="top" constant="8" id="wcJ-eI-d02"/>
+                        </constraints>
+                        <viewLayoutGuide key="safeArea" id="00D-OA-gmU"/>
+                    </view>
+                    <navigationItem key="navigationItem" title="Create Dropp" id="Py8-50-KwO"/>
+                    <connections>
+                        <outlet property="activityIndicatorView" destination="BI7-ar-4un" id="tsq-GD-M14"/>
+                        <outlet property="addPhotoButton" destination="bKF-1R-e8E" id="aJD-NK-dmf"/>
+                        <outlet property="imageView" destination="7BQ-2k-eZd" id="dYY-hB-ecg"/>
+                        <outlet property="loadingView" destination="9Cm-4q-C2u" id="SCY-To-byw"/>
+                        <outlet property="placeholderLabel" destination="U1g-8G-S0P" id="OVj-Te-rCJ"/>
+                        <outlet property="textView" destination="l1O-ho-IOc" id="Z5a-qG-Sa0"/>
+                    </connections>
+                </viewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="1XX-iD-brR" userLabel="First Responder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="328.80000000000001" y="24.7376311844078"/>
+        </scene>
+    </scenes>
+</document>

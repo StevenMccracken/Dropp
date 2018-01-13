@@ -12,7 +12,7 @@ extension NSMutableData {
   
   func appendString(_ string: String) throws {
     guard let data = string.data(using: String.Encoding.utf8, allowLossyConversion: false) else {
-      throw NSError.init(domain: "", code: 0, userInfo: ["reason": "Unable to create data from string", "details": string])
+      throw NSError(reason: "Unable to create data from string", details: string)
     }
     
     append(data)

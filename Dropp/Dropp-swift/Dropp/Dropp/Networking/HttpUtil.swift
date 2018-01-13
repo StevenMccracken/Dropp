@@ -24,12 +24,48 @@ class HttpUtil {
     return request
   }
   
-  class func postRequest(_ path: String, parameters: [String: Any]) -> URLRequest? {
+  class func postRequest(_ path: String, parameters: [String: Any] = [:]) -> URLRequest? {
     guard var request = jsonRequest(toUrl: path) else {
       return nil
     }
     
     request.httpMethod = "POST"
+    do {
+      request.httpBody = try data(from: parameters)
+    } catch {
+      debugPrint("Unable to add data from parameters to request body", error)
+      return nil
+    }
+    
+    return request
+  }
+  
+  class func putRequest(_ path: String, parameters: [String: Any] = [:]) -> URLRequest? {
+    guard var request = jsonRequest(toUrl: path) else {
+      return nil
+    }
+    
+    request.httpMethod = "PUT"
+    do {
+      request.httpBody = try data(from: parameters)
+    } catch {
+      debugPrint("Unable to add data from parameters to request body", error)
+      return nil
+    }
+    
+    return request
+  }
+  
+  class func deleteRequest(_ path: String, parameters: [String: Any]? = nil) -> URLRequest? {
+    guard var request = jsonRequest(toUrl: path) else {
+      return nil
+    }
+    
+    request.httpMethod = "DELETE"
+    guard let parameters = parameters else {
+      return request
+    }
+    
     do {
       request.httpBody = try data(from: parameters)
     } catch {
@@ -129,17 +165,18 @@ class HttpUtil {
       }
       
       guard let response = response as? HTTPURLResponse else {
-        failure?(NSError(domain: "", code: 0, userInfo: ["reason": "Response was nil"]))
-        return
-      }
-      
-      guard case 200...299 = response.statusCode else {
-        failure?(NSError(domain: "", code: response.statusCode, userInfo: ["reason": "Status code was not success", "details": response]))
+        failure?(NSError(reason: "Response was nil"))
         return
       }
       
       guard let data = data else {
-        failure?(NSError(domain: "", code: 0, userInfo: ["reason": "Data was nil", "details": response]))
+        failure?(NSError(reason: "Data was nil", details: response))
+        return
+      }
+      
+      guard case 200...299 = response.statusCode else {
+        let details: [String: Any] = ["reason": "Status code was invalid", "details": response, "data": data]
+        failure?(NSError(domain: "", code: response.statusCode, userInfo: details))
         return
       }
       
@@ -158,11 +195,21 @@ class HttpUtil {
       }
       
       guard let successJson = json["success"].dictionary else {
-        failure?(NSError(domain: "", code: 0, userInfo: ["reason": "Success field was invalid", "details": response]))
+        failure?(NSError(reason: "'success' field was invalid", details: response))
         return
       }
       
       success?(JSON(successJson))
-    }, failure: failure)
+    }, failure: { (error: NSError) in
+      var details = error.userInfo
+      guard let data = details["data"] as? Data else {
+        failure?(error)
+        return
+      }
+      
+      let json = JSON(data: data)
+      details["responseBody"] = json
+      failure?(NSError(domain: error.domain, code: error.code, userInfo: details))
+    })
   }
 }

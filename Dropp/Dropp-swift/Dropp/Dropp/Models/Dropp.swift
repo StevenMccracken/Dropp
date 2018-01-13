@@ -11,8 +11,13 @@ import CoreLocation
 import SwiftyJSON
 
 class Dropp: NSObject, Comparable {
+  
   var id: String!
-  var user: String!
+  var user: User
+  var username: String! {
+    return user.username
+  }
+  
   var location: CLLocation!
   var timestamp: Int!
   var message: String!
@@ -21,38 +26,42 @@ class Dropp: NSObject, Comparable {
     return Date(timeIntervalSince1970: Double(timestamp))
   }
   
+  var postedByCurrentUser: Bool {
+    return username == UserDefaults.standard.object(forKey: "username") as? String
+  }
+  
   init(id: String, json: JSON) throws {
     guard let username = json["username"].string else {
-      throw NSError(domain: "", code: 0, userInfo: ["reason": "'username' field is invalid", "details": json])
+      throw NSError(reason: "'username' field is invalid", details: json)
     }
     
     guard let locationString = json["location"].string else {
-      throw NSError(domain: "", code: 0, userInfo: ["reason": "'location' field is invalid", "details": json])
+      throw NSError(reason: "'location' field is invalid", details: json)
     }
     
     guard let timestamp = json["timestamp"].int else {
-      throw NSError(domain: "", code: 0, userInfo: ["reason": "'timestamp' field is invalid", "details": json])
+      throw NSError(reason: "'timestamp' field is invalid", details: json)
     }
     
     guard let message = json["text"].string else {
-      throw NSError(domain: "", code: 0, userInfo: ["reason": "'text' field is invalid", "details": json])
+      throw NSError(reason: "'text' field is invalid", details: json)
     }
     
     guard let hasMedia = json["media"].string else {
-      throw NSError(domain: "", code: 0, userInfo: ["reason": "'media' field is invalid", "details": json])
+      throw NSError(reason: "'media' field is invalid", details: json)
     }
     
     self.id = id
-    self.user = username
+    self.user = User(username)
     self.location = try locationString.toLocation()
     self.timestamp = timestamp
     self.message = message
     self.hasMedia = hasMedia == "true"
   }
   
-  init(id: String, user: String, location: String, timestamp: Int, message: String, hasMedia: Bool) throws {
+  init(id: String, username: String, location: String, timestamp: Int, message: String, hasMedia: Bool) throws {
     self.id = id
-    self.user = user
+    self.user = User(username)
     self.location = try location.toLocation()
     self.timestamp = timestamp
     self.message = message
@@ -60,7 +69,7 @@ class Dropp: NSObject, Comparable {
   }
   
   override var description: String {
-    let string = "<'\(self.id!)' posted by '\(self.user!)' at \(self.location.coordinate) on \(self.timestamp!) with message '\(self.message!)'. Does\(self.hasMedia ? "" : " not") have media>"
+    let string = "<'\(self.id!)' posted by '\(self.username!)' at \(self.location.coordinate) on \(self.timestamp!) with message '\(self.message!)'. Does\(self.hasMedia ? "" : " not") have media>"
     return string
   }
   
@@ -116,6 +125,25 @@ class Dropp: NSObject, Comparable {
     }
     
     return message
+  }
+  
+  class func sort(_ dropps: [Dropp], by sortType: DroppFeedSortingType, currentLocation: CLLocation? = nil) -> [Dropp] {
+    var sortedDropps: [Dropp]
+    if sortType == .distance, let location = currentLocation {
+      sortedDropps = dropps.sorted(by: { (a: Dropp, b: Dropp) in
+        return a.distance(from: location) < b.distance(from: location)
+      })
+    } else if sortType == .reverseChronological {
+      sortedDropps = dropps.sorted() { (a: Dropp, b: Dropp) in
+        return a < b
+      }
+    } else {
+      sortedDropps = dropps.sorted() { (a: Dropp, b: Dropp) in
+        return a > b
+      }
+    }
+    
+    return sortedDropps
   }
 }
 

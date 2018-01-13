@@ -20,7 +20,7 @@ extension String {
   func toLocation() throws -> CLLocation {
     let coordinates = self.components(separatedBy: ",").doubleArray
     guard coordinates.count >= 2 else {
-      throw NSError.init(domain: "", code: 0, userInfo: ["reason": "Not enough coordinates in the string", "details": coordinates])
+      throw NSError(reason: "Not enough coordinates in the string", details: coordinates)
     }
     
     return CLLocation(latitude: coordinates[0], longitude: coordinates[1])
@@ -32,6 +32,10 @@ extension String {
   
   func index(from: Int) -> Index {
     return self.index(startIndex, offsetBy: from)
+  }
+  
+  func contains(_ string: String, options: String.CompareOptions) -> Bool {
+    return range(of: string, options: options) != nil
   }
   
   func substring(with r: Range<Int>) -> String {
