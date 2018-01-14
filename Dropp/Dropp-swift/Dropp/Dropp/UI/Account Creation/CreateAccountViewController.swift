@@ -13,6 +13,7 @@ protocol CreateAccountViewDelegate: class {
   func didCreateAccount(username: String, password: String, token: String)
 }
 
+// TODO: Add scroll view
 class CreateAccountViewController: UIViewController {
   
   weak var delegate: CreateAccountViewDelegate?
