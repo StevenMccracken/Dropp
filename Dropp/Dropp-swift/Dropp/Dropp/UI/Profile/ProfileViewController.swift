@@ -48,7 +48,7 @@ class ProfileViewController: UITableViewController {
     label.textColor = .salmon
     label.textAlignment = .center
     label.lineBreakMode = .byWordWrapping
-    label.text = "Follow this user to see their dropps🔑"
+    label.text = "Follow this user to see all of their dropps🔑"
     label.font = UIFont(name: label.font.fontName, size: 20.0)
     label.sizeToFit()
     
@@ -102,7 +102,6 @@ class ProfileViewController: UITableViewController {
   
   @objc
   func didTapInfoButton() {
-    return // TODO: Remove this early return statement once ProfileDetailsViewController is fully implemented
     guard user == LoginManager.shared.currentUser else {
       return
     }

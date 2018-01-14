@@ -22,23 +22,44 @@ class ProfileDetailsViewController: UITableViewController {
   // MARK: - Table view data source
   
   override func numberOfSections(in tableView: UITableView) -> Int {
-    return 1
+    return 2
   }
   
   override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
     return 1
   }
   
+  override func tableView(_ tableView: UITableView, heightForHeaderInSection section: Int) -> CGFloat {
+    return section == 0 ? 10 : 15
+  }
+  
   override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-    let cell = tableView.dequeueReusableCell(withIdentifier: "profileDetailsTableViewCell", for: indexPath)
-//    let label = cell.contentView.value(forKey: "label") as? UILabel
-//    label?.text = user.username
+    var cell: UITableViewCell
+    // Check if cell is not the last section
+    if indexPath.section < tableView.numberOfSections - 1 {
+      // TODO: Add user's username to the content of this cell
+      cell = tableView.dequeueReusableCell(withIdentifier: "profileDetailsTableViewCell", for: indexPath)
+    } else {
+      cell = tableView.dequeueReusableCell(withIdentifier: "logoutTableViewCell", for: indexPath)
+    }
+    
     return cell
   }
   
   // Override to support conditional editing of the table view.
   override func tableView(_ tableView: UITableView, canEditRowAt indexPath: IndexPath) -> Bool {
     return true
+  }
+  
+  override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+    if indexPath.section == tableView.numberOfSections - 1 {
+      LoginManager.shared.logout()
+      navigationController?.dismiss(animated: true) {
+        LoginManager.shared.ensureLogin()
+      }
+    } else {
+      tableView.deselectRow(at: indexPath, animated: true)
+    }
   }
   
   /*

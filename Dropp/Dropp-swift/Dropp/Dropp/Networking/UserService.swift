@@ -11,6 +11,33 @@ import SwiftyJSON
 
 class UserService {
   
+  class func createAccount(email: String, username: String, password: String, success: ((String) -> Void)? = nil, failure: ((NSError) -> Void)? = nil) {
+    let credentials = ["email": email, "username": username, "password": password]
+    guard let request = HttpUtil.postRequest("\(Constants.apiUrl)/users", parameters: credentials) else {
+      failure?(NSError(reason: "Request to create account was not created"))
+      return
+    }
+    
+    HttpUtil.send(request: request, success: { (json: JSON) in
+      guard let jwt = json["token"].string else {
+        failure?(NSError(reason: "'token' field was nil"))
+        return
+      }
+      
+      guard !jwt.isEmpty else {
+        debugPrint("Creating account succeeded but JWT was empty")
+        return
+      }
+      
+      guard jwt.substring(with: 0..<3) == "JWT" else {
+        debugPrint("Creating account succeeded but JWT is invalid")
+        return
+      }
+      
+      success?(jwt)
+    }, failure: failure)
+  }
+  
   class func getNewJwt(success: ((String) -> Void)? = nil, failure: ((NSError) -> Void)? = nil) {
     guard let username = UserDefaults.standard.value(forKey: "username") as? String else {
       failure?(NSError(reason: "Username does not exist in user defaults"))

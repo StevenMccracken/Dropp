@@ -162,7 +162,17 @@ class DroppDetailViewController: UIViewController {
     }
     
     let alert = UIAlertController(title: nil, message: nil, preferredStyle: .actionSheet, color: .salmon)
-    alert.addAction(UIAlertAction(title: "Edit", style: .default, handler: { _ in
+    if let image = imageView.image {
+      alert.addAction(UIAlertAction(title: "Save photo", style: .default, handler: { _ in
+        Utils.save(image: image, withTimestamp: self.dropp.date, andLocation: self.dropp.location, success: nil, failure: { (savePhotoError: Error?) in
+          debugPrint("Failed to save photo to user's photos", savePhotoError)
+          let errorAlert = UIAlertController(title: "Error", message: "Unable to save photo", preferredStyle: .alert, color: .salmon, addDefaultAction: true)
+          Utils.present(viewController: errorAlert, animated: true, completion: nil)
+        })
+      }))
+    }
+    
+    alert.addAction(UIAlertAction(title: "Edit dropp", style: .default, handler: { _ in
       guard !self.deletingDropp else {
         return
       }
@@ -170,7 +180,7 @@ class DroppDetailViewController: UIViewController {
       self.enterEditingState()
     }))
     
-    alert.addAction(UIAlertAction(title: "Delete", style: .destructive, handler: { _ in
+    alert.addAction(UIAlertAction(title: "Delete dropp", style: .destructive, handler: { _ in
       guard !self.deletingDropp else {
         return
       }

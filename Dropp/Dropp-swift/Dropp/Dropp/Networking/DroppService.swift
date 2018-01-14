@@ -131,12 +131,11 @@ class DroppService {
         return
       }
       
-      failure?(NSError(reason: "Bitch", details: ["response": response, "data": data]))
-//      success?(image)
+      success?(image)
     }, failure: failure)
   }
   
-  class func createDropp(at location: CLLocationCoordinate2D?, on date: Date, withMessage message: String?, hasMedia: Bool, success: ((String) -> Void)? = nil, failure: ((NSError) -> Void)? = nil) {
+  class func createDropp(at location: CLLocation?, on date: Date, withMessage message: String?, hasMedia: Bool, success: ((String) -> Void)? = nil, failure: ((NSError) -> Void)? = nil) {
     guard let location = location else {
       failure?(NSError(domain: "", code: Constants.locationNotEnabled, userInfo: ["reason": "Location was nil"]))
       return
@@ -149,7 +148,7 @@ class DroppService {
     
     
     let parameters = [
-      "location": location.toString,
+      "location": location.coordinate.toString,
       "timestamp": Int(date.timeIntervalSince1970.rounded()) - 15,
       "text": message ?? "",
       "media": "\(hasMedia)",

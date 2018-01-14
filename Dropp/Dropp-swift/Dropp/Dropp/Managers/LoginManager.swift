@@ -22,6 +22,7 @@ class LoginManager {
     loginEvent = Event<Bool>()
     logoutEvent = Event<Void>()
     
+    isLoggedIn = false
     let jwt = UserDefaults.standard.object(forKey: "jwt") as? String ?? ""
     let username = UserDefaults.standard.object(forKey: "username") as? String ?? ""
     let password = UserDefaults.standard.object(forKey: "password") as? String ?? ""
@@ -67,6 +68,7 @@ class LoginManager {
     logoutEvent.raise(data: ())
   }
   
+  @discardableResult
   func ensureLogin(failure: ((NSError) -> Void)? = nil) -> Bool {
     guard !isLoggedIn else {
       return false
@@ -87,11 +89,51 @@ class LoginManager {
     Utils.present(viewController: loginNavigationController)
     return true
   }
+  
+  @discardableResult
+  func presentAccountCreation(failure: ((NSError) -> Void)? = nil) -> Bool {
+    let createAccountStoryboard = UIStoryboard(name: "CreateAccount", bundle: nil)
+    guard let createAccountNavigationController = createAccountStoryboard.instantiateInitialViewController() else {
+      failure?(NSError(reason: "Initial view controller for CreateAccount storyboard was nil"))
+      return false
+    }
+    
+    guard let createAccountViewController = createAccountNavigationController.childViewControllers.first as? CreateAccountViewController else {
+      failure?(NSError(reason: "Initial view controller for navigation controller was NOT CreateAccountViewController"))
+      return false
+    }
+    
+    createAccountViewController.delegate = self
+    Utils.present(viewController: createAccountNavigationController)
+    return true
+  }
 }
 
 extension LoginManager: LogInViewDelegate {
   
   func didLogIn() {
+    let mainStoryboard = UIStoryboard(name: "Main", bundle: nil)
+    guard let mainViewController = mainStoryboard.instantiateInitialViewController() else {
+      debugPrint("Initial view controller for Main storyboard was nil")
+      return
+    }
+    
+    Utils.present(viewController: mainViewController)
+  }
+}
+
+extension LoginManager: CreateAccountViewDelegate {
+  
+  func didCreateAccount(username: String, password: String, token: String) {
+    UserDefaults.standard.set(token, forKey: "jwt")
+    UserDefaults.standard.setValue(username, forKey: "username")
+    UserDefaults.standard.setValue(password, forKey: "password")
+    UserDefaults.standard.synchronize()
+    
+    isLoggedIn = true
+    currentUser = User(username)
+    loginEvent.raise(data: true)
+    
     let mainStoryboard = UIStoryboard(name: "Main", bundle: nil)
     guard let mainViewController = mainStoryboard.instantiateInitialViewController() else {
       debugPrint("Initial view controller for Main storyboard was nil")

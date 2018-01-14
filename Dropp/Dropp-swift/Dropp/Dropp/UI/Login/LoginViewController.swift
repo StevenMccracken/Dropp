@@ -19,8 +19,13 @@ class LoginViewController: UIViewController {
   @IBOutlet weak var usernameTextField: UITextField!
   @IBOutlet weak var passwordTextField: UITextField!
   @IBOutlet weak var loginButton: UIButton!
+  @IBOutlet weak var goToCreateAccountButton: UIButton!
   @IBOutlet weak var loadingView: UIView!
   @IBOutlet weak var activityIndicatorView: GIFImageView!
+  
+  private var textFieldsAreValid: Bool {
+    return !(usernameTextField.text ?? "").isEmpty && !(passwordTextField.text ?? "").isEmpty
+  }
   
   override func viewDidLoad() {
     super.viewDidLoad()
@@ -84,10 +89,17 @@ class LoginViewController: UIViewController {
     })
   }
   
+  @IBAction func goToCreateAccountButtonTapped(_ sender: Any) {
+    dismiss(animated: true) {
+      LoginManager.shared.presentAccountCreation()
+    }
+  }
+  
   @objc
   private func textFieldDidChange(_ notification: NSNotification) {
-    toggleLoginButton(enabled: areTextFieldsValid())
+    toggleLoginButton(enabled: textFieldsAreValid)
   }
+  
   
   private func toggleLoginButton(enabled: Bool) {
     DispatchQueue.main.async {
@@ -116,10 +128,6 @@ class LoginViewController: UIViewController {
       }
     }
   }
-  
-  private func areTextFieldsValid() -> Bool {
-    return !(usernameTextField.text ?? "").isEmpty && !(passwordTextField.text ?? "").isEmpty
-  }
 }
 
 extension LoginViewController: UITextFieldDelegate {
@@ -134,7 +142,7 @@ extension LoginViewController: UITextFieldDelegate {
         passwordTextField.resignFirstResponder()
       }
       
-      if areTextFieldsValid() {
+      if textFieldsAreValid {
         loginButtonTapped(self)
       }
     }

@@ -10,7 +10,7 @@
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
     <scenes>
-        <!--Log In-->
+        <!--Login-->
         <scene sceneID="nk2-cg-goX">
             <objects>
                 <viewController id="ji6-L4-8Qs" customClass="LoginViewController" customModule="Dropp" customModuleProvider="target" sceneMemberID="viewController">
@@ -19,7 +19,7 @@
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
                             <stackView opaque="NO" contentMode="scaleToFill" axis="vertical" spacing="5" translatesAutoresizingMaskIntoConstraints="NO" id="dLa-ir-dUh">
-                                <rect key="frame" x="10" y="126" width="355" height="130"/>
+                                <rect key="frame" x="10" y="126" width="355" height="175"/>
                                 <subviews>
                                     <textField opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" borderStyle="roundedRect" placeholder="Username" minimumFontSize="17" clearButtonMode="whileEditing" translatesAutoresizingMaskIntoConstraints="NO" id="N0H-tT-NF0">
                                         <rect key="frame" x="0.0" y="0.0" width="355" height="40"/>
@@ -37,17 +37,28 @@
                                             <constraint firstAttribute="height" constant="40" id="hdi-pf-tIp"/>
                                         </constraints>
                                         <fontDescription key="fontDescription" type="boldSystem" pointSize="17"/>
-                                        <state key="normal" title="Log In">
+                                        <state key="normal" title="Log in">
                                             <color key="titleColor" white="0.66666666666666663" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                         </state>
-                                        <state key="disabled" title="Log In"/>
+                                        <state key="disabled" title="Log in"/>
                                         <connections>
                                             <action selector="loginButtonTapped:" destination="ji6-L4-8Qs" eventType="touchUpInside" id="UdR-WT-V46"/>
+                                        </connections>
+                                    </button>
+                                    <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="Pkp-Om-Svz" userLabel="Go to account creation button">
+                                        <rect key="frame" x="0.0" y="135" width="355" height="40"/>
+                                        <fontDescription key="fontDescription" type="system" pointSize="14"/>
+                                        <state key="normal" title="New here? Sign up now🎉">
+                                            <color key="titleColor" red="0.91661626100000004" green="0.3107863367" blue="0.38301837439999997" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                                        </state>
+                                        <connections>
+                                            <action selector="goToCreateAccountButtonTapped:" destination="ji6-L4-8Qs" eventType="touchUpInside" id="GfY-u2-G8V"/>
                                         </connections>
                                     </button>
                                 </subviews>
                                 <constraints>
                                     <constraint firstItem="wbn-UJ-Pce" firstAttribute="height" secondItem="k15-8T-enr" secondAttribute="height" id="OQ7-RI-fk2"/>
+                                    <constraint firstItem="Pkp-Om-Svz" firstAttribute="height" secondItem="wbn-UJ-Pce" secondAttribute="height" id="eDf-2f-mMq"/>
                                     <constraint firstItem="wbn-UJ-Pce" firstAttribute="height" secondItem="N0H-tT-NF0" secondAttribute="height" id="wLg-Ww-T9S"/>
                                 </constraints>
                             </stackView>
@@ -78,9 +89,10 @@
                         </constraints>
                         <viewLayoutGuide key="safeArea" id="088-LV-BFz"/>
                     </view>
-                    <navigationItem key="navigationItem" title="Log In" id="ZS6-nN-pIt"/>
+                    <navigationItem key="navigationItem" title="Login" id="ZS6-nN-pIt"/>
                     <connections>
                         <outlet property="activityIndicatorView" destination="tnz-xq-lMr" id="f85-cJ-2Rv"/>
+                        <outlet property="goToCreateAccountButton" destination="Pkp-Om-Svz" id="pCw-TM-cKf"/>
                         <outlet property="loadingView" destination="Wea-l8-GzK" id="Of5-jg-TAR"/>
                         <outlet property="loginButton" destination="wbn-UJ-Pce" id="twZ-G6-uS8"/>
                         <outlet property="passwordTextField" destination="k15-8T-enr" id="4mZ-q6-ZAC"/>

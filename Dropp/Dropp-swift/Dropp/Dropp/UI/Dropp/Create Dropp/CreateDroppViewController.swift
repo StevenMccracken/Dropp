@@ -164,7 +164,7 @@ class CreateDroppViewController: UIViewController {
     let now = Date()
     let image = imageView.image
     let message = textView.text.trim()
-    let location = LocationManager.shared.currentCoordinates
+    let location = LocationManager.shared.currentLocation
     postingDropp = true
     DroppService.createDropp(at: location, on: now, withMessage: message, hasMedia: image != nil, success: { [weak self] (droppId: String) in
       guard let strongSelf = self else {
@@ -182,7 +182,9 @@ class CreateDroppViewController: UIViewController {
         }
         
         strongSelf.displayAddDroppSuccess()
-//        UIImageWriteToSavedPhotosAlbum(image, nil, nil, nil) // TODO: Ask for permission
+        Utils.save(image: image, withTimestamp: now, andLocation: location, success: nil, failure: { (error: Error?) in
+          debugPrint("Failed to save posted image to user's photos", error)
+        })
       }, failure: { [weak self] (addImageError: NSError) in
         guard let strongSelf = self else {
           return
