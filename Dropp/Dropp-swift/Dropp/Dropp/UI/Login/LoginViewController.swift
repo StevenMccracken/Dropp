@@ -13,7 +13,6 @@ protocol LogInViewDelegate: class {
   func didLogIn()
 }
 
-// TODO: Add scroll view
 class LoginViewController: UIViewController {
   
   weak var delegate: LogInViewDelegate?

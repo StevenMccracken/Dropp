@@ -37,18 +37,14 @@ class ProfileDetailsViewController: UITableViewController {
     var cell: UITableViewCell
     // Check if cell is not the last section
     if indexPath.section < tableView.numberOfSections - 1 {
-      // TODO: Add user's username to the content of this cell
-      cell = tableView.dequeueReusableCell(withIdentifier: "profileDetailsTableViewCell", for: indexPath)
+      let usernameCell = tableView.dequeueReusableCell(withIdentifier: "profileDetailsTableViewCell", for: indexPath) as! ProfileDetailsUsernameTableViewCell
+      usernameCell.addContent(user.username)
+      cell = usernameCell
     } else {
       cell = tableView.dequeueReusableCell(withIdentifier: "logoutTableViewCell", for: indexPath)
     }
     
     return cell
-  }
-  
-  // Override to support conditional editing of the table view.
-  override func tableView(_ tableView: UITableView, canEditRowAt indexPath: IndexPath) -> Bool {
-    return true
   }
   
   override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {

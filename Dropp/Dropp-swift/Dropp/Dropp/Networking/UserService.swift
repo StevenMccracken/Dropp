@@ -80,6 +80,33 @@ class UserService {
     }, failure: failure)
   }
   
+  class func getUser(username: String, success: ((User) -> Void)? = nil, failure: ((NSError) -> Void)? = nil) {
+    guard let request = HttpUtil.getRequest("\(Constants.apiUrl)/users/\(username)") else {
+      failure?(NSError(reason: "Request to get user was not created"))
+      return
+    }
+    
+    HttpUtil.send(request: request, checkSuccessField: false, success: { (json: JSON) in
+      let user = User(username)
+      user.followers = []
+      user.following = []
+      
+      if let followers = json["followers"].dictionary {
+        for (followerUsername, _) in followers {
+          user.followers?.append(User(followerUsername))
+        }
+      }
+      
+      if let following = json["follows"].dictionary {
+        for (followUsername, _) in following {
+          user.following?.append(User(followUsername))
+        }
+      }
+      
+      success?(user)
+    }, failure: failure)
+  }
+  
   class func getConnections(ofType connectionType: String, forUser user: User, success: (([User]) -> Void)? = nil, failure: ((NSError) -> Void)? = nil) {
     guard let request = HttpUtil.getRequest("\(Constants.apiUrl)/users/\(user.username)/\(connectionType)") else {
       failure?(NSError(reason: "Request to get user's connections was not created"))

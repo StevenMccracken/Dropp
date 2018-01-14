@@ -10,6 +10,7 @@ import UIKit
 
 class ProfileViewController: UITableViewController {
   
+  var currentUserUpdatedEventHandler: Disposable?
   var user: User!
   var dropps: [Dropp] = []
   var filteredDropps: [Dropp] = []
@@ -90,14 +91,27 @@ class ProfileViewController: UITableViewController {
     self.refreshControl = refreshControl
     
     getDropps()
-    getFollowers()
-    getFollowing()
+    getUserInfo()
+  }
+  
+  override func viewDidAppear(_ animated: Bool) {
+    super.viewDidAppear(animated)
+    if user.isCurrentUser {
+      currentUserUpdatedEventHandler = LoginManager.shared.currentUserUpdatedEvent.addHandler(target: self, handler: ProfileViewController.updateUserProfile)
+    }
   }
   
   override func viewWillDisappear(_ animated: Bool) {
     super.viewWillDisappear(animated)
     refreshing = false
     self.refreshControl?.endRefreshing()
+    currentUserUpdatedEventHandler?.dispose()
+  }
+  
+  private func updateUserProfile(newUser: User) {
+    user = newUser
+    updateFollowersCount()
+    updateFollowingCount()
   }
   
   @objc
@@ -219,6 +233,29 @@ class ProfileViewController: UITableViewController {
     present(alert, animated: true, completion: nil)
   }
   
+  func getUserInfo(_ done: (() -> Void)? = nil) {
+    UserService.getUser(username: user.username, success: { [weak self] (updatedUser: User) in
+      guard let strongSelf = self else {
+        return
+      }
+      
+      if strongSelf.user.isCurrentUser {
+        LoginManager.shared.updateCurrentUser(with: updatedUser)
+      } else {
+        strongSelf.updateUserProfile(newUser: updatedUser)
+      }
+      
+      done?()
+    }, failure: { [weak self] (getUserError: NSError) in
+      guard let _ = self else {
+        return
+      }
+      
+      debugPrint("Failed to get updated user profile", getUserError)
+      done?()
+    })
+  }
+  
   func getFollowers(_ done: (() -> Void)? = nil) {
     UserService.getFollowers(forUser: user, success: { [weak self] (followers: [User]) in
       guard let strongSelf = self else {
@@ -283,7 +320,7 @@ class ProfileViewController: UITableViewController {
       }
     })
     
-    getFollowing({ [weak self] () in
+    getUserInfo({ [weak self] () in
       guard let strongSelf = self else {
         return
       }
@@ -293,15 +330,25 @@ class ProfileViewController: UITableViewController {
       }
     })
     
-    getFollowers({ [weak self] () in
-      guard let strongSelf = self else {
-        return
-      }
-      
-      DispatchQueue.main.async {
-        strongSelf.refreshControl?.endRefreshing()
-      }
-    })
+//    getFollowing({ [weak self] () in
+//      guard let strongSelf = self else {
+//        return
+//      }
+//
+//      DispatchQueue.main.async {
+//        strongSelf.refreshControl?.endRefreshing()
+//      }
+//    })
+//
+//    getFollowers({ [weak self] () in
+//      guard let strongSelf = self else {
+//        return
+//      }
+//
+//      DispatchQueue.main.async {
+//        strongSelf.refreshControl?.endRefreshing()
+//      }
+//    })
   }
   
   func toggleFetchFailedLabel(visible: Bool) {

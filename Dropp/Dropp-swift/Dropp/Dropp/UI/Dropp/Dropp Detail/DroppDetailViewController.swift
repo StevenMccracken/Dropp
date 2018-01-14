@@ -239,8 +239,9 @@ class DroppDetailViewController: UIViewController {
     }
   }
   
-  func exitEditingState() {
+  func exitEditingState(_ done: (() -> Void)? = nil) {
     guard editingDropp else {
+      done?()
       return
     }
     
@@ -255,6 +256,7 @@ class DroppDetailViewController: UIViewController {
       self.textView.isHidden = true
       self.contentLabel.isHidden = false
       self.textView.resignFirstResponder()
+      done?()
     }
   }
   
@@ -298,9 +300,16 @@ class DroppDetailViewController: UIViewController {
         strongSelf.dropp.message = editedText
         DispatchQueue.main.async {
           strongSelf.contentLabel.text = editedText
+          if editedText.isOnlyEmoji {
+            strongSelf.contentLabel.font = UIFont(name: strongSelf.contentLabel.font.fontName, size: 40.0)
+          } else {
+            strongSelf.contentLabel.font = UIFont(name: strongSelf.contentLabel.font.fontName, size: 20.0)
+          }
         }
         
-        strongSelf.exitEditingState()
+        strongSelf.exitEditingState() {
+          strongSelf.updateHeightConstraint()
+        }
       }, failure: { [weak self] (updateDroppError: NSError) in
         guard let strongSelf = self else {
           return

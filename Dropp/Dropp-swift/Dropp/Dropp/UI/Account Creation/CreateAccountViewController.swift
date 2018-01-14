@@ -13,7 +13,6 @@ protocol CreateAccountViewDelegate: class {
   func didCreateAccount(username: String, password: String, token: String)
 }
 
-// TODO: Add scroll view
 class CreateAccountViewController: UIViewController {
   
   weak var delegate: CreateAccountViewDelegate?
@@ -199,6 +198,7 @@ class CreateAccountViewController: UIViewController {
 extension CreateAccountViewController: UITextFieldDelegate {
   
   func textFieldShouldReturn(_ textField: UITextField) -> Bool {
+    textField.text = textField.text?.trim()
     if textField == emailTextField {
       usernameTextField.becomeFirstResponder()
     } else if textField == usernameTextField {

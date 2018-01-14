@@ -17,6 +17,8 @@ class CreateDroppViewController: UIViewController {
   @IBOutlet weak var imageView: UIImageView!
   @IBOutlet weak var loadingView: UIView!
   @IBOutlet weak var activityIndicatorView: GIFImageView!
+  @IBOutlet weak var containerView: UIView!
+  @IBOutlet weak var containerViewHeightConstraint: NSLayoutConstraint!
   
   weak var droppFeedViewControllerDelegate: DroppFeedViewControllerDelegate?
   var postingDropp = false
@@ -58,6 +60,8 @@ class CreateDroppViewController: UIViewController {
     navigationItem.rightBarButtonItem = postButton
     
     addPhotoButton.layer.cornerRadius = 5
+    addPhotoButton.backgroundColor = .salmon
+    addPhotoButton.setTitleColor(.white, for: .normal)
     togglePostButton(enabled: false)
     
     // Customize the text view
@@ -71,6 +75,13 @@ class CreateDroppViewController: UIViewController {
     // Add photo alerts configuration
     configureCameraOptionsSheet(includeDeleteOption: false)
     activityIndicatorView.prepareForAnimation(withGIFNamed: Constants.activityIndicatorFileName)
+    
+    NotificationCenter.default.addObserver(self, selector: #selector(deviceDidRotate), name: NSNotification.Name.UIDeviceOrientationDidChange, object: nil)
+  }
+  
+  override func viewWillDisappear(_ animated: Bool) {
+    super.viewWillDisappear(animated)
+    NotificationCenter.default.removeObserver(self)
   }
   
   private func configureCameraOptionsSheet(includeDeleteOption: Bool) {
@@ -86,6 +97,7 @@ class CreateDroppViewController: UIViewController {
     if includeDeleteOption {
       let deleteOption = UIAlertAction(title: "Remove Photo", style: .destructive, handler: { _ in
         self.imageView.image = nil
+        self.updateHeightConstraint()
         self.addPhotoButton.setTitle("Add photo", for: .normal)
         self.configureCameraOptionsSheet(includeDeleteOption: false)
         
@@ -157,15 +169,16 @@ class CreateDroppViewController: UIViewController {
       return
     }
     
+    postingDropp = true
     dismissKeyboard()
     toggleLoadingView(visible: true)
     togglePostButton(enabled: false)
     toggleCancelButton(enabled: false)
+    
     let now = Date()
     let image = imageView.image
     let message = textView.text.trim()
     let location = LocationManager.shared.currentLocation
-    postingDropp = true
     DroppService.createDropp(at: location, on: now, withMessage: message, hasMedia: image != nil, success: { [weak self] (droppId: String) in
       guard let strongSelf = self else {
         return
@@ -259,6 +272,7 @@ class CreateDroppViewController: UIViewController {
     togglePostButton(enabled: false)
     DispatchQueue.main.async {
       self.imageView.image = nil
+      self.updateHeightConstraint()
       self.clearTextView()
       self.textView.resignFirstResponder()
       self.addPhotoButton.setTitle("Add photo", for: .normal)
@@ -288,6 +302,21 @@ class CreateDroppViewController: UIViewController {
     toolbar.items = [clearButton, spacing, doneButton]
     textView.inputAccessoryView = toolbar
   }
+  
+  @objc
+  func deviceDidRotate() {
+    updateHeightConstraint()
+  }
+  
+  func updateHeightConstraint() {
+    if let existingHeightConstraint = containerViewHeightConstraint {
+      self.view.removeConstraint(existingHeightConstraint)
+    }
+    
+    let height = textView.frame.height + addPhotoButton.frame.height + (imageView.image == nil ? 250 : imageView.frame.height) + 35
+    containerViewHeightConstraint = NSLayoutConstraint(item: containerView, attribute: .height, relatedBy: .equal, toItem: nil, attribute: .height, multiplier: 1.0, constant: height)
+    self.view.addConstraint(containerViewHeightConstraint!)
+  }
 }
 
 extension CreateDroppViewController: UITextViewDelegate {
@@ -312,6 +341,7 @@ extension CreateDroppViewController: UIImagePickerControllerDelegate, UINavigati
     }
     
     imageView.image = image
+    updateHeightConstraint()
     addPhotoButton.setTitle("Edit photo", for: .normal)
     configureCameraOptionsSheet(includeDeleteOption: true)
     picker.dismiss(animated: true, completion: nil)

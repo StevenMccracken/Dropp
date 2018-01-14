@@ -63,6 +63,7 @@
 		69C3BAFA1FE7CC6500537C99 /* Utils.swift in Sources */ = {isa = PBXBuildFile; fileRef = 69C3BAF91FE7CC6500537C99 /* Utils.swift */; };
 		69C3BAFC1FE7CF4600537C99 /* LoginManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 69C3BAFB1FE7CF4600537C99 /* LoginManager.swift */; };
 		69C3BAFE1FE7E0CF00537C99 /* Placeholder.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 69C3BAFD1FE7E0CF00537C99 /* Placeholder.storyboard */; };
+		69D8E2FD200B909900CCEC6C /* ProfileDetailsUsernameTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 69D8E2FC200B909900CCEC6C /* ProfileDetailsUsernameTableViewCell.swift */; };
 		69F14DA61FF22EAE00D784EC /* UnicodeScalar+Shortcuts.swift in Sources */ = {isa = PBXBuildFile; fileRef = 69F14DA51FF22EAE00D784EC /* UnicodeScalar+Shortcuts.swift */; };
 		69F14DA81FF2440700D784EC /* UIViewController+Shortcuts.swift in Sources */ = {isa = PBXBuildFile; fileRef = 69F14DA71FF2440700D784EC /* UIViewController+Shortcuts.swift */; };
 		69FB3ECF1FF9BF760008F355 /* DroppDetailViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 69FB3ECE1FF9BF760008F355 /* DroppDetailViewController.swift */; };
@@ -141,6 +142,7 @@
 		69C3BAF91FE7CC6500537C99 /* Utils.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Utils.swift; sourceTree = "<group>"; };
 		69C3BAFB1FE7CF4600537C99 /* LoginManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoginManager.swift; sourceTree = "<group>"; };
 		69C3BAFD1FE7E0CF00537C99 /* Placeholder.storyboard */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; path = Placeholder.storyboard; sourceTree = "<group>"; };
+		69D8E2FC200B909900CCEC6C /* ProfileDetailsUsernameTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProfileDetailsUsernameTableViewCell.swift; sourceTree = "<group>"; };
 		69F14DA51FF22EAE00D784EC /* UnicodeScalar+Shortcuts.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UnicodeScalar+Shortcuts.swift"; sourceTree = "<group>"; };
 		69F14DA71FF2440700D784EC /* UIViewController+Shortcuts.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIViewController+Shortcuts.swift"; sourceTree = "<group>"; };
 		69FB3ECE1FF9BF760008F355 /* DroppDetailViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DroppDetailViewController.swift; sourceTree = "<group>"; };
@@ -301,6 +303,7 @@
 			children = (
 				6982FF5D2006FB400015D069 /* ProfileDetails.storyboard */,
 				6982FF5F2006FC120015D069 /* ProfileDetailsViewController.swift */,
+				69D8E2FC200B909900CCEC6C /* ProfileDetailsUsernameTableViewCell.swift */,
 			);
 			path = "Profile Details";
 			sourceTree = "<group>";
@@ -722,6 +725,7 @@
 				693AFB4E1FFF69E9008901A0 /* NSError+Shortcuts.swift in Sources */,
 				691B1ABB1FEF3D240043EBA0 /* DroppTableViewCell.swift in Sources */,
 				691B1AB61FEF3C7C0043EBA0 /* FeedViewController.swift in Sources */,
+				69D8E2FD200B909900CCEC6C /* ProfileDetailsUsernameTableViewCell.swift in Sources */,
 				6982FF62200946430015D069 /* UINavigationController+Shortcuts.swift in Sources */,
 				694F2A771FE5E5B700E23D7E /* LocationManager.swift in Sources */,
 				695CF3A71EFF230E007D07A7 /* NsMutableData+Shortcuts.swift in Sources */,

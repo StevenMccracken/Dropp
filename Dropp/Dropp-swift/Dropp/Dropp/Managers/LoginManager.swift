@@ -16,11 +16,13 @@ class LoginManager {
   private(set) var isLoggedIn: Bool
   private(set) var loginEvent: Event<Bool>
   private(set) var logoutEvent: Event<Void>
+  private(set) var currentUserUpdatedEvent: Event<User>
   private(set) var currentUser: User?
   
   private init() {
     loginEvent = Event<Bool>()
     logoutEvent = Event<Void>()
+    currentUserUpdatedEvent = Event<User>()
     
     isLoggedIn = false
     let jwt = UserDefaults.standard.object(forKey: "jwt") as? String ?? ""
@@ -28,7 +30,9 @@ class LoginManager {
     let password = UserDefaults.standard.object(forKey: "password") as? String ?? ""
     isLoggedIn = !jwt.isEmpty && !username.isEmpty && !password.isEmpty
     if isLoggedIn {
-      currentUser = User(username)
+      let user = User(username)
+      currentUser = user
+      currentUserUpdatedEvent.raise(data: user)
     }
   }
   
@@ -45,7 +49,10 @@ class LoginManager {
       UserDefaults.standard.setValue(username, forKey: "username")
       UserDefaults.standard.setValue(password, forKey: "password")
       UserDefaults.standard.synchronize()
-      self.currentUser = User(username)
+      
+      let user = User(username)
+      self.currentUser = user
+      self.currentUserUpdatedEvent.raise(data: user)
       
       self.isLoggedIn = true
       success?()
@@ -66,6 +73,11 @@ class LoginManager {
     UserDefaults.standard.synchronize()
     currentUser = nil
     logoutEvent.raise(data: ())
+  }
+  
+  func updateCurrentUser(with user: User) {
+    currentUser = user
+    currentUserUpdatedEvent.raise(data: user)
   }
   
   @discardableResult
