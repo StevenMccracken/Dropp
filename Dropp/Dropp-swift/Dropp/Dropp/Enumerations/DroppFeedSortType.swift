@@ -10,6 +10,8 @@ import Foundation
 
 enum DroppFeedSortingType {
   case distance
+  case closest
+  case farthest
   case chronological
   case reverseChronological
 }

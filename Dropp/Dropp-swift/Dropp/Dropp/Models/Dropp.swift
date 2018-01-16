@@ -88,8 +88,8 @@ class Dropp: NSObject, Comparable {
     
     var message: String
     let distance = self.distance(from: location)
-    if distance > 304.8 {
-      // Distance is further than 1000 feet. Convert to miles
+    if distance > 1409.7853 {
+      // Distance is far enough away that when rounded, it will be one mile. Convert to miles
       let miles = distance.metersToMiles
       let roundedDistance = Int((miles * 4.0).rounded() / 4)
       let quantifier = roundedDistance == 1 ? "mile" : "miles"

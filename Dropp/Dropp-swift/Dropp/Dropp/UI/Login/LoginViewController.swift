@@ -23,6 +23,7 @@ class LoginViewController: UIViewController {
   @IBOutlet weak var loadingView: UIView!
   @IBOutlet weak var activityIndicatorView: GIFImageView!
   
+  private var textFieldToolbarItems: [UIBarButtonItem]!
   private var textFieldsAreValid: Bool {
     return !(usernameTextField.text ?? "").isEmpty && !(passwordTextField.text ?? "").isEmpty
   }
@@ -42,6 +43,15 @@ class LoginViewController: UIViewController {
     passwordTextField.layer.cornerRadius = 5
     usernameTextField.backgroundColor = .veryLightGray
     passwordTextField.backgroundColor = .veryLightGray
+    
+    let spacing = UIBarButtonItem(barButtonSystemItem: .flexibleSpace, target: nil, action: nil)
+    let doneButton = UIBarButtonItem(title: "Done", style: .plain, target: self, action: #selector(dismissKeyboard))
+    textFieldToolbarItems = [spacing, doneButton]
+  }
+  
+  override func viewDidAppear(_ animated: Bool) {
+    super.viewDidAppear(animated)
+    usernameTextField.becomeFirstResponder()
   }
   
   @IBAction func loginButtonTapped(_ sender: Any) {
@@ -132,7 +142,13 @@ class LoginViewController: UIViewController {
 
 extension LoginViewController: UITextFieldDelegate {
   
+  func textFieldShouldBeginEditing(_ textField: UITextField) -> Bool {
+    textField.addToolbar(withItems: textFieldToolbarItems)
+    return true
+  }
+  
   func textFieldShouldReturn(_ textField: UITextField) -> Bool {
+    var shouldReturn = true
     if textField == usernameTextField {
       passwordTextField.becomeFirstResponder()
     } else {
@@ -144,9 +160,11 @@ extension LoginViewController: UITextFieldDelegate {
       
       if textFieldsAreValid {
         loginButtonTapped(self)
+      } else {
+        shouldReturn = false
       }
     }
     
-    return true
+    return shouldReturn
   }
 }

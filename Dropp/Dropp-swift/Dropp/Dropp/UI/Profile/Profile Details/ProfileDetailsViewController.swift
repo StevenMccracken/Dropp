@@ -37,11 +37,11 @@ class ProfileDetailsViewController: UITableViewController {
     var cell: UITableViewCell
     // Check if cell is not the last section
     if indexPath.section < tableView.numberOfSections - 1 {
-      let usernameCell = tableView.dequeueReusableCell(withIdentifier: "profileDetailsTableViewCell", for: indexPath) as! ProfileDetailsUsernameTableViewCell
+      let usernameCell = tableView.dequeueReusableCell(withIdentifier: ProfileDetailsUsernameTableViewCell.reuseIdentifier, for: indexPath) as! ProfileDetailsUsernameTableViewCell
       usernameCell.addContent(user.username)
       cell = usernameCell
     } else {
-      cell = tableView.dequeueReusableCell(withIdentifier: "logoutTableViewCell", for: indexPath)
+      cell = tableView.dequeueReusableCell(withIdentifier: "LogoutTableViewCell", for: indexPath)
     }
     
     return cell

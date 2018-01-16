@@ -74,8 +74,8 @@ extension AppDelegate: UITabBarControllerDelegate {
       return false
     }
     
-    if let selectedNavigationController = tabBarController.selectedViewController as? UINavigationController, let droppFeedViewControllerDelegate = selectedNavigationController.childViewControllers.first as? DroppFeedViewControllerDelegate {
-      createDroppViewController.droppFeedViewControllerDelegate = droppFeedViewControllerDelegate
+    if let selectedNavigationController = tabBarController.selectedViewController as? UINavigationController, let feedViewControllerDelegate = selectedNavigationController.childViewControllers.first as? FeedViewControllerDelegate {
+      createDroppViewController.feedViewControllerDelegate = feedViewControllerDelegate
     }
     
     let navigationController = UINavigationController(rootViewController: createDroppViewController, customize: true)

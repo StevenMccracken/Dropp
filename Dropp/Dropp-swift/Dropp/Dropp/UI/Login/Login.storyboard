@@ -25,7 +25,7 @@
                                         <rect key="frame" x="0.0" y="0.0" width="375" height="200"/>
                                         <subviews>
                                             <stackView opaque="NO" contentMode="scaleToFill" axis="vertical" spacing="5" translatesAutoresizingMaskIntoConstraints="NO" id="dLa-ir-dUh">
-                                                <rect key="frame" x="10" y="10" width="355" height="175"/>
+                                                <rect key="frame" x="10" y="10" width="355" height="130"/>
                                                 <subviews>
                                                     <textField opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" borderStyle="roundedRect" placeholder="Username" minimumFontSize="17" clearButtonMode="whileEditing" translatesAutoresizingMaskIntoConstraints="NO" id="N0H-tT-NF0">
                                                         <rect key="frame" x="0.0" y="0.0" width="355" height="40"/>
@@ -35,7 +35,7 @@
                                                     <textField opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" borderStyle="roundedRect" placeholder="Password" minimumFontSize="17" clearButtonMode="whileEditing" translatesAutoresizingMaskIntoConstraints="NO" id="k15-8T-enr">
                                                         <rect key="frame" x="0.0" y="45" width="355" height="40"/>
                                                         <fontDescription key="fontDescription" type="system" pointSize="14"/>
-                                                        <textInputTraits key="textInputTraits" autocorrectionType="no" spellCheckingType="no" returnKeyType="done" enablesReturnKeyAutomatically="YES" secureTextEntry="YES" textContentType="password"/>
+                                                        <textInputTraits key="textInputTraits" autocorrectionType="no" spellCheckingType="no" returnKeyType="go" enablesReturnKeyAutomatically="YES" secureTextEntry="YES" textContentType="password"/>
                                                     </textField>
                                                     <button opaque="NO" contentMode="scaleToFill" enabled="NO" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="wbn-UJ-Pce">
                                                         <rect key="frame" x="0.0" y="90" width="355" height="40"/>
@@ -51,29 +51,34 @@
                                                             <action selector="loginButtonTapped:" destination="ji6-L4-8Qs" eventType="touchUpInside" id="UdR-WT-V46"/>
                                                         </connections>
                                                     </button>
-                                                    <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="Pkp-Om-Svz" userLabel="Go to account creation button">
-                                                        <rect key="frame" x="0.0" y="135" width="355" height="40"/>
-                                                        <fontDescription key="fontDescription" type="system" pointSize="14"/>
-                                                        <state key="normal" title="New here? Sign up now🎉">
-                                                            <color key="titleColor" red="0.91661626100000004" green="0.3107863367" blue="0.38301837439999997" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
-                                                        </state>
-                                                        <connections>
-                                                            <action selector="goToCreateAccountButtonTapped:" destination="ji6-L4-8Qs" eventType="touchUpInside" id="GfY-u2-G8V"/>
-                                                        </connections>
-                                                    </button>
                                                 </subviews>
                                                 <constraints>
                                                     <constraint firstItem="wbn-UJ-Pce" firstAttribute="height" secondItem="k15-8T-enr" secondAttribute="height" id="OQ7-RI-fk2"/>
-                                                    <constraint firstItem="Pkp-Om-Svz" firstAttribute="height" secondItem="wbn-UJ-Pce" secondAttribute="height" id="eDf-2f-mMq"/>
                                                     <constraint firstItem="wbn-UJ-Pce" firstAttribute="height" secondItem="N0H-tT-NF0" secondAttribute="height" id="wLg-Ww-T9S"/>
                                                 </constraints>
                                             </stackView>
+                                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="Pkp-Om-Svz" userLabel="Go to account creation button">
+                                                <rect key="frame" x="100" y="145" width="175" height="30"/>
+                                                <constraints>
+                                                    <constraint firstAttribute="width" constant="175" id="jch-hZ-Gm6"/>
+                                                    <constraint firstAttribute="height" constant="30" id="zOm-CP-Jp8"/>
+                                                </constraints>
+                                                <fontDescription key="fontDescription" type="system" pointSize="14"/>
+                                                <state key="normal" title="New here? Sign up now🎉">
+                                                    <color key="titleColor" red="0.91661626100000004" green="0.3107863367" blue="0.38301837439999997" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                                                </state>
+                                                <connections>
+                                                    <action selector="goToCreateAccountButtonTapped:" destination="ji6-L4-8Qs" eventType="touchUpInside" id="GfY-u2-G8V"/>
+                                                </connections>
+                                            </button>
                                         </subviews>
                                         <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                         <constraints>
                                             <constraint firstAttribute="height" constant="200" id="7RV-PL-cu6" userLabel="height = 350"/>
+                                            <constraint firstItem="Pkp-Om-Svz" firstAttribute="top" secondItem="dLa-ir-dUh" secondAttribute="bottom" constant="5" id="UZm-Ua-VTp"/>
                                             <constraint firstAttribute="trailing" secondItem="dLa-ir-dUh" secondAttribute="trailing" constant="10" id="WhX-vO-3O8"/>
                                             <constraint firstItem="dLa-ir-dUh" firstAttribute="leading" secondItem="hfB-IX-uea" secondAttribute="leading" constant="10" id="aly-y2-67B"/>
+                                            <constraint firstItem="Pkp-Om-Svz" firstAttribute="centerX" secondItem="hfB-IX-uea" secondAttribute="centerX" id="qKs-W3-0Rg"/>
                                             <constraint firstItem="dLa-ir-dUh" firstAttribute="top" secondItem="hfB-IX-uea" secondAttribute="top" constant="10" id="u2l-Cf-FV0"/>
                                         </constraints>
                                     </view>

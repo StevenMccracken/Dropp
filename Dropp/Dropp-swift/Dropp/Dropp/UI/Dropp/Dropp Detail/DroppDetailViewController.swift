@@ -24,7 +24,7 @@ class DroppDetailViewController: UIViewController {
   @IBOutlet weak var darkLoadingViewSpinnerView: GIFImageView!
   @IBOutlet weak var fetchImageErrorLabel: UILabel!
   
-  weak var droppFeedViewControllerDelegate: DroppFeedViewControllerDelegate?
+  weak var feedViewControllerDelegate: FeedViewControllerDelegate?
   var dropp: Dropp!
   var displayInfoButton: Bool?
   var deletingDropp = false
@@ -72,6 +72,10 @@ class DroppDetailViewController: UIViewController {
     let span = MKCoordinateSpan(latitudeDelta: 0.008, longitudeDelta: 0.008)
     let region = MKCoordinateRegion(center: dropp.location.coordinate, span: span)
     mapView.setRegion(region, animated: true)
+    
+    let spacing = UIBarButtonItem(barButtonSystemItem: .flexibleSpace, target: nil, action: nil)
+    let clearButton = UIBarButtonItem(title: "Clear", style: .plain, target: self, action: #selector(clearTextView))
+    textView.addToolbar(withItems: [spacing, clearButton])
   }
   
   override func viewWillDisappear(_ animated: Bool) {
@@ -164,7 +168,7 @@ class DroppDetailViewController: UIViewController {
     let alert = UIAlertController(title: nil, message: nil, preferredStyle: .actionSheet, color: .salmon)
     if let image = imageView.image {
       alert.addAction(UIAlertAction(title: "Save photo", style: .default, handler: { _ in
-        Utils.save(image: image, withTimestamp: self.dropp.date, andLocation: self.dropp.location, success: nil, failure: { (savePhotoError: Error?) in
+        Utils.save(image: image, withTimestamp: self.dropp.date, andLocation: self.dropp.location, success: nil, failure: { (savePhotoError: Error) in
           debugPrint("Failed to save photo to user's photos", savePhotoError)
           let errorAlert = UIAlertController(title: "Error", message: "Unable to save photo", preferredStyle: .alert, color: .salmon, addDefaultAction: true)
           Utils.present(viewController: errorAlert, animated: true, completion: nil)
@@ -193,15 +197,12 @@ class DroppDetailViewController: UIViewController {
           return
         }
         
-        let alert = UIAlertController(title: "Success", message: "Your dropp has been deleted", preferredStyle: .alert, color: .salmon, addDefaultAction: true) { _ in
-          strongSelf.navigationController?.popViewController(animated: true)
-          strongSelf.droppFeedViewControllerDelegate?.shouldRefreshData()
-        }
-        
-        strongSelf.present(alert, animated: true, completion: { () in
-          strongSelf.toggleDarkLoadingView(visible: false)
+        strongSelf.toggleDarkLoadingView(visible: false)
+        DispatchQueue.main.async {
           strongSelf.navigationItem.setHidesBackButton(false, animated: true)
-        })
+          strongSelf.navigationController?.popViewController(animated: true)
+          strongSelf.feedViewControllerDelegate?.shouldRemoveDropp?(strongSelf.dropp)
+        }
       }, failure: { [weak self] (deleteDroppError: NSError) in
         guard let strongSelf = self else {
           return
@@ -215,6 +216,12 @@ class DroppDetailViewController: UIViewController {
     }))
     
     alert.addAction(UIAlertAction(title: "Cancel", style: .cancel, handler: nil))
+    if Utils.isPad() {
+      let popover = alert.popoverPresentationController
+      popover?.permittedArrowDirections = .up
+      popover?.barButtonItem = navigationItem.rightBarButtonItem
+    }
+    
     present(alert, animated: true, completion: nil)
   }
   
@@ -285,6 +292,7 @@ class DroppDetailViewController: UIViewController {
       textView.isEditable = false
       textView.resignFirstResponder()
       editingDroppActivityIndicator.startAnimating()
+      navigationItem.leftBarButtonItem?.isEnabled = false
       navigationItem.rightBarButtonItem = UIBarButtonItem(customView: editingDroppActivityIndicator)
       
       let editVersion = self.editVersion
@@ -297,7 +305,9 @@ class DroppDetailViewController: UIViewController {
           return
         }
         
+        let oldDropp: Dropp = strongSelf.dropp
         strongSelf.dropp.message = editedText
+        strongSelf.feedViewControllerDelegate?.shouldRefresh(dropp: oldDropp, with: strongSelf.dropp)
         DispatchQueue.main.async {
           strongSelf.contentLabel.text = editedText
           if editedText.isOnlyEmoji {
@@ -325,6 +335,7 @@ class DroppDetailViewController: UIViewController {
           strongSelf.addEditingDoneButton()
           strongSelf.present(alert, animated: true, completion: { () in
             strongSelf.textView.isEditable = true
+            strongSelf.navigationItem.leftBarButtonItem?.isEnabled = true
           })
         }
       })
@@ -332,6 +343,11 @@ class DroppDetailViewController: UIViewController {
       let alert = UIAlertController(title: "Invalid update", message: "This dropp must have a message", preferredStyle: .alert, color: .salmon, addDefaultAction: true)
       present(alert, animated: true, completion: nil)
     }
+  }
+  
+  @objc
+  func clearTextView() {
+    textView.text = ""
   }
   
   @objc

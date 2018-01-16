@@ -10,6 +10,7 @@ import UIKit
 
 class ConnectionTableViewCell: UITableViewCell {
   
+  static let reuseIdentifier = "ConnectionTableViewCell"
   @IBOutlet weak var usernameLabel: UILabel!
   
   override func awakeFromNib() {

@@ -10,11 +10,13 @@ import UIKit
 
 class ProfileHeaderTableViewCell: UITableViewCell {
   
+  static let reuseIdentifier = "ProfileHeaderTableViewCell"
   @IBOutlet weak var followersButton: UIButton!
   @IBOutlet weak var followingButton: UIButton!
   @IBOutlet weak var followersCount: UILabel!
   @IBOutlet weak var followingCount: UILabel!
   @IBOutlet weak var interactionButton: UIButton!
+  @IBOutlet weak var interactionButtonHeightConstraint: NSLayoutConstraint!
   weak var delegate: ProfileHeaderTableViewCellDelegate?
   
   override func awakeFromNib() {
@@ -44,12 +46,24 @@ class ProfileHeaderTableViewCell: UITableViewCell {
     interactionButton.isHidden = !visible
   }
   
+  func setInteractionButtonHeight(_ height: CGFloat) {
+    interactionButtonHeightConstraint.constant = height
+  }
+  
   func updateFollowers(_ count: Int) {
     followersCount.text = String(count)
   }
   
   func updateFollowing(_ count: Int) {
     followingCount.text = String(count)
+  }
+  
+  func toggleFollowersButton(enabled: Bool) {
+    followersButton.isEnabled = enabled
+  }
+  
+  func toggleFollowingButton(enabled: Bool) {
+    followingButton.isEnabled = enabled
   }
   
   @IBAction func didTapFollowersButton(_ sender: Any) {
@@ -61,12 +75,12 @@ class ProfileHeaderTableViewCell: UITableViewCell {
   }
   
   @IBAction func didTapInteractionButton(_ sender: Any) {
-    delegate?.didTapInteractionButton()
+    delegate?.didTapInteractionButton(self)
   }
 }
 
 protocol ProfileHeaderTableViewCellDelegate: class {
   func didTapFollowersButton()
   func didTapFollowingButton()
-  func didTapInteractionButton()
+  func didTapInteractionButton(_ sender: ProfileHeaderTableViewCell)
 }

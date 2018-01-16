@@ -131,6 +131,30 @@ class UserService {
     getConnections(ofType: "follows", forUser: user, success: success, failure: failure)
   }
   
+  class func getConnectionRequests(ofType connectionType: String, success: (([User]) -> Void)? = nil, failure: ((NSError) -> Void)? = nil) {
+    guard let request = HttpUtil.getRequest("\(Constants.apiUrl)/requests/\(connectionType)") else {
+      failure?(NSError(reason: "Request to get user's connections was not created"))
+      return
+    }
+    
+    HttpUtil.send(request: request, checkSuccessField: false, success: { (json: JSON) in
+      var connectionRequests: [User] = []
+      for (connectionRequestKey, _) in json {
+        connectionRequests.append(User(connectionRequestKey))
+      }
+      
+      success?(connectionRequests)
+    }, failure: failure)
+  }
+  
+  class func getFollowerRequests(success: (([User]) -> Void)? = nil, failure: ((NSError) -> Void)? = nil) {
+    getConnectionRequests(ofType: "followers", success: success, failure: failure)
+  }
+  
+  class func getFollowingRequests(success: (([User]) -> Void)? = nil, failure: ((NSError) -> Void)? = nil) {
+    getConnectionRequests(ofType: "follows", success: success, failure: failure)
+  }
+  
   class func requestToFollow(user: User, success: (() -> Void)? = nil, failure: ((NSError) -> Void)? = nil) {
     guard let request = HttpUtil.postRequest("\(Constants.apiUrl)/requests/follows/\(user.username)") else {
       failure?(NSError(reason: "Request to request to follow user was not created"))
@@ -140,5 +164,57 @@ class UserService {
     HttpUtil.send(request: request, success: { (json: JSON) in
       success?()
     }, failure: failure)
+  }
+  
+  class func removePendingFollowRequest(toUser user: User, success: (() -> Void)? = nil, failure: ((NSError) -> Void)? = nil) {
+    guard let request = HttpUtil.deleteRequest("\(Constants.apiUrl)/requests/follows/\(user.username)") else {
+      failure?(NSError(reason: "Request to remove pending follow request was not created"))
+      return
+    }
+    
+    HttpUtil.send(request: request, success: { (json: JSON) in
+      success?()
+    }, failure: failure)
+  }
+  
+  class func acceptFollowerRequest(fromUser user: User, success: (() -> Void)? = nil, failure: ((NSError) -> Void)? = nil) {
+    guard let request = HttpUtil.putRequest("\(Constants.apiUrl)/requests/followers/\(user.username)") else {
+      failure?(NSError(reason: "Request to accept follower request was not created"))
+      return
+    }
+    
+    HttpUtil.send(request: request, success: { (json: JSON) in
+      success?()
+    }, failure: failure)
+  }
+  
+  class func denyFollowerRequest(fromUser user: User, success: (() -> Void)? = nil, failure: ((NSError) -> Void)? = nil) {
+    guard let request = HttpUtil.deleteRequest("\(Constants.apiUrl)/requests/followers/\(user.username)") else {
+      failure?(NSError(reason: "Request to deny follower request was not created"))
+      return
+    }
+    
+    HttpUtil.send(request: request, success: { (json: JSON) in
+      success?()
+    }, failure: failure)
+  }
+  
+  class func removeConection(ofType connectionType: String, forUser user: User, success: (() -> Void)? = nil, failure: ((NSError) -> Void)? = nil) {
+    guard let request = HttpUtil.deleteRequest("\(Constants.apiUrl)/\(connectionType)/\(user.username)") else {
+      failure?(NSError(reason: "Request to accept follower request was not created"))
+      return
+    }
+    
+    HttpUtil.send(request: request, success: { (json: JSON) in
+      success?()
+    }, failure: failure)
+  }
+  
+  class func removeFollower(_ user: User, success: (() -> Void)? = nil, failure: ((NSError) -> Void)? = nil) {
+    removeConection(ofType: "followers", forUser: user, success: success, failure: failure)
+  }
+  
+  class func unfollow(_ user: User, success: (() -> Void)? = nil, failure: ((NSError) -> Void)? = nil) {
+    removeConection(ofType: "follows", forUser: user, success: success, failure: failure)
   }
 }

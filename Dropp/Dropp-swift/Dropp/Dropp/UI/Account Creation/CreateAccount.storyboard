@@ -26,7 +26,7 @@
                                         <rect key="frame" x="0.0" y="0.0" width="375" height="500"/>
                                         <subviews>
                                             <stackView opaque="NO" contentMode="scaleToFill" axis="vertical" spacing="5" translatesAutoresizingMaskIntoConstraints="NO" id="jiG-6o-Ivu">
-                                                <rect key="frame" x="10" y="10" width="355" height="265"/>
+                                                <rect key="frame" x="10" y="10" width="355" height="220"/>
                                                 <subviews>
                                                     <textField opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" borderStyle="roundedRect" placeholder="Email" minimumFontSize="17" clearButtonMode="whileEditing" translatesAutoresizingMaskIntoConstraints="NO" id="tFl-Kx-DhJ" userLabel="Email text field">
                                                         <rect key="frame" x="0.0" y="0.0" width="355" height="40"/>
@@ -49,7 +49,7 @@
                                                     <textField opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" borderStyle="roundedRect" placeholder="Confirm password" minimumFontSize="17" clearButtonMode="whileEditing" translatesAutoresizingMaskIntoConstraints="NO" id="cr1-fH-h3J" userLabel="Confirm password text field">
                                                         <rect key="frame" x="0.0" y="135" width="355" height="40"/>
                                                         <fontDescription key="fontDescription" type="system" pointSize="14"/>
-                                                        <textInputTraits key="textInputTraits" autocorrectionType="no" spellCheckingType="no" returnKeyType="done" enablesReturnKeyAutomatically="YES" secureTextEntry="YES" textContentType="password"/>
+                                                        <textInputTraits key="textInputTraits" autocorrectionType="no" spellCheckingType="no" returnKeyType="join" enablesReturnKeyAutomatically="YES" secureTextEntry="YES" textContentType="password"/>
                                                         <connections>
                                                             <action selector="passwordConfirmTextFieldChanged:" destination="xTR-pT-cdj" eventType="editingChanged" id="f7c-47-BLf"/>
                                                         </connections>
@@ -74,33 +74,38 @@
                                                             <action selector="signupButtonTapped:" destination="xTR-pT-cdj" eventType="touchUpInside" id="9BF-Zd-9mW"/>
                                                         </connections>
                                                     </button>
-                                                    <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="IfO-1b-7nx" userLabel="Go to login button">
-                                                        <rect key="frame" x="0.0" y="225" width="355" height="40"/>
-                                                        <fontDescription key="fontDescription" type="system" pointSize="14"/>
-                                                        <state key="normal" title="Already have an account? Log in now😁">
-                                                            <color key="titleColor" red="0.91661626100000004" green="0.3107863367" blue="0.38301837439999997" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
-                                                        </state>
-                                                        <connections>
-                                                            <action selector="goToLoginButtonTapped:" destination="xTR-pT-cdj" eventType="touchUpInside" id="866-Up-UYL"/>
-                                                        </connections>
-                                                    </button>
                                                 </subviews>
                                                 <constraints>
                                                     <constraint firstItem="JfM-bS-31u" firstAttribute="height" secondItem="h8W-DM-C7H" secondAttribute="height" id="Hvx-KE-4Wp"/>
                                                     <constraint firstItem="cr1-fH-h3J" firstAttribute="height" secondItem="JfM-bS-31u" secondAttribute="height" id="J6t-BP-1MY"/>
                                                     <constraint firstItem="tFl-Kx-DhJ" firstAttribute="height" secondItem="JfM-bS-31u" secondAttribute="height" id="Onf-nO-ono"/>
                                                     <constraint firstItem="8Nj-6i-Wxr" firstAttribute="height" secondItem="JfM-bS-31u" secondAttribute="height" multiplier="0.75" id="lvg-5c-8wG"/>
-                                                    <constraint firstItem="IfO-1b-7nx" firstAttribute="height" secondItem="JfM-bS-31u" secondAttribute="height" id="q7g-Ay-eWC"/>
                                                     <constraint firstItem="JfM-bS-31u" firstAttribute="height" secondItem="cOv-Uk-yai" secondAttribute="height" id="xxm-kn-mw3"/>
                                                 </constraints>
                                             </stackView>
+                                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="IfO-1b-7nx" userLabel="Go to login button">
+                                                <rect key="frame" x="57.5" y="235" width="260" height="30"/>
+                                                <constraints>
+                                                    <constraint firstAttribute="height" constant="30" id="7FX-VX-Epw"/>
+                                                    <constraint firstAttribute="width" constant="260" id="Bvv-SP-DsF"/>
+                                                </constraints>
+                                                <fontDescription key="fontDescription" type="system" pointSize="14"/>
+                                                <state key="normal" title="Already have an account? Log in now😁">
+                                                    <color key="titleColor" red="0.91661626100000004" green="0.3107863367" blue="0.38301837439999997" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                                                </state>
+                                                <connections>
+                                                    <action selector="goToLoginButtonTapped:" destination="xTR-pT-cdj" eventType="touchUpInside" id="866-Up-UYL"/>
+                                                </connections>
+                                            </button>
                                         </subviews>
                                         <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                         <constraints>
                                             <constraint firstAttribute="trailing" secondItem="jiG-6o-Ivu" secondAttribute="trailing" constant="10" id="BK5-ht-ofR"/>
                                             <constraint firstItem="jiG-6o-Ivu" firstAttribute="leading" secondItem="58r-PV-tV4" secondAttribute="leading" constant="10" id="TTc-xY-j0d"/>
                                             <constraint firstAttribute="height" constant="500" id="WfB-kf-hf1"/>
+                                            <constraint firstItem="IfO-1b-7nx" firstAttribute="centerX" secondItem="58r-PV-tV4" secondAttribute="centerX" id="ZLY-vk-VZR"/>
                                             <constraint firstItem="jiG-6o-Ivu" firstAttribute="top" secondItem="58r-PV-tV4" secondAttribute="top" constant="10" id="gTF-qd-TWo"/>
+                                            <constraint firstItem="IfO-1b-7nx" firstAttribute="top" secondItem="jiG-6o-Ivu" secondAttribute="bottom" constant="5" id="gWp-FQ-0iz"/>
                                         </constraints>
                                     </view>
                                 </subviews>

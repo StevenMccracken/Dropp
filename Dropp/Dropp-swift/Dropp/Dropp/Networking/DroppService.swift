@@ -135,7 +135,7 @@ class DroppService {
     }, failure: failure)
   }
   
-  class func createDropp(at location: CLLocation?, on date: Date, withMessage message: String?, hasMedia: Bool, success: ((String) -> Void)? = nil, failure: ((NSError) -> Void)? = nil) {
+  class func createDropp(at location: CLLocation?, on date: Date, withMessage message: String?, hasMedia: Bool, success: ((Dropp) -> Void)? = nil, failure: ((NSError) -> Void)? = nil) {
     guard let location = location else {
       failure?(NSError(domain: "", code: Constants.locationNotEnabled, userInfo: ["reason": "Location was nil"]))
       return
@@ -147,10 +147,14 @@ class DroppService {
     }
     
     
+    let text = message ?? ""
+    let currentUser = LoginManager.shared.currentUser!
+    let locationCoordinates = location.coordinate.toString
+    let timestamp = Int(date.timeIntervalSince1970.rounded()) - 15
     let parameters = [
-      "location": location.coordinate.toString,
-      "timestamp": Int(date.timeIntervalSince1970.rounded()) - 15,
-      "text": message ?? "",
+      "location": locationCoordinates,
+      "timestamp": timestamp,
+      "text": text,
       "media": "\(hasMedia)",
     ] as [String: Any]
     guard let request = HttpUtil.postRequest("\(Constants.apiUrl)/dropps", parameters: parameters) else {
@@ -169,12 +173,17 @@ class DroppService {
         return
       }
       
-      success?(droppId)
+      do {
+        let dropp = try Dropp(id: droppId, username: currentUser.username, location: location.coordinate.toString, timestamp: timestamp, message: text, hasMedia: hasMedia)
+        success?(dropp)
+      } catch {
+        failure?(NSError(reason: "Service call to create dropp succeeded, but Dropp init threw an error"))
+      }
     }, failure: failure)
   }
   
-  class func upload(image: UIImage, forDropp droppId: String, withCompression compression: Double = 0.6, success: (() -> Void)? = nil, failure: ((NSError) -> Void)? = nil) {
-    guard let request = HttpUtil.dataRequest(image: image, toUrl: "\(Constants.apiUrl)/dropps/\(droppId)/image", compressionRate: compression) else {
+  class func upload(image: UIImage, forDropp dropp: Dropp, withCompression compression: Double = 0.6, success: (() -> Void)? = nil, failure: ((NSError) -> Void)? = nil) {
+    guard let request = HttpUtil.dataRequest(image: image, toUrl: "\(Constants.apiUrl)/dropps/\(dropp.id!)/image", compressionRate: compression) else {
       failure?(NSError(reason: "Request to upload image for dropp was not created"))
       return
     }
@@ -196,8 +205,8 @@ class DroppService {
     }, failure: failure)
   }
   
-  class func delete(_ droppId: String, success: (() -> Void)? = nil, failure: ((NSError) -> Void)? = nil) {
-    guard let request = HttpUtil.deleteRequest("\(Constants.apiUrl)/dropps/\(droppId)") else {
+  class func delete(_ dropp: Dropp, success: (() -> Void)? = nil, failure: ((NSError) -> Void)? = nil) {
+    guard let request = HttpUtil.deleteRequest("\(Constants.apiUrl)/dropps/\(dropp.id!)") else {
       failure?(NSError(reason: "Request to delete dropp was not created"))
       return
     }
@@ -205,9 +214,5 @@ class DroppService {
     HttpUtil.send(request: request, success: { (json: JSON) in
       success?()
     }, failure: failure)
-  }
-  
-  class func delete(_ dropp: Dropp, success: (() -> Void)? = nil, failure: ((NSError) -> Void)? = nil) {
-    delete(dropp.id!, success: success, failure: failure)
   }
 }

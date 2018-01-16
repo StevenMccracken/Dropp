@@ -26,6 +26,7 @@ class CreateAccountViewController: UIViewController {
   @IBOutlet weak var loadingView: UIView!
   @IBOutlet weak var activityIndicatorView: GIFImageView!
   
+  private var textFieldToolbarItems: [UIBarButtonItem]!
   private var textFieldsAreValid: Bool {
     return !(emailTextField.text ?? "").trim().isEmpty && !(usernameTextField.text ?? "").trim().isEmpty && !(passwordTextField.text ?? "").trim().isEmpty && !(passwordConfirmTextField.text ?? "").trim().isEmpty && (passwordTextField.text ?? "") == (passwordConfirmTextField.text ?? "")
   }
@@ -54,6 +55,15 @@ class CreateAccountViewController: UIViewController {
     usernameTextField.backgroundColor = .veryLightGray
     passwordTextField.backgroundColor = .veryLightGray
     passwordConfirmTextField.backgroundColor = .veryLightGray
+    
+    let spacing = UIBarButtonItem(barButtonSystemItem: .flexibleSpace, target: nil, action: nil)
+    let doneButton = UIBarButtonItem(title: "Done", style: .plain, target: self, action: #selector(dismissKeyboard))
+    textFieldToolbarItems = [spacing, doneButton]
+  }
+  
+  override func viewDidAppear(_ animated: Bool) {
+    super.viewDidAppear(animated)
+    emailTextField.becomeFirstResponder()
   }
   
   @IBAction func signupButtonTapped(_ sender: Any) {
@@ -197,7 +207,13 @@ class CreateAccountViewController: UIViewController {
 
 extension CreateAccountViewController: UITextFieldDelegate {
   
+  func textFieldShouldBeginEditing(_ textField: UITextField) -> Bool {
+    textField.addToolbar(withItems: textFieldToolbarItems)
+    return true
+  }
+  
   func textFieldShouldReturn(_ textField: UITextField) -> Bool {
+    var shouldReturn = true
     textField.text = textField.text?.trim()
     if textField == emailTextField {
       usernameTextField.becomeFirstResponder()
@@ -206,16 +222,14 @@ extension CreateAccountViewController: UITextFieldDelegate {
     } else if textField == passwordTextField {
       passwordConfirmTextField.becomeFirstResponder()
     } else {
-      // Last text field was reached. If everything is valid,
-      // initiate sign up. Else go back to the first text field
+      // Last text field was reached. If everything is valid, initiate sign up request
       if textFieldsAreValid {
         signupButtonTapped(self)
       } else {
-        emailTextField.becomeFirstResponder()
+        shouldReturn = false
       }
     }
     
-    return true
+    return shouldReturn
   }
 }
-
