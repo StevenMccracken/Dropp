@@ -13,7 +13,7 @@ class FeedViewController: UITableViewController {
   var dropps: [Dropp] = []
   var filteredDropps: [Dropp] = []
   private var refreshing = false
-  private var sortingType: DroppFeedSortingType = .distance
+  private var sortingType: DroppFeedSortingType = .closest
   private var locationAuthorizationEventHandler: Disposable?
   private lazy var fetchFailedLabel: UILabel = {
     let label = UILabel(withText: "\nUnable to get dropps😟", forTableViewBackground: tableView, andFontSize: 30)
@@ -116,15 +116,32 @@ class FeedViewController: UITableViewController {
     let disclosure = "If you choose to sort by distance and your location cannot be determined, your feed will be sorted by newest dropps first."
     let alert = UIAlertController(title: "Sort Feed", message: disclosure, preferredStyle: .actionSheet, color: .salmon)
     
-    let distanceTitle = "Distance\(sortingType == .distance ? " ✓" : "")"
-    alert.addAction(UIAlertAction(title: distanceTitle, style: .default, handler: { _ in
-      guard self.sortingType != .distance else {
+    let closestTitle = "Closest\(sortingType == .closest ? " ✓" : "")"
+    alert.addAction(UIAlertAction(title: closestTitle, style: .default, handler: { _ in
+      guard self.sortingType != .closest else {
         return
       }
       
       if let location = LocationManager.shared.currentLocation {
-        self.sortingType = .distance
-        self.dropps = Dropp.sort(self.dropps, by: .distance, currentLocation: location)
+        self.sortingType = .closest
+        self.dropps = Dropp.sort(self.dropps, by: .closest, currentLocation: location)
+      } else {
+        self.sortingType = .chronological
+        self.dropps = Dropp.sort(self.dropps, by: .chronological)
+      }
+      
+      self.tableView.reloadData()
+    }))
+    
+    let farthestTitle = "Farthest\(sortingType == .farthest ? " ✓" : "")"
+    alert.addAction(UIAlertAction(title: farthestTitle, style: .default, handler: { _ in
+      guard self.sortingType != .farthest else {
+        return
+      }
+      
+      if let location = LocationManager.shared.currentLocation {
+        self.sortingType = .farthest
+        self.dropps = Dropp.sort(self.dropps, by: .farthest, currentLocation: location)
       } else {
         self.sortingType = .chronological
         self.dropps = Dropp.sort(self.dropps, by: .chronological)
@@ -266,7 +283,7 @@ extension FeedViewController: FeedViewControllerDelegate {
       var index: Int
       var rowAnimation: UITableViewRowAnimation
       var scrollPosition: UITableViewScrollPosition
-      if self.sortingType == .reverseChronological {
+      if self.sortingType == .reverseChronological || self.sortingType == .farthest {
         self.dropps.append(dropp)
         index = self.dropps.count - 1
         rowAnimation = .bottom

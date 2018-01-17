@@ -129,9 +129,11 @@ class Dropp: NSObject, Comparable {
   
   class func sort(_ dropps: [Dropp], by sortType: DroppFeedSortingType, currentLocation: CLLocation? = nil) -> [Dropp] {
     var sortedDropps: [Dropp]
-    if sortType == .distance, let location = currentLocation {
+    if (sortType == .farthest || sortType == .closest), let location = currentLocation {
       sortedDropps = dropps.sorted(by: { (a: Dropp, b: Dropp) in
-        return a.distance(from: location) < b.distance(from: location)
+        let distanceFromAToLocation = a.distance(from: location)
+        let distanceFromBToLocation = b.distance(from: location)
+        return sortType == .closest ? distanceFromAToLocation < distanceFromBToLocation :  distanceFromAToLocation > distanceFromBToLocation
       })
     } else if sortType == .reverseChronological {
       sortedDropps = dropps.sorted() { (a: Dropp, b: Dropp) in
