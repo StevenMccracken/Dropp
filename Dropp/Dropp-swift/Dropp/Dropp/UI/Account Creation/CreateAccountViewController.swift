@@ -23,8 +23,6 @@ class CreateAccountViewController: UIViewController {
   @IBOutlet weak var signupButton: UIButton!
   @IBOutlet weak var goToLoginButton: UIButton!
   @IBOutlet weak var errorInfoLabel: UILabel!
-  @IBOutlet weak var loadingView: UIView!
-  @IBOutlet weak var activityIndicatorView: GIFImageView!
   
   private var textFieldToolbarItems: [UIBarButtonItem]!
   private var textFieldsAreValid: Bool {
@@ -34,7 +32,6 @@ class CreateAccountViewController: UIViewController {
   override func viewDidLoad() {
     super.viewDidLoad()
     addDismissKeyboardGesture()
-    activityIndicatorView.prepareForAnimation(withGIFNamed: Constants.activityIndicatorFileName)
     NotificationCenter.default.addObserver(self, selector: #selector(textFieldDidChange(_:)), name: Notification.Name.UITextFieldTextDidChange, object: nil)
     
     emailTextField.delegate = self
@@ -68,33 +65,31 @@ class CreateAccountViewController: UIViewController {
   
   @IBAction func signupButtonTapped(_ sender: Any) {
     guard let email = emailTextField.text, !email.trim().isEmpty else {
-      toggleSignupButton(enabled: false)
+      signupButton.toggle(enabled: false)
       return
     }
     
     guard let username = usernameTextField.text, !username.trim().isEmpty else {
-      toggleSignupButton(enabled: false)
+      signupButton.toggle(enabled: false)
       return
     }
     
     guard let password = passwordTextField.text, !password.trim().isEmpty else {
-      toggleSignupButton(enabled: false)
+      signupButton.toggle(enabled: false)
       return
     }
     
     guard let passwordConfirm = passwordConfirmTextField.text, !passwordConfirm.trim().isEmpty else {
-      toggleSignupButton(enabled: false)
+      signupButton.toggle(enabled: false)
       return
     }
     
     guard password == passwordConfirm else {
-      toggleSignupButton(enabled: false)
+      signupButton.toggle(enabled: false)
       return
     }
     
-    toggleSignupButton(enabled: false)
-    resignFirstResponder()
-    toggleLoadingView(visible: true)
+    enterSigningUpState()
     UserService.createAccount(email: email, username: username, password: password, success: { [weak self] (token: String) in
       guard let strongSelf = self else {
         return
@@ -108,7 +103,7 @@ class CreateAccountViewController: UIViewController {
       
       DispatchQueue.main.async {
         strongSelf.present(alert, animated: true) {
-          strongSelf.toggleLoadingView(visible: false)
+          strongSelf.exitSigningUpState()
         }
       }
     }, failure: { [weak self] (createAccountError: NSError) in
@@ -131,10 +126,10 @@ class CreateAccountViewController: UIViewController {
           strongSelf.emailTextField.becomeFirstResponder()
         }
       }
+      
       DispatchQueue.main.async {
         strongSelf.present(alert, animated: true) {
-          strongSelf.toggleSignupButton(enabled: true)
-          strongSelf.toggleLoadingView(visible: false)
+          strongSelf.exitSigningUpState()
         }
       }
     })
@@ -148,7 +143,9 @@ class CreateAccountViewController: UIViewController {
   
   @objc
   private func textFieldDidChange(_ notification: NSNotification) {
-    toggleSignupButton(enabled: textFieldsAreValid)
+    DispatchQueue.main.async {
+      self.signupButton.toggle(enabled: self.textFieldsAreValid)
+    }
   }
   
   @IBAction func passwordTextFieldChanged(_ sender: UITextField) {
@@ -167,32 +164,32 @@ class CreateAccountViewController: UIViewController {
     }
   }
   
-  
-  private func toggleSignupButton(enabled: Bool) {
+  private func enterSigningUpState() {
+    let activityIndicator = UIActivityIndicatorView(activityIndicatorStyle: .gray)
+    activityIndicator.startAnimating()
     DispatchQueue.main.async {
-      self.signupButton.isEnabled = enabled
-      if enabled {
-        self.signupButton.backgroundColor = .salmon
-        self.signupButton.setTitleColor(.white, for: .normal)
-        self.signupButton.layer.borderWidth = 0
-      } else {
-        self.signupButton.backgroundColor = .white
-        self.signupButton.setTitleColor(.lightGray, for: .disabled)
-        self.signupButton.layer.borderWidth = 0.5
-      }
+      self.resignFirstResponder()
+      self.emailTextField.isEnabled = false
+      self.usernameTextField.isEnabled = false
+      self.passwordTextField.isEnabled = false
+      self.passwordConfirmTextField.isEnabled = false
+      self.signupButton.toggle(enabled: false, withTitle: "Creating your account...")
+      self.goToLoginButton.isEnabled = false
+      self.goToLoginButton.setTitleColor(.lightGray, for: .disabled)
+      self.navigationItem.rightBarButtonItem = UIBarButtonItem(customView: activityIndicator)
     }
   }
   
-  private func toggleLoadingView(visible: Bool) {
+  private func exitSigningUpState() {
     DispatchQueue.main.async {
-      self.loadingView.isHidden = !visible
-      if visible {
-        self.activityIndicatorView.startAnimatingGIF()
-        self.activityIndicatorView.isHidden = false
-      } else {
-        self.activityIndicatorView.isHidden = true
-        self.activityIndicatorView.stopAnimatingGIF()
-      }
+      self.emailTextField.isEnabled = true
+      self.usernameTextField.isEnabled = true
+      self.passwordTextField.isEnabled = true
+      self.passwordConfirmTextField.isEnabled = true
+      self.signupButton.toggle(enabled: true, withTitle: "Create your account")
+      self.goToLoginButton.isEnabled = true
+      self.goToLoginButton.setTitleColor(.salmon, for: .normal)
+      self.navigationItem.rightBarButtonItem = nil
     }
   }
   

@@ -20,8 +20,6 @@ class LoginViewController: UIViewController {
   @IBOutlet weak var passwordTextField: UITextField!
   @IBOutlet weak var loginButton: UIButton!
   @IBOutlet weak var goToCreateAccountButton: UIButton!
-  @IBOutlet weak var loadingView: UIView!
-  @IBOutlet weak var activityIndicatorView: GIFImageView!
   
   private var textFieldToolbarItems: [UIBarButtonItem]!
   private var textFieldsAreValid: Bool {
@@ -34,7 +32,6 @@ class LoginViewController: UIViewController {
     usernameTextField.delegate = self
     passwordTextField.delegate = self
     NotificationCenter.default.addObserver(self, selector: #selector(textFieldDidChange(_:)), name: Notification.Name.UITextFieldTextDidChange, object: nil)
-    activityIndicatorView.prepareForAnimation(withGIFNamed: Constants.activityIndicatorFileName)
     
     loginButton.layer.borderColor = UIColor.lightGray.cgColor
     loginButton.layer.borderWidth = 0.5
@@ -56,18 +53,16 @@ class LoginViewController: UIViewController {
   
   @IBAction func loginButtonTapped(_ sender: Any) {
     guard let username = usernameTextField.text, !username.isEmpty else {
-      toggleLoginButton(enabled: false)
+      loginButton.toggle(enabled: false)
       return
     }
     
     guard let password = passwordTextField.text, !password.isEmpty else {
-      toggleLoginButton(enabled: false)
+      loginButton.toggle(enabled: false)
       return
     }
     
-    toggleLoginButton(enabled: false)
-    resignFirstResponder()
-    toggleLoadingView(visible: true)
+    enterLoggingInState()
     LoginManager.shared.login(username: username, password: password, success: { [weak self] in
       guard let strongSelf = self else {
         return
@@ -91,10 +86,9 @@ class LoginViewController: UIViewController {
       
       let alert = UIAlertController(title: alertDetails.0, message: alertDetails.1, preferredStyle: .alert, color: .salmon, addDefaultAction: true)
       DispatchQueue.main.async {
-        strongSelf.present(alert, animated: true, completion: { () in
-          strongSelf.toggleLoginButton(enabled: true)
-          strongSelf.toggleLoadingView(visible: false)
-        })
+        strongSelf.present(alert, animated: true) {
+          strongSelf.exitLoggingInState()
+        }
       }
     })
   }
@@ -107,35 +101,33 @@ class LoginViewController: UIViewController {
   
   @objc
   private func textFieldDidChange(_ notification: NSNotification) {
-    toggleLoginButton(enabled: textFieldsAreValid)
-  }
-  
-  
-  private func toggleLoginButton(enabled: Bool) {
     DispatchQueue.main.async {
-      self.loginButton.isEnabled = enabled
-      if enabled {
-        self.loginButton.backgroundColor = .salmon
-        self.loginButton.setTitleColor(.white, for: .normal)
-        self.loginButton.layer.borderWidth = 0
-      } else {
-        self.loginButton.backgroundColor = .white
-        self.loginButton.setTitleColor(.lightGray, for: .disabled)
-        self.loginButton.layer.borderWidth = 0.5
-      }
+      self.loginButton.toggle(enabled: self.textFieldsAreValid)
     }
   }
   
-  private func toggleLoadingView(visible: Bool) {
+  private func enterLoggingInState() {
+    let activityIndicator = UIActivityIndicatorView(activityIndicatorStyle: .gray)
+    activityIndicator.startAnimating()
     DispatchQueue.main.async {
-      self.loadingView.isHidden = !visible
-      if visible {
-        self.activityIndicatorView.startAnimatingGIF()
-        self.activityIndicatorView.isHidden = false
-      } else {
-        self.activityIndicatorView.isHidden = true
-        self.activityIndicatorView.stopAnimatingGIF()
-      }
+      self.resignFirstResponder()
+      self.usernameTextField.isEnabled = false
+      self.passwordTextField.isEnabled = false
+      self.loginButton.toggle(enabled: false, withTitle: "Logging in...")
+      self.goToCreateAccountButton.isEnabled = false
+      self.goToCreateAccountButton.setTitleColor(.lightGray, for: .disabled)
+      self.navigationItem.rightBarButtonItem = UIBarButtonItem(customView: activityIndicator)
+    }
+  }
+  
+  private func exitLoggingInState() {
+    DispatchQueue.main.async {
+      self.usernameTextField.isEnabled = true
+      self.passwordTextField.isEnabled = true
+      self.loginButton.toggle(enabled: true, withTitle: "Log in")
+      self.goToCreateAccountButton.isEnabled = true
+      self.goToCreateAccountButton.setTitleColor(.salmon, for: .normal)
+      self.navigationItem.rightBarButtonItem = nil
     }
   }
 }

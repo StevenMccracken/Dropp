@@ -20,11 +20,10 @@ class DroppDetailViewController: UIViewController {
   @IBOutlet weak var timestampLabel: UILabel!
   @IBOutlet weak var contentLabel: UILabel!
   @IBOutlet weak var textView: UITextView!
-  @IBOutlet weak var darkLoadingView: UIView!
-  @IBOutlet weak var darkLoadingViewSpinnerView: GIFImageView!
   @IBOutlet weak var fetchImageErrorLabel: UILabel!
   
   weak var feedViewControllerDelegate: FeedViewControllerDelegate?
+  private var originalTitle: String!
   var dropp: Dropp!
   var displayInfoButton: Bool?
   var deletingDropp = false
@@ -43,11 +42,11 @@ class DroppDetailViewController: UIViewController {
     
     if dropp.postedByCurrentUser {
       title = "⭐️Your dropp"
-      darkLoadingViewSpinnerView.prepareForAnimation(withGIFNamed: Constants.activityIndicatorFileName)
     } else {
       title = "\(dropp.username!)'s dropp"
     }
     
+    originalTitle = title ?? ""
     if dropp.hasMedia {
       imageLoadingViewSpinner.prepareForAnimation(withGIFNamed: Constants.activityIndicatorFileName)
       fetchMedia()
@@ -94,6 +93,14 @@ class DroppDetailViewController: UIViewController {
     }
     
     navigationItem.rightBarButtonItem = UIBarButtonItem(customView: infoButton)
+    if editingDroppActivityIndicator.isAnimating {
+      editingDroppActivityIndicator.stopAnimating()
+    }
+  }
+  
+  func addDroppActivityIndicator() {
+    editingDroppActivityIndicator.startAnimating()
+    navigationItem.rightBarButtonItem = UIBarButtonItem(customView: editingDroppActivityIndicator)
   }
   
   func addEditingCancelButton() {
@@ -111,7 +118,9 @@ class DroppDetailViewController: UIViewController {
     }
     
     navigationItem.rightBarButtonItem = UIBarButtonItem(barButtonSystemItem: .done, target: self, action: #selector(didTapEditingDoneButton))
-    navigationItem.rightBarButtonItem?.tintColor = .salmon
+    if editingDroppActivityIndicator.isAnimating {
+      editingDroppActivityIndicator.stopAnimating()
+    }
   }
   
   func fetchMedia() {
@@ -190,14 +199,15 @@ class DroppDetailViewController: UIViewController {
       }
       
       self.deletingDropp = true
-      self.toggleDarkLoadingView(visible: true)
+      self.title = "Deleting..."
+      self.addDroppActivityIndicator()
       self.navigationItem.setHidesBackButton(true, animated: true)
+      self.mapView.isUserInteractionEnabled = false
       DroppService.delete(self.dropp, success: { [weak self] () in
         guard let strongSelf = self else {
           return
         }
         
-        strongSelf.toggleDarkLoadingView(visible: false)
         DispatchQueue.main.async {
           strongSelf.navigationItem.setHidesBackButton(false, animated: true)
           strongSelf.navigationController?.popViewController(animated: true)
@@ -208,10 +218,34 @@ class DroppDetailViewController: UIViewController {
           return
         }
         
-        let alert = UIAlertController(title: "Error", message: "Unable to delete your dropp", preferredStyle: .alert, color: .salmon, addDefaultAction: true)
-        strongSelf.present(alert, animated: true, completion: nil)
-        strongSelf.toggleLoadingImageIndicator(visible: false)
-        strongSelf.navigationItem.setHidesBackButton(false, animated: true)
+        let errorCompletion = {
+          strongSelf.addInfoButton()
+          strongSelf.title = strongSelf.originalTitle
+          strongSelf.navigationItem.setHidesBackButton(false, animated: true)
+          strongSelf.mapView.isUserInteractionEnabled = true
+        }
+        
+        guard deleteDroppError.code != 404 else {
+          let alert = UIAlertController(title: "Error", message: "We're sorry, but this dropp no longer exists", preferredStyle: .alert, color: .salmon, addDefaultAction: true) { _ in
+              strongSelf.navigationItem.setHidesBackButton(false, animated: true)
+              strongSelf.navigationController?.popViewController(animated: true)
+              strongSelf.feedViewControllerDelegate?.shouldRemoveDropp?(strongSelf.dropp)
+          }
+          
+          DispatchQueue.main.async {
+            errorCompletion()
+            strongSelf.present(alert, animated: true, completion: nil)
+          }
+         
+          return
+        }
+        
+        debugPrint("Error while trying to delete dropp", deleteDroppError)
+        let alert = UIAlertController(title: "Error", message: "We're sorry, but we were unable to delete your dropp", preferredStyle: .alert, color: .salmon, addDefaultAction: true)
+        DispatchQueue.main.async {
+          strongSelf.present(alert, animated: true, completion: nil)
+          errorCompletion()
+        }
       })
     }))
     
@@ -232,6 +266,7 @@ class DroppDetailViewController: UIViewController {
     
     imageView.animateAlpha(to: 0.0, duration: 0.25)
     DispatchQueue.main.async {
+      self.title = "Editing dropp"
       self.scrollToTextView()
       self.scrollView.isUserInteractionEnabled = false
       self.addEditingCancelButton()
@@ -254,6 +289,7 @@ class DroppDetailViewController: UIViewController {
     
     imageView.animateAlpha(to: 1.0, duration: 0.5)
     DispatchQueue.main.async {
+      self.title = self.originalTitle
       self.scrollView.scrollRectToVisible(self.mapView.frame, animated: true)
       self.scrollView.isUserInteractionEnabled = true
       self.navigationItem.leftBarButtonItem = nil
@@ -291,9 +327,9 @@ class DroppDetailViewController: UIViewController {
     } else if shouldSendUpdateRequest {
       textView.isEditable = false
       textView.resignFirstResponder()
-      editingDroppActivityIndicator.startAnimating()
+      self.title = "Updating..."
+      self.addDroppActivityIndicator()
       navigationItem.leftBarButtonItem?.isEnabled = false
-      navigationItem.rightBarButtonItem = UIBarButtonItem(customView: editingDroppActivityIndicator)
       
       let editVersion = self.editVersion
       DroppService.update(dropp, withText: editedText, success: { [weak self] () in
@@ -329,14 +365,32 @@ class DroppDetailViewController: UIViewController {
           return
         }
         
-        let alert = UIAlertController(title: "Error", message: "Unable to update your dropp", preferredStyle: .alert, color: .salmon, addDefaultAction: true)
-        DispatchQueue.main.async {
-          strongSelf.editingDroppActivityIndicator.stopAnimating()
-          strongSelf.addEditingDoneButton()
-          strongSelf.present(alert, animated: true, completion: { () in
+        let errorCompletion = {
+          DispatchQueue.main.async {
+            strongSelf.addEditingDoneButton()
+            strongSelf.title = "Editing dropp"
+          }
+        }
+        
+        guard updateDroppError.code != 404 else {
+          let alert = UIAlertController(title: "Error", message: "We're sorry, but this dropp no longer exists", preferredStyle: .alert, color: .salmon, addDefaultAction: true) { _ in
+            strongSelf.navigationItem.setHidesBackButton(false, animated: true)
+            strongSelf.navigationController?.popViewController(animated: true)
+            strongSelf.feedViewControllerDelegate?.shouldRemoveDropp?(strongSelf.dropp)
+          }
+          
+          strongSelf.present(alert, animated: true, completion: errorCompletion)
+          return
+        }
+        
+        debugPrint("Error while trying to update dropp", updateDroppError)
+        let alert = UIAlertController(title: "Error", message: "We're sorry, but we were unable to update your dropp", preferredStyle: .alert, color: .salmon, addDefaultAction: true)
+        strongSelf.present(alert, animated: true) {
+          errorCompletion()
+          DispatchQueue.main.async {
             strongSelf.textView.isEditable = true
             strongSelf.navigationItem.leftBarButtonItem?.isEnabled = true
-          })
+          }
         }
       })
     } else {
@@ -381,20 +435,6 @@ class DroppDetailViewController: UIViewController {
       } else {
         self.imageLoadingViewSpinner.isHidden = true
         self.imageLoadingViewSpinner.stopAnimatingGIF()
-      }
-    }
-  }
-  
-  private func toggleDarkLoadingView(visible: Bool) {
-    DispatchQueue.main.async {
-      if visible {
-        self.darkLoadingViewSpinnerView.startAnimatingGIF()
-        self.darkLoadingView.isHidden = false
-        self.darkLoadingViewSpinnerView.isHidden = false
-      } else {
-        self.darkLoadingView.isHidden = true
-        self.darkLoadingViewSpinnerView.isHidden = true
-        self.darkLoadingViewSpinnerView.stopAnimatingGIF()
       }
     }
   }

@@ -5,7 +5,6 @@
     </device>
     <dependencies>
         <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="13527"/>
-        <capability name="Aspect ratio constraints" minToolsVersion="5.1"/>
         <capability name="Safe area layout guides" minToolsVersion="9.0"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
@@ -90,29 +89,12 @@
                                     <constraint firstItem="hfB-IX-uea" firstAttribute="leading" secondItem="9AZ-kD-MmE" secondAttribute="leading" id="zFC-fv-DC6"/>
                                 </constraints>
                             </scrollView>
-                            <view hidden="YES" alpha="0.59999999999999998" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="Wea-l8-GzK" userLabel="Loading View">
-                                <rect key="frame" x="-50" y="116" width="475" height="601"/>
-                                <color key="backgroundColor" white="0.33333333333333331" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
-                            </view>
-                            <imageView hidden="YES" userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" translatesAutoresizingMaskIntoConstraints="NO" id="tnz-xq-lMr" customClass="GIFImageView" customModule="Gifu">
-                                <rect key="frame" x="150" y="329" width="75" height="75"/>
-                                <constraints>
-                                    <constraint firstAttribute="width" secondItem="tnz-xq-lMr" secondAttribute="height" multiplier="1:1" id="dXM-0V-sQj"/>
-                                    <constraint firstAttribute="width" constant="75" id="oSm-ds-36K"/>
-                                </constraints>
-                            </imageView>
                         </subviews>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                         <constraints>
                             <constraint firstItem="9AZ-kD-MmE" firstAttribute="leading" secondItem="43p-0S-7uS" secondAttribute="leading" id="BOL-Q3-TUM"/>
-                            <constraint firstItem="tnz-xq-lMr" firstAttribute="centerX" secondItem="Wea-l8-GzK" secondAttribute="centerX" id="Een-ag-poV"/>
-                            <constraint firstItem="Wea-l8-GzK" firstAttribute="trailing" secondItem="088-LV-BFz" secondAttribute="trailing" constant="50" id="J8C-qg-pYR"/>
-                            <constraint firstItem="Wea-l8-GzK" firstAttribute="top" secondItem="088-LV-BFz" secondAttribute="top" id="UGK-I7-j9b"/>
-                            <constraint firstItem="tnz-xq-lMr" firstAttribute="centerY" secondItem="Wea-l8-GzK" secondAttribute="centerY" constant="-50" id="gdb-mL-FTP"/>
                             <constraint firstItem="088-LV-BFz" firstAttribute="bottom" secondItem="9AZ-kD-MmE" secondAttribute="bottom" id="jYn-yi-XlE"/>
-                            <constraint firstItem="Wea-l8-GzK" firstAttribute="leading" secondItem="088-LV-BFz" secondAttribute="leading" constant="-50" id="n9k-9H-Zbw"/>
                             <constraint firstItem="hfB-IX-uea" firstAttribute="width" secondItem="43p-0S-7uS" secondAttribute="width" id="s8r-qr-iaq"/>
-                            <constraint firstItem="Wea-l8-GzK" firstAttribute="bottom" secondItem="088-LV-BFz" secondAttribute="bottom" constant="50" id="wGd-JM-akS"/>
                             <constraint firstItem="9AZ-kD-MmE" firstAttribute="top" secondItem="088-LV-BFz" secondAttribute="top" id="xyx-AK-KvE"/>
                             <constraint firstAttribute="trailing" secondItem="9AZ-kD-MmE" secondAttribute="trailing" id="yZk-s5-ENZ"/>
                         </constraints>
@@ -120,9 +102,7 @@
                     </view>
                     <navigationItem key="navigationItem" title="Login" id="ZS6-nN-pIt"/>
                     <connections>
-                        <outlet property="activityIndicatorView" destination="tnz-xq-lMr" id="f85-cJ-2Rv"/>
                         <outlet property="goToCreateAccountButton" destination="Pkp-Om-Svz" id="pCw-TM-cKf"/>
-                        <outlet property="loadingView" destination="Wea-l8-GzK" id="Of5-jg-TAR"/>
                         <outlet property="loginButton" destination="wbn-UJ-Pce" id="twZ-G6-uS8"/>
                         <outlet property="passwordTextField" destination="k15-8T-enr" id="4mZ-q6-ZAC"/>
                         <outlet property="usernameTextField" destination="N0H-tT-NF0" id="A7O-cc-gMF"/>

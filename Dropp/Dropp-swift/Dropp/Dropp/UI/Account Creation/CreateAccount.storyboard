@@ -5,7 +5,6 @@
     </device>
     <dependencies>
         <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="13527"/>
-        <capability name="Aspect ratio constraints" minToolsVersion="5.1"/>
         <capability name="Constraints with non-1.0 multipliers" minToolsVersion="5.1"/>
         <capability name="Safe area layout guides" minToolsVersion="9.0"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
@@ -116,41 +115,22 @@
                                     <constraint firstItem="58r-PV-tV4" firstAttribute="leading" secondItem="U72-dW-XDt" secondAttribute="leading" id="zg2-W3-tZk"/>
                                 </constraints>
                             </scrollView>
-                            <view hidden="YES" alpha="0.60000002384185791" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="iXV-v0-KZw" userLabel="Loading View">
-                                <rect key="frame" x="-50" y="116" width="475" height="601"/>
-                                <color key="backgroundColor" white="0.33333333329999998" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
-                            </view>
-                            <imageView hidden="YES" userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" translatesAutoresizingMaskIntoConstraints="NO" id="x3t-z4-wuU" customClass="GIFImageView" customModule="Gifu">
-                                <rect key="frame" x="150" y="329" width="75" height="75"/>
-                                <constraints>
-                                    <constraint firstAttribute="width" secondItem="x3t-z4-wuU" secondAttribute="height" multiplier="1:1" id="7ta-QK-TTa"/>
-                                    <constraint firstAttribute="width" constant="75" id="w7r-5c-QeL"/>
-                                </constraints>
-                            </imageView>
                         </subviews>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                         <constraints>
-                            <constraint firstItem="x3t-z4-wuU" firstAttribute="centerY" secondItem="iXV-v0-KZw" secondAttribute="centerY" constant="-50" id="9KS-Xj-3lD"/>
                             <constraint firstItem="U72-dW-XDt" firstAttribute="leading" secondItem="Dh5-9L-hhQ" secondAttribute="leading" id="G4D-Ax-M7Y"/>
-                            <constraint firstItem="iXV-v0-KZw" firstAttribute="bottom" secondItem="ieQ-6z-WPZ" secondAttribute="bottom" constant="50" id="Jm8-Ti-7QC"/>
                             <constraint firstItem="U72-dW-XDt" firstAttribute="top" secondItem="ieQ-6z-WPZ" secondAttribute="top" id="Kat-sP-DMc"/>
                             <constraint firstItem="58r-PV-tV4" firstAttribute="width" secondItem="Dh5-9L-hhQ" secondAttribute="width" id="WK0-vU-JfV"/>
-                            <constraint firstItem="iXV-v0-KZw" firstAttribute="leading" secondItem="ieQ-6z-WPZ" secondAttribute="leading" constant="-50" id="awa-uO-ueq"/>
-                            <constraint firstItem="iXV-v0-KZw" firstAttribute="top" secondItem="ieQ-6z-WPZ" secondAttribute="top" id="dCI-uz-o8h"/>
                             <constraint firstAttribute="trailing" secondItem="U72-dW-XDt" secondAttribute="trailing" id="ksV-TT-Ra9"/>
-                            <constraint firstItem="iXV-v0-KZw" firstAttribute="trailing" secondItem="ieQ-6z-WPZ" secondAttribute="trailing" constant="50" id="nKp-0P-VuK"/>
-                            <constraint firstItem="x3t-z4-wuU" firstAttribute="centerX" secondItem="iXV-v0-KZw" secondAttribute="centerX" id="p32-1b-jRo"/>
                             <constraint firstItem="ieQ-6z-WPZ" firstAttribute="bottom" secondItem="U72-dW-XDt" secondAttribute="bottom" id="wW9-HE-CBd"/>
                         </constraints>
                         <viewLayoutGuide key="safeArea" id="ieQ-6z-WPZ"/>
                     </view>
                     <navigationItem key="navigationItem" title="Sign Up" id="nZd-Ek-XEs"/>
                     <connections>
-                        <outlet property="activityIndicatorView" destination="x3t-z4-wuU" id="4Te-CJ-U2o"/>
                         <outlet property="emailTextField" destination="tFl-Kx-DhJ" id="woT-cF-XZb"/>
                         <outlet property="errorInfoLabel" destination="8Nj-6i-Wxr" id="ahj-rr-7ra"/>
                         <outlet property="goToLoginButton" destination="IfO-1b-7nx" id="lR8-6c-XlI"/>
-                        <outlet property="loadingView" destination="iXV-v0-KZw" id="7ox-zw-IoL"/>
                         <outlet property="passwordConfirmTextField" destination="cr1-fH-h3J" id="biV-k1-AzD"/>
                         <outlet property="passwordTextField" destination="h8W-DM-C7H" id="sg8-RW-fjz"/>
                         <outlet property="signupButton" destination="JfM-bS-31u" id="dWr-kJ-ZCl"/>

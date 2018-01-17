@@ -50,8 +50,7 @@ class CreateDroppViewController: UIViewController {
     navigationItem.rightBarButtonItem = postButton
     
     addPhotoButton.layer.cornerRadius = 5
-    addPhotoButton.backgroundColor = .salmon
-    addPhotoButton.setTitleColor(.white, for: .normal)
+    addPhotoButton.toggle(enabled: true)
     togglePostButton(enabled: false)
     
     // Customize the text view
@@ -111,7 +110,7 @@ class CreateDroppViewController: UIViewController {
       let deleteOption = UIAlertAction(title: "Remove Photo", style: .destructive, handler: { _ in
         self.imageView.image = nil
         self.updateHeightConstraint()
-        self.addPhotoButton.setTitle("Add photo", for: .normal)
+        self.addPhotoButton.toggle(enabled: true, withTitle: "Add photo")
         self.configureCameraOptionsSheet(imageViewContainsImage: false)
         
         let shouldEnable = !self.textView.text.trim().isEmpty
@@ -287,7 +286,7 @@ class CreateDroppViewController: UIViewController {
       self.updateHeightConstraint()
       self.clearTextView()
       self.textView.resignFirstResponder()
-      self.addPhotoButton.setTitle("Add photo", for: .normal)
+      self.addPhotoButton.toggle(enabled: true, withTitle: "Add photo")
     }
   }
   
@@ -337,7 +336,7 @@ extension CreateDroppViewController: UIImagePickerControllerDelegate, UINavigati
     
     imageView.image = image
     updateHeightConstraint()
-    addPhotoButton.setTitle("Edit photo", for: .normal)
+    addPhotoButton.toggle(enabled: true, withTitle: "Edit photo")
     configureCameraOptionsSheet(imageViewContainsImage: true)
     picker.dismiss(animated: true, completion: nil)
     togglePostButton(enabled: true)
