@@ -15,12 +15,11 @@ class CreateDroppViewController: UIViewController {
   @IBOutlet weak var placeholderLabel: UILabel!
   @IBOutlet weak var addPhotoButton: UIButton!
   @IBOutlet weak var imageView: UIImageView!
-  @IBOutlet weak var loadingView: UIView!
-  @IBOutlet weak var activityIndicatorView: GIFImageView!
   @IBOutlet weak var containerView: UIView!
   @IBOutlet weak var containerViewHeightConstraint: NSLayoutConstraint!
   
   weak var feedViewControllerDelegate: FeedViewControllerDelegate?
+  private var originalTitle: String!
   var postingDropp = false
   var cameraOptionsSheet: UIAlertController!
   lazy var imagePicker: UIImagePickerController = {
@@ -43,6 +42,7 @@ class CreateDroppViewController: UIViewController {
   
   override func viewDidLoad() {
     super.viewDidLoad()
+    originalTitle = title ?? ""
     
     let postButton = UIBarButtonItem(title: "Share", style: .done, target: self, action: #selector(didTapPostButton(_:)))
     let cancelButton = UIBarButtonItem(title: "Cancel", style: .plain, target: self, action: #selector(didTapCancelButton))
@@ -67,7 +67,6 @@ class CreateDroppViewController: UIViewController {
     
     // Add photo alerts configuration
     configureCameraOptionsSheet(imageViewContainsImage: false)
-    activityIndicatorView.prepareForAnimation(withGIFNamed: Constants.activityIndicatorFileName)
     
     NotificationCenter.default.addObserver(self, selector: #selector(deviceDidRotate), name: NSNotification.Name.UIDeviceOrientationDidChange, object: nil)
   }
@@ -175,11 +174,7 @@ class CreateDroppViewController: UIViewController {
       return
     }
     
-    postingDropp = true
-    dismissKeyboard()
-    toggleLoadingView(visible: true)
-    togglePostButton(enabled: false)
-    toggleCancelButton(enabled: false)
+    enterPostingState()
     
     let now = Date()
     let image = imageView.image
@@ -223,23 +218,52 @@ class CreateDroppViewController: UIViewController {
     })
   }
   
+  private func enterPostingState() {
+    guard !postingDropp else {
+      return
+    }
+    
+    postingDropp = true
+    dismissKeyboard()
+    let loadingIndicator = UIActivityIndicatorView(activityIndicatorStyle: .gray)
+    loadingIndicator.startAnimating()
+    toggleCancelButton(enabled: false)
+    DispatchQueue.main.async {
+      self.title = "Sharing..."
+      self.navigationItem.rightBarButtonItem = UIBarButtonItem(customView: loadingIndicator)
+      self.textView.isEditable = false
+      self.textView.isSelectable = false
+      self.addPhotoButton.toggle(enabled: false)
+    }
+  }
+  
+  private func exitPostingState() {
+    guard postingDropp else {
+      return
+    }
+    
+    postingDropp = false
+    toggleCancelButton(enabled: true)
+    DispatchQueue.main.async {
+      self.title = self.originalTitle
+      self.navigationItem.rightBarButtonItem = UIBarButtonItem(title: "Share", style: .done, target: self, action: #selector(self.didTapPostButton(_:)))
+      self.textView.isEditable = true
+      self.textView.isSelectable = true
+      self.addPhotoButton.toggle(enabled: true)
+    }
+  }
+  
   private func performSuccessCleanup(_ dropp: Dropp) {
-    self.postingDropp = false
-    self.toggleLoadingView(visible: false)
+    self.exitPostingState()
     self.dismiss(animated: true) {
       self.feedViewControllerDelegate?.shouldAddDropp?(dropp)
     }
   }
   
   private func displayAddDroppFailure() {
-    let alert = UIAlertController(title: "Error", message: "Unable to post your dropp😕", preferredStyle: .alert, color: .salmon, addDefaultAction: true) { _ in
-      self.togglePostButton(enabled: true)
-      self.toggleCancelButton(enabled: true)
-    }
-    
+    let alert = UIAlertController(title: "Error", message: "Unable to share your dropp😕", preferredStyle: .alert, color: .salmon, addDefaultAction: true)
     present(alert, animated: true, completion: { () in
-      self.postingDropp = false
-      self.toggleLoadingView(visible: false)
+      self.exitPostingState()
     })
   }
   
@@ -252,19 +276,6 @@ class CreateDroppViewController: UIViewController {
   private func togglePostButton(enabled: Bool) {
     DispatchQueue.main.async {
       self.navigationItem.rightBarButtonItem?.isEnabled = enabled
-    }
-  }
-  
-  private func toggleLoadingView(visible: Bool) {
-    DispatchQueue.main.async {
-      self.loadingView.isHidden = !visible
-      if visible {
-        self.activityIndicatorView.startAnimatingGIF()
-        self.activityIndicatorView.isHidden = false
-      } else {
-        self.activityIndicatorView.isHidden = true
-        self.activityIndicatorView.stopAnimatingGIF()
-      }
     }
   }
   

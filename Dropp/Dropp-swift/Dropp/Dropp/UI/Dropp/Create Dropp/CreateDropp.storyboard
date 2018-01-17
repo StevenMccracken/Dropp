@@ -5,7 +5,6 @@
     </device>
     <dependencies>
         <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="13527"/>
-        <capability name="Aspect ratio constraints" minToolsVersion="5.1"/>
         <capability name="Constraints with non-1.0 multipliers" minToolsVersion="5.1"/>
         <capability name="Safe area layout guides" minToolsVersion="9.0"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
@@ -84,43 +83,24 @@
                                     <constraint firstItem="rQb-dd-qYT" firstAttribute="top" secondItem="Y7z-eO-dDc" secondAttribute="top" id="oaL-Ts-TTA"/>
                                 </constraints>
                             </scrollView>
-                            <view hidden="YES" alpha="0.59999999999999998" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="9Cm-4q-C2u">
-                                <rect key="frame" x="-50" y="20" width="475" height="697"/>
-                                <color key="backgroundColor" white="0.33333333333333331" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
-                            </view>
-                            <imageView hidden="YES" userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" translatesAutoresizingMaskIntoConstraints="NO" id="BI7-ar-4un" userLabel="Activity Indicator View" customClass="GIFImageView" customModule="Gifu">
-                                <rect key="frame" x="149.5" y="281" width="75" height="75"/>
-                                <constraints>
-                                    <constraint firstAttribute="width" secondItem="BI7-ar-4un" secondAttribute="height" multiplier="1:1" id="1Dp-HA-f9R"/>
-                                    <constraint firstAttribute="width" constant="75" id="bE4-Kx-SZ7"/>
-                                </constraints>
-                            </imageView>
                         </subviews>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                         <constraints>
-                            <constraint firstItem="BI7-ar-4un" firstAttribute="centerX" secondItem="9Cm-4q-C2u" secondAttribute="centerX" id="21v-dN-6jg"/>
-                            <constraint firstItem="9Cm-4q-C2u" firstAttribute="trailing" secondItem="00D-OA-gmU" secondAttribute="trailing" constant="50" id="2x3-1V-1CP"/>
                             <constraint firstItem="00D-OA-gmU" firstAttribute="bottom" secondItem="Y7z-eO-dDc" secondAttribute="bottom" id="Bxb-am-Pw2"/>
                             <constraint firstAttribute="trailing" secondItem="Y7z-eO-dDc" secondAttribute="trailing" id="Pbv-Fb-HoN"/>
                             <constraint firstItem="rQb-dd-qYT" firstAttribute="width" secondItem="z2O-lG-6aT" secondAttribute="width" id="Yi2-De-Q9U"/>
-                            <constraint firstItem="9Cm-4q-C2u" firstAttribute="bottom" secondItem="00D-OA-gmU" secondAttribute="bottom" constant="50" id="cuv-Fk-Z9f"/>
-                            <constraint firstItem="9Cm-4q-C2u" firstAttribute="top" secondItem="00D-OA-gmU" secondAttribute="top" id="mH0-wj-vip"/>
                             <constraint firstItem="Y7z-eO-dDc" firstAttribute="top" secondItem="00D-OA-gmU" secondAttribute="top" id="mbi-8e-lqO"/>
                             <constraint firstItem="Y7z-eO-dDc" firstAttribute="leading" secondItem="z2O-lG-6aT" secondAttribute="leading" id="qNc-gS-qtc"/>
-                            <constraint firstItem="BI7-ar-4un" firstAttribute="centerY" secondItem="9Cm-4q-C2u" secondAttribute="centerY" constant="-50" id="tXg-dY-0Ht"/>
                             <constraint firstItem="l1O-ho-IOc" firstAttribute="height" secondItem="00D-OA-gmU" secondAttribute="height" multiplier="0.4" id="tf0-JQ-6ri"/>
-                            <constraint firstItem="9Cm-4q-C2u" firstAttribute="leading" secondItem="00D-OA-gmU" secondAttribute="leading" constant="-50" id="uhz-Ff-zUA"/>
                         </constraints>
                         <viewLayoutGuide key="safeArea" id="00D-OA-gmU"/>
                     </view>
                     <navigationItem key="navigationItem" title="Create Dropp" id="Py8-50-KwO"/>
                     <connections>
-                        <outlet property="activityIndicatorView" destination="BI7-ar-4un" id="tsq-GD-M14"/>
                         <outlet property="addPhotoButton" destination="bKF-1R-e8E" id="aJD-NK-dmf"/>
                         <outlet property="containerView" destination="rQb-dd-qYT" id="EDW-sa-c79"/>
                         <outlet property="containerViewHeightConstraint" destination="h5n-p4-dk9" id="k4G-2E-2DT"/>
                         <outlet property="imageView" destination="7BQ-2k-eZd" id="dYY-hB-ecg"/>
-                        <outlet property="loadingView" destination="9Cm-4q-C2u" id="SCY-To-byw"/>
                         <outlet property="placeholderLabel" destination="U1g-8G-S0P" id="OVj-Te-rCJ"/>
                         <outlet property="textView" destination="l1O-ho-IOc" id="Z5a-qG-Sa0"/>
                     </connections>
