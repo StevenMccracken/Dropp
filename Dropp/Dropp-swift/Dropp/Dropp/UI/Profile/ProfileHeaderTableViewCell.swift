@@ -25,21 +25,8 @@ class ProfileHeaderTableViewCell: UITableViewCell {
     interactionButton.layer.borderColor = UIColor.lightGray.cgColor
   }
   
-  func updateInteractionButton(_ text: String, state: UIControlState) {
-    interactionButton.setTitle(text, for: state)
-  }
-  
-  func toggleInteractionButton(enabled: Bool) {
-    interactionButton.isEnabled = enabled
-    if enabled {
-      interactionButton.backgroundColor = .salmon
-      interactionButton.setTitleColor(.white, for: .normal)
-      interactionButton.layer.borderWidth = 0
-    } else {
-      interactionButton.backgroundColor = .white
-      interactionButton.setTitleColor(.lightGray, for: .disabled)
-      interactionButton.layer.borderWidth = 0.5
-    }
+  func toggleInteractionButton(enabled: Bool, withTitle title: String? = nil) {
+    interactionButton.toggle(enabled: enabled, withTitle: title)
   }
   
   func toggleInteractionButton(visible: Bool) {

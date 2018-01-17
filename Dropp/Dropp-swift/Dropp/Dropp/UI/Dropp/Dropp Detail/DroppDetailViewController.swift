@@ -8,17 +8,17 @@
 
 import UIKit
 import MapKit
-import Gifu
 
 class DroppDetailViewController: UIViewController {
   
   @IBOutlet weak var containerView: UIView!
   @IBOutlet weak var scrollView: UIScrollView!
-  @IBOutlet weak var imageLoadingViewSpinner: GIFImageView!
+  @IBOutlet weak var loadingImageBackgroundView: UIView!
+  @IBOutlet weak var loadingImageActivityIndicatorView: UIActivityIndicatorView!
   @IBOutlet weak var imageView: UIImageView!
   @IBOutlet weak var mapView: MKMapView!
-  @IBOutlet weak var timestampLabel: UILabel!
-  @IBOutlet weak var contentLabel: UILabel!
+  @IBOutlet weak var timestampLabel: UICopyableLabel!
+  @IBOutlet weak var contentLabel: UICopyableLabel!
   @IBOutlet weak var textView: UITextView!
   @IBOutlet weak var fetchImageErrorLabel: UILabel!
   
@@ -37,6 +37,7 @@ class DroppDetailViewController: UIViewController {
   override func viewDidLoad() {
     super.viewDidLoad()
     mapView.delegate = self
+    loadingImageBackgroundView.layer.cornerRadius = 10
     textView.layer.cornerRadius = 5
     textView.backgroundColor = UIColor(white: 0.95, alpha: 1)
     
@@ -48,7 +49,6 @@ class DroppDetailViewController: UIViewController {
     
     originalTitle = title ?? ""
     if dropp.hasMedia {
-      imageLoadingViewSpinner.prepareForAnimation(withGIFNamed: Constants.activityIndicatorFileName)
       fetchMedia()
     }
     
@@ -429,13 +429,8 @@ class DroppDetailViewController: UIViewController {
   
   private func toggleLoadingImageIndicator(visible: Bool) {
     DispatchQueue.main.async {
-      if visible {
-        self.imageLoadingViewSpinner.startAnimatingGIF()
-        self.imageLoadingViewSpinner.isHidden = false
-      } else {
-        self.imageLoadingViewSpinner.isHidden = true
-        self.imageLoadingViewSpinner.stopAnimatingGIF()
-      }
+      self.loadingImageBackgroundView.isHidden = !visible
+      self.loadingImageActivityIndicatorView.isHidden = !visible
     }
   }
 }

@@ -6,7 +6,6 @@
 //  Copyright © 2017 Group B. All rights reserved.
 //
 
-import Gifu
 import UIKit
 
 class CreateDroppViewController: UIViewController {

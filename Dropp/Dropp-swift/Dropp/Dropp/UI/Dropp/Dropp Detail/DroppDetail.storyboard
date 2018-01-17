@@ -25,10 +25,10 @@
                                     <view verifyAmbiguity="ignoreSizes" contentMode="scaleToFill" ambiguous="YES" translatesAutoresizingMaskIntoConstraints="NO" id="PhT-bd-15Y" userLabel="Container View">
                                         <rect key="frame" x="0.0" y="0.0" width="375" height="551"/>
                                         <subviews>
-                                            <mapView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" mapType="standard" scrollEnabled="NO" rotateEnabled="NO" pitchEnabled="NO" showsUserLocation="YES" showsScale="YES" translatesAutoresizingMaskIntoConstraints="NO" id="RqI-A4-P6i">
+                                            <mapView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" mapType="standard" rotateEnabled="NO" pitchEnabled="NO" showsUserLocation="YES" showsScale="YES" translatesAutoresizingMaskIntoConstraints="NO" id="RqI-A4-P6i">
                                                 <rect key="frame" x="0.0" y="0.0" width="375" height="323.5"/>
                                             </mapView>
-                                            <label opaque="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Timestamp" lineBreakMode="wordWrap" numberOfLines="0" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="LKv-84-lVX">
+                                            <label opaque="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Timestamp" lineBreakMode="wordWrap" numberOfLines="0" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="LKv-84-lVX" customClass="UICopyableLabel" customModule="Dropp" customModuleProvider="target">
                                                 <rect key="frame" x="10" y="328.5" width="355" height="19.5"/>
                                                 <fontDescription key="fontDescription" type="system" pointSize="16"/>
                                                 <color key="textColor" red="0.91661626100000004" green="0.3107863367" blue="0.38301837439999997" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
@@ -43,7 +43,7 @@
                                                 <fontDescription key="fontDescription" type="system" pointSize="20"/>
                                                 <textInputTraits key="textInputTraits" autocapitalizationType="sentences" enablesReturnKeyAutomatically="YES"/>
                                             </textView>
-                                            <label opaque="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Content" lineBreakMode="wordWrap" numberOfLines="0" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="4T2-ct-BHu">
+                                            <label opaque="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Content" lineBreakMode="wordWrap" numberOfLines="0" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="4T2-ct-BHu" customClass="UICopyableLabel" customModule="Dropp" customModuleProvider="target">
                                                 <rect key="frame" x="10" y="353" width="355" height="24"/>
                                                 <fontDescription key="fontDescription" type="system" weight="medium" pointSize="20"/>
                                                 <nil key="textColor"/>
@@ -55,13 +55,22 @@
                                                     <constraint firstAttribute="height" constant="350" id="cOa-5a-1pt"/>
                                                 </constraints>
                                             </imageView>
-                                            <imageView hidden="YES" userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" translatesAutoresizingMaskIntoConstraints="NO" id="NcX-Ck-4qT" userLabel="Image view spinner" customClass="GIFImageView" customModule="Gifu">
-                                                <rect key="frame" x="149.5" y="519.5" width="75" height="75"/>
+                                            <view hidden="YES" opaque="NO" alpha="0.80000000000000004" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="PZs-fl-EtS" userLabel="Activity Indicator Background View">
+                                                <rect key="frame" x="160" y="529.5" width="55" height="55"/>
+                                                <subviews>
+                                                    <activityIndicatorView hidden="YES" contentMode="scaleToFill" horizontalHuggingPriority="750" verticalHuggingPriority="750" hidesWhenStopped="YES" animating="YES" style="whiteLarge" translatesAutoresizingMaskIntoConstraints="NO" id="dKd-bn-zlf">
+                                                        <rect key="frame" x="8.5" y="8.5" width="37" height="37"/>
+                                                        <color key="color" red="0.91661626100000004" green="0.3107863367" blue="0.38301837439999997" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                                                    </activityIndicatorView>
+                                                </subviews>
+                                                <color key="backgroundColor" white="0.0" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                                 <constraints>
-                                                    <constraint firstAttribute="width" constant="75" id="E8Z-s1-Xjt"/>
-                                                    <constraint firstAttribute="width" secondItem="NcX-Ck-4qT" secondAttribute="height" multiplier="1:1" id="nYL-wV-SU7"/>
+                                                    <constraint firstItem="dKd-bn-zlf" firstAttribute="centerX" secondItem="PZs-fl-EtS" secondAttribute="centerX" id="Etf-0C-coa"/>
+                                                    <constraint firstAttribute="width" secondItem="PZs-fl-EtS" secondAttribute="height" multiplier="1:1" id="Msv-OY-aAd"/>
+                                                    <constraint firstItem="dKd-bn-zlf" firstAttribute="centerY" secondItem="PZs-fl-EtS" secondAttribute="centerY" id="bla-iN-NyT"/>
+                                                    <constraint firstAttribute="width" constant="55" id="tMT-fl-xYv"/>
                                                 </constraints>
-                                            </imageView>
+                                            </view>
                                             <label hidden="YES" opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Unable to get image😦" textAlignment="center" lineBreakMode="wordWrap" numberOfLines="0" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="kwo-dc-9Gl" userLabel="Fetch image error label">
                                                 <rect key="frame" x="10" y="544" width="355" height="26.5"/>
                                                 <fontDescription key="fontDescription" type="system" weight="medium" pointSize="22"/>
@@ -82,13 +91,13 @@
                                             <constraint firstItem="aNs-qz-Wuu" firstAttribute="top" secondItem="4T2-ct-BHu" secondAttribute="top" id="XGX-Kq-cnh"/>
                                             <constraint firstItem="RqI-A4-P6i" firstAttribute="leading" secondItem="PhT-bd-15Y" secondAttribute="leading" id="Zty-Bg-Ym6"/>
                                             <constraint firstItem="kwo-dc-9Gl" firstAttribute="trailing" secondItem="Jku-gd-Qxo" secondAttribute="trailing" id="aGK-zj-ZB1"/>
-                                            <constraint firstItem="NcX-Ck-4qT" firstAttribute="centerY" secondItem="Jku-gd-Qxo" secondAttribute="centerY" id="dbU-zN-F20"/>
+                                            <constraint firstItem="PZs-fl-EtS" firstAttribute="centerX" secondItem="Jku-gd-Qxo" secondAttribute="centerX" id="d2g-9G-eTT"/>
+                                            <constraint firstItem="PZs-fl-EtS" firstAttribute="centerY" secondItem="Jku-gd-Qxo" secondAttribute="centerY" id="dX2-eH-lgo"/>
                                             <constraint firstItem="4T2-ct-BHu" firstAttribute="leading" secondItem="PhT-bd-15Y" secondAttribute="leading" constant="10" id="dwb-Ir-qUR"/>
                                             <constraint firstItem="LKv-84-lVX" firstAttribute="top" secondItem="RqI-A4-P6i" secondAttribute="bottom" constant="5" id="ejY-3b-ZU1"/>
                                             <constraint firstItem="Jku-gd-Qxo" firstAttribute="top" secondItem="4T2-ct-BHu" secondAttribute="bottom" constant="5" id="fRv-C5-3wH"/>
                                             <constraint firstItem="aNs-qz-Wuu" firstAttribute="leading" secondItem="4T2-ct-BHu" secondAttribute="leading" id="giE-tg-sf4"/>
                                             <constraint firstItem="RqI-A4-P6i" firstAttribute="top" secondItem="PhT-bd-15Y" secondAttribute="top" id="h0C-o6-y6c"/>
-                                            <constraint firstItem="NcX-Ck-4qT" firstAttribute="centerX" secondItem="Jku-gd-Qxo" secondAttribute="centerX" id="kYU-vk-7do"/>
                                             <constraint firstItem="kwo-dc-9Gl" firstAttribute="leading" secondItem="Jku-gd-Qxo" secondAttribute="leading" id="puV-yd-JVq"/>
                                             <constraint firstItem="kwo-dc-9Gl" firstAttribute="centerY" secondItem="Jku-gd-Qxo" secondAttribute="centerY" id="vh1-b9-OeJ"/>
                                         </constraints>
@@ -117,8 +126,9 @@
                         <outlet property="containerView" destination="PhT-bd-15Y" id="uvx-jJ-Fwn"/>
                         <outlet property="contentLabel" destination="4T2-ct-BHu" id="Mkk-DU-POE"/>
                         <outlet property="fetchImageErrorLabel" destination="kwo-dc-9Gl" id="CtC-1y-ilE"/>
-                        <outlet property="imageLoadingViewSpinner" destination="NcX-Ck-4qT" id="TD5-Hj-9Ea"/>
                         <outlet property="imageView" destination="Jku-gd-Qxo" id="XWZ-rQ-SQr"/>
+                        <outlet property="loadingImageActivityIndicatorView" destination="dKd-bn-zlf" id="Yoc-fQ-xTK"/>
+                        <outlet property="loadingImageBackgroundView" destination="PZs-fl-EtS" id="O5U-PA-6Rz"/>
                         <outlet property="mapView" destination="RqI-A4-P6i" id="5Hn-bV-rZt"/>
                         <outlet property="scrollView" destination="AOp-mc-etn" id="YN6-vy-I0F"/>
                         <outlet property="textView" destination="aNs-qz-Wuu" id="h7Z-OH-o7Y"/>

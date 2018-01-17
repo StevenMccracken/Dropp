@@ -310,14 +310,13 @@ class ProfileViewController: UITableViewController {
           DispatchQueue.main.async {
             strongSelf.navigationItem.rightBarButtonItem = strongSelf.sortButton
             let headerCell = strongSelf.tableView.dequeueReusableCell(withIdentifier: ProfileHeaderTableViewCell.reuseIdentifier, for: IndexPath(row: 0, section: 0)) as! ProfileHeaderTableViewCell
-            headerCell.updateInteractionButton("Unfollow", state: .normal)
+            headerCell.toggleInteractionButton(enabled: true, withTitle: "Unfollow")
           }
         } else if let hasRequestedFollow = LoginManager.shared.currentUser?.hasRequestedFollow(updatedUser), hasRequestedFollow == true {
           DispatchQueue.main.async {
             strongSelf.navigationItem.rightBarButtonItem = strongSelf.infoButton
             let headerCell = strongSelf.tableView.dequeueReusableCell(withIdentifier: ProfileHeaderTableViewCell.reuseIdentifier, for: IndexPath(row: 0, section: 0)) as! ProfileHeaderTableViewCell
-            headerCell.toggleInteractionButton(enabled: false)
-            headerCell.updateInteractionButton("Pending...", state: .disabled)
+            headerCell.toggleInteractionButton(enabled: false, withTitle: "Request pending...")
           }
         }
       }
@@ -473,12 +472,9 @@ class ProfileViewController: UITableViewController {
       headerCell.toggleInteractionButton(visible: !user.isCurrentUser)
       if let _ = user.followers {
         let following = LoginManager.shared.currentUser!.follows(user) ?? false
-        let buttonText = following ? "Unfollow" : "Follow"
-        headerCell.toggleInteractionButton(enabled: true)
-        headerCell.updateInteractionButton(buttonText, state: .normal)
+        headerCell.toggleInteractionButton(enabled: true, withTitle: following ? "Unfollow" : "Follow")
       } else {
-        headerCell.toggleInteractionButton(enabled: false)
-        headerCell.updateInteractionButton("Loading...", state: .disabled)
+        headerCell.toggleInteractionButton(enabled: false, withTitle: "Loading...")
       }
       
       if user.isCurrentUser {
@@ -527,35 +523,25 @@ class ProfileViewController: UITableViewController {
   }
   
   func toggleLoadingView(hidden: Bool, newRightBarButtonItem: UIBarButtonItem? = nil, _ completion: (() -> Void)? = nil) {
-    toggleInteractionButton(enabled: hidden) {
-      DispatchQueue.main.async {
-        if hidden {
-          self.navigationItem.setHidesBackButton(false, animated: true)
-          self.navigationItem.rightBarButtonItem = newRightBarButtonItem
-        } else {
-          self.navigationItem.setHidesBackButton(true, animated: true)
-          let activityIndicator = UIActivityIndicatorView(activityIndicatorStyle: .gray)
-          activityIndicator.startAnimating()
-          self.navigationItem.rightBarButtonItem = UIBarButtonItem(customView: activityIndicator)
-        }
-        
-        completion?()
+    updateInteractionButton(enabled: hidden) {
+      if hidden {
+        self.navigationItem.setHidesBackButton(false, animated: true)
+        self.navigationItem.rightBarButtonItem = newRightBarButtonItem
+      } else {
+        self.navigationItem.setHidesBackButton(true, animated: true)
+        let activityIndicator = UIActivityIndicatorView(activityIndicatorStyle: .gray)
+        activityIndicator.startAnimating()
+        self.navigationItem.rightBarButtonItem = UIBarButtonItem(customView: activityIndicator)
       }
-    }
-  }
-  
-  func toggleInteractionButton(enabled: Bool, _ completion: (() -> Void)? = nil) {
-    DispatchQueue.main.async {
-      let headerCell = self.tableView.dequeueReusableCell(withIdentifier: ProfileHeaderTableViewCell.reuseIdentifier, for: IndexPath(row: 0, section: 0)) as! ProfileHeaderTableViewCell
-      headerCell.toggleInteractionButton(enabled: enabled)
+      
       completion?()
     }
   }
   
-  func updateInteractionButton(withText text: String, forState state: UIControlState, _ completion: (() -> Void)? = nil) {
+  func updateInteractionButton(enabled: Bool, withTitle title: String? = nil, _ completion: (() -> Void)? = nil) {
     DispatchQueue.main.async {
       let headerCell = self.tableView.dequeueReusableCell(withIdentifier: ProfileHeaderTableViewCell.reuseIdentifier, for: IndexPath(row: 0, section: 0)) as! ProfileHeaderTableViewCell
-      headerCell.updateInteractionButton(text, state: state)
+      headerCell.toggleInteractionButton(enabled: enabled, withTitle: title)
       completion?()
     }
   }
@@ -710,8 +696,7 @@ extension ProfileViewController: ProfileHeaderTableViewCellDelegate {
       LoginManager.shared.currentUser?.followRequests?.append(strongSelf.user)
       strongSelf.toggleLoadingView(hidden: true, newRightBarButtonItem: strongSelf.infoButton) {
         DispatchQueue.main.async {
-          strongSelf.toggleFollowRequestSentLabel(visible: true)
-          headerTableViewCell.updateInteractionButton("Remove follow request", state: .normal)
+          headerTableViewCell.toggleInteractionButton(enabled: true, withTitle: "Remove follow request")
         }
       }
     }, failure: { [weak self] (requestToFollowError: NSError) in
@@ -740,7 +725,7 @@ extension ProfileViewController: ProfileHeaderTableViewCellDelegate {
       strongSelf.filteredDropps = []
       strongSelf.toggleNotFollowingLabel(visible: true)
       strongSelf.toggleLoadingView(hidden: true) {
-        strongSelf.updateInteractionButton(withText: "Follow", forState: .normal)
+        strongSelf.updateInteractionButton(enabled: true, withTitle: "Follow")
       }
     }, failure: { [weak self] (removeFollowRequestError: NSError) in
       guard let strongSelf = self else {
@@ -769,12 +754,8 @@ extension ProfileViewController: ProfileHeaderTableViewCellDelegate {
       strongSelf.dropps = []
       strongSelf.filteredDropps = []
       strongSelf.toggleNotFollowingLabel(visible: true)
-      strongSelf.toggleInteractionButton(enabled: true) {
-        strongSelf.updateInteractionButton(withText: "Follow", forState: .normal) {
-          DispatchQueue.main.async {
-            strongSelf.tableView.reloadData()
-          }
-        }
+      strongSelf.updateInteractionButton(enabled: true, withTitle: "Follow") {
+        strongSelf.tableView.reloadData()
       }
     }, failure: { [weak self] (unfollowError: NSError) in
       guard let strongSelf = self else {
