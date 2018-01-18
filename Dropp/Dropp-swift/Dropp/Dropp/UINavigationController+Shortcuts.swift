@@ -7,7 +7,6 @@
 //
 
 import UIKit
-import Foundation
 
 extension UINavigationController {
   
@@ -18,14 +17,6 @@ extension UINavigationController {
     }
     
     navigationBar.tintColor = .salmon
-    navigationBar.barTintColor = .white
     navigationBar.prefersLargeTitles = true
-    
-    let textAttributes: [NSAttributedStringKey: Any] = [
-      NSAttributedStringKey(rawValue: NSAttributedStringKey.foregroundColor.rawValue): UIColor.salmon,
-    ]
-    
-    navigationBar.titleTextAttributes = textAttributes
-    navigationBar.largeTitleTextAttributes = textAttributes
   }
 }

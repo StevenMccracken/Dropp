@@ -37,6 +37,8 @@
 	<string>Record videos</string>
 	<key>NSPhotoLibraryUsageDescription</key>
 	<string>Access photos</string>
+	<key>NSPhotoLibraryAddUsageDescription</key>
+	<string>Save photos you take</string>
 	<key>UIBackgroundModes</key>
 	<array>
 		<string>location</string>

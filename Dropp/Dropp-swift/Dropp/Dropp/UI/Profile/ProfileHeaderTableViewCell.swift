@@ -10,11 +10,13 @@ import UIKit
 
 class ProfileHeaderTableViewCell: UITableViewCell {
   
+  static let reuseIdentifier = "ProfileHeaderTableViewCell"
   @IBOutlet weak var followersButton: UIButton!
   @IBOutlet weak var followingButton: UIButton!
   @IBOutlet weak var followersCount: UILabel!
   @IBOutlet weak var followingCount: UILabel!
   @IBOutlet weak var interactionButton: UIButton!
+  @IBOutlet weak var interactionButtonHeightConstraint: NSLayoutConstraint!
   weak var delegate: ProfileHeaderTableViewCellDelegate?
   
   override func awakeFromNib() {
@@ -23,25 +25,16 @@ class ProfileHeaderTableViewCell: UITableViewCell {
     interactionButton.layer.borderColor = UIColor.lightGray.cgColor
   }
   
-  func updateInteractionButton(_ text: String, state: UIControlState) {
-    interactionButton.setTitle(text, for: state)
-  }
-  
-  func toggleInteractionButton(enabled: Bool) {
-    interactionButton.isEnabled = enabled
-    if enabled {
-      interactionButton.backgroundColor = .salmon
-      interactionButton.setTitleColor(.white, for: .normal)
-      interactionButton.layer.borderWidth = 0
-    } else {
-      interactionButton.backgroundColor = .white
-      interactionButton.setTitleColor(.lightGray, for: .disabled)
-      interactionButton.layer.borderWidth = 0.5
-    }
+  func toggleInteractionButton(enabled: Bool, withTitle title: String? = nil) {
+    interactionButton.toggle(enabled: enabled, withTitle: title)
   }
   
   func toggleInteractionButton(visible: Bool) {
     interactionButton.isHidden = !visible
+  }
+  
+  func setInteractionButtonHeight(_ height: CGFloat) {
+    interactionButtonHeightConstraint.constant = height
   }
   
   func updateFollowers(_ count: Int) {
@@ -50,6 +43,14 @@ class ProfileHeaderTableViewCell: UITableViewCell {
   
   func updateFollowing(_ count: Int) {
     followingCount.text = String(count)
+  }
+  
+  func toggleFollowersButton(enabled: Bool) {
+    followersButton.isEnabled = enabled
+  }
+  
+  func toggleFollowingButton(enabled: Bool) {
+    followingButton.isEnabled = enabled
   }
   
   @IBAction func didTapFollowersButton(_ sender: Any) {
@@ -61,12 +62,12 @@ class ProfileHeaderTableViewCell: UITableViewCell {
   }
   
   @IBAction func didTapInteractionButton(_ sender: Any) {
-    delegate?.didTapInteractionButton()
+    delegate?.didTapInteractionButton(self)
   }
 }
 
 protocol ProfileHeaderTableViewCellDelegate: class {
   func didTapFollowersButton()
   func didTapFollowingButton()
-  func didTapInteractionButton()
+  func didTapInteractionButton(_ sender: ProfileHeaderTableViewCell)
 }

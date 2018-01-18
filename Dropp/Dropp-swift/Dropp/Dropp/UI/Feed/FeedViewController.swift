@@ -13,34 +13,24 @@ class FeedViewController: UITableViewController {
   var dropps: [Dropp] = []
   var filteredDropps: [Dropp] = []
   private var refreshing = false
-  private var sortingType: DroppFeedSortingType = .distance
+  private var sortingType: DroppFeedSortingType = .closest
   private var locationAuthorizationEventHandler: Disposable?
   private lazy var fetchFailedLabel: UILabel = {
-    let label = UILabel(frame: CGRect(x: 0, y: 0, width: tableView.bounds.size.width, height: tableView.bounds.size.height))
-    label.textColor = .salmon
-    label.textAlignment = .center
-    label.lineBreakMode = .byWordWrapping
-    label.text = "Unable to get dropps😟"
-    label.font = UIFont(name: label.font.fontName, size: 30.0)
-    label.sizeToFit()
+    let label = UILabel(withText: "\nUnable to get dropps😟", forTableViewBackground: tableView, andFontSize: 30)
     return label
   }()
   
   private lazy var noNearbyDroppsLabel: UILabel = {
-    let label = UILabel(frame: CGRect(x: 0, y: 0, width: tableView.bounds.size.width, height: tableView.bounds.size.height))
-    label.textColor = .salmon
-    label.textAlignment = .center
-    label.text = "No nearby dropps😢"
-    label.lineBreakMode = .byWordWrapping
-    label.font = UIFont(name: label.font.fontName, size: 30.0)
-    label.sizeToFit()
+    let label = UILabel(withText: "\nNo nearby dropps😢", forTableViewBackground: tableView, andFontSize: 30)
+
     return label
   }()
   
   override func viewDidLoad() {
     super.viewDidLoad()
     
-    navigationItem.rightBarButtonItem = UIBarButtonItem.init(title: "Sort", style: .plain, target: self, action: #selector(didTapSortButton))
+    navigationItem.rightBarButtonItem = UIBarButtonItem(title: "Sort", style: .plain, target: self, action: #selector(didTapSortButton))
+    navigationItem.rightBarButtonItem?.isEnabled = false
     tableView.rowHeight = UITableViewAutomaticDimension
     tableView.estimatedRowHeight = 150
     
@@ -93,14 +83,18 @@ class FeedViewController: UITableViewController {
     }
     
     refreshing = true
-    DroppService.getAllDropps(currentLocation: LocationManager.shared.currentLocation, withRange: 100.0, success: { [weak self] (dropps: [Dropp]) in
+    DroppService.getAllDropps(currentLocation: LocationManager.shared.currentLocation, withRange: 1000.0, success: { [weak self] (dropps: [Dropp]) in
       guard let strongSelf = self else {
         return
       }
       
       debugPrint("Got \(dropps.count) dropps")
-      strongSelf.dropps = Dropp.sort(dropps, by: strongSelf.sortingType)
+      strongSelf.dropps = Dropp.sort(dropps, by: strongSelf.sortingType, currentLocation: LocationManager.shared.currentLocation)
       strongSelf.toggleNoNearbyDroppsLabel(visible: dropps.isEmpty)
+      DispatchQueue.main.async {
+        strongSelf.navigationItem.rightBarButtonItem?.isEnabled = !dropps.isEmpty
+      }
+      
       completion()
     }, failure: { [weak self] (getDroppsError: NSError) in
       guard let strongSelf = self else {
@@ -109,6 +103,10 @@ class FeedViewController: UITableViewController {
       
       debugPrint("Failed to get dropps", getDroppsError)
       strongSelf.toggleFetchFailedLabel(visible: strongSelf.dropps.isEmpty)
+      DispatchQueue.main.async {
+        strongSelf.navigationItem.rightBarButtonItem?.isEnabled = !strongSelf.dropps.isEmpty
+      }
+      
       completion()
     })
   }
@@ -118,15 +116,32 @@ class FeedViewController: UITableViewController {
     let disclosure = "If you choose to sort by distance and your location cannot be determined, your feed will be sorted by newest dropps first."
     let alert = UIAlertController(title: "Sort Feed", message: disclosure, preferredStyle: .actionSheet, color: .salmon)
     
-    let distanceTitle = "Distance\(sortingType == .distance ? " ✓" : "")"
-    alert.addAction(UIAlertAction(title: distanceTitle, style: .default, handler: { _ in
-      guard self.sortingType != .distance else {
+    let closestTitle = "Closest\(sortingType == .closest ? " ✓" : "")"
+    alert.addAction(UIAlertAction(title: closestTitle, style: .default, handler: { _ in
+      guard self.sortingType != .closest else {
         return
       }
       
       if let location = LocationManager.shared.currentLocation {
-        self.sortingType = .distance
-        self.dropps = Dropp.sort(self.dropps, by: .distance, currentLocation: location)
+        self.sortingType = .closest
+        self.dropps = Dropp.sort(self.dropps, by: .closest, currentLocation: location)
+      } else {
+        self.sortingType = .chronological
+        self.dropps = Dropp.sort(self.dropps, by: .chronological)
+      }
+      
+      self.tableView.reloadData()
+    }))
+    
+    let farthestTitle = "Farthest\(sortingType == .farthest ? " ✓" : "")"
+    alert.addAction(UIAlertAction(title: farthestTitle, style: .default, handler: { _ in
+      guard self.sortingType != .farthest else {
+        return
+      }
+      
+      if let location = LocationManager.shared.currentLocation {
+        self.sortingType = .farthest
+        self.dropps = Dropp.sort(self.dropps, by: .farthest, currentLocation: location)
       } else {
         self.sortingType = .chronological
         self.dropps = Dropp.sort(self.dropps, by: .chronological)
@@ -158,6 +173,12 @@ class FeedViewController: UITableViewController {
     }))
     
     alert.addAction(UIAlertAction(title: "Cancel", style: .cancel, handler: nil))
+    if Utils.isPad() {
+      let popover = alert.popoverPresentationController
+      popover?.permittedArrowDirections = .up
+      popover?.barButtonItem = navigationItem.rightBarButtonItem
+    }
+    
     present(alert, animated: true, completion: nil)
   }
   
@@ -196,7 +217,7 @@ class FeedViewController: UITableViewController {
   }
   
   override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-    let cell = tableView.dequeueReusableCell(withIdentifier: "DroppTableViewCell", for: indexPath) as! DroppTableViewCell
+    let cell = tableView.dequeueReusableCell(withIdentifier: DroppTableViewCell.reuseIdentifier, for: indexPath) as! DroppTableViewCell
     
     // Configure the cell
     let dropp = dropps[indexPath.section]
@@ -229,14 +250,77 @@ class FeedViewController: UITableViewController {
     let dropp = dropps[indexPath.section]
     destination.dropp = dropp
     destination.displayInfoButton = !dropp.postedByCurrentUser
-    destination.droppFeedViewControllerDelegate = self
+    destination.feedViewControllerDelegate = self
     let _ = destination.view
   }
 }
 
-extension FeedViewController: DroppFeedViewControllerDelegate {
+extension FeedViewController: FeedViewControllerDelegate {
   
   func shouldRefreshData() {
     refreshData()
+  }
+  
+  func shouldRefresh(dropp: Dropp, with newDropp: Dropp) {
+    guard let index = dropps.index(of: dropp) else {
+      return
+    }
+    
+    dropps[index] = newDropp
+    let indexPath = IndexPath(row: 0, section: index)
+    DispatchQueue.main.async {
+      self.tableView.reloadRows(at: [indexPath], with: .fade)
+    }
+  }
+  
+  func shouldAddDropp(_ dropp: Dropp) {
+    if dropps.isEmpty {
+      toggleFetchFailedLabel(visible: false)
+      toggleNoNearbyDroppsLabel(visible: false)
+    }
+    
+    DispatchQueue.main.async {
+      var index: Int
+      var rowAnimation: UITableViewRowAnimation
+      var scrollPosition: UITableViewScrollPosition
+      if self.sortingType == .reverseChronological || self.sortingType == .farthest {
+        self.dropps.append(dropp)
+        index = self.dropps.count - 1
+        rowAnimation = .bottom
+        scrollPosition = .bottom
+      } else {
+        self.dropps.insert(dropp, at: 0)
+        index = 0
+        rowAnimation = .top
+        scrollPosition = .top
+      }
+      
+      self.tableView.insertSections(IndexSet(integer: index), with: rowAnimation)
+      
+      let visibleIndexPaths = self.tableView.indexPathsForVisibleRows ?? []
+      let indexPathToScrollTo = IndexPath(row: 0, section: index)
+      guard !visibleIndexPaths.contains(indexPathToScrollTo) else {
+        return
+      }
+      
+      self.tableView.selectRow(at: indexPathToScrollTo, animated: true, scrollPosition: scrollPosition)
+      DispatchQueue.main.asyncAfter(deadline: .now() + .milliseconds(500)) {
+        self.tableView.deselectRow(at: indexPathToScrollTo, animated: true)
+      }
+    }
+  }
+  
+  func shouldRemoveDropp(_ dropp: Dropp) {
+    guard let index = dropps.index(of: dropp) else {
+      return
+    }
+    
+    DispatchQueue.main.async {
+      self.dropps.remove(at: index)
+      self.tableView.deleteSections(IndexSet(integer: index), with: .left)
+      if self.dropps.isEmpty {
+        self.toggleNoNearbyDroppsLabel(visible: true)
+      }
+    }
   }
 }

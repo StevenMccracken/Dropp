@@ -10,6 +10,7 @@ import UIKit
 
 class DroppTableViewCell: UITableViewCell {
   
+  static let reuseIdentifier = "DroppTableViewCell"
   @IBOutlet weak var usernameLabel: UILabel!
   @IBOutlet weak var distanceLabel: UILabel!
   @IBOutlet weak var contentLabel: UILabel!

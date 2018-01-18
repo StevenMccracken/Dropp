@@ -88,8 +88,8 @@ class Dropp: NSObject, Comparable {
     
     var message: String
     let distance = self.distance(from: location)
-    if distance > 304.8 {
-      // Distance is further than 1000 feet. Convert to miles
+    if distance > 1409.7853 {
+      // Distance is far enough away that when rounded, it will be one mile. Convert to miles
       let miles = distance.metersToMiles
       let roundedDistance = Int((miles * 4.0).rounded() / 4)
       let quantifier = roundedDistance == 1 ? "mile" : "miles"
@@ -129,9 +129,11 @@ class Dropp: NSObject, Comparable {
   
   class func sort(_ dropps: [Dropp], by sortType: DroppFeedSortingType, currentLocation: CLLocation? = nil) -> [Dropp] {
     var sortedDropps: [Dropp]
-    if sortType == .distance, let location = currentLocation {
+    if (sortType == .farthest || sortType == .closest), let location = currentLocation {
       sortedDropps = dropps.sorted(by: { (a: Dropp, b: Dropp) in
-        return a.distance(from: location) < b.distance(from: location)
+        let distanceFromAToLocation = a.distance(from: location)
+        let distanceFromBToLocation = b.distance(from: location)
+        return sortType == .closest ? distanceFromAToLocation < distanceFromBToLocation :  distanceFromAToLocation > distanceFromBToLocation
       })
     } else if sortType == .reverseChronological {
       sortedDropps = dropps.sorted() { (a: Dropp, b: Dropp) in

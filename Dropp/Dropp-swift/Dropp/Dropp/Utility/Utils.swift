@@ -7,7 +7,8 @@
 //
 
 import UIKit
-import Foundation
+import Photos
+import CoreLocation
 
 class Utils {
   
@@ -36,5 +37,21 @@ class Utils {
   
   class func isPad() -> Bool {
     return UIDevice.current.userInterfaceIdiom == .pad
+  }
+  
+  class func save(image: UIImage, withTimestamp timestamp: Date, andLocation location: CLLocation? = nil, success: ((Bool) -> Void)? = nil, failure: ((Error) -> Void)? = nil) {
+    PHPhotoLibrary.shared().performChanges({ () in
+      let request = PHAssetChangeRequest.creationRequestForAsset(from: image)
+      request.creationDate = timestamp
+      if let location = location {
+        request.location = location
+      }
+    }, completionHandler: { (successfulSave: Bool, error: Error?) in
+      if let error = error {
+        failure?(error)
+      } else {
+        success?(successfulSave)
+      }
+    })
   }
 }

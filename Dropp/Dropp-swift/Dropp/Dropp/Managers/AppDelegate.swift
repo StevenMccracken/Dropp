@@ -20,6 +20,14 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
       return true
     }
     
+    if let user = LoginManager.shared.currentUser {
+      UserService.getUser(username: user.username, success: { (fetchedUser: User) in
+        LoginManager.shared.updateCurrentUser(with: fetchedUser)
+      }, failure: { (getUserError: NSError) in
+        debugPrint("Failed to fetch updated user profile for current user after startup", getUserError)
+      })
+    }
+    
     let mainStoryboard = UIStoryboard(name: "Main", bundle: nil)
     guard let initialViewController = mainStoryboard.instantiateInitialViewController() else {
       debugPrint("Initial view controller was nil")
@@ -66,8 +74,8 @@ extension AppDelegate: UITabBarControllerDelegate {
       return false
     }
     
-    if let selectedNavigationController = tabBarController.selectedViewController as? UINavigationController, let droppFeedViewControllerDelegate = selectedNavigationController.childViewControllers.first as? DroppFeedViewControllerDelegate {
-      createDroppViewController.droppFeedViewControllerDelegate = droppFeedViewControllerDelegate
+    if let selectedNavigationController = tabBarController.selectedViewController as? UINavigationController, let feedViewControllerDelegate = selectedNavigationController.childViewControllers.first as? FeedViewControllerDelegate {
+      createDroppViewController.feedViewControllerDelegate = feedViewControllerDelegate
     }
     
     let navigationController = UINavigationController(rootViewController: createDroppViewController, customize: true)

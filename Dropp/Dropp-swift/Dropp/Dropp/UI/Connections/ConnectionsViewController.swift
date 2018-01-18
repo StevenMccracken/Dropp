@@ -54,7 +54,7 @@ class ConnectionsViewController: UITableViewController {
   }
   
   override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-    let cell = tableView.dequeueReusableCell(withIdentifier: "connectionTableViewCell", for: indexPath) as! ConnectionTableViewCell
+    let cell = tableView.dequeueReusableCell(withIdentifier: ConnectionTableViewCell.reuseIdentifier, for: indexPath) as! ConnectionTableViewCell
     let user = isFiltering ? filteredConnections[indexPath.row] : connections![indexPath.row]
     cell.addContent(user)
     cell.selectionStyle = user.isCurrentUser ? .none : .default

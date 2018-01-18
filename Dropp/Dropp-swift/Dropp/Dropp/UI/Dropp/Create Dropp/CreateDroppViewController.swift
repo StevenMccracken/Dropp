@@ -6,7 +6,6 @@
 //  Copyright © 2017 Group B. All rights reserved.
 //
 
-import Gifu
 import UIKit
 
 class CreateDroppViewController: UIViewController {
@@ -15,10 +14,11 @@ class CreateDroppViewController: UIViewController {
   @IBOutlet weak var placeholderLabel: UILabel!
   @IBOutlet weak var addPhotoButton: UIButton!
   @IBOutlet weak var imageView: UIImageView!
-  @IBOutlet weak var loadingView: UIView!
-  @IBOutlet weak var activityIndicatorView: GIFImageView!
+  @IBOutlet weak var containerView: UIView!
+  @IBOutlet weak var containerViewHeightConstraint: NSLayoutConstraint!
   
-  weak var droppFeedViewControllerDelegate: DroppFeedViewControllerDelegate?
+  weak var feedViewControllerDelegate: FeedViewControllerDelegate?
+  private var originalTitle: String!
   var postingDropp = false
   var cameraOptionsSheet: UIAlertController!
   lazy var imagePicker: UIImagePickerController = {
@@ -27,16 +27,6 @@ class CreateDroppViewController: UIViewController {
     picker.allowsEditing = false
     picker.navigationBar.tintColor = .salmon
     return picker
-  }()
-  
-  lazy var resetDroppAlert: UIAlertController = {
-    let alert = UIAlertController(title: "Reset", message: "Are you sure you want to reset everything here?", preferredStyle: .alert, color: .salmon)
-    alert.addAction(UIAlertAction(title: "No", style: .cancel, handler: nil))
-    alert.addAction(UIAlertAction(title: "Yes", style: .destructive, handler: { _ in
-      self.resetInputs()
-    }))
-    
-    return alert
   }()
   
   lazy var mediaSourceUnavailableAlert: UIAlertController = {
@@ -51,6 +41,7 @@ class CreateDroppViewController: UIViewController {
   
   override func viewDidLoad() {
     super.viewDidLoad()
+    originalTitle = title ?? ""
     
     let postButton = UIBarButtonItem(title: "Share", style: .done, target: self, action: #selector(didTapPostButton(_:)))
     let cancelButton = UIBarButtonItem(title: "Cancel", style: .plain, target: self, action: #selector(didTapCancelButton))
@@ -58,6 +49,7 @@ class CreateDroppViewController: UIViewController {
     navigationItem.rightBarButtonItem = postButton
     
     addPhotoButton.layer.cornerRadius = 5
+    addPhotoButton.toggle(enabled: true)
     togglePostButton(enabled: false)
     
     // Customize the text view
@@ -66,14 +58,23 @@ class CreateDroppViewController: UIViewController {
     textView.backgroundColor = UIColor(white: 0.95, alpha: 1)
     
     addDismissKeyboardGesture()
-    addKeyboardToolbar()
+    let spacing = UIBarButtonItem(barButtonSystemItem: .flexibleSpace, target: nil, action: nil)
+    let doneButton = UIBarButtonItem(title: "Done", style: .plain, target: self, action: #selector(dismissKeyboard))
+    let clearButton = UIBarButtonItem(title: "Clear", style: .plain, target: self, action: #selector(clearTextView))
+    textView.addToolbar(withItems: [clearButton, spacing, doneButton])
     
     // Add photo alerts configuration
-    configureCameraOptionsSheet(includeDeleteOption: false)
-    activityIndicatorView.prepareForAnimation(withGIFNamed: Constants.activityIndicatorFileName)
+    configureCameraOptionsSheet(imageViewContainsImage: false)
+    
+    NotificationCenter.default.addObserver(self, selector: #selector(deviceDidRotate), name: NSNotification.Name.UIDeviceOrientationDidChange, object: nil)
   }
   
-  private func configureCameraOptionsSheet(includeDeleteOption: Bool) {
+  override func viewWillDisappear(_ animated: Bool) {
+    super.viewWillDisappear(animated)
+    NotificationCenter.default.removeObserver(self)
+  }
+  
+  private func configureCameraOptionsSheet(imageViewContainsImage: Bool) {
     cameraOptionsSheet = UIAlertController(title: nil, message: nil, preferredStyle: .actionSheet, color: .salmon)
     let cameraOption = UIAlertAction(title: "Take Photo", style: .default, handler: { _ in
       self.presentImagePicker(for: .camera)
@@ -83,28 +84,42 @@ class CreateDroppViewController: UIViewController {
       self.presentImagePicker(for: .photoLibrary)
     })
     
-    if includeDeleteOption {
+    cameraOptionsSheet.addAction(cameraOption)
+    cameraOptionsSheet.addAction(photoLibraryOption)
+    if imageViewContainsImage {
+      let saveOption = UIAlertAction(title: "Save Photo", style: .default, handler: { _ in
+        let message = "The image will be saved to your photos once you successfully post your dropp. Would you still like to save the image now?"
+        let saveAlert = UIAlertController(title: "Save Photo", message: message, preferredStyle: .alert, color: .salmon)
+        saveAlert.addAction(UIAlertAction(title: "No", style: .cancel, handler: nil))
+        saveAlert.addAction(UIAlertAction(title: "Yes", style: .default, handler: { _ in
+          Utils.save(image: self.imageView.image!, withTimestamp: Date(), andLocation: LocationManager.shared.currentLocation, success: nil, failure: { [weak self] (saveImageError: Error) in
+            guard let strongSelf = self else {
+              return
+            }
+            
+            debugPrint("Error saving image", saveImageError)
+            let errorAlert = UIAlertController(title: "Error", message: "Unable to save image", preferredStyle: .alert, color: .salmon, addDefaultAction: true)
+            strongSelf.present(errorAlert, animated: true, completion: nil)
+          })
+        }))
+        
+        self.present(saveAlert, animated: true, completion: nil)
+      })
+      
       let deleteOption = UIAlertAction(title: "Remove Photo", style: .destructive, handler: { _ in
         self.imageView.image = nil
-        self.addPhotoButton.setTitle("Add photo", for: .normal)
-        self.configureCameraOptionsSheet(includeDeleteOption: false)
+        self.updateHeightConstraint()
+        self.addPhotoButton.toggle(enabled: true, withTitle: "Add photo")
+        self.configureCameraOptionsSheet(imageViewContainsImage: false)
         
         let shouldEnable = !self.textView.text.trim().isEmpty
         self.togglePostButton(enabled: shouldEnable)
-        if shouldEnable {
-          self.navigationItem.rightBarButtonItem?.isEnabled = true
-          self.navigationItem.rightBarButtonItem?.tintColor = .salmon
-        } else {
-          self.navigationItem.rightBarButtonItem?.isEnabled = false
-          self.navigationItem.rightBarButtonItem?.tintColor = .lightGray
-        }
       })
       
+      cameraOptionsSheet.addAction(saveOption)
       cameraOptionsSheet.addAction(deleteOption)
     }
     
-    cameraOptionsSheet.addAction(cameraOption)
-    cameraOptionsSheet.addAction(photoLibraryOption)
     cameraOptionsSheet.addAction(UIAlertAction(title: "Cancel", style: .cancel, handler: nil))
   }
   
@@ -157,39 +172,38 @@ class CreateDroppViewController: UIViewController {
       return
     }
     
-    dismissKeyboard()
-    toggleLoadingView(visible: true)
-    togglePostButton(enabled: false)
-    toggleCancelButton(enabled: false)
+    enterPostingState()
+    
     let now = Date()
     let image = imageView.image
     let message = textView.text.trim()
-    let location = LocationManager.shared.currentCoordinates
-    postingDropp = true
-    DroppService.createDropp(at: location, on: now, withMessage: message, hasMedia: image != nil, success: { [weak self] (droppId: String) in
+    let location = LocationManager.shared.currentLocation
+    DroppService.createDropp(at: location, on: now, withMessage: message, hasMedia: image != nil, success: { [weak self] (dropp: Dropp) in
       guard let strongSelf = self else {
         return
       }
       
       guard let image = image else {
-        strongSelf.displayAddDroppSuccess()
+        strongSelf.performSuccessCleanup(dropp)
         return
       }
       
-      DroppService.upload(image: image, forDropp: droppId, success: { [weak self] () in
+      DroppService.upload(image: image, forDropp: dropp, success: { [weak self] () in
         guard let strongSelf = self else {
           return
         }
         
-        strongSelf.displayAddDroppSuccess()
-//        UIImageWriteToSavedPhotosAlbum(image, nil, nil, nil) // TODO: Ask for permission
+        strongSelf.performSuccessCleanup(dropp)
+        Utils.save(image: image, withTimestamp: now, andLocation: location, success: nil, failure: { (error: Error) in
+          debugPrint("Failed to save posted image to user's photos", error)
+        })
       }, failure: { [weak self] (addImageError: NSError) in
         guard let strongSelf = self else {
           return
         }
         
         debugPrint("Post dropp image error", addImageError)
-        DroppService.delete(droppId)
+        DroppService.delete(dropp)
         strongSelf.displayAddDroppFailure()
       })
     }, failure: { [weak self] (createDroppError: NSError) in
@@ -202,28 +216,52 @@ class CreateDroppViewController: UIViewController {
     })
   }
   
-  private func displayAddDroppSuccess() {
-    let alert = UIAlertController(title: "Dropped", message: "We got your dropp!😄", preferredStyle: .alert, color: .salmon, addDefaultAction: true) { _ in
-      self.droppFeedViewControllerDelegate?.shouldRefreshData()
-      self.dismiss(animated: true, completion: nil)
+  private func enterPostingState() {
+    guard !postingDropp else {
+      return
     }
     
-    present(alert, animated: true, completion: { () in
-      self.postingDropp = false
-      self.toggleCancelButton(enabled: true)
-      self.toggleLoadingView(visible: false)
-    })
+    postingDropp = true
+    dismissKeyboard()
+    let loadingIndicator = UIActivityIndicatorView(activityIndicatorStyle: .gray)
+    loadingIndicator.startAnimating()
+    toggleCancelButton(enabled: false)
+    DispatchQueue.main.async {
+      self.title = "Sharing..."
+      self.navigationItem.rightBarButtonItem = UIBarButtonItem(customView: loadingIndicator)
+      self.textView.isEditable = false
+      self.textView.isSelectable = false
+      self.addPhotoButton.toggle(enabled: false)
+    }
+  }
+  
+  private func exitPostingState() {
+    guard postingDropp else {
+      return
+    }
+    
+    postingDropp = false
+    toggleCancelButton(enabled: true)
+    DispatchQueue.main.async {
+      self.title = self.originalTitle
+      self.navigationItem.rightBarButtonItem = UIBarButtonItem(title: "Share", style: .done, target: self, action: #selector(self.didTapPostButton(_:)))
+      self.textView.isEditable = true
+      self.textView.isSelectable = true
+      self.addPhotoButton.toggle(enabled: true)
+    }
+  }
+  
+  private func performSuccessCleanup(_ dropp: Dropp) {
+    self.exitPostingState()
+    self.dismiss(animated: true) {
+      self.feedViewControllerDelegate?.shouldAddDropp?(dropp)
+    }
   }
   
   private func displayAddDroppFailure() {
-    let alert = UIAlertController(title: "Error", message: "Unable to post your dropp😕", preferredStyle: .alert, color: .salmon, addDefaultAction: true) { _ in
-      self.togglePostButton(enabled: true)
-      self.toggleCancelButton(enabled: true)
-    }
-    
+    let alert = UIAlertController(title: "Error", message: "Unable to share your dropp😕", preferredStyle: .alert, color: .salmon, addDefaultAction: true)
     present(alert, animated: true, completion: { () in
-      self.postingDropp = false
-      self.toggleLoadingView(visible: false)
+      self.exitPostingState()
     })
   }
   
@@ -239,27 +277,15 @@ class CreateDroppViewController: UIViewController {
     }
   }
   
-  private func toggleLoadingView(visible: Bool) {
-    DispatchQueue.main.async {
-      self.loadingView.isHidden = !visible
-      if visible {
-        self.activityIndicatorView.startAnimatingGIF()
-        self.activityIndicatorView.isHidden = false
-      } else {
-        self.activityIndicatorView.isHidden = true
-        self.activityIndicatorView.stopAnimatingGIF()
-      }
-    }
-  }
-  
   func resetInputs() {
-    configureCameraOptionsSheet(includeDeleteOption: false)
+    configureCameraOptionsSheet(imageViewContainsImage: false)
     togglePostButton(enabled: false)
     DispatchQueue.main.async {
       self.imageView.image = nil
+      self.updateHeightConstraint()
       self.clearTextView()
       self.textView.resignFirstResponder()
-      self.addPhotoButton.setTitle("Add photo", for: .normal)
+      self.addPhotoButton.toggle(enabled: true, withTitle: "Add photo")
     }
   }
   
@@ -267,24 +293,22 @@ class CreateDroppViewController: UIViewController {
   private func clearTextView() {
     textView.text = ""
     placeholderLabel.isHidden = false
-    let shouldEnable = imageView.image != nil
-    togglePostButton(enabled: shouldEnable)
+    togglePostButton(enabled: imageView.image != nil)
   }
   
-  func addKeyboardToolbar() {
-    let toolbar = UIToolbar()
-    toolbar.sizeToFit()
-    toolbar.barTintColor = .white
+  @objc
+  func deviceDidRotate() {
+    updateHeightConstraint()
+  }
+  
+  func updateHeightConstraint() {
+    if let existingHeightConstraint = containerViewHeightConstraint {
+      self.view.removeConstraint(existingHeightConstraint)
+    }
     
-    let spacing = UIBarButtonItem(barButtonSystemItem: .flexibleSpace, target: self, action: nil)
-    let doneButton = UIBarButtonItem(title: "Done", style: .plain, target: self, action: #selector(dismissKeyboard))
-    let clearButton = UIBarButtonItem(title: "Clear", style: .plain, target: self, action: #selector(clearTextView))
-    doneButton.tintColor = .salmon
-    clearButton.tintColor = .salmon
-    
-    // Add custom buttons to keyboard toolbar
-    toolbar.items = [clearButton, spacing, doneButton]
-    textView.inputAccessoryView = toolbar
+    let height = textView.frame.height + addPhotoButton.frame.height + (imageView.image == nil ? 250 : imageView.frame.height) + 35
+    containerViewHeightConstraint = NSLayoutConstraint(item: containerView, attribute: .height, relatedBy: .equal, toItem: nil, attribute: .height, multiplier: 1.0, constant: height)
+    self.view.addConstraint(containerViewHeightConstraint!)
   }
 }
 
@@ -310,8 +334,9 @@ extension CreateDroppViewController: UIImagePickerControllerDelegate, UINavigati
     }
     
     imageView.image = image
-    addPhotoButton.setTitle("Edit photo", for: .normal)
-    configureCameraOptionsSheet(includeDeleteOption: true)
+    updateHeightConstraint()
+    addPhotoButton.toggle(enabled: true, withTitle: "Edit photo")
+    configureCameraOptionsSheet(imageViewContainsImage: true)
     picker.dismiss(animated: true, completion: nil)
     togglePostButton(enabled: true)
   }

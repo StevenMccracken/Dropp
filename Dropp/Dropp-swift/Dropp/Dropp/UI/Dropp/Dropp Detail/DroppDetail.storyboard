@@ -6,6 +6,7 @@
     <dependencies>
         <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="13527"/>
         <capability name="Aspect ratio constraints" minToolsVersion="5.1"/>
+        <capability name="Constraints with non-1.0 multipliers" minToolsVersion="5.1"/>
         <capability name="Safe area layout guides" minToolsVersion="9.0"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
@@ -24,20 +25,17 @@
                                     <view verifyAmbiguity="ignoreSizes" contentMode="scaleToFill" ambiguous="YES" translatesAutoresizingMaskIntoConstraints="NO" id="PhT-bd-15Y" userLabel="Container View">
                                         <rect key="frame" x="0.0" y="0.0" width="375" height="551"/>
                                         <subviews>
-                                            <mapView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" mapType="standard" scrollEnabled="NO" rotateEnabled="NO" pitchEnabled="NO" showsUserLocation="YES" showsScale="YES" translatesAutoresizingMaskIntoConstraints="NO" id="RqI-A4-P6i">
-                                                <rect key="frame" x="0.0" y="0.0" width="375" height="300"/>
-                                                <constraints>
-                                                    <constraint firstAttribute="height" constant="300" id="IHD-eN-ahL"/>
-                                                </constraints>
+                                            <mapView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" mapType="standard" rotateEnabled="NO" pitchEnabled="NO" showsUserLocation="YES" showsScale="YES" translatesAutoresizingMaskIntoConstraints="NO" id="RqI-A4-P6i">
+                                                <rect key="frame" x="0.0" y="0.0" width="375" height="323.5"/>
                                             </mapView>
-                                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Timestamp" lineBreakMode="tailTruncation" numberOfLines="0" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="LKv-84-lVX">
-                                                <rect key="frame" x="10" y="305" width="355" height="19.5"/>
+                                            <label opaque="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Timestamp" lineBreakMode="wordWrap" numberOfLines="0" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="LKv-84-lVX" customClass="UICopyableLabel" customModule="Dropp" customModuleProvider="target">
+                                                <rect key="frame" x="10" y="328.5" width="355" height="19.5"/>
                                                 <fontDescription key="fontDescription" type="system" pointSize="16"/>
                                                 <color key="textColor" red="0.91661626100000004" green="0.3107863367" blue="0.38301837439999997" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                                                 <nil key="highlightedColor"/>
                                             </label>
                                             <textView hidden="YES" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="aNs-qz-Wuu" userLabel="Editing text view">
-                                                <rect key="frame" x="10" y="329" width="355" height="100"/>
+                                                <rect key="frame" x="10" y="352.5" width="355" height="100"/>
                                                 <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                                 <constraints>
                                                     <constraint firstAttribute="height" constant="100" id="7is-nQ-CWI"/>
@@ -45,27 +43,36 @@
                                                 <fontDescription key="fontDescription" type="system" pointSize="20"/>
                                                 <textInputTraits key="textInputTraits" autocapitalizationType="sentences" enablesReturnKeyAutomatically="YES"/>
                                             </textView>
-                                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Content" lineBreakMode="tailTruncation" numberOfLines="0" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="4T2-ct-BHu">
-                                                <rect key="frame" x="10" y="329.5" width="355" height="24"/>
+                                            <label opaque="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Content" lineBreakMode="wordWrap" numberOfLines="0" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="4T2-ct-BHu" customClass="UICopyableLabel" customModule="Dropp" customModuleProvider="target">
+                                                <rect key="frame" x="10" y="353" width="355" height="24"/>
                                                 <fontDescription key="fontDescription" type="system" weight="medium" pointSize="20"/>
                                                 <nil key="textColor"/>
                                                 <nil key="highlightedColor"/>
                                             </label>
-                                            <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" translatesAutoresizingMaskIntoConstraints="NO" id="Jku-gd-Qxo">
-                                                <rect key="frame" x="10" y="358.5" width="355" height="350"/>
+                                            <imageView clipsSubviews="YES" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" translatesAutoresizingMaskIntoConstraints="NO" id="Jku-gd-Qxo">
+                                                <rect key="frame" x="10" y="382" width="355" height="350"/>
+                                                <gestureRecognizers/>
                                                 <constraints>
                                                     <constraint firstAttribute="height" constant="350" id="cOa-5a-1pt"/>
                                                 </constraints>
                                             </imageView>
-                                            <imageView hidden="YES" userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" translatesAutoresizingMaskIntoConstraints="NO" id="NcX-Ck-4qT" userLabel="Image view spinner" customClass="GIFImageView" customModule="Gifu">
-                                                <rect key="frame" x="149.5" y="496" width="75" height="75"/>
+                                            <view hidden="YES" opaque="NO" alpha="0.59999999999999998" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="PZs-fl-EtS" userLabel="Activity Indicator Background View">
+                                                <rect key="frame" x="160" y="529.5" width="55" height="55"/>
+                                                <subviews>
+                                                    <activityIndicatorView hidden="YES" contentMode="scaleToFill" horizontalHuggingPriority="750" verticalHuggingPriority="750" hidesWhenStopped="YES" animating="YES" style="whiteLarge" translatesAutoresizingMaskIntoConstraints="NO" id="dKd-bn-zlf">
+                                                        <rect key="frame" x="8.5" y="8.5" width="37" height="37"/>
+                                                    </activityIndicatorView>
+                                                </subviews>
+                                                <color key="backgroundColor" white="0.0" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                                 <constraints>
-                                                    <constraint firstAttribute="width" constant="75" id="E8Z-s1-Xjt"/>
-                                                    <constraint firstAttribute="width" secondItem="NcX-Ck-4qT" secondAttribute="height" multiplier="1:1" id="nYL-wV-SU7"/>
+                                                    <constraint firstItem="dKd-bn-zlf" firstAttribute="centerX" secondItem="PZs-fl-EtS" secondAttribute="centerX" id="Etf-0C-coa"/>
+                                                    <constraint firstAttribute="width" secondItem="PZs-fl-EtS" secondAttribute="height" multiplier="1:1" id="Msv-OY-aAd"/>
+                                                    <constraint firstItem="dKd-bn-zlf" firstAttribute="centerY" secondItem="PZs-fl-EtS" secondAttribute="centerY" id="bla-iN-NyT"/>
+                                                    <constraint firstAttribute="width" constant="55" id="tMT-fl-xYv"/>
                                                 </constraints>
-                                            </imageView>
+                                            </view>
                                             <label hidden="YES" opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Unable to get image😦" textAlignment="center" lineBreakMode="wordWrap" numberOfLines="0" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="kwo-dc-9Gl" userLabel="Fetch image error label">
-                                                <rect key="frame" x="10" y="520.5" width="355" height="26.5"/>
+                                                <rect key="frame" x="10" y="544" width="355" height="26.5"/>
                                                 <fontDescription key="fontDescription" type="system" weight="medium" pointSize="22"/>
                                                 <color key="textColor" red="0.91661626100000004" green="0.3107863367" blue="0.38301837439999997" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                                                 <nil key="highlightedColor"/>
@@ -84,13 +91,13 @@
                                             <constraint firstItem="aNs-qz-Wuu" firstAttribute="top" secondItem="4T2-ct-BHu" secondAttribute="top" id="XGX-Kq-cnh"/>
                                             <constraint firstItem="RqI-A4-P6i" firstAttribute="leading" secondItem="PhT-bd-15Y" secondAttribute="leading" id="Zty-Bg-Ym6"/>
                                             <constraint firstItem="kwo-dc-9Gl" firstAttribute="trailing" secondItem="Jku-gd-Qxo" secondAttribute="trailing" id="aGK-zj-ZB1"/>
-                                            <constraint firstItem="NcX-Ck-4qT" firstAttribute="centerY" secondItem="Jku-gd-Qxo" secondAttribute="centerY" id="dbU-zN-F20"/>
+                                            <constraint firstItem="PZs-fl-EtS" firstAttribute="centerX" secondItem="Jku-gd-Qxo" secondAttribute="centerX" id="d2g-9G-eTT"/>
+                                            <constraint firstItem="PZs-fl-EtS" firstAttribute="centerY" secondItem="Jku-gd-Qxo" secondAttribute="centerY" id="dX2-eH-lgo"/>
                                             <constraint firstItem="4T2-ct-BHu" firstAttribute="leading" secondItem="PhT-bd-15Y" secondAttribute="leading" constant="10" id="dwb-Ir-qUR"/>
                                             <constraint firstItem="LKv-84-lVX" firstAttribute="top" secondItem="RqI-A4-P6i" secondAttribute="bottom" constant="5" id="ejY-3b-ZU1"/>
                                             <constraint firstItem="Jku-gd-Qxo" firstAttribute="top" secondItem="4T2-ct-BHu" secondAttribute="bottom" constant="5" id="fRv-C5-3wH"/>
                                             <constraint firstItem="aNs-qz-Wuu" firstAttribute="leading" secondItem="4T2-ct-BHu" secondAttribute="leading" id="giE-tg-sf4"/>
                                             <constraint firstItem="RqI-A4-P6i" firstAttribute="top" secondItem="PhT-bd-15Y" secondAttribute="top" id="h0C-o6-y6c"/>
-                                            <constraint firstItem="NcX-Ck-4qT" firstAttribute="centerX" secondItem="Jku-gd-Qxo" secondAttribute="centerX" id="kYU-vk-7do"/>
                                             <constraint firstItem="kwo-dc-9Gl" firstAttribute="leading" secondItem="Jku-gd-Qxo" secondAttribute="leading" id="puV-yd-JVq"/>
                                             <constraint firstItem="kwo-dc-9Gl" firstAttribute="centerY" secondItem="Jku-gd-Qxo" secondAttribute="centerY" id="vh1-b9-OeJ"/>
                                         </constraints>
@@ -103,43 +110,25 @@
                                     <constraint firstItem="PhT-bd-15Y" firstAttribute="leading" secondItem="AOp-mc-etn" secondAttribute="leading" id="zl4-1e-tsu"/>
                                 </constraints>
                             </scrollView>
-                            <view hidden="YES" alpha="0.60000002384185791" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="9Cj-mg-z8y" userLabel="Dark loading view">
-                                <rect key="frame" x="-50" y="-30" width="475" height="747"/>
-                                <color key="backgroundColor" white="0.33333333329999998" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
-                            </view>
-                            <imageView hidden="YES" userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" translatesAutoresizingMaskIntoConstraints="NO" id="zSq-gG-ePk" userLabel="Dark loading view spinner" customClass="GIFImageView" customModule="Gifu">
-                                <rect key="frame" x="150" y="296" width="75" height="75"/>
-                                <constraints>
-                                    <constraint firstAttribute="width" secondItem="zSq-gG-ePk" secondAttribute="height" multiplier="1:1" id="2nH-T0-W9A"/>
-                                    <constraint firstAttribute="width" constant="75" id="TIV-JU-g95"/>
-                                </constraints>
-                            </imageView>
                         </subviews>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                         <constraints>
-                            <constraint firstItem="9Cj-mg-z8y" firstAttribute="width" secondItem="rPS-od-Aam" secondAttribute="width" constant="100" id="0Rg-Ae-VM8"/>
                             <constraint firstItem="AOp-mc-etn" firstAttribute="trailing" secondItem="rPS-od-Aam" secondAttribute="trailing" id="7KV-4G-OdS"/>
                             <constraint firstItem="AOp-mc-etn" firstAttribute="bottom" secondItem="rPS-od-Aam" secondAttribute="bottom" id="A12-Lf-EZI"/>
-                            <constraint firstItem="zSq-gG-ePk" firstAttribute="width" secondItem="zSq-gG-ePk" secondAttribute="height" multiplier="1:1" id="FWM-je-3VA"/>
-                            <constraint firstItem="9Cj-mg-z8y" firstAttribute="centerX" secondItem="rPS-od-Aam" secondAttribute="centerX" id="Msb-GT-DqW"/>
-                            <constraint firstItem="9Cj-mg-z8y" firstAttribute="bottom" secondItem="rPS-od-Aam" secondAttribute="bottom" constant="50" id="Qos-Dd-h07"/>
-                            <constraint firstItem="9Cj-mg-z8y" firstAttribute="centerY" secondItem="rPS-od-Aam" secondAttribute="centerY" id="jVS-wV-60Q"/>
+                            <constraint firstItem="RqI-A4-P6i" firstAttribute="height" secondItem="rPS-od-Aam" secondAttribute="height" multiplier="0.5" id="Ujv-xs-U0J"/>
                             <constraint firstItem="AOp-mc-etn" firstAttribute="leading" secondItem="rPS-od-Aam" secondAttribute="leading" id="jzO-qO-G25"/>
                             <constraint firstItem="PhT-bd-15Y" firstAttribute="width" secondItem="rPS-od-Aam" secondAttribute="width" id="na5-vb-OUc"/>
-                            <constraint firstItem="zSq-gG-ePk" firstAttribute="centerY" secondItem="9Cj-mg-z8y" secondAttribute="centerY" constant="-10" id="uVw-O2-gzF"/>
                             <constraint firstItem="AOp-mc-etn" firstAttribute="top" secondItem="rPS-od-Aam" secondAttribute="top" id="wfY-Bi-MgD"/>
-                            <constraint firstItem="zSq-gG-ePk" firstAttribute="centerX" secondItem="9Cj-mg-z8y" secondAttribute="centerX" id="xyT-M8-HFD"/>
                         </constraints>
                         <viewLayoutGuide key="safeArea" id="rPS-od-Aam"/>
                     </view>
                     <connections>
                         <outlet property="containerView" destination="PhT-bd-15Y" id="uvx-jJ-Fwn"/>
                         <outlet property="contentLabel" destination="4T2-ct-BHu" id="Mkk-DU-POE"/>
-                        <outlet property="darkLoadingView" destination="9Cj-mg-z8y" id="LNs-mb-FUs"/>
-                        <outlet property="darkLoadingViewSpinnerView" destination="zSq-gG-ePk" id="Hz0-Wj-nQM"/>
                         <outlet property="fetchImageErrorLabel" destination="kwo-dc-9Gl" id="CtC-1y-ilE"/>
-                        <outlet property="imageLoadingViewSpinner" destination="NcX-Ck-4qT" id="TD5-Hj-9Ea"/>
                         <outlet property="imageView" destination="Jku-gd-Qxo" id="XWZ-rQ-SQr"/>
+                        <outlet property="loadingImageActivityIndicatorView" destination="dKd-bn-zlf" id="Yoc-fQ-xTK"/>
+                        <outlet property="loadingImageBackgroundView" destination="PZs-fl-EtS" id="O5U-PA-6Rz"/>
                         <outlet property="mapView" destination="RqI-A4-P6i" id="5Hn-bV-rZt"/>
                         <outlet property="scrollView" destination="AOp-mc-etn" id="YN6-vy-I0F"/>
                         <outlet property="textView" destination="aNs-qz-Wuu" id="h7Z-OH-o7Y"/>

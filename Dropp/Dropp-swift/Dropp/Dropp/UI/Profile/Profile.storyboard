@@ -18,29 +18,30 @@
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                         <prototypes>
-                            <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" insetsLayoutMarginsFromSafeArea="NO" selectionStyle="none" hidesAccessoryWhenEditing="NO" indentationLevel="1" indentationWidth="0.0" reuseIdentifier="ProfileHeaderTableViewCell" rowHeight="100" id="hiR-66-C4V" customClass="ProfileHeaderTableViewCell" customModule="Dropp" customModuleProvider="target">
-                                <rect key="frame" x="0.0" y="28" width="375" height="100"/>
+                            <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" insetsLayoutMarginsFromSafeArea="NO" selectionStyle="none" hidesAccessoryWhenEditing="NO" indentationLevel="1" indentationWidth="0.0" reuseIdentifier="ProfileHeaderTableViewCell" rowHeight="150" id="hiR-66-C4V" customClass="ProfileHeaderTableViewCell" customModule="Dropp" customModuleProvider="target">
+                                <rect key="frame" x="0.0" y="28" width="375" height="150"/>
                                 <autoresizingMask key="autoresizingMask"/>
                                 <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" insetsLayoutMarginsFromSafeArea="NO" tableViewCell="hiR-66-C4V" id="gex-Z6-qPf">
-                                    <rect key="frame" x="0.0" y="0.0" width="375" height="99.5"/>
+                                    <rect key="frame" x="0.0" y="0.0" width="375" height="149.5"/>
                                     <autoresizingMask key="autoresizingMask"/>
                                     <subviews>
                                         <label opaque="NO" contentMode="center" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="--" textAlignment="center" lineBreakMode="characterWrap" numberOfLines="0" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="2VM-QH-dei" userLabel="Followers count">
-                                            <rect key="frame" x="66" y="48" width="18" height="24"/>
+                                            <rect key="frame" x="116" y="38" width="18" height="24"/>
                                             <fontDescription key="fontDescription" type="system" pointSize="20"/>
                                             <nil key="textColor"/>
                                             <nil key="highlightedColor"/>
                                         </label>
                                         <label opaque="NO" contentMode="center" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="--" textAlignment="center" lineBreakMode="characterWrap" numberOfLines="0" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="ZdK-TU-ijn" userLabel="Following count">
-                                            <rect key="frame" x="178.5" y="48" width="18" height="24"/>
+                                            <rect key="frame" x="241" y="38" width="18" height="24"/>
                                             <fontDescription key="fontDescription" type="system" pointSize="20"/>
                                             <nil key="textColor"/>
                                             <nil key="highlightedColor"/>
                                         </label>
                                         <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="1zX-xM-fDI" userLabel="Following button">
-                                            <rect key="frame" x="151" y="25" width="73" height="21"/>
+                                            <rect key="frame" x="212.5" y="15" width="75" height="21"/>
                                             <constraints>
                                                 <constraint firstAttribute="height" constant="21" id="hMB-4O-XuA"/>
+                                                <constraint firstAttribute="width" constant="75" id="rRC-el-JMG"/>
                                             </constraints>
                                             <fontDescription key="fontDescription" type="system" pointSize="17"/>
                                             <state key="normal" title="Following">
@@ -51,9 +52,10 @@
                                             </connections>
                                         </button>
                                         <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="RaF-ux-KLJ" userLabel="Followers button">
-                                            <rect key="frame" x="38.5" y="25" width="73" height="21"/>
+                                            <rect key="frame" x="87.5" y="15" width="75" height="21"/>
                                             <constraints>
                                                 <constraint firstAttribute="height" constant="21" id="cGE-zN-Mtv"/>
+                                                <constraint firstAttribute="width" constant="75" id="pQQ-lH-k5e"/>
                                             </constraints>
                                             <fontDescription key="fontDescription" type="system" pointSize="17"/>
                                             <state key="normal" title="Followers">
@@ -64,10 +66,10 @@
                                             </connections>
                                         </button>
                                         <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="uXv-cU-Gi1">
-                                            <rect key="frame" x="250" y="25" width="100" height="36"/>
+                                            <rect key="frame" x="67.5" y="75" width="240" height="40"/>
                                             <color key="backgroundColor" red="0.91661626100000004" green="0.3107863367" blue="0.38301837439999997" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                                             <constraints>
-                                                <constraint firstAttribute="width" constant="100" id="i7c-2C-JqT"/>
+                                                <constraint firstAttribute="height" constant="40" id="bpM-Pt-T2z"/>
                                             </constraints>
                                             <fontDescription key="fontDescription" type="boldSystem" pointSize="20"/>
                                             <state key="normal" title="Follow">
@@ -79,18 +81,18 @@
                                         </button>
                                     </subviews>
                                     <constraints>
-                                        <constraint firstItem="RaF-ux-KLJ" firstAttribute="top" secondItem="gex-Z6-qPf" secondAttribute="top" constant="25" id="4sN-Fn-Dlk"/>
-                                        <constraint firstAttribute="bottom" relation="greaterThanOrEqual" secondItem="2VM-QH-dei" secondAttribute="bottom" constant="20" id="5Am-dF-XoD"/>
-                                        <constraint firstItem="1zX-xM-fDI" firstAttribute="centerX" secondItem="gex-Z6-qPf" secondAttribute="centerX" id="5Kn-O4-too"/>
-                                        <constraint firstItem="uXv-cU-Gi1" firstAttribute="centerX" secondItem="gex-Z6-qPf" secondAttribute="centerX" multiplier="1.6" id="FBG-Vz-YcY"/>
+                                        <constraint firstItem="uXv-cU-Gi1" firstAttribute="leading" secondItem="RaF-ux-KLJ" secondAttribute="leading" constant="-20" id="2Bz-7c-75X"/>
+                                        <constraint firstAttribute="bottom" relation="greaterThanOrEqual" secondItem="uXv-cU-Gi1" secondAttribute="bottom" constant="5" id="2tb-uw-qlH"/>
+                                        <constraint firstItem="RaF-ux-KLJ" firstAttribute="top" secondItem="gex-Z6-qPf" secondAttribute="top" constant="15" id="4sN-Fn-Dlk"/>
+                                        <constraint firstItem="1zX-xM-fDI" firstAttribute="centerX" secondItem="gex-Z6-qPf" secondAttribute="centerX" multiplier="1.333" id="5Kn-O4-too"/>
                                         <constraint firstItem="ZdK-TU-ijn" firstAttribute="top" secondItem="1zX-xM-fDI" secondAttribute="bottom" constant="2" id="Hly-SL-lfP"/>
-                                        <constraint firstItem="RaF-ux-KLJ" firstAttribute="centerX" secondItem="gex-Z6-qPf" secondAttribute="centerX" multiplier="0.4" id="MG3-Bs-p5I"/>
+                                        <constraint firstItem="RaF-ux-KLJ" firstAttribute="centerX" secondItem="gex-Z6-qPf" secondAttribute="centerX" multiplier="0.666" id="MG3-Bs-p5I"/>
                                         <constraint firstItem="2VM-QH-dei" firstAttribute="top" secondItem="1zX-xM-fDI" secondAttribute="bottom" constant="2" id="Uqa-uF-ofZ"/>
                                         <constraint firstItem="ZdK-TU-ijn" firstAttribute="centerX" secondItem="1zX-xM-fDI" secondAttribute="centerX" id="ZIr-IV-KgY"/>
-                                        <constraint firstItem="1zX-xM-fDI" firstAttribute="top" secondItem="gex-Z6-qPf" secondAttribute="top" constant="25" id="aHI-lV-txV"/>
-                                        <constraint firstItem="uXv-cU-Gi1" firstAttribute="top" secondItem="gex-Z6-qPf" secondAttribute="top" constant="25" id="fYp-Zm-Ns5"/>
+                                        <constraint firstItem="1zX-xM-fDI" firstAttribute="top" secondItem="gex-Z6-qPf" secondAttribute="top" constant="15" id="aHI-lV-txV"/>
+                                        <constraint firstItem="uXv-cU-Gi1" firstAttribute="trailing" secondItem="1zX-xM-fDI" secondAttribute="trailing" constant="20" id="gOH-Nv-CEy"/>
+                                        <constraint firstItem="uXv-cU-Gi1" firstAttribute="top" secondItem="gex-Z6-qPf" secondAttribute="top" constant="75" id="jkJ-21-S7W"/>
                                         <constraint firstItem="2VM-QH-dei" firstAttribute="centerX" secondItem="RaF-ux-KLJ" secondAttribute="centerX" id="wrP-Rr-NCq"/>
-                                        <constraint firstAttribute="bottom" relation="greaterThanOrEqual" secondItem="ZdK-TU-ijn" secondAttribute="bottom" constant="20" id="zDx-0w-ocr"/>
                                     </constraints>
                                 </tableViewCellContentView>
                                 <connections>
@@ -99,10 +101,11 @@
                                     <outlet property="followingButton" destination="1zX-xM-fDI" id="aIO-th-vte"/>
                                     <outlet property="followingCount" destination="ZdK-TU-ijn" id="UAV-NI-p40"/>
                                     <outlet property="interactionButton" destination="uXv-cU-Gi1" id="YZx-BZ-oqI"/>
+                                    <outlet property="interactionButtonHeightConstraint" destination="bpM-Pt-T2z" id="JTZ-rf-KVK"/>
                                 </connections>
                             </tableViewCell>
                             <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" preservesSuperviewLayoutMargins="YES" selectionStyle="default" indentationWidth="10" reuseIdentifier="DroppTableViewCell" rowHeight="150" id="aRp-Z5-K8R" customClass="DroppTableViewCell" customModule="Dropp" customModuleProvider="target">
-                                <rect key="frame" x="0.0" y="128" width="375" height="150"/>
+                                <rect key="frame" x="0.0" y="178" width="375" height="150"/>
                                 <autoresizingMask key="autoresizingMask"/>
                                 <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" preservesSuperviewLayoutMargins="YES" insetsLayoutMarginsFromSafeArea="NO" tableViewCell="aRp-Z5-K8R" id="JCB-LH-u3v">
                                     <rect key="frame" x="0.0" y="0.0" width="375" height="149.5"/>

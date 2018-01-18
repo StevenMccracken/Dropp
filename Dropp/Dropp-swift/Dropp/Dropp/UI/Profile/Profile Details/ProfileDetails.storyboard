@@ -12,13 +12,13 @@
         <scene sceneID="WUe-id-tQe">
             <objects>
                 <tableViewController title="Details" id="tzh-Qb-LC9" customClass="ProfileDetailsViewController" customModule="Dropp" customModuleProvider="target" sceneMemberID="viewController">
-                    <tableView key="view" clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="plain" separatorStyle="default" rowHeight="-1" estimatedRowHeight="-1" sectionHeaderHeight="28" sectionFooterHeight="28" id="TFm-hg-Vxb">
+                    <tableView key="view" clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" showsHorizontalScrollIndicator="NO" dataMode="prototypes" style="grouped" separatorStyle="default" sectionIndexMinimumDisplayRowCount="2" rowHeight="44" estimatedRowHeight="-1" sectionHeaderHeight="-1" estimatedSectionHeaderHeight="-1" sectionFooterHeight="-1" estimatedSectionFooterHeight="-1" id="TFm-hg-Vxb">
                         <rect key="frame" x="0.0" y="0.0" width="375" height="667"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
-                        <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                        <color key="backgroundColor" cocoaTouchSystemColor="groupTableViewBackgroundColor"/>
                         <prototypes>
-                            <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" preservesSuperviewLayoutMargins="YES" selectionStyle="default" indentationWidth="10" reuseIdentifier="profileDetailsTableViewCell" textLabel="Tmi-c5-CCX" style="IBUITableViewCellStyleDefault" id="4IW-xt-L0F">
-                                <rect key="frame" x="0.0" y="28" width="375" height="44"/>
+                            <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" preservesSuperviewLayoutMargins="YES" selectionStyle="default" indentationWidth="10" reuseIdentifier="ProfileDetailsTableViewCell" textLabel="Tmi-c5-CCX" style="IBUITableViewCellStyleDefault" id="4IW-xt-L0F" customClass="ProfileDetailsUsernameTableViewCell" customModule="Dropp" customModuleProvider="target">
+                                <rect key="frame" x="0.0" y="55.5" width="375" height="44"/>
                                 <autoresizingMask key="autoresizingMask"/>
                                 <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" preservesSuperviewLayoutMargins="YES" insetsLayoutMarginsFromSafeArea="NO" tableViewCell="4IW-xt-L0F" id="7ih-ee-Unx">
                                     <rect key="frame" x="0.0" y="0.0" width="375" height="43.5"/>
@@ -32,6 +32,31 @@
                                             <nil key="highlightedColor"/>
                                         </label>
                                     </subviews>
+                                </tableViewCellContentView>
+                                <connections>
+                                    <outlet property="usernameLabel" destination="Tmi-c5-CCX" id="SIv-MO-xAn"/>
+                                </connections>
+                            </tableViewCell>
+                            <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" preservesSuperviewLayoutMargins="YES" selectionStyle="default" indentationWidth="10" reuseIdentifier="LogoutTableViewCell" id="AsT-sI-dKM">
+                                <rect key="frame" x="0.0" y="99.5" width="375" height="44"/>
+                                <autoresizingMask key="autoresizingMask"/>
+                                <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" preservesSuperviewLayoutMargins="YES" insetsLayoutMarginsFromSafeArea="NO" tableViewCell="AsT-sI-dKM" id="xqy-mK-a4k">
+                                    <rect key="frame" x="0.0" y="0.0" width="375" height="43.5"/>
+                                    <autoresizingMask key="autoresizingMask"/>
+                                    <subviews>
+                                        <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Logout" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="g4e-5I-kWj">
+                                            <rect key="frame" x="16" y="0.0" width="343" height="43.5"/>
+                                            <fontDescription key="fontDescription" type="system" pointSize="17"/>
+                                            <color key="textColor" red="1" green="0.14913141730000001" blue="0.0" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                                            <color key="highlightedColor" red="1" green="0.14913141730000001" blue="0.0" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                                        </label>
+                                    </subviews>
+                                    <constraints>
+                                        <constraint firstAttribute="bottom" secondItem="g4e-5I-kWj" secondAttribute="bottom" id="EDb-8J-dVA"/>
+                                        <constraint firstItem="g4e-5I-kWj" firstAttribute="top" secondItem="xqy-mK-a4k" secondAttribute="top" id="EKB-QT-Yeg"/>
+                                        <constraint firstItem="g4e-5I-kWj" firstAttribute="leading" secondItem="xqy-mK-a4k" secondAttribute="leading" constant="16" id="hSF-Oh-ULn"/>
+                                        <constraint firstAttribute="trailing" secondItem="g4e-5I-kWj" secondAttribute="trailing" constant="16" id="j93-UJ-ghW"/>
+                                    </constraints>
                                 </tableViewCellContentView>
                             </tableViewCell>
                         </prototypes>

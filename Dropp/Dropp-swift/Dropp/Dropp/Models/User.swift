@@ -11,38 +11,61 @@ import Foundation
 
 class User: NSObject, Comparable {
   
-  var id: String?
   var username: String
   var followers: [User]?
   var following: [User]?
+  var followRequests: [User]?
+  var followerRequests: [User]?
   var isCurrentUser: Bool {
     return username == (UserDefaults.standard.object(forKey: "username") as? String)
   }
   
-  init(_ username: String, id: String? = nil) {
-    self.id = id
+  init(_ username: String) {
     self.username = username
+    followers = []
+    following = []
+    followRequests = []
+    followerRequests = []
   }
   
   init(json: JSON) throws {
-    guard let id = json["id"].string else {
-      throw NSError(reason: "'username' field is invalid", details: json)
-    }
-    
     guard let username = json["username"].string else {
       throw NSError(reason: "'username' field is invalid", details: json)
     }
     
-    self.id = id
     self.username = username
   }
   
-  func isFollowing(_ user: User) -> Bool? {
+  func follows(_ user: User) -> Bool? {
     return following?.contains(user)
   }
   
-  override var description: String {
-    return "\(username)'s ID is \(id ?? "_")"
+  func hasRequestedFollow(_ user: User) -> Bool? {
+    return followRequests?.contains(user)
+  }
+  
+  func removeFollower(_ user: User) {
+    if let index = followers?.index(of: user) {
+      followers?.remove(at: index)
+    }
+  }
+  
+  func removeFollow(_ user: User) {
+    if let index = following?.index(of: user) {
+      following?.remove(at: index)
+    }
+  }
+  
+  func removeFollowerRequest(fromUser user: User) {
+    if let index = followerRequests?.index(of: user) {
+      followerRequests?.remove(at: index)
+    }
+  }
+  
+  func removeFollowRequest(toUser user: User) {
+    if let index = followRequests?.index(of: user) {
+      followRequests?.remove(at: index)
+    }
   }
   
   override func isEqual(_ object: Any?) -> Bool {

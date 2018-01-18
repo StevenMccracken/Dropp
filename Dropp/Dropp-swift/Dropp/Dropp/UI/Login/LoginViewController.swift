@@ -6,7 +6,6 @@
 //  Copyright © 2017 Group B. All rights reserved.
 //
 
-import Gifu
 import UIKit
 
 protocol LogInViewDelegate: class {
@@ -19,8 +18,12 @@ class LoginViewController: UIViewController {
   @IBOutlet weak var usernameTextField: UITextField!
   @IBOutlet weak var passwordTextField: UITextField!
   @IBOutlet weak var loginButton: UIButton!
-  @IBOutlet weak var loadingView: UIView!
-  @IBOutlet weak var activityIndicatorView: GIFImageView!
+  @IBOutlet weak var goToCreateAccountButton: UIButton!
+  
+  private var textFieldToolbarItems: [UIBarButtonItem]!
+  private var textFieldsAreValid: Bool {
+    return !(usernameTextField.text ?? "").isEmpty && !(passwordTextField.text ?? "").isEmpty
+  }
   
   override func viewDidLoad() {
     super.viewDidLoad()
@@ -28,7 +31,6 @@ class LoginViewController: UIViewController {
     usernameTextField.delegate = self
     passwordTextField.delegate = self
     NotificationCenter.default.addObserver(self, selector: #selector(textFieldDidChange(_:)), name: Notification.Name.UITextFieldTextDidChange, object: nil)
-    activityIndicatorView.prepareForAnimation(withGIFNamed: Constants.activityIndicatorFileName)
     
     loginButton.layer.borderColor = UIColor.lightGray.cgColor
     loginButton.layer.borderWidth = 0.5
@@ -37,22 +39,29 @@ class LoginViewController: UIViewController {
     passwordTextField.layer.cornerRadius = 5
     usernameTextField.backgroundColor = .veryLightGray
     passwordTextField.backgroundColor = .veryLightGray
+    
+    let spacing = UIBarButtonItem(barButtonSystemItem: .flexibleSpace, target: nil, action: nil)
+    let doneButton = UIBarButtonItem(title: "Done", style: .plain, target: self, action: #selector(dismissKeyboard))
+    textFieldToolbarItems = [spacing, doneButton]
+  }
+  
+  override func viewDidAppear(_ animated: Bool) {
+    super.viewDidAppear(animated)
+    usernameTextField.becomeFirstResponder()
   }
   
   @IBAction func loginButtonTapped(_ sender: Any) {
     guard let username = usernameTextField.text, !username.isEmpty else {
-      toggleLoginButton(enabled: false)
+      loginButton.toggle(enabled: false)
       return
     }
     
     guard let password = passwordTextField.text, !password.isEmpty else {
-      toggleLoginButton(enabled: false)
+      loginButton.toggle(enabled: false)
       return
     }
     
-    toggleLoginButton(enabled: false)
-    resignFirstResponder()
-    toggleLoadingView(visible: true)
+    enterLoggingInState()
     LoginManager.shared.login(username: username, password: password, success: { [weak self] in
       guard let strongSelf = self else {
         return
@@ -76,55 +85,61 @@ class LoginViewController: UIViewController {
       
       let alert = UIAlertController(title: alertDetails.0, message: alertDetails.1, preferredStyle: .alert, color: .salmon, addDefaultAction: true)
       DispatchQueue.main.async {
-        strongSelf.present(alert, animated: true, completion: { () in
-          strongSelf.toggleLoginButton(enabled: true)
-          strongSelf.toggleLoadingView(visible: false)
-        })
+        strongSelf.present(alert, animated: true) {
+          strongSelf.exitLoggingInState()
+        }
       }
     })
   }
   
+  @IBAction func goToCreateAccountButtonTapped(_ sender: Any) {
+    dismiss(animated: true) {
+      LoginManager.shared.presentAccountCreation()
+    }
+  }
+  
   @objc
   private func textFieldDidChange(_ notification: NSNotification) {
-    toggleLoginButton(enabled: areTextFieldsValid())
-  }
-  
-  private func toggleLoginButton(enabled: Bool) {
     DispatchQueue.main.async {
-      self.loginButton.isEnabled = enabled
-      if enabled {
-        self.loginButton.backgroundColor = .salmon
-        self.loginButton.setTitleColor(.white, for: .normal)
-        self.loginButton.layer.borderWidth = 0
-      } else {
-        self.loginButton.backgroundColor = .white
-        self.loginButton.setTitleColor(.lightGray, for: .disabled)
-        self.loginButton.layer.borderWidth = 0.5
-      }
+      self.loginButton.toggle(enabled: self.textFieldsAreValid)
     }
   }
   
-  private func toggleLoadingView(visible: Bool) {
+  private func enterLoggingInState() {
+    let activityIndicator = UIActivityIndicatorView(activityIndicatorStyle: .gray)
+    activityIndicator.startAnimating()
     DispatchQueue.main.async {
-      self.loadingView.isHidden = !visible
-      if visible {
-        self.activityIndicatorView.startAnimatingGIF()
-        self.activityIndicatorView.isHidden = false
-      } else {
-        self.activityIndicatorView.isHidden = true
-        self.activityIndicatorView.stopAnimatingGIF()
-      }
+      self.resignFirstResponder()
+      self.usernameTextField.isEnabled = false
+      self.passwordTextField.isEnabled = false
+      self.loginButton.toggle(enabled: false, withTitle: "Logging in...")
+      self.goToCreateAccountButton.isEnabled = false
+      self.goToCreateAccountButton.setTitleColor(.lightGray, for: .disabled)
+      self.navigationItem.rightBarButtonItem = UIBarButtonItem(customView: activityIndicator)
     }
   }
   
-  private func areTextFieldsValid() -> Bool {
-    return !(usernameTextField.text ?? "").isEmpty && !(passwordTextField.text ?? "").isEmpty
+  private func exitLoggingInState() {
+    DispatchQueue.main.async {
+      self.usernameTextField.isEnabled = true
+      self.passwordTextField.isEnabled = true
+      self.loginButton.toggle(enabled: true, withTitle: "Log in")
+      self.goToCreateAccountButton.isEnabled = true
+      self.goToCreateAccountButton.setTitleColor(.salmon, for: .normal)
+      self.navigationItem.rightBarButtonItem = nil
+    }
   }
 }
 
 extension LoginViewController: UITextFieldDelegate {
   
+  func textFieldShouldBeginEditing(_ textField: UITextField) -> Bool {
+    textField.addToolbar(withItems: textFieldToolbarItems)
+    return true
+  }
+  
   func textFieldShouldReturn(_ textField: UITextField) -> Bool {
+    var shouldReturn = true
     if textField == usernameTextField {
       passwordTextField.becomeFirstResponder()
     } else {
@@ -134,11 +149,13 @@ extension LoginViewController: UITextFieldDelegate {
         passwordTextField.resignFirstResponder()
       }
       
-      if areTextFieldsValid() {
+      if textFieldsAreValid {
         loginButtonTapped(self)
+      } else {
+        shouldReturn = false
       }
     }
     
-    return true
+    return shouldReturn
   }
 }
