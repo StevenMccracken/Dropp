@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="13529" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES" initialViewController="QjV-hk-JZX">
-    <device id="retina4_7" orientation="portrait">
+    <device id="retina3_5" orientation="landscape">
         <adaptation id="fullscreen"/>
     </device>
     <dependencies>
@@ -15,30 +15,30 @@
             <objects>
                 <viewController title="Sign Up" automaticallyAdjustsScrollViewInsets="NO" id="xTR-pT-cdj" userLabel="CreateAccount" customClass="CreateAccountViewController" customModule="Dropp" customModuleProvider="target" sceneMemberID="viewController">
                     <view key="view" contentMode="scaleToFill" id="Dh5-9L-hhQ">
-                        <rect key="frame" x="0.0" y="0.0" width="375" height="667"/>
+                        <rect key="frame" x="0.0" y="0.0" width="480" height="320"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
                             <scrollView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="U72-dW-XDt">
-                                <rect key="frame" x="0.0" y="116" width="375" height="551"/>
+                                <rect key="frame" x="0.0" y="32" width="480" height="288"/>
                                 <subviews>
                                     <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="58r-PV-tV4" userLabel="Container View">
-                                        <rect key="frame" x="0.0" y="0.0" width="375" height="500"/>
+                                        <rect key="frame" x="0.0" y="0.0" width="480" height="500"/>
                                         <subviews>
                                             <stackView opaque="NO" contentMode="scaleToFill" axis="vertical" spacing="5" translatesAutoresizingMaskIntoConstraints="NO" id="jiG-6o-Ivu">
-                                                <rect key="frame" x="10" y="10" width="355" height="220"/>
+                                                <rect key="frame" x="60" y="10" width="360" height="220"/>
                                                 <subviews>
                                                     <textField opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" borderStyle="roundedRect" placeholder="Email" minimumFontSize="17" clearButtonMode="whileEditing" translatesAutoresizingMaskIntoConstraints="NO" id="tFl-Kx-DhJ" userLabel="Email text field">
-                                                        <rect key="frame" x="0.0" y="0.0" width="355" height="40"/>
+                                                        <rect key="frame" x="0.0" y="0.0" width="360" height="40"/>
                                                         <fontDescription key="fontDescription" type="system" pointSize="14"/>
                                                         <textInputTraits key="textInputTraits" autocorrectionType="no" spellCheckingType="no" keyboardType="emailAddress" returnKeyType="next" enablesReturnKeyAutomatically="YES" textContentType="email"/>
                                                     </textField>
                                                     <textField opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" borderStyle="roundedRect" placeholder="Username" minimumFontSize="17" clearButtonMode="whileEditing" translatesAutoresizingMaskIntoConstraints="NO" id="cOv-Uk-yai">
-                                                        <rect key="frame" x="0.0" y="45" width="355" height="40"/>
+                                                        <rect key="frame" x="0.0" y="45" width="360" height="40"/>
                                                         <fontDescription key="fontDescription" type="system" pointSize="14"/>
                                                         <textInputTraits key="textInputTraits" autocorrectionType="no" spellCheckingType="no" returnKeyType="next" enablesReturnKeyAutomatically="YES" textContentType="username"/>
                                                     </textField>
                                                     <textField opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" borderStyle="roundedRect" placeholder="Password" minimumFontSize="17" clearButtonMode="whileEditing" translatesAutoresizingMaskIntoConstraints="NO" id="h8W-DM-C7H">
-                                                        <rect key="frame" x="0.0" y="90" width="355" height="40"/>
+                                                        <rect key="frame" x="0.0" y="90" width="360" height="40"/>
                                                         <fontDescription key="fontDescription" type="system" pointSize="14"/>
                                                         <textInputTraits key="textInputTraits" autocorrectionType="no" spellCheckingType="no" returnKeyType="next" enablesReturnKeyAutomatically="YES" secureTextEntry="YES" textContentType="password"/>
                                                         <connections>
@@ -46,7 +46,7 @@
                                                         </connections>
                                                     </textField>
                                                     <textField opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" borderStyle="roundedRect" placeholder="Confirm password" minimumFontSize="17" clearButtonMode="whileEditing" translatesAutoresizingMaskIntoConstraints="NO" id="cr1-fH-h3J" userLabel="Confirm password text field">
-                                                        <rect key="frame" x="0.0" y="135" width="355" height="40"/>
+                                                        <rect key="frame" x="0.0" y="135" width="360" height="40"/>
                                                         <fontDescription key="fontDescription" type="system" pointSize="14"/>
                                                         <textInputTraits key="textInputTraits" autocorrectionType="no" spellCheckingType="no" returnKeyType="join" enablesReturnKeyAutomatically="YES" secureTextEntry="YES" textContentType="password"/>
                                                         <connections>
@@ -54,13 +54,13 @@
                                                         </connections>
                                                     </textField>
                                                     <label hidden="YES" opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="" textAlignment="center" lineBreakMode="characterWrap" numberOfLines="0" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="8Nj-6i-Wxr" userLabel="Error info label">
-                                                        <rect key="frame" x="0.0" y="177.5" width="355" height="30"/>
+                                                        <rect key="frame" x="0.0" y="177.5" width="360" height="30"/>
                                                         <fontDescription key="fontDescription" type="system" pointSize="15"/>
                                                         <color key="textColor" red="1" green="0.14913141730000001" blue="0.0" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                                                         <nil key="highlightedColor"/>
                                                     </label>
                                                     <button opaque="NO" contentMode="scaleToFill" enabled="NO" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="JfM-bS-31u" userLabel="Sign up button">
-                                                        <rect key="frame" x="0.0" y="180" width="355" height="40"/>
+                                                        <rect key="frame" x="0.0" y="180" width="360" height="40"/>
                                                         <constraints>
                                                             <constraint firstAttribute="height" constant="40" id="4GH-gM-Dc0"/>
                                                         </constraints>
@@ -83,7 +83,7 @@
                                                 </constraints>
                                             </stackView>
                                             <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="IfO-1b-7nx" userLabel="Go to login button">
-                                                <rect key="frame" x="57.5" y="235" width="260" height="30"/>
+                                                <rect key="frame" x="110" y="235" width="260" height="30"/>
                                                 <constraints>
                                                     <constraint firstAttribute="height" constant="30" id="7FX-VX-Epw"/>
                                                     <constraint firstAttribute="width" constant="260" id="Bvv-SP-DsF"/>
@@ -100,12 +100,52 @@
                                         <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                         <constraints>
                                             <constraint firstAttribute="trailing" secondItem="jiG-6o-Ivu" secondAttribute="trailing" constant="10" id="BK5-ht-ofR"/>
+                                            <constraint firstItem="jiG-6o-Ivu" firstAttribute="centerX" secondItem="58r-PV-tV4" secondAttribute="centerX" id="BRo-Re-kr7"/>
+                                            <constraint firstItem="jiG-6o-Ivu" firstAttribute="width" secondItem="58r-PV-tV4" secondAttribute="width" multiplier="0.75" id="C9Y-uu-SAe"/>
+                                            <constraint firstItem="jiG-6o-Ivu" firstAttribute="centerX" secondItem="58r-PV-tV4" secondAttribute="centerX" id="I26-Ay-qNZ"/>
+                                            <constraint firstItem="jiG-6o-Ivu" firstAttribute="width" secondItem="58r-PV-tV4" secondAttribute="width" multiplier="0.6" id="Rlt-mP-iwm"/>
                                             <constraint firstItem="jiG-6o-Ivu" firstAttribute="leading" secondItem="58r-PV-tV4" secondAttribute="leading" constant="10" id="TTc-xY-j0d"/>
                                             <constraint firstAttribute="height" constant="500" id="WfB-kf-hf1"/>
                                             <constraint firstItem="IfO-1b-7nx" firstAttribute="centerX" secondItem="58r-PV-tV4" secondAttribute="centerX" id="ZLY-vk-VZR"/>
+                                            <constraint firstItem="jiG-6o-Ivu" firstAttribute="width" secondItem="58r-PV-tV4" secondAttribute="width" multiplier="0.75" id="dbH-E2-0CC"/>
                                             <constraint firstItem="jiG-6o-Ivu" firstAttribute="top" secondItem="58r-PV-tV4" secondAttribute="top" constant="10" id="gTF-qd-TWo"/>
                                             <constraint firstItem="IfO-1b-7nx" firstAttribute="top" secondItem="jiG-6o-Ivu" secondAttribute="bottom" constant="5" id="gWp-FQ-0iz"/>
+                                            <constraint firstItem="jiG-6o-Ivu" firstAttribute="centerX" secondItem="58r-PV-tV4" secondAttribute="centerX" id="wBk-kK-Plr"/>
                                         </constraints>
+                                        <variation key="default">
+                                            <mask key="constraints">
+                                                <exclude reference="BRo-Re-kr7"/>
+                                                <exclude reference="C9Y-uu-SAe"/>
+                                                <exclude reference="I26-Ay-qNZ"/>
+                                                <exclude reference="Rlt-mP-iwm"/>
+                                                <exclude reference="dbH-E2-0CC"/>
+                                                <exclude reference="wBk-kK-Plr"/>
+                                            </mask>
+                                        </variation>
+                                        <variation key="heightClass=compact-widthClass=compact">
+                                            <mask key="constraints">
+                                                <exclude reference="BK5-ht-ofR"/>
+                                                <exclude reference="TTc-xY-j0d"/>
+                                                <include reference="dbH-E2-0CC"/>
+                                                <include reference="wBk-kK-Plr"/>
+                                            </mask>
+                                        </variation>
+                                        <variation key="heightClass=compact-widthClass=regular">
+                                            <mask key="constraints">
+                                                <exclude reference="BK5-ht-ofR"/>
+                                                <include reference="C9Y-uu-SAe"/>
+                                                <include reference="I26-Ay-qNZ"/>
+                                                <exclude reference="TTc-xY-j0d"/>
+                                            </mask>
+                                        </variation>
+                                        <variation key="heightClass=regular-widthClass=regular">
+                                            <mask key="constraints">
+                                                <exclude reference="BK5-ht-ofR"/>
+                                                <include reference="BRo-Re-kr7"/>
+                                                <include reference="Rlt-mP-iwm"/>
+                                                <exclude reference="TTc-xY-j0d"/>
+                                            </mask>
+                                        </variation>
                                     </view>
                                 </subviews>
                                 <constraints>
@@ -118,10 +158,10 @@
                         </subviews>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                         <constraints>
-                            <constraint firstItem="U72-dW-XDt" firstAttribute="leading" secondItem="Dh5-9L-hhQ" secondAttribute="leading" id="G4D-Ax-M7Y"/>
+                            <constraint firstItem="U72-dW-XDt" firstAttribute="leading" secondItem="ieQ-6z-WPZ" secondAttribute="leading" id="G4D-Ax-M7Y"/>
                             <constraint firstItem="U72-dW-XDt" firstAttribute="top" secondItem="ieQ-6z-WPZ" secondAttribute="top" id="Kat-sP-DMc"/>
-                            <constraint firstItem="58r-PV-tV4" firstAttribute="width" secondItem="Dh5-9L-hhQ" secondAttribute="width" id="WK0-vU-JfV"/>
-                            <constraint firstAttribute="trailing" secondItem="U72-dW-XDt" secondAttribute="trailing" id="ksV-TT-Ra9"/>
+                            <constraint firstItem="58r-PV-tV4" firstAttribute="width" secondItem="U72-dW-XDt" secondAttribute="width" id="WK0-vU-JfV"/>
+                            <constraint firstItem="ieQ-6z-WPZ" firstAttribute="trailing" secondItem="U72-dW-XDt" secondAttribute="trailing" id="ksV-TT-Ra9"/>
                             <constraint firstItem="ieQ-6z-WPZ" firstAttribute="bottom" secondItem="U72-dW-XDt" secondAttribute="bottom" id="wW9-HE-CBd"/>
                         </constraints>
                         <viewLayoutGuide key="safeArea" id="ieQ-6z-WPZ"/>
@@ -147,7 +187,7 @@
                 <navigationController automaticallyAdjustsScrollViewInsets="NO" id="QjV-hk-JZX" sceneMemberID="viewController">
                     <toolbarItems/>
                     <navigationBar key="navigationBar" contentMode="scaleToFill" insetsLayoutMarginsFromSafeArea="NO" largeTitles="YES" id="cAU-5K-0es">
-                        <rect key="frame" x="0.0" y="20" width="375" height="96"/>
+                        <rect key="frame" x="0.0" y="0.0" width="480" height="32"/>
                         <autoresizingMask key="autoresizingMask"/>
                     </navigationBar>
                     <nil name="viewControllers"/>

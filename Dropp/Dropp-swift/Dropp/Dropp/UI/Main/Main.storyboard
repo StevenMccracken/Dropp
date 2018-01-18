@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="13529" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES" initialViewController="QVd-R6-9ep">
-    <device id="retina4_7" orientation="portrait">
+    <device id="retina5_9" orientation="landscape">
         <adaptation id="fullscreen"/>
     </device>
     <dependencies>
@@ -36,7 +36,7 @@
                     <tabBarItem key="tabBarItem" title="Feed" image="location" selectedImage="location_selected" id="ryg-GD-mBe"/>
                     <toolbarItems/>
                     <navigationBar key="navigationBar" contentMode="scaleToFill" insetsLayoutMarginsFromSafeArea="NO" largeTitles="YES" id="n3v-FI-8MK">
-                        <rect key="frame" x="0.0" y="20" width="375" height="96"/>
+                        <rect key="frame" x="0.0" y="0.0" width="812" height="32"/>
                         <autoresizingMask key="autoresizingMask"/>
                         <color key="tintColor" red="0.91661626100000004" green="0.3107863367" blue="0.38301837439999997" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                     </navigationBar>
@@ -78,7 +78,7 @@
                     </tabBarItem>
                     <toolbarItems/>
                     <navigationBar key="navigationBar" contentMode="scaleToFill" insetsLayoutMarginsFromSafeArea="NO" largeTitles="YES" id="UOh-YG-XSw">
-                        <rect key="frame" x="0.0" y="20" width="375" height="96"/>
+                        <rect key="frame" x="0.0" y="0.0" width="812" height="32"/>
                         <autoresizingMask key="autoresizingMask"/>
                     </navigationBar>
                     <nil name="viewControllers"/>
@@ -95,7 +95,7 @@
             <objects>
                 <viewController restorationIdentifier="DummyViewControllerRestoriationId" title="Dummy View Controller" id="qIQ-f7-0at" sceneMemberID="viewController">
                     <view key="view" contentMode="scaleToFill" id="EI3-LM-fqP">
-                        <rect key="frame" x="0.0" y="0.0" width="375" height="667"/>
+                        <rect key="frame" x="0.0" y="0.0" width="812" height="375"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                         <viewLayoutGuide key="safeArea" id="2Ss-d2-eLg"/>
@@ -108,10 +108,10 @@
         </scene>
     </scenes>
     <resources>
-        <image name="create" width="64" height="64"/>
-        <image name="location" width="48" height="48"/>
-        <image name="location_selected" width="48" height="48"/>
-        <image name="profile" width="56" height="56"/>
-        <image name="profile_selected" width="56" height="56"/>
+        <image name="create" width="42" height="42"/>
+        <image name="location" width="32" height="32"/>
+        <image name="location_selected" width="32" height="32"/>
+        <image name="profile" width="37" height="37"/>
+        <image name="profile_selected" width="37" height="37"/>
     </resources>
 </document>
