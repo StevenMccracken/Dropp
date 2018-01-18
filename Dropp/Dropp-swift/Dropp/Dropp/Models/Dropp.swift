@@ -93,8 +93,8 @@ class Dropp: NSObject, Comparable {
       let miles = distance.metersToMiles
       let roundedDistance = Int((miles * 4.0).rounded() / 4)
       let quantifier = roundedDistance == 1 ? "mile" : "miles"
-      message = "About \(roundedDistance) \(quantifier) away"
-    } else if 1.524 ..< 304.8 ~= distance {
+      message = "\(roundedDistance) \(quantifier) away"
+    } else if 1.524 ..< 1409.7853 ~= distance {
       // Distance is between 5 feet and 1000 feet. Convert to feet
       let feet = distance.metersToFeet
       let roundedDistance = Int(feet.rounded())

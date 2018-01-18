@@ -17,6 +17,7 @@ class DroppDetailViewController: UIViewController {
   @IBOutlet weak var loadingImageActivityIndicatorView: UIActivityIndicatorView!
   @IBOutlet weak var imageView: UIImageView!
   @IBOutlet weak var mapView: MKMapView!
+  @IBOutlet weak var activeDistanceButton: UIButton!
   @IBOutlet weak var timestampLabel: UICopyableLabel!
   @IBOutlet weak var contentLabel: UICopyableLabel!
   @IBOutlet weak var textView: UITextView!
@@ -37,6 +38,12 @@ class DroppDetailViewController: UIViewController {
   override func viewDidLoad() {
     super.viewDidLoad()
     mapView.delegate = self
+    
+    activeDistanceButton.layer.cornerRadius = 5
+    activeDistanceButton.backgroundColor = .salmon
+    activeDistanceButton.setTitleColor(.white, for: .normal)
+    activeDistanceButton.contentEdgeInsets = UIEdgeInsets(top: 5, left: 5, bottom: 5, right: 5)
+    
     loadingImageBackgroundView.layer.cornerRadius = 10
     textView.layer.cornerRadius = 5
     textView.backgroundColor = UIColor(white: 0.95, alpha: 1)
@@ -75,6 +82,8 @@ class DroppDetailViewController: UIViewController {
     let spacing = UIBarButtonItem(barButtonSystemItem: .flexibleSpace, target: nil, action: nil)
     let clearButton = UIBarButtonItem(title: "Clear", style: .plain, target: self, action: #selector(clearTextView))
     textView.addToolbar(withItems: [spacing, clearButton])
+    
+    activeDistanceButton.setTitle(dropp.distanceAwayMessage(from: LocationManager.shared.currentLocation), for: .normal)
   }
   
   override func viewWillDisappear(_ animated: Bool) {
@@ -441,5 +450,7 @@ extension DroppDetailViewController: MKMapViewDelegate {
     let span = MKCoordinateSpan(latitudeDelta: 0.2, longitudeDelta: 0.2)
     let region = MKCoordinateRegion(center: mapView.userLocation.coordinate, span: span)
     mapView.setRegion(region, animated: true)
+    
+    activeDistanceButton.setTitle(dropp.distanceAwayMessage(from: userLocation.location), for: .normal)
   }
 }

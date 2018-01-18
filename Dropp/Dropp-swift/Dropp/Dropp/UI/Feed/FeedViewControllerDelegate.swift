@@ -11,7 +11,7 @@ import Foundation
 @objc
 protocol FeedViewControllerDelegate: class {
   func shouldRefreshData()
-  func shouldRefresh(dropp: Dropp, with newDropp: Dropp)
+  func shouldRefresh(dropp: Dropp, with newDropp: Dropp?)
   @objc optional func shouldAddDropp(_ dropp: Dropp)
   @objc optional func shouldRemoveDropp(_ dropp: Dropp)
 }

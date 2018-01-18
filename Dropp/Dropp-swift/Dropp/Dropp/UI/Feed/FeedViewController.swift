@@ -261,12 +261,15 @@ extension FeedViewController: FeedViewControllerDelegate {
     refreshData()
   }
   
-  func shouldRefresh(dropp: Dropp, with newDropp: Dropp) {
+  func shouldRefresh(dropp: Dropp, with newDropp: Dropp? = nil) {
     guard let index = dropps.index(of: dropp) else {
       return
     }
     
-    dropps[index] = newDropp
+    if let newDropp = newDropp {
+      dropps[index] = newDropp
+    }
+    
     let indexPath = IndexPath(row: 0, section: index)
     DispatchQueue.main.async {
       self.tableView.reloadRows(at: [indexPath], with: .fade)
