@@ -14,8 +14,7 @@ class MainViewController: UITabBarController {
     super.viewDidLoad()
     delegate = UIApplication.shared.delegate as? UITabBarControllerDelegate
     
-    // Do any additional setup after loading the view.
-    guard let username = UserDefaults.standard.object(forKey: "username") as? String, !username.isEmpty else {
+    guard let currentUser = LoginManager.shared.currentUser else {
       return
     }
     
@@ -28,6 +27,6 @@ class MainViewController: UITabBarController {
       return
     }
     
-    profileViewController.user = User(username)
+    profileViewController.user = currentUser
   }
 }

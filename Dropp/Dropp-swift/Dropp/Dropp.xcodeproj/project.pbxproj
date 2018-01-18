@@ -52,6 +52,8 @@
 		69A43EC91E5BEEA6003E6420 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 69A43EC81E5BEEA6003E6420 /* AppDelegate.swift */; };
 		69A43ED01E5BEEA6003E6420 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 69A43ECF1E5BEEA6003E6420 /* Assets.xcassets */; };
 		69A43EDE1E5BEEA6003E6420 /* DroppTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 69A43EDD1E5BEEA6003E6420 /* DroppTests.swift */; };
+		69AB37BC2010FB48005B99BD /* StorageManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 69AB37BB2010FB48005B99BD /* StorageManager.swift */; };
+		69AB37BE2011009E005B99BD /* Platform.swift in Sources */ = {isa = PBXBuildFile; fileRef = 69AB37BD2011009E005B99BD /* Platform.swift */; };
 		69B2DB3620052BF60065DF02 /* Connections.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 69B2DB3520052BF60065DF02 /* Connections.storyboard */; };
 		69B2DB3820052FA10065DF02 /* ConnectionsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 69B2DB3720052FA10065DF02 /* ConnectionsViewController.swift */; };
 		69B2DB3A2005AF960065DF02 /* ConnectionTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 69B2DB392005AF960065DF02 /* ConnectionTableViewCell.swift */; };
@@ -131,6 +133,8 @@
 		69A43ED91E5BEEA6003E6420 /* DroppTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = DroppTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		69A43EDD1E5BEEA6003E6420 /* DroppTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DroppTests.swift; sourceTree = "<group>"; };
 		69A43EDF1E5BEEA6003E6420 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		69AB37BB2010FB48005B99BD /* StorageManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StorageManager.swift; sourceTree = "<group>"; };
+		69AB37BD2011009E005B99BD /* Platform.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Platform.swift; sourceTree = "<group>"; };
 		69B2DB3520052BF60065DF02 /* Connections.storyboard */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; path = Connections.storyboard; sourceTree = "<group>"; };
 		69B2DB3720052FA10065DF02 /* ConnectionsViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConnectionsViewController.swift; sourceTree = "<group>"; };
 		69B2DB392005AF960065DF02 /* ConnectionTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConnectionTableViewCell.swift; sourceTree = "<group>"; };
@@ -313,6 +317,7 @@
 				69A43EC81E5BEEA6003E6420 /* AppDelegate.swift */,
 				69C3BAFB1FE7CF4600537C99 /* LoginManager.swift */,
 				694F2A761FE5E5B700E23D7E /* LocationManager.swift */,
+				69AB37BB2010FB48005B99BD /* StorageManager.swift */,
 			);
 			path = Managers;
 			sourceTree = "<group>";
@@ -442,6 +447,7 @@
 				69C3BAEF1FE7B91A00537C99 /* Constants.swift */,
 				69C3BAF91FE7CC6500537C99 /* Utils.swift */,
 				693AFB4A1FFF5E8E008901A0 /* Event.swift */,
+				69AB37BD2011009E005B99BD /* Platform.swift */,
 			);
 			path = Utility;
 			sourceTree = "<group>";
@@ -697,6 +703,7 @@
 				69387B5E2000CC1F0029147B /* User.swift in Sources */,
 				6918F1901FE8F4C600041010 /* UIColor+CustomColors.swift in Sources */,
 				69387B622001375B0029147B /* ProfileViewController.swift in Sources */,
+				69AB37BE2011009E005B99BD /* Platform.swift in Sources */,
 				695CF3AC1EFF2438007D07A7 /* Collections+Shortcuts.swift in Sources */,
 				6935E6D9200EE32200548066 /* UIButton+Shortcuts.swift in Sources */,
 				6982FF5C2006C1090015D069 /* UIView+Shortcuts.swift in Sources */,
@@ -723,6 +730,7 @@
 				69D8E2FF200C830B00CCEC6C /* UILabel+Shortcuts.swift in Sources */,
 				691B1AB61FEF3C7C0043EBA0 /* FeedViewController.swift in Sources */,
 				69D8E2FD200B909900CCEC6C /* ProfileDetailsUsernameTableViewCell.swift in Sources */,
+				69AB37BC2010FB48005B99BD /* StorageManager.swift in Sources */,
 				6982FF62200946430015D069 /* UINavigationController+Shortcuts.swift in Sources */,
 				694F2A771FE5E5B700E23D7E /* LocationManager.swift in Sources */,
 				690D081F200FC79400C687FD /* UICopyableLabel.swift in Sources */,

@@ -11,10 +11,15 @@ import Foundation
 class Constants {
   
   static let apiUrl = "https://dropps.me"
-  static let activityIndicatorFileName = "Loading-Fast-Icon-200x200"
   static let locationNotEnabled = 666
+  
+  static let storageKey_jwt = "jwt"
+  static let storageKey_username = "username"
+  static let storageKey_password = "password"
+  
   static let showDroppDetailSegueId = "showDroppDetailSegue"
   static let showConnectionsSegueId = "showConnectionsSegue"
   static let showProfileSegueId = "showProfileSegue"
+  
   static let dummyViewControllerRestorationId = "DummyViewControllerRestoriationId"
 }

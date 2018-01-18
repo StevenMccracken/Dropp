@@ -27,7 +27,7 @@ class Dropp: NSObject, Comparable {
   }
   
   var postedByCurrentUser: Bool {
-    return username == UserDefaults.standard.object(forKey: "username") as? String
+    return username == LoginManager.shared.currentUser?.username
   }
   
   init(id: String, json: JSON) throws {

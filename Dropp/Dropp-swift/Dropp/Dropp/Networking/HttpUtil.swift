@@ -148,7 +148,8 @@ class HttpUtil {
     }
     
     var request = URLRequest(url: urlObject, cachePolicy: .reloadIgnoringLocalAndRemoteCacheData, timeoutInterval: TimeInterval(60.0))
-    guard let jwt = UserDefaults.standard.value(forKey: "jwt") as? String else {
+    let jwt = LoginManager.shared.jwt
+    guard Utils.isJwtValid(jwt) else {
       return request
     }
     

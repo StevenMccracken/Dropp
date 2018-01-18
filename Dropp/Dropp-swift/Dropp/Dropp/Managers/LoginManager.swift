@@ -18,15 +18,26 @@ class LoginManager {
   private(set) var currentUserUpdatedEvent: Event<User>
   private(set) var currentUser: User?
   
+  // Credential information
+  var jwt: String {
+    return StorageManager.get(key: Constants.storageKey_jwt) as? String ?? ""
+  }
+  
+  var username: String {
+    return StorageManager.get(key: Constants.storageKey_username) as? String ?? ""
+  }
+  
+  var password: String {
+    return StorageManager.get(key: Constants.storageKey_password) as? String ?? ""
+  }
+  
   private init() {
     loginEvent = Event<Bool>()
     logoutEvent = Event<Void>()
     currentUserUpdatedEvent = Event<User>()
     
     isLoggedIn = false
-    let jwt = UserDefaults.standard.object(forKey: "jwt") as? String ?? ""
-    let username = UserDefaults.standard.object(forKey: "username") as? String ?? ""
-    let password = UserDefaults.standard.object(forKey: "password") as? String ?? ""
+    let username = self.username
     isLoggedIn = !jwt.isEmpty && !username.isEmpty && !password.isEmpty
     if isLoggedIn {
       let user = User(username)
@@ -44,10 +55,6 @@ class LoginManager {
     
     UserService.authenticate(username: username, password: password, success: { (jwt: String) in
       debugPrint("Login succeeded at", Date())
-      UserDefaults.standard.set(jwt, forKey: "jwt")
-      UserDefaults.standard.setValue(username, forKey: "username")
-      UserDefaults.standard.setValue(password, forKey: "password")
-      UserDefaults.standard.synchronize()
       
       let user = User(username)
       self.currentUser = user
@@ -66,10 +73,9 @@ class LoginManager {
   func logout() {
     debugPrint("Logout occurred at", Date())
     self.isLoggedIn = false
-    UserDefaults.standard.removeObject(forKey: "jwt")
-    UserDefaults.standard.removeObject(forKey: "username")
-    UserDefaults.standard.removeObject(forKey: "password")
-    UserDefaults.standard.synchronize()
+    StorageManager.delete(key: Constants.storageKey_jwt)
+    StorageManager.delete(key: Constants.storageKey_username)
+    StorageManager.delete(key: Constants.storageKey_password)
     currentUser = nil
     logoutEvent.raise(data: ())
   }
@@ -136,10 +142,9 @@ extension LoginManager: LogInViewDelegate {
 extension LoginManager: CreateAccountViewDelegate {
   
   func didCreateAccount(username: String, password: String, token: String) {
-    UserDefaults.standard.set(token, forKey: "jwt")
-    UserDefaults.standard.setValue(username, forKey: "username")
-    UserDefaults.standard.setValue(password, forKey: "password")
-    UserDefaults.standard.synchronize()
+    StorageManager.set(key: Constants.storageKey_jwt, value: token)
+    StorageManager.set(key: Constants.storageKey_username, value: username)
+    StorageManager.set(key: Constants.storageKey_password, value: password)
     
     isLoggedIn = true
     currentUser = User(username)

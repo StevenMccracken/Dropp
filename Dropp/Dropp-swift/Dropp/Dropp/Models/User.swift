@@ -17,7 +17,7 @@ class User: NSObject, Comparable {
   var followRequests: [User]?
   var followerRequests: [User]?
   var isCurrentUser: Bool {
-    return username == (UserDefaults.standard.object(forKey: "username") as? String)
+    return username == LoginManager.shared.currentUser?.username
   }
   
   init(_ username: String) {
