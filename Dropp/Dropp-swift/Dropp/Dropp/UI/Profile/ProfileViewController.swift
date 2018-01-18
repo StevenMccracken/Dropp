@@ -25,7 +25,7 @@ class ProfileViewController: UITableViewController {
   }
   
   private lazy var fetchFailedLabel: UILabel = {
-    let label = UILabel(withText: "\nUnable to get dropps😢", forTableViewBackground: tableView, andFontSize: 300)
+    let label = UILabel(withText: "\nUnable to get dropps😢", forTableViewBackground: tableView, andFontSize: 30)
     return label
   }()
   

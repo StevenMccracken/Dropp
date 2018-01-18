@@ -56,6 +56,9 @@ class LoginManager {
     UserService.authenticate(username: username, password: password, success: { (jwt: String) in
       debugPrint("Login succeeded at", Date())
       
+      StorageManager.set(key: Constants.storageKey_jwt, value: jwt)
+      StorageManager.set(key: Constants.storageKey_username, value: username)
+      StorageManager.set(key: Constants.storageKey_password, value: password)
       let user = User(username)
       self.currentUser = user
       self.currentUserUpdatedEvent.raise(data: user)
