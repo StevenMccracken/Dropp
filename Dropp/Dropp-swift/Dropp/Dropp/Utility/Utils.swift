@@ -8,7 +8,6 @@
 
 import UIKit
 import Photos
-import Foundation
 import CoreLocation
 
 class Utils {
