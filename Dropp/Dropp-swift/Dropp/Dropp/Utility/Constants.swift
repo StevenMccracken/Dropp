@@ -16,6 +16,7 @@ class Constants {
   static let storageKey_jwt = "jwt"
   static let storageKey_username = "username"
   static let storageKey_password = "password"
+  static let storageKey_maxFetchDistance = "maxFetchDistance"
   
   static let showDroppDetailSegueId = "showDroppDetailSegue"
   static let showConnectionsSegueId = "showConnectionsSegue"

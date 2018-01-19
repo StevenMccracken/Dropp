@@ -12,18 +12,19 @@ import CoreLocation
 
 class DroppService {
   
-  class func getAllDropps(currentLocation: CLLocation?, withRange radius: Double = 100.0, success: (([Dropp]) -> Void)? = nil, failure: ((NSError) -> Void)? = nil) {
+  class func getAllDropps(currentLocation: CLLocation?, withRange radius: Double = SettingsManager.shared.minMaxFetchDistance, success: (([Dropp]) -> Void)? = nil, failure: ((NSError) -> Void)? = nil) {
     guard let location = currentLocation else {
       failure?(NSError(domain: "", code: Constants.locationNotEnabled, userInfo: ["reason": "Location was nil"]))
       return
     }
     
-    guard radius > 0 else {
+    let meters = radius.feetToMeters
+    guard meters > 0 else {
       failure?(NSError(reason: "Range was not positive"))
       return
     }
     
-    let parameters = ["location": location.coordinate.toString, "max-distance": radius] as [String : Any]
+    let parameters = ["location": location.coordinate.toString, "max-distance": meters] as [String : Any]
     guard let request = HttpUtil.getRequest("\(Constants.apiUrl)/dropps", parameters: parameters) else {
       failure?(NSError(reason: "Request to get dropps was not created"))
       return
@@ -44,18 +45,19 @@ class DroppService {
     }, failure: failure)
   }
   
-  class func getDropps(near location: CLLocation?, withRange radius: Double = 100.0, sorted: Bool = true, success: (([Dropp]) -> Void)? = nil, failure: ((NSError) -> Void)? = nil) {
+  class func getDropps(near location: CLLocation?, withRange radius: Double = SettingsManager.shared.minMaxFetchDistance, sorted: Bool = true, success: (([Dropp]) -> Void)? = nil, failure: ((NSError) -> Void)? = nil) {
     guard let location = location else {
       failure?(NSError(domain: "", code: Constants.locationNotEnabled, userInfo: ["reason": "Location was nil"]))
       return
     }
     
-    guard radius > 0 else {
+    let meters = radius.feetToMeters
+    guard meters > 0 else {
       failure?(NSError(reason: "Range was not positive"))
       return
     }
     
-    let parameters = ["location": location.coordinate.toString, "max-distance": radius] as [String : Any]
+    let parameters = ["location": location.coordinate.toString, "max-distance": meters] as [String : Any]
     guard let request = HttpUtil.getRequest("\(Constants.apiUrl)/location/dropps", parameters: parameters) else {
       failure?(NSError(reason: "Request to get dropps was not created"))
       return

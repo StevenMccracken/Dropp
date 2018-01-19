@@ -16,6 +16,10 @@
 		6910836B1FE52C540030C34D /* CreateDroppViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6910836A1FE52C540030C34D /* CreateDroppViewController.swift */; };
 		6910836D1FE59BF10030C34D /* Background-Strip-2000x500.png in Resources */ = {isa = PBXBuildFile; fileRef = 6910836C1FE59BF00030C34D /* Background-Strip-2000x500.png */; };
 		691083701FE5BF080030C34D /* HttpUtil.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6910836F1FE5BF080030C34D /* HttpUtil.swift */; };
+		6918CEDB201277EF005E547C /* SettingsManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6918CEDA201277EF005E547C /* SettingsManager.swift */; };
+		6918CEDE20127C70005E547C /* Settings.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 6918CEDD20127C70005E547C /* Settings.storyboard */; };
+		6918CEE020127DD0005E547C /* SettingsDistanceTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6918CEDF20127DD0005E547C /* SettingsDistanceTableViewCell.swift */; };
+		6918CEE220127F58005E547C /* SettingsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6918CEE120127F58005E547C /* SettingsViewController.swift */; };
 		6918F18E1FE8D9CD00041010 /* CreateDropp.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 6918F18D1FE8D9CD00041010 /* CreateDropp.storyboard */; };
 		6918F1901FE8F4C600041010 /* UIColor+CustomColors.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6918F18F1FE8F4C600041010 /* UIColor+CustomColors.swift */; };
 		6918F1D81FEE4A3600041010 /* UIAlertController+CustomInit.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6918F1D71FEE4A3600041010 /* UIAlertController+CustomInit.swift */; };
@@ -95,6 +99,10 @@
 		6910836A1FE52C540030C34D /* CreateDroppViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CreateDroppViewController.swift; sourceTree = "<group>"; };
 		6910836C1FE59BF00030C34D /* Background-Strip-2000x500.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "Background-Strip-2000x500.png"; sourceTree = "<group>"; };
 		6910836F1FE5BF080030C34D /* HttpUtil.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HttpUtil.swift; sourceTree = "<group>"; };
+		6918CEDA201277EF005E547C /* SettingsManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsManager.swift; sourceTree = "<group>"; };
+		6918CEDD20127C70005E547C /* Settings.storyboard */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; path = Settings.storyboard; sourceTree = "<group>"; };
+		6918CEDF20127DD0005E547C /* SettingsDistanceTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsDistanceTableViewCell.swift; sourceTree = "<group>"; };
+		6918CEE120127F58005E547C /* SettingsViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsViewController.swift; sourceTree = "<group>"; };
 		6918F18D1FE8D9CD00041010 /* CreateDropp.storyboard */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; path = CreateDropp.storyboard; sourceTree = "<group>"; };
 		6918F18F1FE8F4C600041010 /* UIColor+CustomColors.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIColor+CustomColors.swift"; sourceTree = "<group>"; };
 		6918F1D71FEE4A3600041010 /* UIAlertController+CustomInit.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIAlertController+CustomInit.swift"; sourceTree = "<group>"; };
@@ -199,6 +207,16 @@
 			path = Networking;
 			sourceTree = "<group>";
 		};
+		6918CEDC20127C25005E547C /* Settings */ = {
+			isa = PBXGroup;
+			children = (
+				6918CEDD20127C70005E547C /* Settings.storyboard */,
+				6918CEDF20127DD0005E547C /* SettingsDistanceTableViewCell.swift */,
+				6918CEE120127F58005E547C /* SettingsViewController.swift */,
+			);
+			path = Settings;
+			sourceTree = "<group>";
+		};
 		693ABEDE1FE70515002FE96D /* Models */ = {
 			isa = PBXGroup;
 			children = (
@@ -228,6 +246,7 @@
 				6982FF6A200978C10015D069 /* Dropp */,
 				6982FF6B200978D50015D069 /* Profile */,
 				6982FF6C200979470015D069 /* Connections */,
+				6918CEDC20127C25005E547C /* Settings */,
 			);
 			path = UI;
 			sourceTree = "<group>";
@@ -318,6 +337,7 @@
 				69C3BAFB1FE7CF4600537C99 /* LoginManager.swift */,
 				694F2A761FE5E5B700E23D7E /* LocationManager.swift */,
 				69AB37BB2010FB48005B99BD /* StorageManager.swift */,
+				6918CEDA201277EF005E547C /* SettingsManager.swift */,
 			);
 			path = Managers;
 			sourceTree = "<group>";
@@ -577,6 +597,7 @@
 				69C3BAF51FE7BEFA00537C99 /* Login.storyboard in Resources */,
 				6910836D1FE59BF10030C34D /* Background-Strip-2000x500.png in Resources */,
 				6910835E1FE4B8890030C34D /* Main.storyboard in Resources */,
+				6918CEDE20127C70005E547C /* Settings.storyboard in Resources */,
 				69387B662001526E0029147B /* DroppDetail.storyboard in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -698,6 +719,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				69C3BAEE1FE7B8DA00537C99 /* UserService.swift in Sources */,
+				6918CEE020127DD0005E547C /* SettingsDistanceTableViewCell.swift in Sources */,
 				695CF3A51EFF22DE007D07A7 /* String+Shortcuts.swift in Sources */,
 				69C3BAFA1FE7CC6500537C99 /* Utils.swift in Sources */,
 				69387B5E2000CC1F0029147B /* User.swift in Sources */,
@@ -722,7 +744,9 @@
 				694F2A751FE5DFB900E23D7E /* DroppService.swift in Sources */,
 				16AF6C0B1E9B30270022C051 /* Dropp.swift in Sources */,
 				69F14DA61FF22EAE00D784EC /* UnicodeScalar+Shortcuts.swift in Sources */,
+				6918CEE220127F58005E547C /* SettingsViewController.swift in Sources */,
 				69387B6A2003D1430029147B /* ProfileHeaderTableViewCell.swift in Sources */,
+				6918CEDB201277EF005E547C /* SettingsManager.swift in Sources */,
 				6918F1D81FEE4A3600041010 /* UIAlertController+CustomInit.swift in Sources */,
 				69C3BAF31FE7BED300537C99 /* LoginViewController.swift in Sources */,
 				693AFB4E1FFF69E9008901A0 /* NSError+Shortcuts.swift in Sources */,

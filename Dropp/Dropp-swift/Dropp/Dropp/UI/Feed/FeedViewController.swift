@@ -15,6 +15,7 @@ class FeedViewController: UITableViewController {
   private var refreshing = false
   private var sortingType: DroppFeedSortingType = .closest
   private var locationAuthorizationEventHandler: Disposable?
+  private var maxFetchDistanceUpdatedEventHandler: Disposable?
   private lazy var fetchFailedLabel: UILabel = {
     let label = UILabel(withText: "\nUnable to get dropps😟", forTableViewBackground: tableView, andFontSize: 30)
     return label
@@ -43,6 +44,9 @@ class FeedViewController: UITableViewController {
     } else {
       refreshData()
     }
+    
+//    updateNavigationItemPrompt(withDistance: SettingsManager.shared.maxFetchDistance)
+    maxFetchDistanceUpdatedEventHandler = SettingsManager.shared.maxFetchDistanceChangedEvent.addHandler(target: self, handler: FeedViewController.updateNavigationItemPrompt)
   }
   
   override func viewWillDisappear(_ animated: Bool) {
@@ -56,6 +60,18 @@ class FeedViewController: UITableViewController {
       refreshData()
       locationAuthorizationEventHandler?.dispose()
     }
+  }
+  
+  private func updateNavigationItemPrompt(withDistance distance: Double) {
+//    let title = "Dropps from following and within"
+//    DispatchQueue.main.async {
+//      if distance >= 5280 {
+//        let miles = Int(distance.feetToMiles)
+//        self.navigationItem.prompt = "\(title) \(miles) mile\(miles == 1 ? "" : "s")"
+//      } else {
+//        self.navigationItem.prompt = "\(title) \(Int(distance)) feet"
+//      }
+//    }
   }
   
   @objc
@@ -83,7 +99,7 @@ class FeedViewController: UITableViewController {
     }
     
     refreshing = true
-    DroppService.getAllDropps(currentLocation: LocationManager.shared.currentLocation, withRange: 1000.0, success: { [weak self] (dropps: [Dropp]) in
+    DroppService.getAllDropps(currentLocation: LocationManager.shared.currentLocation, withRange: SettingsManager.shared.maxFetchDistance, success: { [weak self] (dropps: [Dropp]) in
       guard let strongSelf = self else {
         return
       }

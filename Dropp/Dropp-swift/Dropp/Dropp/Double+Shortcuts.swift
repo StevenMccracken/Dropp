@@ -30,6 +30,10 @@ extension Double {
     return self / 5280
   }
   
+  var feetToMeters: Double {
+    return self * 0.3048
+  }
+  
   /// Rounds the double to decimal places value
   func roundTo(places: Int) -> Double {
     let divisor = pow(10.0, Double(places))
