@@ -26,10 +26,12 @@ class DroppDetailViewController: UIViewController {
   weak var feedViewControllerDelegate: FeedViewControllerDelegate?
   private var originalTitle: String!
   var dropp: Dropp!
+  var droppPointAnnotation: MKPointAnnotation!
   var displayInfoButton: Bool?
   var deletingDropp = false
   var editingDropp = false
   var editVersion: UInt = 0
+  var shouldUpdateMapRegion = true
   var containerViewHeightConstraint: NSLayoutConstraint?
   private lazy var editingDroppActivityIndicator: UIActivityIndicatorView = {
     return UIActivityIndicatorView(activityIndicatorStyle: .gray)
@@ -38,10 +40,12 @@ class DroppDetailViewController: UIViewController {
   override func viewDidLoad() {
     super.viewDidLoad()
     mapView.delegate = self
+    droppPointAnnotation = MKPointAnnotation()
+    droppPointAnnotation.coordinate = dropp.location.coordinate
     
     activeDistanceButton.layer.cornerRadius = 5
-    activeDistanceButton.backgroundColor = .salmon
     activeDistanceButton.setTitleColor(.white, for: .normal)
+    activeDistanceButton.setTitleColor(.salmon, for: .disabled)
     activeDistanceButton.contentEdgeInsets = UIEdgeInsets(top: 5, left: 5, bottom: 5, right: 5)
     
     loadingImageBackgroundView.layer.cornerRadius = 10
@@ -75,15 +79,19 @@ class DroppDetailViewController: UIViewController {
     updateHeightConstraint()
     NotificationCenter.default.addObserver(self, selector: #selector(deviceDidRotate), name: NSNotification.Name.UIDeviceOrientationDidChange, object: nil)
     
-    let span = MKCoordinateSpan(latitudeDelta: 0.008, longitudeDelta: 0.008)
-    let region = MKCoordinateRegion(center: dropp.location.coordinate, span: span)
-    mapView.setRegion(region, animated: true)
+    if let userCoordinates = LocationManager.shared.currentCoordinates {
+      resizeMapView(withUserCoordinates: userCoordinates)
+    }
+    
+    let panGestureRecognizer = UIPanGestureRecognizer(target: self, action: #selector(userDidDragMap))
+    panGestureRecognizer.delegate = self
+    mapView.addGestureRecognizer(panGestureRecognizer)
     
     let spacing = UIBarButtonItem(barButtonSystemItem: .flexibleSpace, target: nil, action: nil)
     let clearButton = UIBarButtonItem(title: "Clear", style: .plain, target: self, action: #selector(clearTextView))
     textView.addToolbar(withItems: [spacing, clearButton])
     
-    activeDistanceButton.setTitle(dropp.distanceAwayMessage(from: LocationManager.shared.currentLocation), for: .normal)
+    activeDistanceButton.setTitle(dropp.distanceAwayMessage(from: LocationManager.shared.currentLocation), for: .disabled)
   }
   
   override func viewWillDisappear(_ animated: Bool) {
@@ -442,15 +450,72 @@ class DroppDetailViewController: UIViewController {
       self.loadingImageActivityIndicatorView.isHidden = !visible
     }
   }
+  
+  @objc
+  private func userDidDragMap(_ gesture: UIGestureRecognizer) {
+    if gesture.state == .began && shouldUpdateMapRegion {
+      shouldUpdateMapRegion = false
+      UIView.animate(withDuration: 0.25, animations: { () in
+        self.activeDistanceButton.backgroundColor = .salmon
+      }, completion: { _ in
+        self.activeDistanceButton.isEnabled = true
+        self.activeDistanceButton.setTitle(self.dropp.distanceAwayMessage(from: LocationManager.shared.currentLocation), for: .normal)
+      })
+    }
+  }
+  
+  @IBAction func didTapActiveDistanceButton(_ sender: UIButton) {
+    sender.isEnabled = false
+    UIView.animate(withDuration: 0.25) {
+      sender.backgroundColor = nil
+    }
+    
+    if let userCoordinates = LocationManager.shared.currentCoordinates {
+      resizeMapView(withUserCoordinates: userCoordinates)
+    }
+    
+    mapView.deselectAnnotation(droppPointAnnotation, animated: true)
+    shouldUpdateMapRegion = true
+  }
+  
+  private func resizeMapView(withUserCoordinates coordinates: CLLocationCoordinate2D) {
+    let userAnnotation = MKPointAnnotation()
+    userAnnotation.coordinate = coordinates
+    mapView.showAnnotations([userAnnotation, droppPointAnnotation], animated: true)
+    mapView.removeAnnotation(userAnnotation)
+  }
 }
 
 extension DroppDetailViewController: MKMapViewDelegate {
   
   func mapView(_ mapView: MKMapView, didUpdate userLocation: MKUserLocation) {
-    let span = MKCoordinateSpan(latitudeDelta: 0.2, longitudeDelta: 0.2)
-    let region = MKCoordinateRegion(center: mapView.userLocation.coordinate, span: span)
-    mapView.setRegion(region, animated: true)
+    activeDistanceButton.setTitle(dropp.distanceAwayMessage(from: userLocation.location), for: shouldUpdateMapRegion ? .disabled : .normal)
+    if shouldUpdateMapRegion {
+      resizeMapView(withUserCoordinates: userLocation.coordinate)
+    }
+  }
+  
+  func mapView(_ mapView: MKMapView, didSelect view: MKAnnotationView) {
+    guard let pointAnnotation = view.annotation as? MKPointAnnotation, pointAnnotation == droppPointAnnotation else {
+      return
+    }
     
-    activeDistanceButton.setTitle(dropp.distanceAwayMessage(from: userLocation.location), for: .normal)
+    shouldUpdateMapRegion = false
+    let region = MKCoordinateRegion(center: dropp.location.coordinate, span: MKCoordinateSpan(latitudeDelta: 0.01, longitudeDelta: 0.01))
+    mapView.setRegion(region, animated: true)
+    UIView.animate(withDuration: 0.25, animations: { () in
+      self.activeDistanceButton.backgroundColor = .salmon
+    }, completion: { _ in
+      self.activeDistanceButton.isEnabled = true
+      self.activeDistanceButton.setTitle(self.dropp.distanceAwayMessage(from: LocationManager.shared.currentLocation), for: .normal)
+      self.activeDistanceButton.isEnabled = true
+    })
+  }
+}
+
+extension DroppDetailViewController: UIGestureRecognizerDelegate {
+  
+  func gestureRecognizer(_ gestureRecognizer: UIGestureRecognizer, shouldRecognizeSimultaneouslyWith otherGestureRecognizer: UIGestureRecognizer) -> Bool {
+    return true
   }
 }

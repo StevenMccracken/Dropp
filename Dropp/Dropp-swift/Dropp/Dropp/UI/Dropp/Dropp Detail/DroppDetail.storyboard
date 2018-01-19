@@ -25,17 +25,17 @@
                                     <view verifyAmbiguity="ignoreSizes" contentMode="scaleToFill" ambiguous="YES" translatesAutoresizingMaskIntoConstraints="NO" id="PhT-bd-15Y" userLabel="Container View">
                                         <rect key="frame" x="0.0" y="0.0" width="320" height="551"/>
                                         <subviews>
-                                            <mapView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" mapType="standard" rotateEnabled="NO" pitchEnabled="NO" showsUserLocation="YES" showsScale="YES" translatesAutoresizingMaskIntoConstraints="NO" id="RqI-A4-P6i">
+                                            <mapView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" mapType="standard" pitchEnabled="NO" showsUserLocation="YES" showsScale="YES" translatesAutoresizingMaskIntoConstraints="NO" id="RqI-A4-P6i">
                                                 <rect key="frame" x="0.0" y="0.0" width="320" height="230"/>
                                             </mapView>
                                             <label opaque="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Timestamp" lineBreakMode="wordWrap" numberOfLines="0" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="LKv-84-lVX" customClass="UICopyableLabel" customModule="Dropp" customModuleProvider="target">
-                                                <rect key="frame" x="10" y="235" width="300" height="19.5"/>
+                                                <rect key="frame" x="10" y="235" width="192" height="32"/>
                                                 <fontDescription key="fontDescription" type="system" pointSize="16"/>
                                                 <color key="textColor" red="0.91661626100000004" green="0.3107863367" blue="0.38301837439999997" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                                                 <nil key="highlightedColor"/>
                                             </label>
                                             <textView hidden="YES" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="aNs-qz-Wuu" userLabel="Editing text view">
-                                                <rect key="frame" x="10" y="259" width="300" height="100"/>
+                                                <rect key="frame" x="10" y="271.5" width="300" height="100"/>
                                                 <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                                 <constraints>
                                                     <constraint firstAttribute="height" constant="100" id="7is-nQ-CWI"/>
@@ -44,20 +44,27 @@
                                                 <textInputTraits key="textInputTraits" autocapitalizationType="sentences" enablesReturnKeyAutomatically="YES"/>
                                             </textView>
                                             <label opaque="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Content" lineBreakMode="wordWrap" numberOfLines="0" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="4T2-ct-BHu" customClass="UICopyableLabel" customModule="Dropp" customModuleProvider="target">
-                                                <rect key="frame" x="10" y="259.5" width="300" height="24"/>
+                                                <rect key="frame" x="10" y="272" width="300" height="24"/>
                                                 <fontDescription key="fontDescription" type="system" weight="medium" pointSize="20"/>
                                                 <nil key="textColor"/>
                                                 <nil key="highlightedColor"/>
                                             </label>
+                                            <button opaque="NO" contentMode="scaleToFill" enabled="NO" contentHorizontalAlignment="right" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="yjq-aD-O2f">
+                                                <rect key="frame" x="280" y="235" width="30" height="32"/>
+                                                <fontDescription key="fontDescription" type="system" pointSize="16"/>
+                                                <connections>
+                                                    <action selector="didTapActiveDistanceButton:" destination="5it-UB-LAV" eventType="touchUpInside" id="MRz-a8-pR6"/>
+                                                </connections>
+                                            </button>
                                             <imageView clipsSubviews="YES" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" translatesAutoresizingMaskIntoConstraints="NO" id="Jku-gd-Qxo">
-                                                <rect key="frame" x="10" y="288.5" width="300" height="350"/>
+                                                <rect key="frame" x="10" y="301" width="300" height="350"/>
                                                 <gestureRecognizers/>
                                                 <constraints>
                                                     <constraint firstAttribute="height" constant="350" id="cOa-5a-1pt"/>
                                                 </constraints>
                                             </imageView>
                                             <view hidden="YES" opaque="NO" alpha="0.59999999999999998" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="PZs-fl-EtS" userLabel="Activity Indicator Background View">
-                                                <rect key="frame" x="132.5" y="436" width="55" height="55"/>
+                                                <rect key="frame" x="132.5" y="448.5" width="55" height="55"/>
                                                 <subviews>
                                                     <activityIndicatorView hidden="YES" contentMode="scaleToFill" horizontalHuggingPriority="750" verticalHuggingPriority="750" hidesWhenStopped="YES" animating="YES" style="whiteLarge" translatesAutoresizingMaskIntoConstraints="NO" id="dKd-bn-zlf">
                                                         <rect key="frame" x="8.5" y="8.5" width="37" height="37"/>
@@ -72,26 +79,22 @@
                                                 </constraints>
                                             </view>
                                             <label hidden="YES" opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Unable to get image😦" textAlignment="center" lineBreakMode="wordWrap" numberOfLines="0" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="kwo-dc-9Gl" userLabel="Fetch image error label">
-                                                <rect key="frame" x="10" y="450.5" width="300" height="26.5"/>
+                                                <rect key="frame" x="10" y="463" width="300" height="26.5"/>
                                                 <fontDescription key="fontDescription" type="system" weight="medium" pointSize="22"/>
                                                 <color key="textColor" red="0.91661626100000004" green="0.3107863367" blue="0.38301837439999997" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                                                 <nil key="highlightedColor"/>
                                             </label>
-                                            <button opaque="NO" userInteractionEnabled="NO" contentMode="scaleToFill" contentHorizontalAlignment="right" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="yjq-aD-O2f">
-                                                <rect key="frame" x="205" y="195" width="105" height="30"/>
-                                                <state key="normal" title="Active distance"/>
-                                            </button>
                                         </subviews>
                                         <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                         <constraints>
                                             <constraint firstAttribute="trailing" secondItem="yjq-aD-O2f" secondAttribute="trailing" constant="10" id="6ck-T2-9e4"/>
                                             <constraint firstAttribute="trailing" secondItem="RqI-A4-P6i" secondAttribute="trailing" id="9zy-iC-9z7"/>
                                             <constraint firstItem="4T2-ct-BHu" firstAttribute="top" secondItem="LKv-84-lVX" secondAttribute="bottom" constant="5" id="EKQ-SB-LQd"/>
-                                            <constraint firstAttribute="trailing" secondItem="LKv-84-lVX" secondAttribute="trailing" constant="10" id="FAh-po-TwI"/>
                                             <constraint firstItem="aNs-qz-Wuu" firstAttribute="trailing" secondItem="4T2-ct-BHu" secondAttribute="trailing" id="H14-Sx-sSt"/>
                                             <constraint firstItem="LKv-84-lVX" firstAttribute="leading" secondItem="PhT-bd-15Y" secondAttribute="leading" constant="10" id="LTk-HG-DpZ"/>
                                             <constraint firstAttribute="trailing" secondItem="4T2-ct-BHu" secondAttribute="trailing" constant="10" id="MgL-jS-qxt"/>
                                             <constraint firstAttribute="trailing" secondItem="Jku-gd-Qxo" secondAttribute="trailing" constant="10" id="Pad-9H-krO"/>
+                                            <constraint firstItem="4T2-ct-BHu" firstAttribute="top" secondItem="yjq-aD-O2f" secondAttribute="bottom" constant="5" id="Pyx-Nu-aB5"/>
                                             <constraint firstItem="Jku-gd-Qxo" firstAttribute="leading" secondItem="PhT-bd-15Y" secondAttribute="leading" constant="10" id="TY0-vN-yjd"/>
                                             <constraint firstItem="aNs-qz-Wuu" firstAttribute="top" secondItem="4T2-ct-BHu" secondAttribute="top" id="XGX-Kq-cnh"/>
                                             <constraint firstItem="RqI-A4-P6i" firstAttribute="leading" secondItem="PhT-bd-15Y" secondAttribute="leading" id="Zty-Bg-Ym6"/>
@@ -103,9 +106,10 @@
                                             <constraint firstItem="Jku-gd-Qxo" firstAttribute="top" secondItem="4T2-ct-BHu" secondAttribute="bottom" constant="5" id="fRv-C5-3wH"/>
                                             <constraint firstItem="aNs-qz-Wuu" firstAttribute="leading" secondItem="4T2-ct-BHu" secondAttribute="leading" id="giE-tg-sf4"/>
                                             <constraint firstItem="RqI-A4-P6i" firstAttribute="top" secondItem="PhT-bd-15Y" secondAttribute="top" id="h0C-o6-y6c"/>
-                                            <constraint firstItem="LKv-84-lVX" firstAttribute="top" secondItem="yjq-aD-O2f" secondAttribute="bottom" constant="10" id="i8q-5A-d6d"/>
+                                            <constraint firstItem="yjq-aD-O2f" firstAttribute="top" secondItem="RqI-A4-P6i" secondAttribute="bottom" constant="5" id="i8q-5A-d6d"/>
                                             <constraint firstItem="kwo-dc-9Gl" firstAttribute="leading" secondItem="Jku-gd-Qxo" secondAttribute="leading" id="puV-yd-JVq"/>
                                             <constraint firstItem="kwo-dc-9Gl" firstAttribute="centerY" secondItem="Jku-gd-Qxo" secondAttribute="centerY" id="vh1-b9-OeJ"/>
+                                            <constraint firstItem="LKv-84-lVX" firstAttribute="width" secondItem="PhT-bd-15Y" secondAttribute="width" multiplier="0.6" id="yWc-sF-6e6"/>
                                         </constraints>
                                     </view>
                                 </subviews>

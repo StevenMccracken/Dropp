@@ -12,10 +12,12 @@ extension UIView {
   
   // Animates a view's alpha to a given value. This method is safe to call
   // from any scope, as the animations are guaranteed to run on the main thread
-  func animateAlpha(to alpha: CGFloat, duration: TimeInterval) {
+  func animateAlpha(to alpha: CGFloat, duration: TimeInterval, done: (() -> Void)? = nil) {
     DispatchQueue.main.async {
       UIView.animate(withDuration: duration, animations: { () in
         self.alpha = alpha
+      }, completion: { _ in
+        done?()
       })
     }
   }

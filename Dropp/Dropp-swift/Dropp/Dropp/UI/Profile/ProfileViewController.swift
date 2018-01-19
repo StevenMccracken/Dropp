@@ -35,7 +35,7 @@ class ProfileViewController: UITableViewController {
   }()
   
   private lazy var notFollowingLabel: UILabel = {
-    let label = UILabel(withText: "\nFollow this user to see all of their dropps🔑", forTableViewBackground: tableView, andFontSize: 30)
+    let label = UILabel(withText: "\nFollow this user to see all of their dropps🔑", forTableViewBackground: tableView, andFontSize: 25)
     return label
   }()
   
