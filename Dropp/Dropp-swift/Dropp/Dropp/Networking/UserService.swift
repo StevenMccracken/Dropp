@@ -39,13 +39,15 @@ class UserService {
   }
   
   class func getNewJwt(success: ((String) -> Void)? = nil, failure: ((NSError) -> Void)? = nil) {
-    guard let username = UserDefaults.standard.value(forKey: "username") as? String else {
-      failure?(NSError(reason: "Username does not exist in user defaults"))
+    let username = LoginManager.shared.username
+    guard !username.isEmpty else {
+      failure?(NSError(reason: "Username from LoginManager is empty"))
       return
     }
     
-    guard let password = UserDefaults.standard.value(forKey: "password") as? String else {
-      failure?(NSError(reason: "Password does not exist in user defaults"))
+    let password = LoginManager.shared.password
+    guard !password.isEmpty else {
+      failure?(NSError(reason: "Password from LoginManager is empty"))
       return
     }
     
@@ -65,12 +67,7 @@ class UserService {
         return
       }
       
-      guard !jwt.isEmpty else {
-        debugPrint("Authentication succeeded but JWT was empty")
-        return
-      }
-      
-      guard jwt.substring(with: 0..<3) == "JWT" else {
+      guard Utils.isJwtValid(jwt) else {
         debugPrint("Authentication succeeded but JWT is invalid")
         return
       }

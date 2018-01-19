@@ -54,4 +54,8 @@ class Utils {
       }
     })
   }
+  
+  class func isJwtValid(_ jwt: String) -> Bool {
+    return !jwt.isEmpty && jwt.substring(with: 0..<3) == "JWT"
+  }
 }

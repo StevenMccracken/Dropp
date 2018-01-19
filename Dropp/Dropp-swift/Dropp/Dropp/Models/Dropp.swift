@@ -27,7 +27,7 @@ class Dropp: NSObject, Comparable {
   }
   
   var postedByCurrentUser: Bool {
-    return username == UserDefaults.standard.object(forKey: "username") as? String
+    return username == LoginManager.shared.currentUser?.username
   }
   
   init(id: String, json: JSON) throws {
@@ -83,7 +83,7 @@ class Dropp: NSObject, Comparable {
   
   func distanceAwayMessage(from location: CLLocation?) -> String {
     guard let location = location else {
-      return "Can't determine distance"
+      return "Location unavailable😪"
     }
     
     var message: String
@@ -93,14 +93,14 @@ class Dropp: NSObject, Comparable {
       let miles = distance.metersToMiles
       let roundedDistance = Int((miles * 4.0).rounded() / 4)
       let quantifier = roundedDistance == 1 ? "mile" : "miles"
-      message = "About \(roundedDistance) \(quantifier) away"
-    } else if 1.524 ..< 304.8 ~= distance {
-      // Distance is between 5 feet and 1000 feet. Convert to feet
+      message = "\(roundedDistance) \(quantifier) away"
+    } else if 0.3048 ..< 1409.7853 ~= distance {
+      // Distance is between 1.5 feet and 1 mile. Convert to feet
       let feet = distance.metersToFeet
       let roundedDistance = Int(feet.rounded())
       message = "\(roundedDistance) feet away"
     } else {
-      message = "Less than 5 feet away"
+      message = "1 foot away"
     }
     
     return message
@@ -110,17 +110,24 @@ class Dropp: NSObject, Comparable {
     var message: String
     let timeDifference = time.timeIntervalSince(date)
     if timeDifference < 60 {
-      message = "Less than a minute ago"
+      message = "Just now"
     } else {
       let minutesAgo = Int((timeDifference / 60).rounded())
       if minutesAgo < 60 {
         let quantifier = minutesAgo == 1 ? "minute" : "minutes"
         message = "\(minutesAgo) \(quantifier) ago"
       } else {
-        let hoursAgoDouble = Double(minutesAgo) / 60
-        let hoursAgo = hoursAgoDouble.roundTo(places: 1)
-        let quantifier = hoursAgo == 1.0 ? "hour" : "hours"
-        message = "\(hoursAgo) \(quantifier) ago"
+        let hoursAgo = minutesAgo / 60
+        let hoursQuantifier = hoursAgo == 1 ? "hour" : "hours"
+        message = "\(hoursAgo) \(hoursQuantifier)"
+        
+        let subMinutesAgo = minutesAgo % 60
+        if subMinutesAgo > 0 {
+          let subMinutesQuantifier = subMinutesAgo == 1 ? "minute" : "minutes"
+          message = "\(message) \(subMinutesAgo) \(subMinutesQuantifier)"
+        }
+        
+        message = "\(message) ago"
       }
     }
     

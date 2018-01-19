@@ -25,7 +25,7 @@ class ProfileViewController: UITableViewController {
   }
   
   private lazy var fetchFailedLabel: UILabel = {
-    let label = UILabel(withText: "\nUnable to get dropps😢", forTableViewBackground: tableView, andFontSize: 300)
+    let label = UILabel(withText: "\nUnable to get dropps😢", forTableViewBackground: tableView, andFontSize: 30)
     return label
   }()
   
@@ -35,7 +35,7 @@ class ProfileViewController: UITableViewController {
   }()
   
   private lazy var notFollowingLabel: UILabel = {
-    let label = UILabel(withText: "\nFollow this user to see all of their dropps🔑", forTableViewBackground: tableView, andFontSize: 30)
+    let label = UILabel(withText: "\nFollow this user to see all of their dropps🔑", forTableViewBackground: tableView, andFontSize: 25)
     return label
   }()
   
@@ -579,12 +579,15 @@ extension ProfileViewController: FeedViewControllerDelegate {
     getDropps()
   }
   
-  func shouldRefresh(dropp: Dropp, with newDropp: Dropp) {
+  func shouldRefresh(dropp: Dropp, with newDropp: Dropp? = nil) {
     guard let index = dropps.index(of: dropp) else {
       return
     }
     
-    dropps[index] = newDropp
+    if let newDropp = newDropp {
+      dropps[index] = newDropp
+    }
+    
     let indexPath = IndexPath(row: 0, section: index + 1)
     DispatchQueue.main.async {
       self.tableView.reloadRows(at: [indexPath], with: .fade)
