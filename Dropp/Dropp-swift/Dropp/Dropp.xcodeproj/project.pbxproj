@@ -9,6 +9,7 @@
 /* Begin PBXBuildFile section */
 		16AF6C0B1E9B30270022C051 /* Dropp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 16AF6C0A1E9B30270022C051 /* Dropp.swift */; };
 		2986B0CE30CF1A30A6B10072 /* Pods_DroppTests.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A89741AD814E44A9F9D24FC3 /* Pods_DroppTests.framework */; };
+		69011C112013EFF900AEEDD6 /* UIMapView+Shortcuts.swift in Sources */ = {isa = PBXBuildFile; fileRef = 69011C102013EFF900AEEDD6 /* UIMapView+Shortcuts.swift */; };
 		690D081F200FC79400C687FD /* UICopyableLabel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 690D081E200FC79400C687FD /* UICopyableLabel.swift */; };
 		6910835E1FE4B8890030C34D /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 6910835D1FE4B8890030C34D /* Main.storyboard */; };
 		691083601FE4BB500030C34D /* MapKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 6910835F1FE4BB500030C34D /* MapKit.framework */; };
@@ -20,6 +21,8 @@
 		6918CEDE20127C70005E547C /* Settings.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 6918CEDD20127C70005E547C /* Settings.storyboard */; };
 		6918CEE020127DD0005E547C /* SettingsDistanceTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6918CEDF20127DD0005E547C /* SettingsDistanceTableViewCell.swift */; };
 		6918CEE220127F58005E547C /* SettingsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6918CEE120127F58005E547C /* SettingsViewController.swift */; };
+		6918CEE52012A710005E547C /* Map.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 6918CEE42012A710005E547C /* Map.storyboard */; };
+		6918CEE72012AAA6005E547C /* MapViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6918CEE62012AAA6005E547C /* MapViewController.swift */; };
 		6918F18E1FE8D9CD00041010 /* CreateDropp.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 6918F18D1FE8D9CD00041010 /* CreateDropp.storyboard */; };
 		6918F1901FE8F4C600041010 /* UIColor+CustomColors.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6918F18F1FE8F4C600041010 /* UIColor+CustomColors.swift */; };
 		6918F1D81FEE4A3600041010 /* UIAlertController+CustomInit.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6918F1D71FEE4A3600041010 /* UIAlertController+CustomInit.swift */; };
@@ -91,6 +94,7 @@
 		16CA209E1EC19E7600EDA7CC /* Dropp-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = "Dropp-Bridging-Header.h"; path = "Dropp/Dropp-Bridging-Header.h"; sourceTree = SOURCE_ROOT; };
 		410E488F5CFBA78B82AAED78 /* Pods_Dropp.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_Dropp.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		67BE7C9F4619CCF963CC9BF7 /* Pods-Dropp.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Dropp.debug.xcconfig"; path = "Pods/Target Support Files/Pods-Dropp/Pods-Dropp.debug.xcconfig"; sourceTree = "<group>"; };
+		69011C102013EFF900AEEDD6 /* UIMapView+Shortcuts.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIMapView+Shortcuts.swift"; sourceTree = "<group>"; };
 		690D081E200FC79400C687FD /* UICopyableLabel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UICopyableLabel.swift; sourceTree = "<group>"; };
 		6910835D1FE4B8890030C34D /* Main.storyboard */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; path = Main.storyboard; sourceTree = "<group>"; };
 		6910835F1FE4BB500030C34D /* MapKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = MapKit.framework; path = System/Library/Frameworks/MapKit.framework; sourceTree = SDKROOT; };
@@ -103,6 +107,8 @@
 		6918CEDD20127C70005E547C /* Settings.storyboard */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; path = Settings.storyboard; sourceTree = "<group>"; };
 		6918CEDF20127DD0005E547C /* SettingsDistanceTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsDistanceTableViewCell.swift; sourceTree = "<group>"; };
 		6918CEE120127F58005E547C /* SettingsViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsViewController.swift; sourceTree = "<group>"; };
+		6918CEE42012A710005E547C /* Map.storyboard */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; path = Map.storyboard; sourceTree = "<group>"; };
+		6918CEE62012AAA6005E547C /* MapViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MapViewController.swift; sourceTree = "<group>"; };
 		6918F18D1FE8D9CD00041010 /* CreateDropp.storyboard */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; path = CreateDropp.storyboard; sourceTree = "<group>"; };
 		6918F18F1FE8F4C600041010 /* UIColor+CustomColors.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIColor+CustomColors.swift"; sourceTree = "<group>"; };
 		6918F1D71FEE4A3600041010 /* UIAlertController+CustomInit.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIAlertController+CustomInit.swift"; sourceTree = "<group>"; };
@@ -217,6 +223,15 @@
 			path = Settings;
 			sourceTree = "<group>";
 		};
+		6918CEE32012A6F1005E547C /* Map */ = {
+			isa = PBXGroup;
+			children = (
+				6918CEE42012A710005E547C /* Map.storyboard */,
+				6918CEE62012AAA6005E547C /* MapViewController.swift */,
+			);
+			path = Map;
+			sourceTree = "<group>";
+		};
 		693ABEDE1FE70515002FE96D /* Models */ = {
 			isa = PBXGroup;
 			children = (
@@ -243,6 +258,7 @@
 				69C3BAF11FE7BE9C00537C99 /* Login */,
 				6982FF66200978200015D069 /* Main */,
 				6982FF672009783B0015D069 /* Feed */,
+				6918CEE32012A6F1005E547C /* Map */,
 				6982FF6A200978C10015D069 /* Dropp */,
 				6982FF6B200978D50015D069 /* Profile */,
 				6982FF6C200979470015D069 /* Connections */,
@@ -352,6 +368,7 @@
 				6982FF61200946430015D069 /* UINavigationController+Shortcuts.swift */,
 				69D8E2FE200C830B00CCEC6C /* UILabel+Shortcuts.swift */,
 				6935E6D8200EE32200548066 /* UIButton+Shortcuts.swift */,
+				69011C102013EFF900AEEDD6 /* UIMapView+Shortcuts.swift */,
 			);
 			name = "UI Extensions";
 			sourceTree = "<group>";
@@ -587,6 +604,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				69A43ED01E5BEEA6003E6420 /* Assets.xcassets in Resources */,
+				6918CEE52012A710005E547C /* Map.storyboard in Resources */,
 				6982FF642009773F0015D069 /* Feed.storyboard in Resources */,
 				69B2DB3620052BF60065DF02 /* Connections.storyboard in Resources */,
 				69387B5C2000A6280029147B /* Profile.storyboard in Resources */,
@@ -722,6 +740,7 @@
 				6918CEE020127DD0005E547C /* SettingsDistanceTableViewCell.swift in Sources */,
 				695CF3A51EFF22DE007D07A7 /* String+Shortcuts.swift in Sources */,
 				69C3BAFA1FE7CC6500537C99 /* Utils.swift in Sources */,
+				69011C112013EFF900AEEDD6 /* UIMapView+Shortcuts.swift in Sources */,
 				69387B5E2000CC1F0029147B /* User.swift in Sources */,
 				6918F1901FE8F4C600041010 /* UIColor+CustomColors.swift in Sources */,
 				69387B622001375B0029147B /* ProfileViewController.swift in Sources */,
@@ -749,6 +768,7 @@
 				6918CEDB201277EF005E547C /* SettingsManager.swift in Sources */,
 				6918F1D81FEE4A3600041010 /* UIAlertController+CustomInit.swift in Sources */,
 				69C3BAF31FE7BED300537C99 /* LoginViewController.swift in Sources */,
+				6918CEE72012AAA6005E547C /* MapViewController.swift in Sources */,
 				693AFB4E1FFF69E9008901A0 /* NSError+Shortcuts.swift in Sources */,
 				691B1ABB1FEF3D240043EBA0 /* DroppTableViewCell.swift in Sources */,
 				69D8E2FF200C830B00CCEC6C /* UILabel+Shortcuts.swift in Sources */,

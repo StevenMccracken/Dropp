@@ -6,7 +6,7 @@
 //  Copyright © 2017 Group B. All rights reserved.
 //
 
-import Foundation
+import MapKit
 import CoreLocation
 import SwiftyJSON
 
@@ -28,6 +28,12 @@ class Dropp: NSObject, Comparable {
   
   var postedByCurrentUser: Bool {
     return username == LoginManager.shared.currentUser?.username
+  }
+  
+  var pointAnnotation: MKPointAnnotation {
+    let point = MKPointAnnotation()
+    point.coordinate = location.coordinate
+    return point
   }
   
   init(id: String, json: JSON) throws {

@@ -21,9 +21,10 @@
                     </tabBar>
                     <connections>
                         <segue destination="7lR-p1-hax" kind="relationship" relationship="viewControllers" id="FMB-1V-udw"/>
-                        <segue destination="qIQ-f7-0at" kind="relationship" relationship="viewControllers" id="R0x-sY-2ef"/>
-                        <segue destination="FOp-WS-HxL" kind="relationship" relationship="viewControllers" id="FPR-iR-0tz"/>
-                        <segue destination="7Ly-eG-hOW" kind="relationship" relationship="viewControllers" id="T3P-XX-Qi2"/>
+                        <segue destination="2dV-fM-ein" kind="relationship" relationship="viewControllers" id="LBj-oJ-YVV"/>
+                        <segue destination="qIQ-f7-0at" kind="relationship" relationship="viewControllers" id="MNh-kK-2I1"/>
+                        <segue destination="FOp-WS-HxL" kind="relationship" relationship="viewControllers" id="KA5-9B-imu"/>
+                        <segue destination="7Ly-eG-hOW" kind="relationship" relationship="viewControllers" id="ldw-BV-xzU"/>
                     </connections>
                 </tabBarController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="rlA-lc-Qcu" userLabel="First Responder" sceneMemberID="firstResponder"/>
@@ -38,13 +39,13 @@
                 </viewControllerPlaceholder>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="xqG-SJ-ffN" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="1418" y="219"/>
+            <point key="canvasLocation" x="1281" y="1414"/>
         </scene>
         <!--Feed Navigation-->
         <scene sceneID="s69-PC-FHJ">
             <objects>
                 <navigationController title="Feed Navigation" automaticallyAdjustsScrollViewInsets="NO" id="7lR-p1-hax" sceneMemberID="viewController">
-                    <tabBarItem key="tabBarItem" title="Feed" image="location" selectedImage="location_selected" id="ryg-GD-mBe"/>
+                    <tabBarItem key="tabBarItem" title="Feed" image="FeedIcon" selectedImage="FeedIcon" id="ryg-GD-mBe"/>
                     <toolbarItems/>
                     <navigationBar key="navigationBar" contentMode="scaleToFill" insetsLayoutMarginsFromSafeArea="NO" largeTitles="YES" id="n3v-FI-8MK">
                         <rect key="frame" x="0.0" y="44" width="375" height="96"/>
@@ -58,7 +59,7 @@
                 </navigationController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="Uf3-mR-7na" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="-1135" y="965"/>
+            <point key="canvasLocation" x="-1740" y="964"/>
         </scene>
         <!--Feed-->
         <scene sceneID="viV-HW-B3U">
@@ -68,7 +69,18 @@
                 </viewControllerPlaceholder>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="NoS-LN-l7I" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="-1136" y="1415"/>
+            <point key="canvasLocation" x="-1741" y="1414"/>
+        </scene>
+        <!--Map-->
+        <scene sceneID="3uh-jV-YK8">
+            <objects>
+                <viewControllerPlaceholder storyboardName="Map" id="2dV-fM-ein" sceneMemberID="viewController">
+                    <tabBarItem key="tabBarItem" title="Nearby" image="location" selectedImage="location_selected" id="hSL-Ob-Iec"/>
+                    <navigationItem key="navigationItem" title="Nearby" largeTitleDisplayMode="never" id="747-el-pQj"/>
+                </viewControllerPlaceholder>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="L5L-2q-CZ1" userLabel="First Responder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="-1006" y="673"/>
         </scene>
         <!--Profile-->
         <scene sceneID="74u-aK-9oC">
@@ -78,7 +90,7 @@
                 </viewControllerPlaceholder>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="Era-Fk-fAV" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="696" y="1415"/>
+            <point key="canvasLocation" x="520" y="1414"/>
         </scene>
         <!--Profile Navigation-->
         <scene sceneID="TRV-4f-rRs">
@@ -99,7 +111,7 @@
                 </navigationController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="z9L-up-Gvm" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="697" y="965"/>
+            <point key="canvasLocation" x="521" y="964"/>
         </scene>
         <!--Dummy View Controller-->
         <scene sceneID="yGH-58-5yN">
@@ -115,7 +127,7 @@
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="CPK-Y6-vps" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="-226" y="965"/>
+            <point key="canvasLocation" x="-226" y="964"/>
         </scene>
         <!--Navigation Controller-->
         <scene sceneID="62t-f8-nQY">
@@ -134,10 +146,11 @@
                 </navigationController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="Q5w-HO-TEp" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="697" y="219"/>
+            <point key="canvasLocation" x="1282" y="964"/>
         </scene>
     </scenes>
     <resources>
+        <image name="FeedIcon" width="16" height="16"/>
         <image name="create" width="42" height="42"/>
         <image name="location" width="32" height="32"/>
         <image name="location_selected" width="32" height="32"/>

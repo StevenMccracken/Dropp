@@ -17,6 +17,8 @@ class DroppDetailViewController: UIViewController {
   @IBOutlet weak var loadingImageActivityIndicatorView: UIActivityIndicatorView!
   @IBOutlet weak var imageView: UIImageView!
   @IBOutlet weak var mapView: MKMapView!
+  @IBOutlet weak var locateButtonBackgroundView: UIView!
+  @IBOutlet weak var locateUserButton: UIButton!
   @IBOutlet weak var activeDistanceButton: UIButton!
   @IBOutlet weak var timestampLabel: UICopyableLabel!
   @IBOutlet weak var contentLabel: UICopyableLabel!
@@ -43,8 +45,9 @@ class DroppDetailViewController: UIViewController {
     droppPointAnnotation = MKPointAnnotation()
     droppPointAnnotation.coordinate = dropp.location.coordinate
     
+    locateButtonBackgroundView.layer.cornerRadius = 10
+    
     activeDistanceButton.layer.cornerRadius = 5
-    activeDistanceButton.setTitleColor(.white, for: .normal)
     activeDistanceButton.setTitleColor(.salmon, for: .disabled)
     activeDistanceButton.contentEdgeInsets = UIEdgeInsets(top: 5, left: 5, bottom: 5, right: 5)
     
@@ -77,7 +80,6 @@ class DroppDetailViewController: UIViewController {
     }
     
     updateHeightConstraint()
-    NotificationCenter.default.addObserver(self, selector: #selector(deviceDidRotate), name: NSNotification.Name.UIDeviceOrientationDidChange, object: nil)
     
     if let userCoordinates = LocationManager.shared.currentCoordinates {
       resizeMapView(withUserCoordinates: userCoordinates)
@@ -92,6 +94,11 @@ class DroppDetailViewController: UIViewController {
     textView.addToolbar(withItems: [spacing, clearButton])
     
     activeDistanceButton.setTitle(dropp.distanceAwayMessage(from: LocationManager.shared.currentLocation), for: .disabled)
+  }
+  
+  override func viewWillAppear(_ animated: Bool) {
+    super.viewWillAppear(animated)
+    NotificationCenter.default.addObserver(self, selector: #selector(deviceDidRotate), name: NSNotification.Name.UIDeviceOrientationDidChange, object: nil)
   }
   
   override func viewWillDisappear(_ animated: Bool) {
@@ -455,21 +462,15 @@ class DroppDetailViewController: UIViewController {
   private func userDidDragMap(_ gesture: UIGestureRecognizer) {
     if gesture.state == .began && shouldUpdateMapRegion {
       shouldUpdateMapRegion = false
-      UIView.animate(withDuration: 0.25, animations: { () in
-        self.activeDistanceButton.backgroundColor = .salmon
-      }, completion: { _ in
-        self.activeDistanceButton.isEnabled = true
-        self.activeDistanceButton.setTitle(self.dropp.distanceAwayMessage(from: LocationManager.shared.currentLocation), for: .normal)
-      })
+      locateButtonBackgroundView.animateAlpha(to: 1, duration: 0.2) {
+        self.locateUserButton.isEnabled = true
+      }
     }
   }
   
-  @IBAction func didTapActiveDistanceButton(_ sender: UIButton) {
+  @IBAction func didTapLocateUserButton(_ sender: UIButton) {
     sender.isEnabled = false
-    UIView.animate(withDuration: 0.25) {
-      sender.backgroundColor = nil
-    }
-    
+    locateButtonBackgroundView.animateAlpha(to: 0, duration: 0.2)
     if let userCoordinates = LocationManager.shared.currentCoordinates {
       resizeMapView(withUserCoordinates: userCoordinates)
     }
@@ -489,7 +490,7 @@ class DroppDetailViewController: UIViewController {
 extension DroppDetailViewController: MKMapViewDelegate {
   
   func mapView(_ mapView: MKMapView, didUpdate userLocation: MKUserLocation) {
-    activeDistanceButton.setTitle(dropp.distanceAwayMessage(from: userLocation.location), for: shouldUpdateMapRegion ? .disabled : .normal)
+    activeDistanceButton.setTitle(dropp.distanceAwayMessage(from: userLocation.location), for:  .disabled)
     if shouldUpdateMapRegion {
       resizeMapView(withUserCoordinates: userLocation.coordinate)
     }
@@ -503,13 +504,9 @@ extension DroppDetailViewController: MKMapViewDelegate {
     shouldUpdateMapRegion = false
     let region = MKCoordinateRegion(center: dropp.location.coordinate, span: MKCoordinateSpan(latitudeDelta: 0.01, longitudeDelta: 0.01))
     mapView.setRegion(region, animated: true)
-    UIView.animate(withDuration: 0.25, animations: { () in
-      self.activeDistanceButton.backgroundColor = .salmon
-    }, completion: { _ in
-      self.activeDistanceButton.isEnabled = true
-      self.activeDistanceButton.setTitle(self.dropp.distanceAwayMessage(from: LocationManager.shared.currentLocation), for: .normal)
-      self.activeDistanceButton.isEnabled = true
-    })
+    locateButtonBackgroundView.animateAlpha(to: 1, duration: 0.2) {
+      self.locateUserButton.isEnabled = true
+    }
   }
 }
 

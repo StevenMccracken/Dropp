@@ -38,22 +38,6 @@ class UserService {
     }, failure: failure)
   }
   
-  class func getNewJwt(success: ((String) -> Void)? = nil, failure: ((NSError) -> Void)? = nil) {
-    let username = LoginManager.shared.username
-    guard !username.isEmpty else {
-      failure?(NSError(reason: "Username from LoginManager is empty"))
-      return
-    }
-    
-    let password = LoginManager.shared.password
-    guard !password.isEmpty else {
-      failure?(NSError(reason: "Password from LoginManager is empty"))
-      return
-    }
-    
-    authenticate(username: username, password: password, success: success, failure: failure)
-  }
-  
   class func authenticate(username: String, password: String, success: ((String) -> Void)? = nil, failure: ((NSError) -> Void)? = nil) {
     let credentials = ["username": username, "password": password]
     guard let request = HttpUtil.postRequest("\(Constants.apiUrl)/authenticate", parameters: credentials) else {

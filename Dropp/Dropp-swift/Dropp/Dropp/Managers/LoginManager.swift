@@ -27,10 +27,6 @@ class LoginManager {
     return StorageManager.get(key: Constants.storageKey_username) as? String ?? ""
   }
   
-  var password: String {
-    return StorageManager.get(key: Constants.storageKey_password) as? String ?? ""
-  }
-  
   private init() {
     loginEvent = Event<Bool>()
     logoutEvent = Event<Void>()
@@ -38,7 +34,7 @@ class LoginManager {
     
     isLoggedIn = false
     let username = self.username
-    isLoggedIn = !jwt.isEmpty && !username.isEmpty && !password.isEmpty
+    isLoggedIn = !jwt.isEmpty && !username.isEmpty
     if isLoggedIn {
       let user = User(username)
       currentUser = user
@@ -58,7 +54,6 @@ class LoginManager {
       
       StorageManager.set(key: Constants.storageKey_jwt, value: jwt)
       StorageManager.set(key: Constants.storageKey_username, value: username)
-      StorageManager.set(key: Constants.storageKey_password, value: password)
       let user = User(username)
       self.currentUser = user
       self.currentUserUpdatedEvent.raise(data: user)
@@ -78,7 +73,6 @@ class LoginManager {
     self.isLoggedIn = false
     StorageManager.delete(key: Constants.storageKey_jwt)
     StorageManager.delete(key: Constants.storageKey_username)
-    StorageManager.delete(key: Constants.storageKey_password)
     currentUser = nil
     logoutEvent.raise(data: ())
   }
@@ -147,7 +141,6 @@ extension LoginManager: CreateAccountViewDelegate {
   func didCreateAccount(username: String, password: String, token: String) {
     StorageManager.set(key: Constants.storageKey_jwt, value: token)
     StorageManager.set(key: Constants.storageKey_username, value: username)
-    StorageManager.set(key: Constants.storageKey_password, value: password)
     
     isLoggedIn = true
     currentUser = User(username)

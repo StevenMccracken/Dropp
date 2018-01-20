@@ -28,6 +28,27 @@
                                             <mapView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" mapType="standard" pitchEnabled="NO" showsUserLocation="YES" showsScale="YES" translatesAutoresizingMaskIntoConstraints="NO" id="RqI-A4-P6i">
                                                 <rect key="frame" x="0.0" y="0.0" width="320" height="230"/>
                                             </mapView>
+                                            <view alpha="0.0" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="5vi-QK-Hxs" userLabel="Locate Button Background View">
+                                                <rect key="frame" x="265" y="175" width="45" height="45"/>
+                                                <subviews>
+                                                    <button opaque="NO" contentMode="scaleToFill" enabled="NO" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="N1M-Db-KV8" userLabel="Locate Button">
+                                                        <rect key="frame" x="12" y="12" width="21" height="21"/>
+                                                        <state key="normal" image="location_arrow_empty"/>
+                                                        <state key="highlighted" image="location_arrow_filled"/>
+                                                        <connections>
+                                                            <action selector="didTapLocateUserButton:" destination="5it-UB-LAV" eventType="touchUpInside" id="ZaB-AL-3yW"/>
+                                                        </connections>
+                                                    </button>
+                                                </subviews>
+                                                <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                                                <constraints>
+                                                    <constraint firstItem="N1M-Db-KV8" firstAttribute="top" secondItem="5vi-QK-Hxs" secondAttribute="top" constant="12" id="BW0-27-M9o"/>
+                                                    <constraint firstAttribute="width" constant="45" id="HbK-qP-773"/>
+                                                    <constraint firstAttribute="trailing" secondItem="N1M-Db-KV8" secondAttribute="trailing" constant="12" id="Igq-Qa-qrL"/>
+                                                    <constraint firstItem="N1M-Db-KV8" firstAttribute="leading" secondItem="5vi-QK-Hxs" secondAttribute="leading" constant="12" id="jMD-rJ-90S"/>
+                                                    <constraint firstAttribute="bottom" secondItem="N1M-Db-KV8" secondAttribute="bottom" constant="12" id="yB1-ZR-piK"/>
+                                                </constraints>
+                                            </view>
                                             <label opaque="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Timestamp" lineBreakMode="wordWrap" numberOfLines="0" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="LKv-84-lVX" customClass="UICopyableLabel" customModule="Dropp" customModuleProvider="target">
                                                 <rect key="frame" x="10" y="235" width="192" height="32"/>
                                                 <fontDescription key="fontDescription" type="system" pointSize="16"/>
@@ -52,9 +73,6 @@
                                             <button opaque="NO" contentMode="scaleToFill" enabled="NO" contentHorizontalAlignment="right" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="yjq-aD-O2f">
                                                 <rect key="frame" x="280" y="235" width="30" height="32"/>
                                                 <fontDescription key="fontDescription" type="system" pointSize="16"/>
-                                                <connections>
-                                                    <action selector="didTapActiveDistanceButton:" destination="5it-UB-LAV" eventType="touchUpInside" id="MRz-a8-pR6"/>
-                                                </connections>
                                             </button>
                                             <imageView clipsSubviews="YES" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" translatesAutoresizingMaskIntoConstraints="NO" id="Jku-gd-Qxo">
                                                 <rect key="frame" x="10" y="301" width="300" height="350"/>
@@ -101,15 +119,18 @@
                                             <constraint firstItem="kwo-dc-9Gl" firstAttribute="trailing" secondItem="Jku-gd-Qxo" secondAttribute="trailing" id="aGK-zj-ZB1"/>
                                             <constraint firstItem="PZs-fl-EtS" firstAttribute="centerX" secondItem="Jku-gd-Qxo" secondAttribute="centerX" id="d2g-9G-eTT"/>
                                             <constraint firstItem="PZs-fl-EtS" firstAttribute="centerY" secondItem="Jku-gd-Qxo" secondAttribute="centerY" id="dX2-eH-lgo"/>
+                                            <constraint firstAttribute="trailing" secondItem="5vi-QK-Hxs" secondAttribute="trailing" constant="10" id="dim-Gp-Kq8"/>
                                             <constraint firstItem="4T2-ct-BHu" firstAttribute="leading" secondItem="PhT-bd-15Y" secondAttribute="leading" constant="10" id="dwb-Ir-qUR"/>
                                             <constraint firstItem="LKv-84-lVX" firstAttribute="top" secondItem="RqI-A4-P6i" secondAttribute="bottom" constant="5" id="ejY-3b-ZU1"/>
                                             <constraint firstItem="Jku-gd-Qxo" firstAttribute="top" secondItem="4T2-ct-BHu" secondAttribute="bottom" constant="5" id="fRv-C5-3wH"/>
                                             <constraint firstItem="aNs-qz-Wuu" firstAttribute="leading" secondItem="4T2-ct-BHu" secondAttribute="leading" id="giE-tg-sf4"/>
                                             <constraint firstItem="RqI-A4-P6i" firstAttribute="top" secondItem="PhT-bd-15Y" secondAttribute="top" id="h0C-o6-y6c"/>
                                             <constraint firstItem="yjq-aD-O2f" firstAttribute="top" secondItem="RqI-A4-P6i" secondAttribute="bottom" constant="5" id="i8q-5A-d6d"/>
+                                            <constraint firstItem="5vi-QK-Hxs" firstAttribute="width" secondItem="5vi-QK-Hxs" secondAttribute="height" multiplier="1:1" id="pXG-qm-AQ0"/>
                                             <constraint firstItem="kwo-dc-9Gl" firstAttribute="leading" secondItem="Jku-gd-Qxo" secondAttribute="leading" id="puV-yd-JVq"/>
                                             <constraint firstItem="kwo-dc-9Gl" firstAttribute="centerY" secondItem="Jku-gd-Qxo" secondAttribute="centerY" id="vh1-b9-OeJ"/>
                                             <constraint firstItem="LKv-84-lVX" firstAttribute="width" secondItem="PhT-bd-15Y" secondAttribute="width" multiplier="0.6" id="yWc-sF-6e6"/>
+                                            <constraint firstItem="RqI-A4-P6i" firstAttribute="bottom" secondItem="5vi-QK-Hxs" secondAttribute="bottom" constant="10" id="zMI-Rs-ihQ"/>
                                         </constraints>
                                     </view>
                                 </subviews>
@@ -140,6 +161,8 @@
                         <outlet property="imageView" destination="Jku-gd-Qxo" id="XWZ-rQ-SQr"/>
                         <outlet property="loadingImageActivityIndicatorView" destination="dKd-bn-zlf" id="Yoc-fQ-xTK"/>
                         <outlet property="loadingImageBackgroundView" destination="PZs-fl-EtS" id="O5U-PA-6Rz"/>
+                        <outlet property="locateButtonBackgroundView" destination="5vi-QK-Hxs" id="ecl-cr-944"/>
+                        <outlet property="locateUserButton" destination="N1M-Db-KV8" id="ckc-67-Tes"/>
                         <outlet property="mapView" destination="RqI-A4-P6i" id="5Hn-bV-rZt"/>
                         <outlet property="scrollView" destination="AOp-mc-etn" id="YN6-vy-I0F"/>
                         <outlet property="textView" destination="aNs-qz-Wuu" id="h7Z-OH-o7Y"/>
@@ -151,4 +174,8 @@
             <point key="canvasLocation" x="2644" y="192.95352323838082"/>
         </scene>
     </scenes>
+    <resources>
+        <image name="location_arrow_empty" width="48" height="48"/>
+        <image name="location_arrow_filled" width="48" height="48"/>
+    </resources>
 </document>

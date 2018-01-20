@@ -12,8 +12,14 @@ class MainViewController: UITabBarController {
   
   override func viewDidLoad() {
     super.viewDidLoad()
-    delegate = UIApplication.shared.delegate as? UITabBarControllerDelegate
     
+    // Assign delegate as AppDelegate to allow presentation of create dropp view controller
+    delegate = UIApplication.shared.delegate as? UITabBarControllerDelegate
+    configureNearbyTabBarItem()
+    configureProfileViewController()
+  }
+  
+  private func configureProfileViewController() {
     guard let currentUser = LoginManager.shared.currentUser else {
       return
     }
@@ -23,10 +29,18 @@ class MainViewController: UITabBarController {
     }
     
     guard let profileViewController = profileNavigationController.childViewControllers.first as? ProfileViewController else {
-      debugPrint("Profile view controller was nil")
       return
     }
     
     profileViewController.user = currentUser
+  }
+  
+  private func configureNearbyTabBarItem() {
+    guard let nearbyViewController = viewControllers?.first(where: { $0 is MapViewController }) else {
+      return
+    }
+    
+    nearbyViewController.tabBarItem.image = UIImage(named: "location")
+    nearbyViewController.tabBarItem.selectedImage = UIImage(named: "location_selected")
   }
 }

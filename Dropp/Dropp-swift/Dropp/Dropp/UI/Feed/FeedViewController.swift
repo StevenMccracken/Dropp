@@ -22,7 +22,7 @@ class FeedViewController: UITableViewController {
   }()
   
   private lazy var noNearbyDroppsLabel: UILabel = {
-    let label = UILabel(withText: "\nNo nearby dropps😢", forTableViewBackground: tableView, andFontSize: 30)
+    let label = UILabel(withText: "\nNo dropps😢", forTableViewBackground: tableView, andFontSize: 30)
 
     return label
   }()
@@ -45,7 +45,7 @@ class FeedViewController: UITableViewController {
       refreshData()
     }
     
-//    updateNavigationItemPrompt(withDistance: SettingsManager.shared.maxFetchDistance)
+    updateNavigationItemPrompt(withDistance: SettingsManager.shared.maxFetchDistance)
     maxFetchDistanceUpdatedEventHandler = SettingsManager.shared.maxFetchDistanceChangedEvent.addHandler(target: self, handler: FeedViewController.updateNavigationItemPrompt)
   }
   
@@ -63,15 +63,18 @@ class FeedViewController: UITableViewController {
   }
   
   private func updateNavigationItemPrompt(withDistance distance: Double) {
-//    let title = "Dropps from following and within"
-//    DispatchQueue.main.async {
-//      if distance >= 5280 {
-//        let miles = Int(distance.feetToMiles)
-//        self.navigationItem.prompt = "\(title) \(miles) mile\(miles == 1 ? "" : "s")"
-//      } else {
-//        self.navigationItem.prompt = "\(title) \(Int(distance)) feet"
-//      }
-//    }
+    var message = "Dropps from friends & within"
+    if distance >= 5280 {
+      let miles = Int(distance.feetToMiles)
+      message = "\(message) \(miles) mile\(miles == 1 ? "" : "s")"
+    } else {
+      message = "\(message) \(Int(distance)) feet"
+    }
+    
+    navigationItem.prompt = message
+    DispatchQueue.main.asyncAfter(deadline: .now() + .seconds(5)) {
+      self.navigationItem.prompt = nil
+    }
   }
   
   @objc
