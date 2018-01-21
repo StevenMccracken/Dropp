@@ -29,11 +29,11 @@ class DroppDetailViewController: UIViewController {
   private var originalTitle: String!
   var dropp: Dropp!
   var droppPointAnnotation: MKPointAnnotation!
-  var displayInfoButton: Bool?
   var deletingDropp = false
   var editingDropp = false
   var editVersion: UInt = 0
   var shouldUpdateMapRegion = true
+  var shouldZoomToDroppOnAppearance = false
   var containerViewHeightConstraint: NSLayoutConstraint?
   private lazy var editingDroppActivityIndicator: UIActivityIndicatorView = {
     return UIActivityIndicatorView(activityIndicatorStyle: .gray)
@@ -67,7 +67,6 @@ class DroppDetailViewController: UIViewController {
     }
     
     navigationItem.largeTitleDisplayMode = .never
-    navigationItem.backBarButtonItem?.tintColor = .salmon
     addInfoButton()
     
     let formatter = DateFormatter()
@@ -81,7 +80,11 @@ class DroppDetailViewController: UIViewController {
     
     updateHeightConstraint()
     
-    if let userCoordinates = LocationManager.shared.currentCoordinates {
+    if shouldZoomToDroppOnAppearance {
+      shouldUpdateMapRegion = false
+      mapView.showAnnotations([droppPointAnnotation], animated: true)
+      revealLocateUserButton()
+    } else if let userCoordinates = LocationManager.shared.currentCoordinates {
       resizeMapView(withUserCoordinates: userCoordinates)
     }
     
@@ -133,7 +136,6 @@ class DroppDetailViewController: UIViewController {
     }
     
     navigationItem.leftBarButtonItem = UIBarButtonItem(barButtonSystemItem: .cancel, target: self, action: #selector(didTapEditingCancelButton))
-    navigationItem.leftBarButtonItem?.tintColor = .salmon
   }
   
   func addEditingDoneButton() {
@@ -462,9 +464,7 @@ class DroppDetailViewController: UIViewController {
   private func userDidDragMap(_ gesture: UIGestureRecognizer) {
     if gesture.state == .began && shouldUpdateMapRegion {
       shouldUpdateMapRegion = false
-      locateButtonBackgroundView.animateAlpha(to: 1, duration: 0.2) {
-        self.locateUserButton.isEnabled = true
-      }
+      revealLocateUserButton()
     }
   }
   
@@ -485,6 +485,16 @@ class DroppDetailViewController: UIViewController {
     mapView.showAnnotations([userAnnotation, droppPointAnnotation], animated: true)
     mapView.removeAnnotation(userAnnotation)
   }
+  
+  private func revealLocateUserButton() {
+    guard locateButtonBackgroundView.alpha == 0 else {
+      return
+    }
+    
+    locateButtonBackgroundView.animateAlpha(to: 1, duration: 0.2) {
+      self.locateUserButton.isEnabled = true
+    }
+  }
 }
 
 extension DroppDetailViewController: MKMapViewDelegate {
@@ -493,6 +503,8 @@ extension DroppDetailViewController: MKMapViewDelegate {
     activeDistanceButton.setTitle(dropp.distanceAwayMessage(from: userLocation.location), for:  .disabled)
     if shouldUpdateMapRegion {
       resizeMapView(withUserCoordinates: userLocation.coordinate)
+    } else {
+      revealLocateUserButton()
     }
   }
   
@@ -504,9 +516,7 @@ extension DroppDetailViewController: MKMapViewDelegate {
     shouldUpdateMapRegion = false
     let region = MKCoordinateRegion(center: dropp.location.coordinate, span: MKCoordinateSpan(latitudeDelta: 0.01, longitudeDelta: 0.01))
     mapView.setRegion(region, animated: true)
-    locateButtonBackgroundView.animateAlpha(to: 1, duration: 0.2) {
-      self.locateUserButton.isEnabled = true
-    }
+    revealLocateUserButton()
   }
 }
 

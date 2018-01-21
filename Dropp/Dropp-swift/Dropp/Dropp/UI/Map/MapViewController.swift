@@ -36,11 +36,18 @@ class MapViewController: UIViewController {
   override func viewWillAppear(_ animated: Bool) {
     super.viewWillAppear(animated)
     NotificationCenter.default.addObserver(self, selector: #selector(deviceDidRotate), name: NSNotification.Name.UIDeviceOrientationDidChange, object: nil)
+    navigationController?.setNavigationBarHidden(true, animated: true)
+    deviceDidRotate()
   }
   
   override func viewWillDisappear(_ animated: Bool) {
     super.viewWillDisappear(animated)
     NotificationCenter.default.removeObserver(self)
+  }
+  
+  override func viewDidDisappear(_ animated: Bool) {
+    super.viewDidDisappear(animated)
+    navigationController?.setNavigationBarHidden(false, animated: true)
   }
   
   override func didReceiveMemoryWarning() {
@@ -142,11 +149,7 @@ class MapViewController: UIViewController {
   
   @objc
   func deviceDidRotate() {
-    if UIDevice.current.orientation == .portrait {
-      statusBarBlurViewHeightConstraint.constant = 20
-    } else {
-      statusBarBlurViewHeightConstraint.constant = 0
-    }
+    statusBarBlurViewHeightConstraint.constant = UIDevice.current.orientation == .portrait ? Constants.statusBarHeight : 0
   }
   
   private func toggleDroppCountButton(hidden: Bool) {
@@ -188,5 +191,66 @@ extension MapViewController: MKMapViewDelegate {
     }
     
     mapView.showAnnotations([annotation], animated: true)
+    guard let pointAnnotation = annotation as? MKPointAnnotation, let index = annotations.index(of: pointAnnotation), index < dropps.count else {
+      return
+    }
+    
+    let droppDetailStoryboard = UIStoryboard(name: "DroppDetail", bundle: nil)
+    guard let droppDetailViewController = droppDetailStoryboard.instantiateInitialViewController() as? DroppDetailViewController else {
+      return
+    }
+    
+    droppDetailViewController.dropp = dropps[index]
+    droppDetailViewController.shouldZoomToDroppOnAppearance = true
+    droppDetailViewController.feedViewControllerDelegate = self
+    navigationController?.pushViewController(droppDetailViewController, animated: true)
+    mapView.deselectAnnotation(annotation, animated: true)
+  }
+}
+
+extension MapViewController: FeedViewControllerDelegate {
+  
+  func shouldRefreshData() {
+    
+  }
+  
+  func shouldRefresh(dropp: Dropp, with newDropp: Dropp?) {
+    guard let index = dropps.index(of: dropp) else {
+      return
+    }
+    
+    guard let newDropp = newDropp else {
+      return
+    }
+    
+    let newAnnotation = newDropp.pointAnnotation
+    dropps[index] = newDropp
+    DispatchQueue.main.async {
+      self.mapView.removeAnnotation(self.annotations[index])
+      self.annotations[index] = newAnnotation
+      self.mapView.showAnnotations([newAnnotation], animated: true)
+    }
+  }
+  
+  func shouldAddDropp(_ dropp: Dropp) {
+    dropps.append(dropp)
+    let droppAnnotation = dropp.pointAnnotation
+    annotations.append(droppAnnotation)
+    mapView.showAnnotations([droppAnnotation], animated: true)
+    DispatchQueue.main.async {
+      self.updateDroppCountButton(self.dropps)
+    }
+  }
+  
+  func shouldRemoveDropp(_ dropp: Dropp) {
+    guard let index = dropps.index(of: dropp) else {
+      return
+    }
+    
+    dropps.remove(at: index)
+    updateMapView(withDropps: dropps)
+    DispatchQueue.main.async {
+      self.updateDroppCountButton(self.dropps)
+    }
   }
 }

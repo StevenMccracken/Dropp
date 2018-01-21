@@ -6,6 +6,7 @@
 //  Copyright © 2017 Group B. All rights reserved.
 //
 
+import UIKit
 import Foundation
 
 class Constants {
@@ -23,4 +24,9 @@ class Constants {
   static let showProfileSegueId = "showProfileSegue"
   
   static let dummyViewControllerRestorationId = "DummyViewControllerRestoriationId"
+  
+  static let iPhoneXHeight: CGFloat = 2436
+  static var statusBarHeight: CGFloat {
+    return Utils.isDeviceIPhoneX() ? 44 : 20
+  }
 }

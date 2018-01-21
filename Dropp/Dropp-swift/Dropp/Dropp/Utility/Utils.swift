@@ -31,6 +31,10 @@ class Utils {
     }
   }
   
+  class func isDeviceIPhoneX() -> Bool {
+    return isPhone() && UIScreen.main.nativeBounds.height == Constants.iPhoneXHeight
+  }
+  
   class func isPhone() -> Bool {
     return UIDevice.current.userInterfaceIdiom == .phone
   }

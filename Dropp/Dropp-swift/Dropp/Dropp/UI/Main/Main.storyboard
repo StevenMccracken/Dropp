@@ -21,7 +21,7 @@
                     </tabBar>
                     <connections>
                         <segue destination="7lR-p1-hax" kind="relationship" relationship="viewControllers" id="FMB-1V-udw"/>
-                        <segue destination="2dV-fM-ein" kind="relationship" relationship="viewControllers" id="LBj-oJ-YVV"/>
+                        <segue destination="sGQ-wC-lDS" kind="relationship" relationship="viewControllers" id="LBj-oJ-YVV"/>
                         <segue destination="qIQ-f7-0at" kind="relationship" relationship="viewControllers" id="MNh-kK-2I1"/>
                         <segue destination="FOp-WS-HxL" kind="relationship" relationship="viewControllers" id="KA5-9B-imu"/>
                         <segue destination="7Ly-eG-hOW" kind="relationship" relationship="viewControllers" id="ldw-BV-xzU"/>
@@ -75,12 +75,11 @@
         <scene sceneID="3uh-jV-YK8">
             <objects>
                 <viewControllerPlaceholder storyboardName="Map" id="2dV-fM-ein" sceneMemberID="viewController">
-                    <tabBarItem key="tabBarItem" title="Nearby" image="location" selectedImage="location_selected" id="hSL-Ob-Iec"/>
                     <navigationItem key="navigationItem" title="Nearby" largeTitleDisplayMode="never" id="747-el-pQj"/>
                 </viewControllerPlaceholder>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="L5L-2q-CZ1" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="-1006" y="673"/>
+            <point key="canvasLocation" x="-976" y="1414"/>
         </scene>
         <!--Profile-->
         <scene sceneID="74u-aK-9oC">
@@ -103,6 +102,7 @@
                     <navigationBar key="navigationBar" contentMode="scaleToFill" insetsLayoutMarginsFromSafeArea="NO" largeTitles="YES" id="UOh-YG-XSw">
                         <rect key="frame" x="0.0" y="44" width="375" height="96"/>
                         <autoresizingMask key="autoresizingMask"/>
+                        <color key="tintColor" red="0.91661626100000004" green="0.3107863367" blue="0.38301837439999997" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                     </navigationBar>
                     <nil name="viewControllers"/>
                     <connections>
@@ -138,6 +138,7 @@
                     <navigationBar key="navigationBar" contentMode="scaleToFill" insetsLayoutMarginsFromSafeArea="NO" largeTitles="YES" id="2el-67-Udm">
                         <rect key="frame" x="0.0" y="44" width="375" height="96"/>
                         <autoresizingMask key="autoresizingMask"/>
+                        <color key="tintColor" red="0.91661626100000004" green="0.3107863367" blue="0.38301837439999997" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                     </navigationBar>
                     <nil name="viewControllers"/>
                     <connections>
@@ -147,6 +148,25 @@
                 <placeholder placeholderIdentifier="IBFirstResponder" id="Q5w-HO-TEp" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
             <point key="canvasLocation" x="1282" y="964"/>
+        </scene>
+        <!--Nearby-->
+        <scene sceneID="9Hm-B0-gGe">
+            <objects>
+                <navigationController automaticallyAdjustsScrollViewInsets="NO" navigationBarHidden="YES" id="sGQ-wC-lDS" sceneMemberID="viewController">
+                    <tabBarItem key="tabBarItem" title="Nearby" image="location" selectedImage="location_selected" id="hSL-Ob-Iec"/>
+                    <toolbarItems/>
+                    <navigationBar key="navigationBar" contentMode="scaleToFill" insetsLayoutMarginsFromSafeArea="NO" id="59M-If-7kr">
+                        <autoresizingMask key="autoresizingMask"/>
+                        <color key="tintColor" red="0.91661626100000004" green="0.3107863367" blue="0.38301837439999997" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                    </navigationBar>
+                    <nil name="viewControllers"/>
+                    <connections>
+                        <segue destination="2dV-fM-ein" kind="relationship" relationship="rootViewController" id="BVO-nm-CiT"/>
+                    </connections>
+                </navigationController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="y8f-fx-vrh" userLabel="First Responder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="-975" y="964"/>
         </scene>
     </scenes>
     <resources>

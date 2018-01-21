@@ -88,10 +88,9 @@
                                 </constraints>
                             </view>
                             <button opaque="NO" contentMode="scaleToFill" enabled="NO" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="wLZ-C7-b0N">
-                                <rect key="frame" x="323" y="30" width="42" height="30"/>
+                                <rect key="frame" x="335" y="30" width="30" height="30"/>
                                 <color key="backgroundColor" red="0.99999600649999998" green="1" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
-                                <state key="normal" title="Button"/>
-                                <state key="disabled" title="Count">
+                                <state key="disabled">
                                     <color key="titleColor" red="0.91661626100000004" green="0.3107863367" blue="0.38301837439999997" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                                 </state>
                             </button>
@@ -99,16 +98,16 @@
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                         <constraints>
                             <constraint firstItem="oze-Uy-NMq" firstAttribute="trailing" secondItem="wLZ-C7-b0N" secondAttribute="trailing" constant="10" id="1eZ-Zj-0sD"/>
-                            <constraint firstAttribute="trailing" secondItem="JRl-u7-jUJ" secondAttribute="trailing" constant="10" id="8Ry-np-eB3"/>
+                            <constraint firstItem="oze-Uy-NMq" firstAttribute="trailing" secondItem="JRl-u7-jUJ" secondAttribute="trailing" constant="10" id="8Ry-np-eB3"/>
                             <constraint firstAttribute="trailing" secondItem="hrJ-dI-Eui" secondAttribute="trailing" id="9GF-67-pxB"/>
                             <constraint firstItem="p3X-CX-hNg" firstAttribute="top" secondItem="k4D-N2-t3H" secondAttribute="top" id="Eir-YU-lxm"/>
-                            <constraint firstItem="p3X-CX-hNg" firstAttribute="leading" secondItem="oze-Uy-NMq" secondAttribute="leading" id="GMg-wR-Jvc"/>
+                            <constraint firstItem="p3X-CX-hNg" firstAttribute="leading" secondItem="k4D-N2-t3H" secondAttribute="leading" id="GMg-wR-Jvc"/>
                             <constraint firstItem="hrJ-dI-Eui" firstAttribute="leading" secondItem="k4D-N2-t3H" secondAttribute="leading" id="HlY-2U-qEf"/>
-                            <constraint firstItem="oze-Uy-NMq" firstAttribute="trailing" secondItem="p3X-CX-hNg" secondAttribute="trailing" id="N9L-zL-PIJ"/>
+                            <constraint firstAttribute="trailing" secondItem="p3X-CX-hNg" secondAttribute="trailing" id="N9L-zL-PIJ"/>
                             <constraint firstItem="hrJ-dI-Eui" firstAttribute="top" secondItem="k4D-N2-t3H" secondAttribute="top" id="Uxj-Ac-HoT"/>
                             <constraint firstItem="oze-Uy-NMq" firstAttribute="bottom" secondItem="JRl-u7-jUJ" secondAttribute="bottom" constant="10" id="XUG-nh-PJT"/>
                             <constraint firstItem="wLZ-C7-b0N" firstAttribute="top" secondItem="oze-Uy-NMq" secondAttribute="top" constant="10" id="lMx-1g-dqr"/>
-                            <constraint firstItem="oze-Uy-NMq" firstAttribute="bottom" secondItem="p3X-CX-hNg" secondAttribute="bottom" id="wTy-Ff-lhQ"/>
+                            <constraint firstAttribute="bottom" secondItem="p3X-CX-hNg" secondAttribute="bottom" constant="44" id="wTy-Ff-lhQ"/>
                         </constraints>
                         <viewLayoutGuide key="safeArea" id="oze-Uy-NMq"/>
                     </view>

@@ -47,7 +47,6 @@ class ProfileViewController: UITableViewController {
   override func viewDidLoad() {
     super.viewDidLoad()
     
-    navigationController?.navigationBar.tintColor = .salmon
     sortButton = UIBarButtonItem(title: "Sort", style: .plain, target: self, action: #selector(didTapSortButton))
     let disclosureButton = UIButton(type: .detailDisclosure)
     disclosureButton.addTarget(self, action: #selector(didTapInfoButton), for: .touchUpInside)
