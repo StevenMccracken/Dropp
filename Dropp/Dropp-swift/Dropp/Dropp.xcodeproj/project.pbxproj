@@ -91,7 +91,6 @@
 
 /* Begin PBXFileReference section */
 		16AF6C0A1E9B30270022C051 /* Dropp.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Dropp.swift; sourceTree = "<group>"; };
-		16CA209E1EC19E7600EDA7CC /* Dropp-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = "Dropp-Bridging-Header.h"; path = "Dropp/Dropp-Bridging-Header.h"; sourceTree = SOURCE_ROOT; };
 		410E488F5CFBA78B82AAED78 /* Pods_Dropp.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_Dropp.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		67BE7C9F4619CCF963CC9BF7 /* Pods-Dropp.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Dropp.debug.xcconfig"; path = "Pods/Target Support Files/Pods-Dropp/Pods-Dropp.debug.xcconfig"; sourceTree = "<group>"; };
 		69011C102013EFF900AEEDD6 /* UIMapView+Shortcuts.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIMapView+Shortcuts.swift"; sourceTree = "<group>"; };
@@ -448,7 +447,6 @@
 				69A43ED41E5BEEA6003E6420 /* Info.plist */,
 				691083611FE4BB790030C34D /* Dropp.entitlements */,
 				69A43ECF1E5BEEA6003E6420 /* Assets.xcassets */,
-				16CA209E1EC19E7600EDA7CC /* Dropp-Bridging-Header.h */,
 				6982FF7D200986E10015D069 /* Enumerations */,
 				69C3BAF61FE7CB9100537C99 /* Utility */,
 				693ABEDE1FE70515002FE96D /* Models */,
@@ -932,7 +930,6 @@
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = com.groub.Dropp;
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				SWIFT_OBJC_BRIDGING_HEADER = "/Users/stevenmccracken/GitHub/Dropp/Dropp/Dropp-swift/Dropp/Dropp/Dropp-Bridging-Header.h";
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 				SWIFT_VERSION = 4.0;
 			};
@@ -954,7 +951,6 @@
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = com.groub.Dropp;
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				SWIFT_OBJC_BRIDGING_HEADER = "/Users/stevenmccracken/GitHub/Dropp/Dropp/Dropp-swift/Dropp/Dropp/Dropp-Bridging-Header.h";
 				SWIFT_VERSION = 4.0;
 			};
 			name = Release;
