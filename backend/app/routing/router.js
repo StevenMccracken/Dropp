@@ -22,10 +22,10 @@ function log(_message, _request) {
  * @param {Object} _response the HTTP response
  */
 function handleError(_error = new Error(), _request, _response) {
-  let details;
-  if (_error instanceof DroppError) details = _error.details;
+  let errorDetails;
+  if (_error instanceof DroppError) errorDetails = _error.details;
 
-  _response.json(details);
+  _response.json(errorDetails);
 }
 
 let router;

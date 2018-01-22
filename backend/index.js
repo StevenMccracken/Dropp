@@ -5,7 +5,7 @@
 const Cors = require('cors');
 const Express = require('express');
 const BodyParser = require('body-parser');
-const Routes = require('./app/router/router');
+const Routes = require('./app/routing/router');
 
 let server;
 const PORTS = {

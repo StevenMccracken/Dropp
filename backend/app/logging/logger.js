@@ -18,9 +18,9 @@ const log = function log(_source, _message, _request = null) {
   if (!Utils.hasValue(_request)) message = `{${now}} [${_source}]: ${_message}`;
   else {
     // Capture info about the incoming HTTP request
-    const requestId = _request.headers.requestId;
+    const id = _request.headers.requestId;
     const ipAddress = _request.headers['x-forwarded-for'] || _request.connection.remoteAddress;
-    message = `{${now}} [${_source}] (${ipAddress}) <${requestId}>: ${message}`;
+    message = `{${now}} [${_source}] (${ipAddress}) <${id}>: ${_message}`;
   }
 
   console.log(message);
