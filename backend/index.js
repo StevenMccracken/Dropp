@@ -5,6 +5,7 @@
 const Cors = require('cors');
 const Express = require('express');
 const BodyParser = require('body-parser');
+const Routes = require('./app/router/router');
 
 let server;
 const PORTS = {
@@ -176,6 +177,12 @@ startupLog('Arguments checked', true);
 
 // Set the port of the server in the environment
 process.env.DROPP_PORT = `${port}`;
+
+// Register the routes from the router module with the express application
+startupLog('Adding Router configuration...', true);
+const router = Routes(Express.Router());
+express.use('/', router);
+startupLog('Router configured');
 
 // Listen for all incoming requests on the specified port
 startupLog('Starting Express app...', true);

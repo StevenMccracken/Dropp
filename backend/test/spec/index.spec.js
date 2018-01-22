@@ -1,5 +1,5 @@
+const Log = require('../logger');
 const Request = require('request');
-const Log = require('../logger_mod');
 const Server = require('../../index');
 
 const baseUrl = `http://localhost:${Server.port}`;
