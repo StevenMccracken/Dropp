@@ -1,0 +1,19 @@
+{
+  "name": "dropp-rest-api",
+  "version": "1.0.0",
+  "description": "REST API for Dropp",
+  "main": "index.js",
+  "scripts": {
+    "start": "node index.js",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "eslintConfig": {
+    "env": {
+      "browser": false,
+      "node": true
+    }
+  },
+  "keywords": [],
+  "author": "Steven McCracken",
+  "license": "ISC"
+}
