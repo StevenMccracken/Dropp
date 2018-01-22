@@ -3,7 +3,9 @@
  */
 
 const Log = require('../logging/logger');
+const Error = require('../errors/error');
 const Utils = require('../utilities/utils');
+const Auth = require('../authentication/auth');
 const DroppError = require('../models/DroppError');
 
 /**
@@ -44,9 +46,32 @@ const routing = function routing(_router) {
     next();
   });
 
-  // The base GET route for the API. This route does not require token authentication
+  /**
+   * Base route for the API
+   * Method: GET
+   * Does not require token authentication
+   */
   router.route('/').get((request, response) => {
     response.json({ message: 'This is the REST API for Dropp' });
+  });
+
+  /**
+   * Test route
+   * Method: GET
+   * Requires token authentication
+   */
+  router.route('/test').get(async (request, response) => {
+    let userInfo;
+    try {
+      userInfo = await Auth.verifyToken(request, response);
+    } catch (authError) {
+      const source = 'Router /test';
+      const standardError = Error.handleAuthError(source, request, response, authError);
+      response.json(standardError);
+      return;
+    }
+
+    response.json({ hey: userInfo });
   });
 
   return router;
