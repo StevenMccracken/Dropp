@@ -13,7 +13,7 @@ const JwtConfig = require('../../config/jwt');
 require('../../config/passport')(Passport);
 
 /**
- * log - Logs a message about authentication
+ * Logs a message about authentication
  * @param {String} _message the message to log
  * @param {Object} _request the HTTP request
  */

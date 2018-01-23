@@ -6,7 +6,7 @@ const Log = require('../logging/logger');
 const Error = require('../errors/error');
 const Utils = require('../utilities/utils');
 const Auth = require('../authentication/auth');
-const DroppError = require('../models/DroppError');
+const DroppError = require('../errors/DroppError');
 
 /**
  * Logs a message about routing
