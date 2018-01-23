@@ -74,6 +74,19 @@ const validateLocation = function validateLocation(_location) {
 };
 
 /**
+ * Validates a given integer
+ * @param {Number} _integer the integer to validate
+ * @return {Boolean} whether or not the integer is valid
+ */
+const validateInteger = function validateInteger(_integer) {
+  if (!Utils.hasValue(_integer) || typeof _integer !== 'number') {
+    return false;
+  }
+
+  return (_integer % 1) === 0;
+};
+
+/**
  * Validates a given UNIX timestamp
  * @param {Number} _timestamp the UNIX timestamp to validate
  * @return {Boolean} whether or not the UNIX timestamp is valid
@@ -83,7 +96,20 @@ const validateTimestamp = function validateTimestamp(_timestamp) {
     return false;
   }
 
-  return (_timestamp % 1) === 0 && _timestamp >= 0;
+  return validateInteger(_timestamp) && _timestamp >= 0;
+};
+
+/**
+ * Validates a given positive floating-point number
+ * @param {Number} _float the floating-point number to validate
+ * @return {Boolean} whether or not the floating-point number is valid
+ */
+const validatePositiveFloat = function validatePositiveFloat(_float) {
+  if (!Utils.hasValue(_float) || typeof _float !== 'number') {
+    return false;
+  }
+
+  return Number(_float) > 0.0 && (/^\d+(\.\d*)?$/).test(_float);
 };
 
 /**
@@ -114,11 +140,13 @@ const validateBooleanString = function validateBooleanString(_booleanString) {
 
 module.exports = {
   isValidEmail: validateEmail,
+  isValidInteger: validateInteger,
   isValidTextPost: validateTextPost,
   isValidUsername: validateUsername,
   isValidPassword: validatePassword,
   isValidLocation: validateLocation,
   isValidTimestamp: validateTimestamp,
   isValidFirebaseId: validateFirebaseId,
+  isValidPositiveFloat: validatePositiveFloat,
   isValidBooleanString: validateBooleanString,
 };

@@ -1,5 +1,5 @@
-const Log = require('../../logger');
-const Validator = require('../../../app/utilities/validator');
+const Log = require('../../../logger');
+const Validator = require('../../../../app/utilities/validator');
 
 /* eslint-disable no-undef */
 const usernameInputValidator = 'Username input validator';
