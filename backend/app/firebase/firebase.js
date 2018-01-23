@@ -5,7 +5,7 @@
 const Log = require('../logging/logger');
 // const Error = require('../errors/error');
 const Firebase = require('firebase-admin');
-const Utils = require('../utilities/utils');
+const Validator = require('../utilities/validator');
 const DroppError = require('../errors/DroppError');
 const firebaseApiKey = require('../../config/secrets/firebaseApiKey.json');
 
@@ -46,17 +46,6 @@ function log(_message, _url) {
 }
 
 /**
- * Validates a firebase path
- * @param {String} _url the firebase path to interact with
- * @return {Boolean} whether or not the url is valid. Evaluates
- * to true if the url is not null, defined, and doesn't contain
- * a period, hash, dollar sign, or open/close square brackets
- */
-function isValidUrl(_url) {
-  return Utils.hasValue(_url) && !(/[.#$[\]]/).test(_url);
-}
-
-/**
  * Creates and throws an error with the invalid URL in the details
  * @param {String} _url the firebase path to interact with
  * @throws {DroppError}
@@ -86,7 +75,7 @@ const get = async function get(_url) {
   log(source, _url);
 
   if (!didStart) throwHasNotStartedError();
-  if (!isValidUrl(_url)) throwInvalidUrlError();
+  if (!Validator.isValidFirebaseId(_url)) throwInvalidUrlError();
   const ref = db.ref(_url);
   const snapshot = await ref.once('value');
   return snapshot.val();
@@ -104,7 +93,7 @@ const add = async function add(_url, _data) {
   log(source, _url);
 
   if (!didStart) throwHasNotStartedError();
-  if (!isValidUrl(_url)) throwInvalidUrlError();
+  if (!Validator.isValidFirebaseId(_url)) throwInvalidUrlError();
   const ref = db.ref(_url);
   const key = await ref.push(_data);
   return key.toString();
@@ -121,7 +110,7 @@ const update = async function update(_url, _data) {
   log(source, _url);
 
   if (!didStart) throwHasNotStartedError();
-  if (!isValidUrl(_url)) throwInvalidUrlError();
+  if (!Validator.isValidFirebaseId(_url)) throwInvalidUrlError();
   const ref = db.ref(_url);
   await ref.set(_data);
 };
@@ -136,7 +125,7 @@ const remove = async function remove(_url) {
   log(source, _url);
 
   if (!didStart) throwHasNotStartedError();
-  if (!isValidUrl(_url)) throwInvalidUrlError();
+  if (!Validator.isValidFirebaseId(_url)) throwInvalidUrlError();
   const ref = db.ref(_url);
   await ref.remove();
 };
