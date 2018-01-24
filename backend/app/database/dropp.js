@@ -40,98 +40,79 @@ const get = async function get(_id) {
 };
 
 /**
- * Adds a dropp to the database with the given data
- * @param {Object} _data JSON containing the following members:
- *  location: a string of two floating-point values, separated
- *    by a comma with no extra whitespace
- *  timestamp: a positive integer
- *  username: a string
- *  text: a string
- *  media: a boolean
- * @return {String} the unique dropp ID for the created dropp
- * @throws {DroppError|Error} if one of the
- * required members in the data is missing
+ * Adds a dropp to the database
+ * @param {Dropp} _dropp the dropp to add to the database
+ * @return {Dropp} the same dropp object with it's unique ID added
+ * @throws {DroppError|Error} if the data in the dropp is invalid
  */
-const add = async function add(_data) {
+const add = async function add(_dropp) {
   const source = 'add()';
   log(source, '');
 
+  if (!(_dropp instanceof Dropp)) {
+    throw new DroppError({ invalid_type: 'Object is not a Dropp' });
+  }
+
   const invalidMembers = [];
-  if (!Validator.isValidLocation(_data.location)) invalidMembers.push('location');
-  if (!Validator.isValidTimestamp(_data.timestamp)) invalidMembers.push('timestamp');
-  if (!Validator.isValidUsername(_data.username)) invalidMembers.push('username');
-  if (!Validator.isValidTextPost(_data.text)) invalidMembers.push('text');
-  if (!Validator.isValidBooleanString(_data.media)) invalidMembers.push('media');
+  if (!Validator.isValidTextPost(_dropp.text)) invalidMembers.push('text');
+  if (!Validator.isValidBooleanString(_dropp.media)) invalidMembers.push('media');
+  if (!Validator.isValidLocation(_dropp.location)) invalidMembers.push('location');
+  if (!Validator.isValidUsername(_dropp.username)) invalidMembers.push('username');
+  if (!Validator.isValidTimestamp(_dropp.timestamp)) invalidMembers.push('timestamp');
 
   if (invalidMembers.length > 0) {
     throw new DroppError({ invalidMembers });
   }
 
-  const droppUrl = await Firebase.add(baseUrl, _data);
-  const droppId = droppUrl.split('/').pop();
-  return droppId;
-};
+  const droppUrl = await Firebase.add(baseUrl, _dropp.data);
+  const id = droppUrl.split('/').pop();
 
-/**
- * Updates an entire dropp with a new set of data
- * @param {String} _id the unique ID of the dropp to update
- * @param {Object} _data JSON containing the following members:
- *  location: a string of two floating-point values, separated
- *    by a comma with no extra whitespace
- *  timestamp: a positive integer
- *  username: a string
- *  text: a string
- *  media: a boolean
- * @throws {DroppError|Error}
- */
-const update = async function update(_id, _data) {
-  const source = 'update()';
-  log(source, _id);
-
-  const invalidMembers = [];
-  if (!Utils.hasValue(_data.location)) invalidMembers.append('location');
-  if (!Utils.hasValue(_data.timestamp)) invalidMembers.append('timestamp');
-  if (!Utils.hasValue(_data.username)) invalidMembers.append('username');
-  if (!Utils.hasValue(_data.text)) invalidMembers.append('text');
-  if (!Utils.hasValue(_data.media)) invalidMembers.append('media');
-
-  if (invalidMembers.length > 0) {
-    throw new DroppError({ invalidMembers });
-  }
-
-  await Firebase.update(`${baseUrl}/${_id}`, _data);
+  /* eslint-disable no-param-reassign */
+  _dropp.id = id;
+  /* eslint-enable no-param-reassign */
+  return _dropp;
 };
 
 /**
  * Updates a given dropp's text
- * @param {String} _id the unique ID of the dropp to update
+ * @param {Dropp} _dropp the dropp to update
  * @param {String} _text the new text to update the dropp with
  * @throws {DroppError|Error}
  */
-const updateText = async function updateText(_id, _text) {
+const updateText = async function updateText(_dropp, _text) {
   const source = 'updateText()';
-  log(source, _id);
+  log(source, _dropp.id);
 
-  if (!Utils.hasValue(_text)) throw new DroppError({ invalidMember: 'text' });
-  await Firebase.update(`${baseUrl}/${_id}/text`, _text);
+  if (!(_dropp instanceof Dropp)) {
+    throw new DroppError({ invalid_type: 'Object is not a Dropp' });
+  }
+
+  if (!Validator.isValidTextPost(_text)) throw new DroppError({ invalidMember: 'text' });
+  await Firebase.update(`${baseUrl}/${_dropp.id}/text`, _text);
+  /* eslint-disable no-param-reassign */
+  _dropp.text = _text;
+  /* eslint-enable no-param-reassign */
 };
 
 /**
- * Deletes a dropp from the database by it's ID
- * @param  {String} _id the unique ID of the dropp
+ * Deletes a dropp from the database
+ * @param  {Dropp} _dropp the dropp to delete
  * @throws {DroppError|Error}
  */
-const remove = async function remove(_id) {
+const remove = async function remove(_dropp) {
   const source = 'delete()';
-  log(source, _id);
+  log(source, _dropp.id);
 
-  await Firebase.remove(`${baseUrl}/${_id}`);
+  if (!(_dropp instanceof Dropp)) {
+    throw new DroppError({ invalid_type: 'Object is not a Dropp' });
+  }
+
+  await Firebase.remove(`${baseUrl}/${_dropp.id}`);
 };
 
 module.exports = {
   get,
   add,
-  update,
   remove,
   updateText,
 };

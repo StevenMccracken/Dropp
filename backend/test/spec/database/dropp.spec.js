@@ -1,4 +1,5 @@
 const Log = require('../../logger');
+const Dropp = require('../../../app/models/Dropp');
 const Utils = require('../../../app/utilities/utils');
 const Firebase = require('../../../app/firebase/firebase');
 const DroppAccessor = require('../../../app/database/dropp');
@@ -19,35 +20,25 @@ describe(getMissingDroppTitle, () => {
   it('attempts to get a non-existent dropp from the database', async (done) => {
     const dropp = await DroppAccessor.get(Utils.newUuid());
     expect(dropp).toBe(null);
-    Log(getMissingDroppTitle);
+    Log(getMissingDroppTitle, `Non-existent dropp is ${dropp}`);
     done();
   }, 10000);
 });
 
-let droppId;
-const data = {
+const dropp = new Dropp({
   location: '0,0',
   media: 'false',
   text: 'test',
   timestamp: 1,
   username: 'test',
-};
+});
 
 const addDroppTitle = 'Add dropp';
 describe(addDroppTitle, () => {
   it('adds a dropp to the database', async (done) => {
-    droppId = await DroppAccessor.add(data);
-    expect(droppId).toBeDefined();
-    Log(addDroppTitle, droppId);
-    done();
-  }, 10000);
-});
-
-const updateEntireDroppTitle = 'Update entire dropp';
-describe(updateEntireDroppTitle, () => {
-  it('updates a dropp in the database with entirely new data', async (done) => {
-    await DroppAccessor.update(droppId, data);
-    Log(updateEntireDroppTitle, droppId);
+    await DroppAccessor.add(dropp);
+    expect(dropp.id).toBeDefined();
+    Log(addDroppTitle, dropp.id);
     done();
   }, 10000);
 });
@@ -55,8 +46,8 @@ describe(updateEntireDroppTitle, () => {
 const updateDroppTextTitle = 'Update dropp text';
 describe(updateDroppTextTitle, () => {
   it('updates a dropp in the database with new text', async (done) => {
-    await DroppAccessor.updateText(droppId, 'test 2');
-    Log(updateDroppTextTitle, droppId);
+    await DroppAccessor.updateText(dropp, 'test 2');
+    Log(updateDroppTextTitle, dropp.id);
     done();
   }, 10000);
 });
@@ -64,7 +55,7 @@ describe(updateDroppTextTitle, () => {
 const deleteDroppTitle = 'Delete dropp';
 describe(deleteDroppTitle, () => {
   it('deletes a dropp from the database', async (done) => {
-    await DroppAccessor.remove(droppId);
+    await DroppAccessor.remove(dropp);
     Log(deleteDroppTitle);
     done();
   }, 10000);
