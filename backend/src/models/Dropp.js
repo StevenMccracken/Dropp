@@ -2,6 +2,10 @@ const Utils = require('../utilities/utils');
 const DroppError = require('../errors/DroppError');
 const Validator = require('../utilities/validator');
 
+/**
+ * Model object for a dropp
+ * @extends Object
+ */
 class Dropp extends Object {
   constructor(_details = {}) {
     super();

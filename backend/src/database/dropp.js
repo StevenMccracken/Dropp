@@ -1,5 +1,5 @@
 /**
- * @module for database interaction of dropps
+ * @module for database access of dropps
  */
 
 const Log = require('../logging/logger');

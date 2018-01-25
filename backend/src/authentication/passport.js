@@ -1,10 +1,10 @@
 /**
- * Passport authentication configuration
+ * @module for token authentication using Passport
  */
 
-const JwtConfig = require('./jwt');
+// const Util = require('../utilities/utils');
 const PassportJwt = require('passport-jwt');
-// const Util = require('../src/utilities/utils');
+const JwtConfig = require('../../config/jwt');
 
 const JwtStrategy = PassportJwt.Strategy;
 const JwtExtract = PassportJwt.ExtractJwt;

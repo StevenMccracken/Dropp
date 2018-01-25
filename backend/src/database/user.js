@@ -1,5 +1,5 @@
 /**
- * @module for database interaction of users
+ * @module for database access of users
  */
 
 const Log = require('../logging/logger');

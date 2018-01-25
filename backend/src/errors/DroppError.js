@@ -1,3 +1,8 @@
+/**
+ * Custom error object to contain extra details
+ * @extends Error
+ */
+
 class DroppError extends Error {
   constructor(_details = {}, ..._params) {
     super(..._params);
