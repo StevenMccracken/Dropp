@@ -4,7 +4,7 @@
 
 const JwtConfig = require('./jwt');
 const PassportJwt = require('passport-jwt');
-// const Util = require('../app/utilities/utils');
+// const Util = require('../src/utilities/utils');
 
 const JwtStrategy = PassportJwt.Strategy;
 const JwtExtract = PassportJwt.ExtractJwt;

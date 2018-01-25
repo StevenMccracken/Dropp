@@ -1,5 +1,5 @@
 const Log = require('../../logger');
-const Utils = require('../../../app/utilities/utils');
+const Utils = require('../../../src/utilities/utils');
 
 /* eslint-disable no-undef */
 const utilsHasValueTitle = 'Utils hasValue()';

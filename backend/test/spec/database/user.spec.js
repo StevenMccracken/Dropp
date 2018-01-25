@@ -1,8 +1,8 @@
 const Log = require('../../logger');
-const User = require('../../../app/models/User');
-// const Utils = require('../../../app/utilities/utils');
-const Firebase = require('../../../app/firebase/firebase');
-const UserAccessor = require('../../../app/database/user');
+const User = require('../../../src/models/User');
+// const Utils = require('../../../src/utilities/utils');
+const Firebase = require('../../../src/firebase/firebase');
+const UserAccessor = require('../../../src/database/user');
 
 /* eslint-disable no-undef */
 Firebase.start();

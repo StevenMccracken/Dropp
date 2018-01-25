@@ -1,5 +1,5 @@
 const Log = require('../../../logger');
-const Validator = require('../../../../app/utilities/validator');
+const Validator = require('../../../../src/utilities/validator');
 
 /* eslint-disable no-undef */
 const locationInputValidator = 'Location input validator';

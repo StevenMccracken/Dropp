@@ -5,9 +5,9 @@
 const Cors = require('cors');
 const Express = require('express');
 const BodyParser = require('body-parser');
-const Utils = require('./app/utilities/utils');
-const Routes = require('./app/routing/router');
-const Firebase = require('./app/firebase/firebase');
+const Utils = require('./src/utilities/utils');
+const Routes = require('./src/routing/router');
+const Firebase = require('./src/firebase/firebase');
 
 let server;
 const PORTS = {

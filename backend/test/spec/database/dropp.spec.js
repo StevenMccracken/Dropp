@@ -1,8 +1,8 @@
 const Log = require('../../logger');
-const Dropp = require('../../../app/models/Dropp');
-const Utils = require('../../../app/utilities/utils');
-const Firebase = require('../../../app/firebase/firebase');
-const DroppAccessor = require('../../../app/database/dropp');
+const Dropp = require('../../../src/models/Dropp');
+const Utils = require('../../../src/utilities/utils');
+const Firebase = require('../../../src/firebase/firebase');
+const DroppAccessor = require('../../../src/database/dropp');
 
 /* eslint-disable no-undef */
 Firebase.start();

@@ -1,5 +1,5 @@
 const Log = require('../../logger');
-const Firebase = require('../../../app/firebase/firebase');
+const Firebase = require('../../../src/firebase/firebase');
 
 /* eslint-disable no-undef */
 const startFirebaseTitle = 'Start Firebase';
