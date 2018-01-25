@@ -2,13 +2,13 @@ const Log = require('../../logger');
 const Utils = require('../../../app/utilities/utils');
 
 /* eslint-disable no-undef */
-const utilsTitle = 'Utils hasValue()';
-describe(utilsTitle, () => {
+const utilsHasValueTitle = 'Utils hasValue()';
+describe(utilsHasValueTitle, () => {
   it('should return false for a null value', (done) => {
     const value = null;
     const result = Utils.hasValue(value);
     expect(result).toBe(false);
-    Log(utilsTitle, `${value} returns ${result}`);
+    Log(utilsHasValueTitle, `${value} returns ${result}`);
     done();
   });
 
@@ -16,7 +16,7 @@ describe(utilsTitle, () => {
     const value = undefined;
     const result = Utils.hasValue(value);
     expect(result).toBe(false);
-    Log(utilsTitle, `${value} returns ${result}`);
+    Log(utilsHasValueTitle, `${value} returns ${result}`);
     done();
   });
 
@@ -24,7 +24,7 @@ describe(utilsTitle, () => {
     const value = [];
     const result = Utils.hasValue(value);
     expect(result).toBe(true);
-    Log(utilsTitle, `${value} returns ${result}`);
+    Log(utilsHasValueTitle, `${value} returns ${result}`);
     done();
   });
 
@@ -32,7 +32,7 @@ describe(utilsTitle, () => {
     const value = {};
     const result = Utils.hasValue(value);
     expect(result).toBe(true);
-    Log(utilsTitle, `${value} returns ${result}`);
+    Log(utilsHasValueTitle, `${value} returns ${result}`);
     done();
   });
 
@@ -40,7 +40,7 @@ describe(utilsTitle, () => {
     const value = function value() {};
     const result = Utils.hasValue(value);
     expect(result).toBe(true);
-    Log(utilsTitle, `${value} returns ${result}`);
+    Log(utilsHasValueTitle, `${value} returns ${result}`);
     done();
   });
 
@@ -48,7 +48,7 @@ describe(utilsTitle, () => {
     const value = false;
     const result = Utils.hasValue(value);
     expect(result).toBe(true);
-    Log(utilsTitle, `${value} returns ${result}`);
+    Log(utilsHasValueTitle, `${value} returns ${result}`);
     done();
   });
 
@@ -56,7 +56,7 @@ describe(utilsTitle, () => {
     const value = true;
     const result = Utils.hasValue(value);
     expect(result).toBe(true);
-    Log(utilsTitle, `${value} returns ${result}`);
+    Log(utilsHasValueTitle, `${value} returns ${result}`);
     done();
   });
 
@@ -64,7 +64,7 @@ describe(utilsTitle, () => {
     const value = '';
     const result = Utils.hasValue(value);
     expect(result).toBe(true);
-    Log(utilsTitle, `${value} returns ${result}`);
+    Log(utilsHasValueTitle, `${value} returns ${result}`);
     done();
   });
 
@@ -72,7 +72,7 @@ describe(utilsTitle, () => {
     const value = '    ';
     const result = Utils.hasValue(value);
     expect(result).toBe(true);
-    Log(utilsTitle, `${value} returns ${result}`);
+    Log(utilsHasValueTitle, `${value} returns ${result}`);
     done();
   });
 
@@ -80,7 +80,7 @@ describe(utilsTitle, () => {
     const value = '\t';
     const result = Utils.hasValue(value);
     expect(result).toBe(true);
-    Log(utilsTitle, `${value} returns ${result}`);
+    Log(utilsHasValueTitle, `${value} returns ${result}`);
     done();
   });
 
@@ -88,7 +88,7 @@ describe(utilsTitle, () => {
     const value = '\n';
     const result = Utils.hasValue(value);
     expect(result).toBe(true);
-    Log(utilsTitle, `${value} returns ${result}`);
+    Log(utilsHasValueTitle, `${value} returns ${result}`);
     done();
   });
 
@@ -96,7 +96,7 @@ describe(utilsTitle, () => {
     const value = '\r';
     const result = Utils.hasValue(value);
     expect(result).toBe(true);
-    Log(utilsTitle, `${value} returns ${result}`);
+    Log(utilsHasValueTitle, `${value} returns ${result}`);
     done();
   });
 
@@ -104,7 +104,7 @@ describe(utilsTitle, () => {
     const value = 'console.log(\'hey\')';
     const result = Utils.hasValue(value);
     expect(result).toBe(true);
-    Log(utilsTitle, `${value} returns ${result}`);
+    Log(utilsHasValueTitle, `${value} returns ${result}`);
     done();
   });
 
@@ -112,7 +112,7 @@ describe(utilsTitle, () => {
     const value = 1.1;
     const result = Utils.hasValue(value);
     expect(result).toBe(true);
-    Log(utilsTitle, `${value} returns ${result}`);
+    Log(utilsHasValueTitle, `${value} returns ${result}`);
     done();
   });
 
@@ -120,7 +120,7 @@ describe(utilsTitle, () => {
     const value = 0;
     const result = Utils.hasValue(value);
     expect(result).toBe(true);
-    Log(utilsTitle, `${value} returns ${result}`);
+    Log(utilsHasValueTitle, `${value} returns ${result}`);
     done();
   });
 
@@ -128,7 +128,20 @@ describe(utilsTitle, () => {
     const value = '1';
     const result = Utils.hasValue(value);
     expect(result).toBe(true);
-    Log(utilsTitle, `${value} returns ${result}`);
+    Log(utilsHasValueTitle, `${value} returns ${result}`);
+    done();
+  });
+});
+
+const utilsStepperTitle = 'Utils stepper()';
+describe(utilsStepperTitle, () => {
+  const stepper = Utils.stepper();
+  it('should return 3 after being called 3 times', (done) => {
+    stepper.next();
+    stepper.next();
+    const step = stepper.next().value;
+    expect(step).toBe(3);
+    Log(utilsStepperTitle, `After 3 calls to stepper(), the value returned is ${step}`);
     done();
   });
 });

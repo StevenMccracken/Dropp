@@ -9,6 +9,15 @@ const unixEndTimeSeconds = 2147471999;
 const unixEndTimeMilliseconds = unixEndTimeSeconds * 1000;
 
 /**
+ * Generator for enumerating steps in a process
+ * @return {Generator} the stepper to increment a number of steps
+ */
+function* stepper() {
+  let step = 1;
+  while (true) yield step++;
+}
+
+/**
  * Generates a unique hexadecimal identifier in the form xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx
  * @return {String} a universal unique identifier
  */
@@ -39,6 +48,7 @@ const getIpAddress = function getIpAddress(_request = {}) {
 
 module.exports = {
   Moment,
+  stepper,
   newUuid,
   hasValue,
   getIpAddress,

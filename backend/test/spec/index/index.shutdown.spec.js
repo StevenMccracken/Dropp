@@ -1,7 +1,7 @@
 // const Log = require('../../logger');
 // const Server = require('../../../index');
-
-/* eslint-disable no-undef */
+//
+// /* eslint-disable no-undef */
 // const shutdownServerTitle = 'Shutdown server';
 // describe(shutdownServerTitle, () => {
 //   it('shuts down the server', (done) => {
@@ -10,4 +10,4 @@
 //     done();
 //   });
 // });
-/* eslint-enable no-undef */
+// /* eslint-enable no-undef */

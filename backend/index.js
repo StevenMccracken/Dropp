@@ -5,7 +5,9 @@
 const Cors = require('cors');
 const Express = require('express');
 const BodyParser = require('body-parser');
+const Utils = require('./app/utilities/utils');
 const Routes = require('./app/routing/router');
+const Firebase = require('./app/firebase/firebase');
 
 let server;
 const PORTS = {
@@ -16,17 +18,8 @@ const PORTS = {
 
 // Helper function definitions
 
-/**
- * Generator for enumerating steps in a process
- * @return {Generator} the stepper to increment a number of steps
- */
-function* stepper() {
-  let step = 1;
-  while (true) yield step++;
-}
-
-const startupStepper = stepper();
-const shutdownStepper = stepper();
+const startupStepper = Utils.stepper();
+const shutdownStepper = Utils.stepper();
 
 /**
  * Logs a message to the console
@@ -70,10 +63,6 @@ const shutdown = async function shutdown() {
   shutdownLog('Closing express application...', true);
   server.close();
   shutdownLog('Express application closed');
-
-  shutdownLog('Closing database connection...', true);
-  // TODO: Actually close database connection
-  shutdownLog('Database connection closed');
 };
 
 // Begin application initialization
@@ -183,6 +172,11 @@ startupLog('Adding Router configuration...', true);
 const router = Routes(Express.Router());
 express.use('/', router);
 startupLog('Router configured');
+
+// Start database connection
+startupLog('Starting database...', true);
+Firebase.start();
+startupLog('Database started');
 
 // Listen for all incoming requests on the specified port
 startupLog('Starting Express app...', true);
