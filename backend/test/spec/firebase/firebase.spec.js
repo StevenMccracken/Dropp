@@ -5,9 +5,14 @@ const Firebase = require('../../../app/firebase/firebase');
 const startFirebaseTitle = 'Start Firebase';
 describe(startFirebaseTitle, () => {
   it('starts the Firebase module', (done) => {
-    Firebase.start();
-    expect(Firebase.hasStarted()).toBe(true);
-    Log(startFirebaseTitle, Firebase.hasStarted());
+    try {
+      Firebase.start();
+      expect(Firebase.hasStarted()).toBe(true);
+      Log(startFirebaseTitle, Firebase.hasStarted());
+    } catch (error) {
+      Log(startFirebaseTitle, `Error while trying to start Firebase: ${error.details}`);
+    }
+
     done();
   });
 });

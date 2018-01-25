@@ -19,7 +19,7 @@ let db;
  * @throws {DroppError} if the firebase module has already been started
  */
 const start = function start() {
-  if (didStart) throw new DroppError({ details: 'Firebase has already been started' });
+  if (didStart) return;
   const options = {
     databaseURL: 'https://dropp-3a65d.firebaseio.com',
     credential: Firebase.credential.cert(firebaseApiKey),

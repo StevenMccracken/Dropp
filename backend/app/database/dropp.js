@@ -96,11 +96,11 @@ const updateText = async function updateText(_dropp, _text) {
 
 /**
  * Deletes a dropp from the database
- * @param  {Dropp} _dropp the dropp to delete
+ * @param {Dropp} _dropp the dropp to delete
  * @throws {DroppError|Error}
  */
 const remove = async function remove(_dropp) {
-  const source = 'delete()';
+  const source = 'remove()';
   log(source, _dropp.id);
 
   if (!(_dropp instanceof Dropp)) {

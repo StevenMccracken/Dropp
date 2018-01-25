@@ -5,15 +5,7 @@ const Firebase = require('../../../app/firebase/firebase');
 const DroppAccessor = require('../../../app/database/dropp');
 
 /* eslint-disable no-undef */
-const startFirebaseTitle = 'Start Firebase';
-describe(startFirebaseTitle, () => {
-  it('starts the Firebase module', (done) => {
-    Firebase.start();
-    expect(Firebase.hasStarted()).toBe(true);
-    Log(startFirebaseTitle, Firebase.hasStarted());
-    done();
-  }, 10000);
-});
+Firebase.start();
 
 const getMissingDroppTitle = 'Get non-existent dropp';
 describe(getMissingDroppTitle, () => {
