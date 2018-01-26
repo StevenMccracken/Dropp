@@ -77,16 +77,26 @@ describe(updatePasswordTitle, () => {
   }, 10000);
 });
 
-const secondUser = new User({
+const user2Password = 'password';
+const user2 = new User({
   username: 'test9876543210',
   email: 'test9876543210@test.com',
+});
+
+const addUserDataBulkTitle = 'Add user data in bulk';
+describe(addUserDataBulkTitle, () => {
+  it('adds a user and their password to the database', async (done) => {
+    await UserAccessor.addUserAndPassword(user2, user2Password);
+    Log(addUserDataBulkTitle);
+    done();
+  }, 10000);
 });
 
 const addFollowRequestTitle = 'Add follow request';
 describe(addFollowRequestTitle, () => {
   it('adds a follow request to the user\'s follow requests', async (done) => {
-    await UserAccessor.addFollowRequest(user, secondUser);
-    expect(user.followRequests).toContain(secondUser.username);
+    await UserAccessor.addFollowRequest(user, user2);
+    expect(user.followRequests).toContain(user2.username);
     Log(addFollowRequestTitle);
     done();
   }, 10000);
@@ -95,8 +105,8 @@ describe(addFollowRequestTitle, () => {
 const addFollowerRequestTitle = 'Add follower request';
 describe(addFollowerRequestTitle, () => {
   it('adds a follower request to the user\'s follower requests', async (done) => {
-    await UserAccessor.addFollowerRequest(user, secondUser);
-    expect(user.followerRequests).toContain(secondUser.username);
+    await UserAccessor.addFollowerRequest(user, user2);
+    expect(user.followerRequests).toContain(user2.username);
     Log(addFollowerRequestTitle);
     done();
   }, 10000);
@@ -105,8 +115,8 @@ describe(addFollowerRequestTitle, () => {
 const addFollowTitle = 'Add follow';
 describe(addFollowTitle, () => {
   it('adds a follow to the user\'s follows', async (done) => {
-    await UserAccessor.addFollow(user, secondUser);
-    expect(user.follows).toContain(secondUser.username);
+    await UserAccessor.addFollow(user, user2);
+    expect(user.follows).toContain(user2.username);
     Log(addFollowTitle);
     done();
   }, 10000);
@@ -115,8 +125,8 @@ describe(addFollowTitle, () => {
 const addFollowerTitle = 'Add follower';
 describe(addFollowerTitle, () => {
   it('adds a follower to the user\'s followers', async (done) => {
-    await UserAccessor.addFollower(user, secondUser);
-    expect(user.followers).toContain(secondUser.username);
+    await UserAccessor.addFollower(user, user2);
+    expect(user.followers).toContain(user2.username);
     Log(addFollowerTitle);
     done();
   }, 10000);
@@ -125,8 +135,8 @@ describe(addFollowerTitle, () => {
 const removeFollowRequestTitle = 'Remove follow request';
 describe(removeFollowRequestTitle, () => {
   it('removes a follow request from the user\'s follow requests', async (done) => {
-    await UserAccessor.removeFollowRequest(user, secondUser);
-    expect(user.followRequests).not.toContain(secondUser.username);
+    await UserAccessor.removeFollowRequest(user, user2);
+    expect(user.followRequests).not.toContain(user2.username);
     Log(removeFollowRequestTitle);
     done();
   }, 10000);
@@ -135,8 +145,8 @@ describe(removeFollowRequestTitle, () => {
 const removeFollowerRequestTitle = 'Remove follower request';
 describe(removeFollowerRequestTitle, () => {
   it('removes a follower request from the user\'s follower requests', async (done) => {
-    await UserAccessor.removeFollowerRequest(user, secondUser);
-    expect(user.followerRequests).not.toContain(secondUser.username);
+    await UserAccessor.removeFollowerRequest(user, user2);
+    expect(user.followerRequests).not.toContain(user2.username);
     Log(removeFollowerRequestTitle);
     done();
   }, 10000);
@@ -145,8 +155,8 @@ describe(removeFollowerRequestTitle, () => {
 const removeFollowTitle = 'Remove follow';
 describe(removeFollowTitle, () => {
   it('removes a follow from the user\'s follows', async (done) => {
-    await UserAccessor.removeFollow(user, secondUser);
-    expect(user.follows).not.toContain(secondUser.username);
+    await UserAccessor.removeFollow(user, user2);
+    expect(user.follows).not.toContain(user2.username);
     Log(removeFollowTitle);
     done();
   }, 10000);
@@ -155,8 +165,8 @@ describe(removeFollowTitle, () => {
 const removeFollowerTitle = 'Remove follower';
 describe(removeFollowerTitle, () => {
   it('removes a follower from the user\'s followers', async (done) => {
-    await UserAccessor.removeFollower(user, secondUser);
-    expect(user.followers).not.toContain(secondUser.username);
+    await UserAccessor.removeFollower(user, user2);
+    expect(user.followers).not.toContain(user2.username);
     Log(removeFollowerTitle);
     done();
   }, 10000);
@@ -176,6 +186,15 @@ describe(deletePasswordTitle, () => {
   it('deletes a password from the database', async (done) => {
     await UserAccessor.removePassword(user);
     Log(deletePasswordTitle);
+    done();
+  }, 10000);
+});
+
+const deleteUserDataBulkTitle = 'Delete user data in bulk';
+describe(deleteUserDataBulkTitle, () => {
+  it('deletes a user and their password from the database', async (done) => {
+    await UserAccessor.removeUserAndPassword(user2);
+    Log(deleteUserDataBulkTitle);
     done();
   }, 10000);
 });

@@ -72,7 +72,7 @@ const add = async function add(_user) {
 /**
  * Adds a password for a given user to the database
  * @param {User} _user the user who the password belongs to
- * @param {String} _password the hashed password to add to the database
+ * @param {String} _password the password to add to the database
  * @throws {DroppError|Error}
  */
 const addPassword = async function addPassword(_user, _password) {
@@ -85,6 +85,35 @@ const addPassword = async function addPassword(_user, _password) {
 
   if (!Validator.isValidPassword(_password)) throw new DroppError({ invalidMember: 'password' });
   await Firebase.update(`${passwordsBaseUrl}/${_user.username}`, _password);
+};
+
+/**
+ * Adds a user and password to the database at the same time
+ * @param {User} _user the user to add to the database
+ * @param {String} _password the password to add to the database
+ * @throws {DroppError|Error}
+ */
+const addUserAndPassword = async function addUserAndPassword(_user, _password) {
+  const source = 'addUserAndPassword()';
+  log(source, '');
+
+  if (!(_user instanceof User)) {
+    throw new DroppError({ invalid_type: 'Object is not a User' });
+  }
+
+  const invalidMembers = [];
+  if (!Validator.isValidEmail(_user.email)) invalidMembers.push('email');
+  if (!Validator.isValidUsername(_user.username)) invalidMembers.push('username');
+  if (!Validator.isValidPassword(_password)) invalidMembers.push('password');
+
+  if (invalidMembers.length > 0) {
+    throw new DroppError({ invalidMembers });
+  }
+
+  const data = {};
+  data[`${usersBaseUrl}/${_user.username}`] = _user.data;
+  data[`${passwordsBaseUrl}/${_user.username}`] = _password;
+  await Firebase.bulkUpdate(data);
 };
 
 /**
@@ -296,6 +325,25 @@ const removePassword = async function removePassword(_user) {
   await Firebase.remove(`${passwordsBaseUrl}/${_user.username}`);
 };
 
+/**
+ * Deletes a user and their password from the database at the same time
+ * @param {User} _user the user to delete from the database
+ * @throws {DroppError|Error}
+ */
+const removeUserAndPassword = async function removeUserAndPassword(_user) {
+  const source = 'removeUserAndPassword()';
+  log(source, _user.username);
+
+  if (!(_user instanceof User)) {
+    throw new DroppError({ invalid_type: 'Object is not a User' });
+  }
+
+  const urls = [];
+  urls.push(`${usersBaseUrl}/${_user.username}`);
+  urls.push(`${passwordsBaseUrl}/${_user.username}`);
+  await Firebase.bulkRemove(urls);
+};
+
 module.exports = {
   get,
   add,
@@ -309,7 +357,9 @@ module.exports = {
   removePassword,
   addFollowRequest,
   addFollowerRequest,
+  addUserAndPassword,
   removeFollowRequest,
   removeFollowerRequest,
+  removeUserAndPassword,
   updatePassword: addPassword,
 };

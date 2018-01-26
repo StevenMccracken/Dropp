@@ -116,42 +116,42 @@ describe(firebaseIdInputValidator, () => {
     done();
   });
 
-  it('should return true for an empty string', (done) => {
+  it('should return false for an empty string', (done) => {
     const value = '';
     const result = Validator.isValidFirebaseId(value);
-    expect(result).toBe(true);
+    expect(result).toBe(false);
     Log(firebaseIdInputValidator, `${value} returns ${result}`);
     done();
   });
 
-  it('should return true for a string with space whitespace', (done) => {
+  it('should return false for a string with space whitespace', (done) => {
     const value = '    ';
     const result = Validator.isValidFirebaseId(value);
-    expect(result).toBe(true);
+    expect(result).toBe(false);
     Log(firebaseIdInputValidator, `${value} returns ${result}`);
     done();
   });
 
-  it('should return true for a string with tabbed whitespace', (done) => {
+  it('should return false for a string with tabbed whitespace', (done) => {
     const value = '\t';
     const result = Validator.isValidFirebaseId(value);
-    expect(result).toBe(true);
+    expect(result).toBe(false);
     Log(firebaseIdInputValidator, `${value} returns ${result}`);
     done();
   });
 
-  it('should return true for a string with newline whitespace', (done) => {
+  it('should return false for a string with newline whitespace', (done) => {
     const value = '\n';
     const result = Validator.isValidFirebaseId(value);
-    expect(result).toBe(true);
+    expect(result).toBe(false);
     Log(firebaseIdInputValidator, `${value} returns ${result}`);
     done();
   });
 
-  it('should return true for a string with return whitespace', (done) => {
+  it('should return false for a string with return whitespace', (done) => {
     const value = '\r';
     const result = Validator.isValidFirebaseId(value);
-    expect(result).toBe(true);
+    expect(result).toBe(false);
     Log(firebaseIdInputValidator, `${value} returns ${result}`);
     done();
   });

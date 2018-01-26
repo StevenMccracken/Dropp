@@ -1,4 +1,5 @@
 const Log = require('../../logger');
+const Utils = require('../../../src/utilities/utils');
 const Firebase = require('../../../src/firebase/firebase');
 
 /* eslint-disable no-undef */
@@ -67,11 +68,35 @@ describe(getUpdatedData, () => {
   }, 10000);
 });
 
+const bulkUpdateData = {};
+const url1 = Utils.newUuid();
+const url2 = Utils.newUuid();
+bulkUpdateData[url1] = Utils.newUuid();
+bulkUpdateData[url2] = { test: 'test' };
+
+const bulkUpdateTitle = 'Multi-update data';
+describe(bulkUpdateTitle, () => {
+  it('updates multiple pieces of data in firebase', async (done) => {
+    await Firebase.bulkUpdate(bulkUpdateData);
+    Log(bulkUpdateTitle);
+    done();
+  }, 10000);
+});
+
 const deleteData = 'Delete data';
 describe(deleteData, () => {
   it('deletes data from firebase', async (done) => {
     await Firebase.remove(`/test/${dataKey}`);
     Log(deleteData);
+    done();
+  }, 10000);
+});
+
+const bulkRemoveTitle = 'Multi-remove data';
+describe(bulkRemoveTitle, () => {
+  it('updates removes pieces of data from firebase', async (done) => {
+    await Firebase.bulkRemove([url1, url2]);
+    Log(bulkRemoveTitle);
     done();
   }, 10000);
 });

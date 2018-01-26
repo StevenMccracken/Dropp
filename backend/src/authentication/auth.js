@@ -10,7 +10,7 @@ const Utils = require('../utilities/utils');
 const JwtConfig = require('../../config/jwt');
 
 // Configure token storage and verification with Passport
-require('../../config/passport')(Passport);
+require('./passport')(Passport);
 
 /**
  * Logs a message about authentication

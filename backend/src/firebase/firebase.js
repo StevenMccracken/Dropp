@@ -13,6 +13,10 @@ const firebaseApiKey = require('../../config/secrets/firebaseApiKey.json');
 
 let didStart = false;
 let db;
+const configOptions = {
+  databaseURL: 'https://dropp-3a65d.firebaseio.com',
+  credential: Firebase.credential.cert(firebaseApiKey),
+};
 
 /**
  * Configures and initializes the firebase module
@@ -20,12 +24,8 @@ let db;
  */
 const start = function start() {
   if (didStart) return;
-  const options = {
-    databaseURL: 'https://dropp-3a65d.firebaseio.com',
-    credential: Firebase.credential.cert(firebaseApiKey),
-  };
 
-  Firebase.initializeApp(options);
+  Firebase.initializeApp(configOptions);
   db = Firebase.database();
   didStart = true;
 };
@@ -116,6 +116,25 @@ const update = async function update(_url, _data) {
 };
 
 /**
+ * Updates multiple URLs with different data in firebase
+ * @param {Object} _urlDataMap a mapping of the firebase
+ * paths to update data for, with their corresponding new data
+ * @throws {DroppError|Error}
+ */
+const bulkUpdate = async function bulkUpdate(_urlDataMap = {}) {
+  const source = 'bulkUpdate()';
+  log(source, Object.keys(_urlDataMap));
+
+  if (!didStart) throwHasNotStartedError();
+  Object.keys(_urlDataMap).forEach((key) => {
+    if (!Validator.isValidFirebaseId(key)) throwInvalidUrlError();
+  });
+
+  const ref = db.ref();
+  await ref.update(_urlDataMap);
+};
+
+/**
  * Removes data from firebase
  * @param {String} _url the firebase path to remove data from
  * @throws {DroppError|Error}
@@ -130,6 +149,27 @@ const remove = async function remove(_url) {
   await ref.remove();
 };
 
+/**
+ * Removes multiple data values in firebase
+ * @param {Array} [_urls=[]] the paths to delete data from
+ * @throws {DroppError|Error}
+ */
+const bulkRemove = async function bulkRemove(_urls = []) {
+  const source = 'bulkRemove()';
+  log(source, _urls);
+
+  if (!didStart) throwHasNotStartedError();
+
+  const deleteUrlsMap = {};
+  _urls.forEach((url) => {
+    if (!Validator.isValidFirebaseId(url)) throwInvalidUrlError();
+    else deleteUrlsMap[url] = null;
+  });
+
+  const ref = db.ref();
+  await ref.update(deleteUrlsMap);
+};
+
 module.exports = {
   get,
   add,
@@ -137,4 +177,6 @@ module.exports = {
   update,
   remove,
   hasStarted,
+  bulkUpdate,
+  bulkRemove,
 };

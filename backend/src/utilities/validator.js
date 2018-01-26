@@ -14,7 +14,7 @@ const validateFirebaseId = function validateFirebaseId(_firebaseId) {
     return false;
   }
 
-  return !(/[.#$[\]]/).test(_firebaseId);
+  return _firebaseId.trim() !== '' && !(/[.#$[\]]/).test(_firebaseId);
 };
 
 // Data validators for user attributes
