@@ -17,10 +17,7 @@ const Validator = require('../utilities/validator');
  */
 function log(_message, _username) {
   let extraMessage = '';
-  if (Utils.hasValue(_username)) {
-    extraMessage = ` user ${_username}`;
-  }
-
+  if (Utils.hasValue(_username)) extraMessage = ` user ${_username}`;
   Log.log('Database', `${_message}${extraMessage}`);
 }
 
@@ -46,55 +43,13 @@ const get = async function get(_username) {
 };
 
 /**
- * Adds a user to the database
+ * Adds a user and their password to the database
  * @param {User} _user the user to add to the database
- * @throws {DroppError|Error} if the data in the user is invalid
- */
-const add = async function add(_user) {
-  const source = 'add()';
-  log(source, '');
-
-  if (!(_user instanceof User)) {
-    throw new DroppError({ invalid_type: 'Object is not a User' });
-  }
-
-  const invalidMembers = [];
-  if (!Validator.isValidEmail(_user.email)) invalidMembers.push('email');
-  if (!Validator.isValidUsername(_user.username)) invalidMembers.push('username');
-
-  if (invalidMembers.length > 0) {
-    throw new DroppError({ invalidMembers });
-  }
-
-  await Firebase.update(`${usersBaseUrl}/${_user.username}`, _user.data);
-};
-
-/**
- * Adds a password for a given user to the database
- * @param {User} _user the user who the password belongs to
- * @param {String} _password the password to add to the database
+ * @param {String} _password the password to for the new user
  * @throws {DroppError|Error}
  */
-const addPassword = async function addPassword(_user, _password) {
-  const source = 'addPassword()';
-  log(source, _user.username);
-
-  if (!(_user instanceof User)) {
-    throw new DroppError({ invalid_type: 'Object is not a User' });
-  }
-
-  if (!Validator.isValidPassword(_password)) throw new DroppError({ invalidMember: 'password' });
-  await Firebase.update(`${passwordsBaseUrl}/${_user.username}`, _password);
-};
-
-/**
- * Adds a user and password to the database at the same time
- * @param {User} _user the user to add to the database
- * @param {String} _password the password to add to the database
- * @throws {DroppError|Error}
- */
-const addUserAndPassword = async function addUserAndPassword(_user, _password) {
-  const source = 'addUserAndPassword()';
+const create = async function create(_user, _password) {
+  const source = 'create()';
   log(source, '');
 
   if (!(_user instanceof User)) {
@@ -106,14 +61,29 @@ const addUserAndPassword = async function addUserAndPassword(_user, _password) {
   if (!Validator.isValidUsername(_user.username)) invalidMembers.push('username');
   if (!Validator.isValidPassword(_password)) invalidMembers.push('password');
 
-  if (invalidMembers.length > 0) {
-    throw new DroppError({ invalidMembers });
-  }
-
+  if (invalidMembers.length > 0) throw new DroppError({ invalidMembers });
   const data = {};
   data[`${usersBaseUrl}/${_user.username}`] = _user.data;
   data[`${passwordsBaseUrl}/${_user.username}`] = _password;
   await Firebase.bulkUpdate(data);
+};
+
+/**
+ * Updates the password for a given user
+ * @param {User} _user the user who the password belongs to
+ * @param {String} _password the password to add
+ * @throws {DroppError|Error}
+ */
+const updatePassword = async function updatePassword(_user, _password) {
+  const source = 'updatePassword()';
+  log(source, _user.username);
+
+  if (!(_user instanceof User)) {
+    throw new DroppError({ invalid_type: 'Object is not a User' });
+  }
+
+  if (!Validator.isValidPassword(_password)) throw new DroppError({ invalidMember: 'password' });
+  await Firebase.update(`${passwordsBaseUrl}/${_user.username}`, _password);
 };
 
 /**
@@ -138,9 +108,11 @@ const updateEmail = async function updateEmail(_user, _email) {
 };
 
 /**
- * Adds a user to a given user's follow requests
+ * Adds a user to a given user's follow requests, and also
+ * adds the given user to the user's follower requests
  * @param {User} _user the user to add a follow request for
- * @param {User} _follow the user to be added to the given user's follow requests
+ * @param {User} _follow the user to be
+ * added to the given user's follow requests
  * @throws {DroppError|Error}
  */
 const addFollowRequest = async function addFollowRequest(_user, _follow) {
@@ -151,30 +123,18 @@ const addFollowRequest = async function addFollowRequest(_user, _follow) {
     throw new DroppError({ invalid_type: 'Object is not a User' });
   }
 
-  await Firebase.update(`${usersBaseUrl}/${_user.username}/follow_requests/${_follow.username}`, _follow.username);
+  const updates = {};
+  updates[`${usersBaseUrl}/${_user.username}/follow_requests/${_follow.username}`] = _follow.username;
+  updates[`${usersBaseUrl}/${_follow.username}/follower_requests/${_user.username}`] = _user.username;
+  await Firebase.bulkUpdate(updates);
+
   _user.followRequests.push(_follow.username);
+  _follow.followerRequests.push(_user.username);
 };
 
 /**
- * Adds a user to a given user's follower requests
- * @param {User} _user the user to add a follower request for
- * @param {User} _follow the user to be added to the given user's follower requests
- * @throws {DroppError|Error}
- */
-const addFollowerRequest = async function addFollowerRequest(_user, _follower) {
-  const source = 'addFollowerRequest()';
-  log(source, _user.username);
-
-  if (!(_user instanceof User) || !(_follower instanceof User)) {
-    throw new DroppError({ invalid_type: 'Object is not a User' });
-  }
-
-  await Firebase.update(`${usersBaseUrl}/${_user.username}/follower_requests/${_follower.username}`, _follower.username);
-  _user.followerRequests.push(_follower.username);
-};
-
-/**
- * Adds a user to a given user's follows
+ * Adds a user to a given user's follows, and also
+ * adds the given user to the user's followers
  * @param {User} _user the user to add a follow for
  * @param {User} _follow the user to be added to the given user's follows
  * @throws {DroppError|Error}
@@ -187,32 +147,28 @@ const addFollow = async function addFollow(_user, _follow) {
     throw new DroppError({ invalid_type: 'Object is not a User' });
   }
 
-  await Firebase.update(`${usersBaseUrl}/${_user.username}/follows/${_follow.username}`, _follow.username);
+  const updates = {};
+  updates[`${usersBaseUrl}/${_user.username}/follow_requests/${_follow.username}`] = null;
+  updates[`${usersBaseUrl}/${_user.username}/follows/${_follow.username}`] = _follow.username;
+  updates[`${usersBaseUrl}/${_follow.username}/follower_requests/${_user.username}`] = null;
+  updates[`${usersBaseUrl}/${_follow.username}/followers/${_user.username}`] = _user.username;
+
+  await Firebase.bulkUpdate(updates);
   _user.follows.push(_follow.username);
+  _follow.followers.push(_user.username);
+
+  const index1 = _user.followRequests.indexOf(_follow.username);
+  const index2 = _follow.followerRequests.indexOf(_user.username);
+  if (index1 !== -1) _user.followRequests.splice(index1, 1);
+  if (index2 !== -1) _follow.followerRequests.splice(index2, 1);
 };
 
 /**
- * Adds a user to a given user's followers
- * @param {User} _user the user to add a follower for
- * @param {User} _follower the user to be added to the given user's followers
- * @throws {DroppError|Error}
- */
-const addFollower = async function addFollower(_user, _follower) {
-  const source = 'addFollower()';
-  log(source, _user.username);
-
-  if (!(_user instanceof User) || !(_follower instanceof User)) {
-    throw new DroppError({ invalid_type: 'Object is not a User' });
-  }
-
-  await Firebase.update(`${usersBaseUrl}/${_user.username}/followers/${_follower.username}`, _follower.username);
-  _user.followers.push(_follower.username);
-};
-
-/**
- * Removes a user from a given user's follow requests
+ * Removes a user from a given user's follow requests, and
+ * also removes the gven user from the user's follower requests
  * @param {User} _user the user to remove the follow request from
- * @param {User} _follow the user to be removed from the given user's follow requests
+ * @param {User} _follow the user to be removed
+ * from the given user's follow requests
  * @throws {DroppError|Error}
  */
 const removeFollowRequest = async function removeFollowRequest(_user, _follow) {
@@ -223,36 +179,20 @@ const removeFollowRequest = async function removeFollowRequest(_user, _follow) {
     throw new DroppError({ invalid_type: 'Object is not a User' });
   }
 
-  await Firebase.remove(`${usersBaseUrl}/${_user.username}/follow_requests/${_follow.username}`);
-  const index = _user.followRequests.indexOf(_follow.username);
-  if (index !== -1) {
-    _user.followRequests.splice(index, 1);
-  }
+  const removals = [];
+  removals.push(`${usersBaseUrl}/${_user.username}/follow_requests/${_follow.username}`);
+  removals.push(`${usersBaseUrl}/${_follow.username}/follower_requests/${_user.username}`);
+  await Firebase.bulkRemove(removals);
+
+  const index1 = _user.followRequests.indexOf(_follow.username);
+  const index2 = _follow.followerRequests.indexOf(_user.username);
+  if (index1 !== -1) _user.followRequests.splice(index1, 1);
+  if (index2 !== -1) _follow.followerRequests.splice(index2, 1);
 };
 
 /**
- * Removes a user from a given user's follower requests
- * @param {User} _user the user to remove the follower request from
- * @param {User} _follow the user to be removed from the given user's follower requests
- * @throws {DroppError|Error}
- */
-const removeFollowerRequest = async function removeFollowerRequest(_user, _follower) {
-  const source = 'removeFollowerRequest()';
-  log(source, _user.username);
-
-  if (!(_user instanceof User) || !(_follower instanceof User)) {
-    throw new DroppError({ invalid_type: 'Object is not a User' });
-  }
-
-  await Firebase.remove(`${usersBaseUrl}/${_user.username}/follower_requests/${_follower.username}`);
-  const index = _user.followerRequests.indexOf(_follower.username);
-  if (index !== -1) {
-    _user.followerRequests.splice(index, 1);
-  }
-};
-
-/**
- * Removes a user from a given user's follows
+ * Removes a user from a given user's follows, and also
+ * removes the given user from the user's followers
  * @param {User} _user the user to remove the follow from
  * @param {User} _follow the user to be removed from the given user's follows
  * @throws {DroppError|Error}
@@ -265,37 +205,20 @@ const removeFollow = async function removeFollow(_user, _follow) {
     throw new DroppError({ invalid_type: 'Object is not a User' });
   }
 
-  await Firebase.remove(`${usersBaseUrl}/${_user.username}/follows/${_follow.username}`);
-  const index = _user.follows.indexOf(_follow.username);
-  if (index !== -1) {
-    _user.follows.splice(index, 1);
-  }
+  const removals = [];
+  removals.push(`${usersBaseUrl}/${_user.username}/follows/${_follow.username}`);
+  removals.push(`${usersBaseUrl}/${_follow.username}/followers/${_user.username}`);
+  await Firebase.bulkRemove(removals);
+
+  const index1 = _user.follows.indexOf(_follow.username);
+  const index2 = _follow.followers.indexOf(_user.username);
+  if (index1 !== -1) _user.follows.splice(index1, 1);
+  if (index2 !== -1) _follow.followers.splice(index2, 1);
 };
 
 /**
- * Removes a user from a given user's followers
- * @param {User} _user the user to remove the follower from
- * @param {User} _follower the user to be removed from the given user's followers
- * @throws {DroppError|Error}
- */
-const removeFollower = async function removeFollower(_user, _follower) {
-  const source = 'removeFollower()';
-  log(source, _user.username);
-
-  if (!(_user instanceof User) || !(_follower instanceof User)) {
-    throw new DroppError({ invalid_type: 'Object is not a User' });
-  }
-
-  await Firebase.remove(`${usersBaseUrl}/${_user.username}/followers/${_follower.username}`);
-  const index = _user.followers.indexOf(_follower.username);
-  if (index !== -1) {
-    _user.followers.splice(index, 1);
-  }
-};
-
-/**
- * Deletes a user from the database
- * @param {User} _user the user to delete
+ * Deletes a user's information from the database
+ * @param {User} _user the user to delete from the database
  * @throws {DroppError|Error}
  */
 const remove = async function remove(_user) {
@@ -306,60 +229,37 @@ const remove = async function remove(_user) {
     throw new DroppError({ invalid_type: 'Object is not a User' });
   }
 
-  await Firebase.remove(`${usersBaseUrl}/${_user.username}`);
-};
+  const removals = [];
+  removals.push(`${usersBaseUrl}/${_user.username}`);
+  removals.push(`${passwordsBaseUrl}/${_user.username}`);
+  _user.follows.forEach((follow) => {
+    removals.push(`${usersBaseUrl}/${follow}/followers/${_user.username}`);
+  });
 
-/**
- * Deletes a user's password from the database
- * @param {User} _user the user for the password to delete
- * @throws {DroppError|Error}
- */
-const removePassword = async function removePassword(_user) {
-  const source = 'removePassword()';
-  log(source, _user.username);
+  _user.followers.forEach((follower) => {
+    removals.push(`${usersBaseUrl}/${follower}/follows/${_user.username}`);
+  });
 
-  if (!(_user instanceof User)) {
-    throw new DroppError({ invalid_type: 'Object is not a User' });
-  }
+  _user.followRequests.forEach((followRequest) => {
+    removals.push(`${usersBaseUrl}/${followRequest}/follower_requests/${_user.username}`);
+  });
 
-  await Firebase.remove(`${passwordsBaseUrl}/${_user.username}`);
-};
+  _user.followerRequests.forEach((followerRequest) => {
+    removals.push(`${usersBaseUrl}/${followerRequest}/follow_requests/${_user.username}`);
+  });
 
-/**
- * Deletes a user and their password from the database at the same time
- * @param {User} _user the user to delete from the database
- * @throws {DroppError|Error}
- */
-const removeUserAndPassword = async function removeUserAndPassword(_user) {
-  const source = 'removeUserAndPassword()';
-  log(source, _user.username);
-
-  if (!(_user instanceof User)) {
-    throw new DroppError({ invalid_type: 'Object is not a User' });
-  }
-
-  const urls = [];
-  urls.push(`${usersBaseUrl}/${_user.username}`);
-  urls.push(`${passwordsBaseUrl}/${_user.username}`);
-  await Firebase.bulkRemove(urls);
+  await Firebase.bulkRemove(removals);
 };
 
 module.exports = {
   get,
-  add,
+  create,
   remove,
   addFollow,
-  addFollower,
-  addPassword,
+  addFollower: addFollow,
   updateEmail,
   removeFollow,
-  removeFollower,
-  removePassword,
+  updatePassword,
   addFollowRequest,
-  addFollowerRequest,
-  addUserAndPassword,
   removeFollowRequest,
-  removeFollowerRequest,
-  removeUserAndPassword,
-  updatePassword: addPassword,
 };

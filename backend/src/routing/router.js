@@ -26,7 +26,6 @@ function log(_message, _request) {
 function handleError(_error = new Error(), _request, _response) {
   let errorDetails;
   if (_error instanceof DroppError) errorDetails = _error.details;
-
   _response.json(errorDetails);
 }
 

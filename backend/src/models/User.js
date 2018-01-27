@@ -17,7 +17,6 @@ class User extends Object {
     if (!Validator.isValidUsername(_details.username)) invalidMembers.push('username');
 
     if (invalidMembers.length > 0) throw new DroppError({ invalidMembers });
-
     this.email = _details.email;
     this.username = _details.username;
     this.follows = [];

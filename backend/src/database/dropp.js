@@ -16,14 +16,12 @@ const Validator = require('../utilities/validator');
  */
 function log(_message, _droppId) {
   let extraMessage = '';
-  if (Utils.hasValue(_droppId)) {
-    extraMessage = ` dropp ${_droppId}`;
-  }
-
+  if (Utils.hasValue(_droppId)) extraMessage = ` dropp ${_droppId}`;
   Log.log('Database', `${_message}${extraMessage}`);
 }
 
 const baseUrl = '/dropps';
+const forbiddenDroppId = '-Kjsh';
 
 /**
  * Retrieves a dropp from the database by it's ID
@@ -35,8 +33,35 @@ const get = async function get(_id) {
   const source = 'get()';
   log(source, _id);
 
-  const json = await Firebase.get(`${baseUrl}/${_id}`);
-  return Utils.hasValue(json) ? new Dropp(json) : null;
+  if (_id === forbiddenDroppId) return null;
+  const details = await Firebase.get(`${baseUrl}/${_id}`);
+
+  if (!Utils.hasValue(details)) return null;
+  const dropp = new Dropp(details);
+  dropp.id = _id;
+  return dropp;
+};
+
+/**
+ * Gets all the dropps from the database
+ * @return {Array} list of dropps
+ * @throws {DroppError|Error}
+ */
+const getAll = async function getAll() {
+  const source = 'getAll()';
+  log(source, '');
+
+  const json = await Firebase.get(baseUrl);
+  const dropps = [];
+  Object.entries(json).forEach(([key, value]) => {
+    if (key === forbiddenDroppId) return;
+    /* eslint-disable no-param-reassign */
+    value.id = key;
+    /* eslint-disable no-param-reassign */
+    dropps.push(new Dropp(value));
+  });
+
+  return dropps;
 };
 
 /**
@@ -60,10 +85,7 @@ const add = async function add(_dropp) {
   if (!Validator.isValidUsername(_dropp.username)) invalidMembers.push('username');
   if (!Validator.isValidTimestamp(_dropp.timestamp)) invalidMembers.push('timestamp');
 
-  if (invalidMembers.length > 0) {
-    throw new DroppError({ invalidMembers });
-  }
-
+  if (invalidMembers.length > 0) throw new DroppError({ invalidMembers });
   const droppUrl = await Firebase.add(baseUrl, _dropp.data);
   const id = droppUrl.split('/').pop();
 
@@ -110,9 +132,29 @@ const remove = async function remove(_dropp) {
   await Firebase.remove(`${baseUrl}/${_dropp.id}`);
 };
 
+/**
+ * Deletes dropps from the database in bulk
+ * @param {Array} [_dropps=[]] the dropps to delete
+ * @throws {DroppError|Error}
+ */
+const bulkRemove = async function bulkRemove(_dropps = []) {
+  const source = 'bulkRemove()';
+  log(source, _dropps);
+
+  const removals = [];
+  _dropps.forEach((dropp) => {
+    if (!(dropp instanceof Dropp)) throw new DroppError({ invalid_type: 'Object is not a Dropp' });
+    else removals.push(`${baseUrl}/${dropp.id}`);
+  });
+
+  await Firebase.bulkRemove(removals);
+};
+
 module.exports = {
   get,
   add,
+  getAll,
   remove,
+  bulkRemove,
   updateText,
 };
