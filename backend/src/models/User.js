@@ -15,8 +15,8 @@ class User extends Object {
     const invalidMembers = [];
     if (!Validator.isValidEmail(_details.email)) invalidMembers.push('email');
     if (!Validator.isValidUsername(_details.username)) invalidMembers.push('username');
-
     if (invalidMembers.length > 0) throw new DroppError({ invalidMembers });
+
     this.email = _details.email;
     this.username = _details.username;
     this.follows = [];
@@ -126,6 +126,11 @@ class User extends Object {
     }
 
     return data;
+  }
+
+  removePrivateData() {
+    delete this._followRequests;
+    delete this._followerRequests;
   }
 }
 

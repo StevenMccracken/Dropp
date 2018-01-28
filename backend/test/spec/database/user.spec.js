@@ -1,6 +1,5 @@
 const Log = require('../../logger');
 const User = require('../../../src/models/User');
-// const Utils = require('../../../src/utilities/utils');
 const Firebase = require('../../../src/firebase/firebase');
 const UserAccessor = require('../../../src/database/user');
 
@@ -45,10 +44,21 @@ describe(createUser2Title, () => {
   }, 10000);
 });
 
+const getPasswordTitle = 'Get password';
+describe(getPasswordTitle, () => {
+  it('gets a password from the database', async (done) => {
+    const password = await UserAccessor.getPassword(user2.username);
+    expect(password).toBe('password');
+    Log(getPasswordTitle);
+    done();
+  }, 10000);
+});
+
+let retrievedUser;
 const getUserTitle = 'Get user';
 describe(getUserTitle, () => {
   it('retrieves a user from the database', async (done) => {
-    const retrievedUser = await UserAccessor.get(user1.username);
+    retrievedUser = await UserAccessor.get(user1.username);
     expect(retrievedUser).toBeDefined();
     expect(retrievedUser.username).toBe(user1.username);
     expect(retrievedUser.email).toBe(user1.email);
@@ -61,11 +71,32 @@ describe(getUserTitle, () => {
   }, 10000);
 });
 
+const removePrivateDataTitle = 'Remove private user data';
+describe(removePrivateDataTitle, () => {
+  it('removes private data from the user object', (done) => {
+    retrievedUser.removePrivateData();
+    expect(retrievedUser.followRequests).not.toBeDefined();
+    expect(retrievedUser.followerRequests).not.toBeDefined();
+    Log(removePrivateDataTitle);
+    done();
+  });
+});
+
 const updatePasswordTitle = 'Update password';
 describe(updatePasswordTitle, () => {
   it('updates a password in the database', async (done) => {
     await UserAccessor.updatePassword(user1, 'newPassword');
     Log(updatePasswordTitle);
+    done();
+  }, 10000);
+});
+
+const getUpdatedPasswordTitle = 'Get updated password';
+describe(getUpdatedPasswordTitle, () => {
+  it('gets the updated password from the database', async (done) => {
+    const password = await UserAccessor.getPassword(user1.username);
+    expect(password).toBe('newPassword');
+    Log(getUpdatedPasswordTitle);
     done();
   }, 10000);
 });

@@ -17,7 +17,7 @@ const Validator = require('../utilities/validator');
 function log(_message, _droppId) {
   let extraMessage = '';
   if (Utils.hasValue(_droppId)) extraMessage = ` dropp ${_droppId}`;
-  Log.log('Database', `${_message}${extraMessage}`);
+  Log.log('Dropp accessor', `${_message}${extraMessage}`);
 }
 
 const baseUrl = '/dropps';
@@ -84,8 +84,8 @@ const add = async function add(_dropp) {
   if (!Validator.isValidLocation(_dropp.location)) invalidMembers.push('location');
   if (!Validator.isValidUsername(_dropp.username)) invalidMembers.push('username');
   if (!Validator.isValidTimestamp(_dropp.timestamp)) invalidMembers.push('timestamp');
-
   if (invalidMembers.length > 0) throw new DroppError({ invalidMembers });
+
   const droppUrl = await Firebase.add(baseUrl, _dropp.data);
   const id = droppUrl.split('/').pop();
 

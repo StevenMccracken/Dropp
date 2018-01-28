@@ -2,8 +2,8 @@
  * @module for database access of users
  */
 
-const Log = require('../logging/logger');
 const User = require('../models/User');
+const Log = require('../logging/logger');
 const Utils = require('../utilities/utils');
 const Firebase = require('../firebase/firebase');
 const DroppError = require('../errors/DroppError');
@@ -13,12 +13,11 @@ const Validator = require('../utilities/validator');
  * Logs a message about user database interaction
  * @param {String} _message the message to log
  * @param {String} _droppId the username of the user to access
- * @param {Boolean} _isPassword whether the log is about the user's password or not
  */
 function log(_message, _username) {
   let extraMessage = '';
   if (Utils.hasValue(_username)) extraMessage = ` user ${_username}`;
-  Log.log('Database', `${_message}${extraMessage}`);
+  Log.log('User accessor', `${_message}${extraMessage}`);
 }
 
 const usersBaseUrl = '/users';
@@ -43,6 +42,20 @@ const get = async function get(_username) {
 };
 
 /**
+ * Retrieves a password for a given user from the database
+ * @param {String} _username the username to retrieve the password for
+ * @return {String} the user's password
+ * @throws {DroppError|Error}
+ */
+const getPassword = async function getPassword(_username) {
+  const source = 'getPassword()';
+  log(source, _username);
+
+  if (!Validator.isValidUsername(_username)) throw new DroppError({ invalidMember: 'username' });
+  return Firebase.get(`${passwordsBaseUrl}/${_username}`);
+};
+
+/**
  * Adds a user and their password to the database
  * @param {User} _user the user to add to the database
  * @param {String} _password the password to for the new user
@@ -60,8 +73,8 @@ const create = async function create(_user, _password) {
   if (!Validator.isValidEmail(_user.email)) invalidMembers.push('email');
   if (!Validator.isValidUsername(_user.username)) invalidMembers.push('username');
   if (!Validator.isValidPassword(_password)) invalidMembers.push('password');
-
   if (invalidMembers.length > 0) throw new DroppError({ invalidMembers });
+
   const data = {};
   data[`${usersBaseUrl}/${_user.username}`] = _user.data;
   data[`${passwordsBaseUrl}/${_user.username}`] = _password;
@@ -256,7 +269,7 @@ module.exports = {
   create,
   remove,
   addFollow,
-  addFollower: addFollow,
+  getPassword,
   updateEmail,
   removeFollow,
   updatePassword,
