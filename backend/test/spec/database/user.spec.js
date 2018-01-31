@@ -71,17 +71,6 @@ describe(getUserTitle, () => {
   }, 10000);
 });
 
-const removePrivateDataTitle = 'Remove private user data';
-describe(removePrivateDataTitle, () => {
-  it('removes private data from the user object', (done) => {
-    retrievedUser.removePrivateData();
-    expect(retrievedUser.followRequests).not.toBeDefined();
-    expect(retrievedUser.followerRequests).not.toBeDefined();
-    Log(removePrivateDataTitle);
-    done();
-  });
-});
-
 const updatePasswordTitle = 'Update password';
 describe(updatePasswordTitle, () => {
   it('updates a password in the database', async (done) => {

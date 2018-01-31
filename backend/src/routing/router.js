@@ -7,6 +7,7 @@ const Error = require('../errors/error');
 const Utils = require('../utilities/utils');
 const Auth = require('../authentication/auth');
 const DroppError = require('../errors/DroppError');
+const UserMiddleware = require('../middleware/user');
 
 /**
  * Logs a message about routing
@@ -29,6 +30,13 @@ function handleError(_error = new Error(), _request, _response) {
   _response.json(errorDetails);
 }
 
+const routes = {
+  '/': 'GET',
+  welcome: 'GET',
+  auth: 'POST',
+  test: 'POST',
+};
+
 let router;
 const routing = function routing(_router) {
   router = _router;
@@ -46,23 +54,54 @@ const routing = function routing(_router) {
   });
 
   /**
-   * Base route for the API
    * Method: GET
-   * Does not require token authentication
+   * Authentication: No
+   * Details: Base route for the API. Provides all accessible routes and methods
    */
-  router.route('/').get((request, response) => {
+  const baseRoute = '/';
+  router.route(baseRoute).get((request, response) => {
+    log(baseRoute, request);
+    response.json(routes);
+  });
+
+  /**
+   * Method: GET
+   * Authentication: No
+   * Details: Route to test without other resource access
+   */
+  const welcomeRoute = '/welcome';
+  router.route(welcomeRoute).get((request, response) => {
+    log(welcomeRoute, request);
     response.json({ message: 'This is the REST API for Dropp' });
   });
 
   /**
-   * Test route
+   * Method: POST
+   * Authentication: No
+   * Details: Generates an authentication token for a valid username and password
+   * Body parameters:
+   *  username
+   *  password
+   */
+  const authRoute = '/auth';
+  router.route(authRoute).post(async (request, response) => {
+    try {
+      const data = await UserMiddleware.getAuthToken(request.body.username, request.body.password);
+      response.json(data);
+    } catch (error) {
+      handleError(error, request, response);
+    }
+  });
+
+  /**
    * Method: GET
-   * Requires token authentication
+   * Authentication: Yes
+   * Details: Test route to test token authentication
    */
   router.route('/test').get(async (request, response) => {
-    let userInfo;
+    let user;
     try {
-      userInfo = await Auth.verifyToken(request, response);
+      user = await Auth.verifyToken(request, response);
     } catch (authError) {
       const source = 'Router /test';
       const standardError = Error.handleAuthError(source, request, response, authError);
@@ -70,7 +109,7 @@ const routing = function routing(_router) {
       return;
     }
 
-    response.json({ hey: userInfo });
+    response.json(user.data);
   });
 
   return router;

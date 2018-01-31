@@ -69,14 +69,14 @@ const verifyToken = async function verifyToken(_request, _response) {
 
 /**
  * Generates a new JSON web token
- * @param {Object} _userInfo JSON containing unique user information
+ * @param {User} _user user object with unique information
  * @return {String} a JSON web token
  */
-const generateToken = function generateToken(_userInfo) {
+const generateToken = function generateToken(_user) {
   const source = 'generateToken()';
   log(source);
 
-  return Jwt.sign(_userInfo, JwtConfig.secret, { expiresIn: expirationTime });
+  return Jwt.sign(_user.privateData, JwtConfig.secret, { expiresIn: expirationTime });
 };
 
 /**
