@@ -21,18 +21,26 @@ function log(_source, _message) {
 
 /**
  * Retrieves a user by their username
- * @param {String} _username the username of the user
- * @return {User} the retrieved user, or
+ * @param {User} _currentUser the current user for the request
+ * @param {Object} [_details={}] the information to get the user
+ * @return {Object} the retrieved user, or
  * null if no user with that username exists
- * @throws {DroppError} if the _username parameter is not a valid username
+ * @throws {DroppError} if the _username parameter is not
+ * a valid username or if no user by that username exists
  */
-const get = async function get(_username) {
+const get = async function get(_currentUser, _details = {}) {
   const source = 'get()';
-  log(source, _username);
+  log(source, _details.username);
 
-  if (!Validator.isValidUsername(_username)) throw new DroppError({ invalidMember: 'username' });
-  const user = await UserAccessor.get(_username);
-  return user;
+  if (!(_currentUser instanceof User)) DroppError.throwServerError(source, null, 'Object is not a User');
+  if (!Validator.isValidUsername(_details.username)) {
+    DroppError.throwInvalidRequestError(source, 'username');
+  }
+
+  const user = await UserAccessor.get(_details.username);
+  if (!Utils.hasValue(user)) DroppError.throwResourceDneError(source, 'user');
+
+  return _currentUser.username === user.username ? user.privateData : user.publicData;
 };
 
 /**
@@ -46,7 +54,7 @@ const getPassword = async function getPassword(_username) {
   const source = 'getPassword()';
   log(source, _username);
 
-  if (!Validator.isValidUsername(_username)) throw new DroppError({ invalidMember: 'username' });
+  if (!Validator.isValidUsername(_username)) DroppError.throwInvalidRequestError(source, 'username');
   return UserAccessor.getPassword(_username);
 };
 
@@ -65,15 +73,17 @@ const create = async function create(_details = {}) {
   if (!Validator.isValidEmail(_details.email)) invalidMembers.push('email');
   if (!Validator.isValidUsername(_details.username)) invalidMembers.push('username');
   if (!Validator.isValidPassword(_details.password)) invalidMembers.push('password');
-  if (invalidMembers.length > 0) throw new DroppError({ invalidMembers });
+  if (invalidMembers.length > 0) DroppError.throwInvalidRequestError(source, invalidMembers);
 
-  const existingUser = await get(_details.username);
+  const existingUser = await UserAccessor.get(_details.username);
   if (Utils.hasValue(existingUser) && existingUser instanceof User) {
     DroppError.throwResourceError(source, 'A user with that username already exists');
   }
 
   const user = new User(_details);
-  await UserAccessor.create(user, _details.password);
+  const password = await Auth.hash(_details.password);
+  await UserAccessor.create(user, password);
+  return user;
 };
 
 /**
@@ -92,21 +102,42 @@ const getAuthToken = async function getAuthToken(_username, _password) {
   const invalidMembers = [];
   if (!Validator.isValidUsername(_username)) invalidMembers.push('username');
   if (!Validator.isValidPassword(_password)) invalidMembers.push('password');
-  if (invalidMembers.length > 0) throw new DroppError({ invalidMembers });
+  if (invalidMembers.length > 0) DroppError.throwInvalidRequestError(source, invalidMembers);
 
   const retrievedPassword = await getPassword(_username);
-  if (!Validator.isValidPassword(retrievedPassword)) throw new DroppError({ userDNE: 'wow' });
+  if (!Validator.isValidPassword(retrievedPassword)) {
+    DroppError.throwLoginError(source, null, `Retrieved password: ${retrievedPassword}`);
+  }
 
   const passwordsMatch = await Auth.validatePasswords(_password, retrievedPassword);
-  if (!passwordsMatch) throw new DroppError({ invalidPassword: _password });
+  if (!passwordsMatch) DroppError.throwLoginError(source);
 
-  const user = await get(_username);
-  if (!Utils.hasValue(user)) throw new DroppError({ serverError: 'shit' });
+  const user = await UserAccessor.get(_username);
+  if (!Utils.hasValue(user)) {
+    DroppError.throwServerError(source, null, `Password was valid, but user was ${user}`);
+  }
 
   const token = Auth.generateToken(user);
   const data = {
     success: {
       token: `Bearer ${token}`,
+      message: 'Successful authentication',
+    },
+  };
+
+  return data;
+};
+
+const addNewUser = async function addNewUser(_details = {}) {
+  const source = 'addNewUser()';
+  log(source, '');
+
+  const user = await create(_details);
+  const token = Auth.generateToken(user);
+  const data = {
+    success: {
+      token: `Bearer ${token}`,
+      message: 'Successful user creation',
     },
   };
 
@@ -117,5 +148,6 @@ module.exports = {
   get,
   getAuthToken,
   create,
+  addNewUser,
   getPassword,
 };

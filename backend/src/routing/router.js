@@ -3,11 +3,11 @@
  */
 
 const Log = require('../logging/logger');
-const Error = require('../errors/error');
 const Utils = require('../utilities/utils');
 const Auth = require('../authentication/auth');
 const DroppError = require('../errors/DroppError');
 const UserMiddleware = require('../middleware/user');
+const ErrorLogAccessor = require('../database/error');
 
 /**
  * Logs a message about routing
@@ -25,8 +25,18 @@ function log(_message, _request) {
  * @param {Object} _response the HTTP response
  */
 function handleError(_error = new Error(), _request, _response) {
+  let logDetails;
   let errorDetails;
-  if (_error instanceof DroppError) errorDetails = _error.details;
+  if (_error instanceof DroppError) {
+    errorDetails = _error.details;
+    logDetails = _error.privateDetails.error;
+    _response.status(_error.statusCode);
+
+    logDetails.requestId = _request.headers.requestId;
+    logDetails.ip = _request.headers['x-forwarded-for'] || _request.connection.remoteAddress;
+    ErrorLogAccessor.add(logDetails);
+  }
+
   _response.json(errorDetails);
 }
 
@@ -34,7 +44,10 @@ const routes = {
   '/': 'GET',
   welcome: 'GET',
   auth: 'POST',
-  test: 'POST',
+  users: {
+    '/': 'POST',
+    '/<username>': 'GET',
+  },
 };
 
 let router;
@@ -94,22 +107,47 @@ const routing = function routing(_router) {
   });
 
   /**
+   * Method: POST
+   * Authentication: No
+   * Details: Creates a user and generates an authentication token
+   * Body parameters:
+   *  email
+   *  username
+   *  password
+   */
+  router.route('/users').post(async (request, response) => {
+    try {
+      const data = await UserMiddleware.addNewUser(request.body);
+      response.json(data);
+    } catch (error) {
+      handleError(error, request, response);
+    }
+  });
+
+  /**
    * Method: GET
    * Authentication: Yes
-   * Details: Test route to test token authentication
+   * Details: Retrieves a user by their username
+   * URL parameters:
+   *  username
    */
-  router.route('/test').get(async (request, response) => {
+  router.route('/users/:username').get(async (request, response) => {
     let user;
     try {
       user = await Auth.verifyToken(request, response);
     } catch (authError) {
-      const source = 'Router /test';
-      const standardError = Error.handleAuthError(source, request, response, authError);
-      response.json(standardError);
+      const source = 'Router /users';
+      const error = DroppError.handleAuthError(source, request, response, authError);
+      handleError(error, request, response);
       return;
     }
 
-    response.json(user.data);
+    try {
+      const data = await UserMiddleware.get(user, request.params);
+      response.json(data);
+    } catch (error) {
+      handleError(error, request, response);
+    }
   });
 
   return router;

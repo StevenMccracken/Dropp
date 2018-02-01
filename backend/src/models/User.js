@@ -10,12 +10,16 @@ class User extends Object {
   constructor(_details = {}) {
     super();
 
-    if (!Utils.hasValue(_details)) throw new DroppError();
+    if (!Utils.hasValue(_details)) {
+      DroppError.throwServerError('User constructor', null, 'Details arg is invalid');
+    }
 
     const invalidMembers = [];
     if (!Validator.isValidEmail(_details.email)) invalidMembers.push('email');
     if (!Validator.isValidUsername(_details.username)) invalidMembers.push('username');
-    if (invalidMembers.length > 0) throw new DroppError({ invalidMembers });
+    if (invalidMembers.length > 0) {
+      DroppError.throwServerError('User constructor', null, `Invalid details args: ${invalidMembers.join(',')}`);
+    }
 
     this.email = _details.email;
     this.username = _details.username;
@@ -178,27 +182,12 @@ class User extends Object {
   }
 
   get publicData() {
-    const data = {
-      username: this._username,
-      follows: {},
-      followers: {},
-      followsCount: 0,
-      followerCount: 0,
-    };
-
-    if (Utils.hasValue(this._follows) && this._follows.length > 0) {
-      this._follows.forEach((follow) => {
-        data.followsCount++;
-        data.follows[follow] = follow;
-      });
-    }
-
-    if (Utils.hasValue(this._followers) && this._followers.length > 0) {
-      this._followers.forEach((follower) => {
-        data.followerCount++;
-        data.followers[follower] = follower;
-      });
-    }
+    const data = this.privateData;
+    delete data.email;
+    delete data.followRequests;
+    delete data.followerRequests;
+    delete data.followRequestCount;
+    delete data.followerRequestCount;
 
     return data;
   }

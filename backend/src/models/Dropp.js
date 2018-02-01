@@ -10,7 +10,9 @@ class Dropp extends Object {
   constructor(_details = {}) {
     super();
 
-    if (!Utils.hasValue(_details)) throw new DroppError();
+    if (!Utils.hasValue(_details)) {
+      DroppError.throwServerError('Dropp constructor', null, 'Details arg is invalid');
+    }
 
     const invalidMembers = [];
     if (!Validator.isValidLocation(_details.location)) invalidMembers.push('location');
@@ -18,7 +20,9 @@ class Dropp extends Object {
     if (!Validator.isValidUsername(_details.username)) invalidMembers.push('username');
     if (!Validator.isValidTextPost(_details.text)) invalidMembers.push('text');
     if (!Validator.isValidBooleanString(_details.media)) invalidMembers.push('media');
-    if (invalidMembers.length > 0) throw new DroppError({ invalidMembers });
+    if (invalidMembers.length > 0) {
+      DroppError.throwServerError('Dropp constructor', null, `Invalid details args: ${invalidMembers.join(',')}`);
+    }
 
     this.id = _details.id;
     this.location = _details.location;

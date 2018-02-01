@@ -3,7 +3,6 @@
  */
 
 const Log = require('../logging/logger');
-// const Error = require('../errors/error');
 const Firebase = require('firebase-admin');
 const Validator = require('../utilities/validator');
 const DroppError = require('../errors/DroppError');
@@ -50,16 +49,16 @@ function log(_message, _url) {
  * @param {String} _url the firebase path to interact with
  * @throws {DroppError}
  */
-function throwInvalidUrlError(_url) {
-  throw new DroppError({ invalid_firebase_url: _url });
+function throwInvalidUrlError(source, _url) {
+  DroppError.throwServerError(source, null, `Invalid URL for Firebase: ${_url}`);
 }
 
 /**
  * Creates and throws an error with the has not started message in the details
  * @throws {DroppError}
  */
-function throwHasNotStartedError() {
-  throw new DroppError({ details: 'Firebase has not started yet' });
+function throwHasNotStartedError(source) {
+  DroppError.throwServerError(source, null, 'Firebase has not started yet');
 }
 
 // Firebase functions
@@ -74,8 +73,8 @@ const get = async function get(_url) {
   const source = 'get()';
   log(source, _url);
 
-  if (!didStart) throwHasNotStartedError();
-  if (!Validator.isValidFirebaseId(_url)) throwInvalidUrlError();
+  if (!didStart) throwHasNotStartedError(source);
+  if (!Validator.isValidFirebaseId(_url)) throwInvalidUrlError(source, _url);
   const ref = db.ref(_url);
   const snapshot = await ref.once('value');
   return snapshot.val();
@@ -92,8 +91,8 @@ const add = async function add(_url, _data) {
   const source = 'add()';
   log(source, _url);
 
-  if (!didStart) throwHasNotStartedError();
-  if (!Validator.isValidFirebaseId(_url)) throwInvalidUrlError();
+  if (!didStart) throwHasNotStartedError(source);
+  if (!Validator.isValidFirebaseId(_url)) throwInvalidUrlError(source, _url);
   const ref = db.ref(_url);
   const key = await ref.push(_data);
   return key.toString();
@@ -109,8 +108,8 @@ const update = async function update(_url, _data) {
   const source = 'update()';
   log(source, _url);
 
-  if (!didStart) throwHasNotStartedError();
-  if (!Validator.isValidFirebaseId(_url)) throwInvalidUrlError();
+  if (!didStart) throwHasNotStartedError(source);
+  if (!Validator.isValidFirebaseId(_url)) throwInvalidUrlError(source, _url);
   const ref = db.ref(_url);
   await ref.set(_data);
 };
@@ -125,9 +124,9 @@ const bulkUpdate = async function bulkUpdate(_urlDataMap = {}) {
   const source = 'bulkUpdate()';
   log(source, Object.keys(_urlDataMap));
 
-  if (!didStart) throwHasNotStartedError();
+  if (!didStart) throwHasNotStartedError(source);
   Object.keys(_urlDataMap).forEach((key) => {
-    if (!Validator.isValidFirebaseId(key)) throwInvalidUrlError();
+    if (!Validator.isValidFirebaseId(key)) throwInvalidUrlError(source, key);
   });
 
   const ref = db.ref();
@@ -143,8 +142,8 @@ const remove = async function remove(_url) {
   const source = 'delete()';
   log(source, _url);
 
-  if (!didStart) throwHasNotStartedError();
-  if (!Validator.isValidFirebaseId(_url)) throwInvalidUrlError();
+  if (!didStart) throwHasNotStartedError(source);
+  if (!Validator.isValidFirebaseId(_url)) throwInvalidUrlError(source, _url);
   const ref = db.ref(_url);
   await ref.remove();
 };
@@ -158,11 +157,10 @@ const bulkRemove = async function bulkRemove(_urls = []) {
   const source = 'bulkRemove()';
   log(source, _urls);
 
-  if (!didStart) throwHasNotStartedError();
-
+  if (!didStart) throwHasNotStartedError(source);
   const deleteUrlsMap = {};
   _urls.forEach((url) => {
-    if (!Validator.isValidFirebaseId(url)) throwInvalidUrlError();
+    if (!Validator.isValidFirebaseId(url)) throwInvalidUrlError(source, url);
     else deleteUrlsMap[url] = null;
   });
 

@@ -74,9 +74,7 @@ const add = async function add(_dropp) {
   const source = 'add()';
   log(source, '');
 
-  if (!(_dropp instanceof Dropp)) {
-    throw new DroppError({ invalid_type: 'Object is not a Dropp' });
-  }
+  if (!(_dropp instanceof Dropp)) DroppError.throwServerError(source, null, 'Object is not a Dropp');
 
   const invalidMembers = [];
   if (!Validator.isValidTextPost(_dropp.text)) invalidMembers.push('text');
@@ -84,7 +82,7 @@ const add = async function add(_dropp) {
   if (!Validator.isValidLocation(_dropp.location)) invalidMembers.push('location');
   if (!Validator.isValidUsername(_dropp.username)) invalidMembers.push('username');
   if (!Validator.isValidTimestamp(_dropp.timestamp)) invalidMembers.push('timestamp');
-  if (invalidMembers.length > 0) throw new DroppError({ invalidMembers });
+  if (invalidMembers.length > 0) DroppError.throwInvalidRequestError(source, invalidMembers);
 
   const droppUrl = await Firebase.add(baseUrl, _dropp.data);
   const id = droppUrl.split('/').pop();
@@ -105,11 +103,8 @@ const updateText = async function updateText(_dropp, _text) {
   const source = 'updateText()';
   log(source, _dropp.id);
 
-  if (!(_dropp instanceof Dropp)) {
-    throw new DroppError({ invalid_type: 'Object is not a Dropp' });
-  }
-
-  if (!Validator.isValidTextPost(_text)) throw new DroppError({ invalidMember: 'text' });
+  if (!(_dropp instanceof Dropp)) DroppError.throwServerError(source, null, 'Object is not a Dropp');
+  if (!Validator.isValidTextPost(_text)) DroppError.throwInvalidRequestError(source, 'text');
   await Firebase.update(`${baseUrl}/${_dropp.id}/text`, _text);
   /* eslint-disable no-param-reassign */
   _dropp.text = _text;
@@ -125,10 +120,7 @@ const remove = async function remove(_dropp) {
   const source = 'remove()';
   log(source, _dropp.id);
 
-  if (!(_dropp instanceof Dropp)) {
-    throw new DroppError({ invalid_type: 'Object is not a Dropp' });
-  }
-
+  if (!(_dropp instanceof Dropp)) DroppError.throwServerError(source, null, 'Object is not a Dropp');
   await Firebase.remove(`${baseUrl}/${_dropp.id}`);
 };
 
@@ -143,7 +135,7 @@ const bulkRemove = async function bulkRemove(_dropps = []) {
 
   const removals = [];
   _dropps.forEach((dropp) => {
-    if (!(dropp instanceof Dropp)) throw new DroppError({ invalid_type: 'Object is not a Dropp' });
+    if (!(dropp instanceof Dropp)) DroppError.throwServerError(source, null, 'Object is not a Dropp');
     else removals.push(`${baseUrl}/${dropp.id}`);
   });
 

@@ -33,7 +33,7 @@ const get = async function get(_username) {
   const source = 'get()';
   log(source, _username);
 
-  if (!Validator.isValidUsername(_username)) throw new DroppError({ invalidMember: 'username' });
+  if (!Validator.isValidUsername(_username)) DroppError.throwInvalidRequestError(source, 'username');
   const json = await Firebase.get(`${usersBaseUrl}/${_username}`);
 
   if (!Utils.hasValue(json)) return null;
@@ -51,7 +51,7 @@ const getPassword = async function getPassword(_username) {
   const source = 'getPassword()';
   log(source, _username);
 
-  if (!Validator.isValidUsername(_username)) throw new DroppError({ invalidMember: 'username' });
+  if (!Validator.isValidUsername(_username)) DroppError.throwInvalidRequestError(source, 'username');
   return Firebase.get(`${passwordsBaseUrl}/${_username}`);
 };
 
@@ -65,15 +65,13 @@ const create = async function create(_user, _password) {
   const source = 'create()';
   log(source, '');
 
-  if (!(_user instanceof User)) {
-    throw new DroppError({ invalid_type: 'Object is not a User' });
-  }
+  if (!(_user instanceof User)) DroppError.throwServerError(source, null, 'Object is not a User');
 
   const invalidMembers = [];
   if (!Validator.isValidEmail(_user.email)) invalidMembers.push('email');
   if (!Validator.isValidUsername(_user.username)) invalidMembers.push('username');
   if (!Validator.isValidPassword(_password)) invalidMembers.push('password');
-  if (invalidMembers.length > 0) throw new DroppError({ invalidMembers });
+  if (invalidMembers.length > 0) DroppError.throwInvalidRequestError(source, invalidMembers);
 
   const data = {};
   data[`${usersBaseUrl}/${_user.username}`] = _user.data;
@@ -91,11 +89,8 @@ const updatePassword = async function updatePassword(_user, _password) {
   const source = 'updatePassword()';
   log(source, _user.username);
 
-  if (!(_user instanceof User)) {
-    throw new DroppError({ invalid_type: 'Object is not a User' });
-  }
-
-  if (!Validator.isValidPassword(_password)) throw new DroppError({ invalidMember: 'password' });
+  if (!(_user instanceof User)) DroppError.throwServerError(source, null, 'Object is not a User');
+  if (!Validator.isValidPassword(_password)) DroppError.throwInvalidRequestError(source, 'password');
   await Firebase.update(`${passwordsBaseUrl}/${_user.username}`, _password);
 };
 
@@ -109,11 +104,8 @@ const updateEmail = async function updateEmail(_user, _email) {
   const source = 'updateEmail()';
   log(source, _user.username);
 
-  if (!(_user instanceof User)) {
-    throw new DroppError({ invalid_type: 'Object is not a User' });
-  }
-
-  if (!Validator.isValidEmail(_email)) throw new DroppError({ invalidMember: 'email' });
+  if (!(_user instanceof User)) DroppError.throwServerError(source, null, 'Object is not a User');
+  if (!Validator.isValidEmail(_email)) DroppError.throwInvalidRequestError(source, 'email');
   await Firebase.update(`${usersBaseUrl}/${_user.username}/email`, _email);
   /* eslint-disable no-param-reassign */
   _user.email = _email;
@@ -133,7 +125,7 @@ const addFollowRequest = async function addFollowRequest(_user, _follow) {
   log(source, _user.username);
 
   if (!(_user instanceof User) || !(_follow instanceof User)) {
-    throw new DroppError({ invalid_type: 'Object is not a User' });
+    DroppError.throwServerError(source, null, 'Object is not a User');
   }
 
   const updates = {};
@@ -157,7 +149,7 @@ const addFollow = async function addFollow(_user, _follow) {
   log(source, _user.username);
 
   if (!(_user instanceof User) || !(_follow instanceof User)) {
-    throw new DroppError({ invalid_type: 'Object is not a User' });
+    DroppError.throwServerError(source, null, 'Object is not a User');
   }
 
   const updates = {};
@@ -189,7 +181,7 @@ const removeFollowRequest = async function removeFollowRequest(_user, _follow) {
   log(source, _user.username);
 
   if (!(_user instanceof User) || !(_follow instanceof User)) {
-    throw new DroppError({ invalid_type: 'Object is not a User' });
+    DroppError.throwServerError(source, null, 'Object is not a User');
   }
 
   const removals = [];
@@ -215,7 +207,7 @@ const removeFollow = async function removeFollow(_user, _follow) {
   log(source, _user.username);
 
   if (!(_user instanceof User) || !(_follow instanceof User)) {
-    throw new DroppError({ invalid_type: 'Object is not a User' });
+    DroppError.throwServerError(source, null, 'Object is not a User');
   }
 
   const removals = [];
@@ -239,7 +231,7 @@ const remove = async function remove(_user) {
   log(source, _user.username);
 
   if (!(_user instanceof User)) {
-    throw new DroppError({ invalid_type: 'Object is not a User' });
+    DroppError.throwServerError(source, null, 'Object is not a User');
   }
 
   const removals = [];
