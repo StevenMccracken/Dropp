@@ -1,8 +1,3 @@
-/**
- * Custom error object to contain extra details
- * @extends Error
- */
-
 const Log = require('../logging/logger');
 const Utils = require('../utilities/utils');
 
@@ -14,6 +9,10 @@ function log(_details) {
   Log.log('ERROR', JSON.stringify(_details));
 }
 
+/**
+ * Custom error object to contain extra details
+ * @extends Error
+ */
 class DroppError extends Error {
   constructor(_details = {}, _privateDetails = {}, ..._params) {
     super(..._params);
