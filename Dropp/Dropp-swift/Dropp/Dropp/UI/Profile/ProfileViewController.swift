@@ -10,19 +10,14 @@ import UIKit
 
 class ProfileViewController: UITableViewController {
   
-  var currentUserUpdatedEventHandler: Disposable?
   var user: User!
-  var dropps: [Dropp] = []
-  var filteredDropps: [Dropp] = []
-  var sortButton: UIBarButtonItem!
-  var infoButton: UIBarButtonItem!
+  private var dropps = [Dropp]()
+  private var sortButton: UIBarButtonItem!
+  private var infoButton: UIBarButtonItem!
+  private var currentUserUpdatedEventHandler: Disposable?
   
   private var sortingType: DroppFeedSortingType = .chronological
   private var refreshing = false
-  private var searchController: UISearchController!
-  private var isFiltering: Bool {
-    return searchController.isActive && !((searchController.searchBar.text ?? "").isEmpty)
-  }
   
   private lazy var fetchFailedLabel: UILabel = {
     let label = UILabel(withText: "\nUnable to get dropps😢", forTableViewBackground: tableView, andFontSize: 30)
@@ -61,17 +56,8 @@ class ProfileViewController: UITableViewController {
       navigationItem.largeTitleDisplayMode = .never
     }
     
-    searchController = UISearchController(searchResultsController: nil)
-    searchController.searchResultsUpdater = self
-    searchController.obscuresBackgroundDuringPresentation = false
-    searchController.searchBar.placeholder = "Search"
-    searchController.searchBar.tintColor = .salmon
-    searchController.searchBar.delegate = self
-    navigationItem.searchController = searchController
-    definesPresentationContext = true
-    
-    tableView.rowHeight = UITableViewAutomaticDimension
-    tableView.estimatedRowHeight = 150
+    tableView.register(UINib(nibName: ProfileHeaderTableViewCell.identifier, bundle: nil), forCellReuseIdentifier: ProfileHeaderTableViewCell.identifier)
+    tableView.register(UINib(nibName: DroppTableViewCell.identifier, bundle: nil), forCellReuseIdentifier: DroppTableViewCell.identifier)
     
     let refreshControl = UIRefreshControl()
     refreshControl.tintColor = .salmon
@@ -127,7 +113,6 @@ class ProfileViewController: UITableViewController {
           }
           
           strongSelf.dropps = []
-          strongSelf.filteredDropps = []
           strongSelf.toggleNotFollowingLabel(visible: true)
           DispatchQueue.main.async {
             strongSelf.tableView.reloadData()
@@ -151,7 +136,7 @@ class ProfileViewController: UITableViewController {
       }))
       
       alert.addAction(UIAlertAction(title: "Cancel", style: .cancel, handler: nil))
-      if Utils.isPad() {
+      if Utils.isPad {
         let popover = alert.popoverPresentationController
         popover?.permittedArrowDirections = .up
         popover?.barButtonItem = infoButton
@@ -225,10 +210,7 @@ class ProfileViewController: UITableViewController {
   
   @objc
   func didTapSortButton() {
-    let droppsType = user.isCurrentUser ? "your dropps" : "dropps"
-    let disclosure = "If you choose to sort by distance and your location cannot be determined, \(droppsType) will be sorted by newest first."
-    let alert = UIAlertController(title: "Sort Dropps", message: disclosure, preferredStyle: .actionSheet, color: .salmon)
-    
+    let alert = UIAlertController(title: nil, message: nil, preferredStyle: .actionSheet, color: .salmon)
     let closestTitle = "Closest\(sortingType == .closest ? " ✓" : "")"
     alert.addAction(UIAlertAction(title: closestTitle, style: .default, handler: { _ in
       guard self.sortingType != .closest else {
@@ -238,12 +220,9 @@ class ProfileViewController: UITableViewController {
       if let location = LocationManager.shared.currentLocation {
         self.sortingType = .closest
         self.dropps = Dropp.sort(self.dropps, by: .closest, currentLocation: location)
-      } else {
-        self.sortingType = .chronological
-        self.dropps = Dropp.sort(self.dropps, by: .chronological)
+        self.tableView.reloadData()
       }
       
-      self.tableView.reloadData()
     }))
     
     let farthestTitle = "Farthest\(sortingType == .farthest ? " ✓" : "")"
@@ -255,12 +234,8 @@ class ProfileViewController: UITableViewController {
       if let location = LocationManager.shared.currentLocation {
         self.sortingType = .farthest
         self.dropps = Dropp.sort(self.dropps, by: .farthest, currentLocation: location)
-      } else {
-        self.sortingType = .chronological
-        self.dropps = Dropp.sort(self.dropps, by: .chronological)
+        self.tableView.reloadData()
       }
-      
-      self.tableView.reloadData()
     }))
     
     let newestTitle = "Newest\(sortingType == .chronological ? " ✓" : "")"
@@ -286,7 +261,7 @@ class ProfileViewController: UITableViewController {
     }))
     
     alert.addAction(UIAlertAction(title: "Cancel", style: .cancel, handler: nil))
-    if Utils.isPad() {
+    if Utils.isPad {
       let popover = alert.popoverPresentationController
       popover?.permittedArrowDirections = .up
       popover?.barButtonItem = sortButton
@@ -308,13 +283,13 @@ class ProfileViewController: UITableViewController {
         if let doesFollowUser = LoginManager.shared.currentUser?.follows(updatedUser), doesFollowUser == true {
           DispatchQueue.main.async {
             strongSelf.navigationItem.rightBarButtonItem = strongSelf.sortButton
-            let headerCell = strongSelf.tableView.dequeueReusableCell(withIdentifier: ProfileHeaderTableViewCell.reuseIdentifier, for: IndexPath(row: 0, section: 0)) as! ProfileHeaderTableViewCell
+            let headerCell = strongSelf.tableView.dequeueReusableCell(withIdentifier: ProfileHeaderTableViewCell.identifier, for: IndexPath(row: 0, section: 0)) as! ProfileHeaderTableViewCell
             headerCell.toggleInteractionButton(enabled: true, withTitle: "Unfollow")
           }
         } else if let hasRequestedFollow = LoginManager.shared.currentUser?.hasRequestedFollow(updatedUser), hasRequestedFollow == true {
           DispatchQueue.main.async {
             strongSelf.navigationItem.rightBarButtonItem = strongSelf.infoButton
-            let headerCell = strongSelf.tableView.dequeueReusableCell(withIdentifier: ProfileHeaderTableViewCell.reuseIdentifier, for: IndexPath(row: 0, section: 0)) as! ProfileHeaderTableViewCell
+            let headerCell = strongSelf.tableView.dequeueReusableCell(withIdentifier: ProfileHeaderTableViewCell.identifier, for: IndexPath(row: 0, section: 0)) as! ProfileHeaderTableViewCell
             headerCell.toggleInteractionButton(enabled: false, withTitle: "Request pending...")
           }
         }
@@ -443,7 +418,7 @@ class ProfileViewController: UITableViewController {
   // MARK: - Table view data source
   
   override func numberOfSections(in tableView: UITableView) -> Int {
-    return isFiltering ? filteredDropps.count : dropps.count + 1
+    return dropps.count + 1
   }
   
   override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
@@ -452,8 +427,8 @@ class ProfileViewController: UITableViewController {
   
   override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
     var cell: UITableViewCell
-    if indexPath.section == 0 && !isFiltering {
-      let headerCell = tableView.dequeueReusableCell(withIdentifier: ProfileHeaderTableViewCell.reuseIdentifier, for: indexPath) as! ProfileHeaderTableViewCell
+    if indexPath.section == 0 {
+      let headerCell = tableView.dequeueReusableCell(withIdentifier: ProfileHeaderTableViewCell.identifier, for: indexPath) as! ProfileHeaderTableViewCell
       if let followersCount = user.followers?.count {
         headerCell.updateFollowers(followersCount)
         headerCell.toggleFollowersButton(enabled: followersCount > 0)
@@ -483,8 +458,8 @@ class ProfileViewController: UITableViewController {
       headerCell.delegate = self
       cell = headerCell
     } else {
-      let droppCell = tableView.dequeueReusableCell(withIdentifier: DroppTableViewCell.reuseIdentifier, for: indexPath) as! DroppTableViewCell
-      let dropp = isFiltering ? filteredDropps[indexPath.section] : dropps[indexPath.section - 1]
+      let droppCell = tableView.dequeueReusableCell(withIdentifier: DroppTableViewCell.identifier, for: indexPath) as! DroppTableViewCell
+      let dropp = dropps[indexPath.section - 1]
       droppCell.addContent(from: dropp)
       cell = droppCell
     }
@@ -509,7 +484,7 @@ class ProfileViewController: UITableViewController {
       return
     }
     
-    guard indexPath.section > 0 || isFiltering else {
+    guard indexPath.section > 0 else {
       return
     }
     
@@ -517,7 +492,7 @@ class ProfileViewController: UITableViewController {
       return
     }
     
-    destination.dropp = isFiltering ? filteredDropps[indexPath.section] : dropps[indexPath.section - 1]
+    destination.dropp = dropps[indexPath.section - 1]
     destination.feedViewControllerDelegate = self
   }
   
@@ -539,36 +514,10 @@ class ProfileViewController: UITableViewController {
   
   func updateInteractionButton(enabled: Bool, withTitle title: String? = nil, _ completion: (() -> Void)? = nil) {
     DispatchQueue.main.async {
-      let headerCell = self.tableView.dequeueReusableCell(withIdentifier: ProfileHeaderTableViewCell.reuseIdentifier, for: IndexPath(row: 0, section: 0)) as! ProfileHeaderTableViewCell
+      let headerCell = self.tableView.dequeueReusableCell(withIdentifier: ProfileHeaderTableViewCell.identifier, for: IndexPath(row: 0, section: 0)) as! ProfileHeaderTableViewCell
       headerCell.toggleInteractionButton(enabled: enabled, withTitle: title)
       completion?()
     }
-  }
-}
-
-extension ProfileViewController: UISearchBarDelegate {
-  
-  func searchBar(_ searchBar: UISearchBar, textDidChange searchText: String) {
-    guard !searchText.trim().isEmpty else {
-      return
-    }
-    
-    filterContent(searchText)
-  }
-}
-
-extension ProfileViewController: UISearchResultsUpdating {
-  
-  func updateSearchResults(for searchController: UISearchController) {
-    filterContent(searchController.searchBar.text!)
-  }
-  
-  func filterContent(_ filter: String) {
-    filteredDropps = dropps.filter {
-      return $0.message!.contains(filter, options: .caseInsensitive)
-    }
-    
-    tableView.reloadData()
   }
 }
 
@@ -724,7 +673,6 @@ extension ProfileViewController: ProfileHeaderTableViewCellDelegate {
       }
       
       strongSelf.dropps = []
-      strongSelf.filteredDropps = []
       strongSelf.toggleNotFollowingLabel(visible: true)
       strongSelf.toggleLoadingView(hidden: true) {
         strongSelf.updateInteractionButton(enabled: true, withTitle: "Follow")
@@ -754,7 +702,6 @@ extension ProfileViewController: ProfileHeaderTableViewCellDelegate {
       LoginManager.shared.currentUser?.removeFollow(strongSelf.user)
       strongSelf.user.removeFollower(LoginManager.shared.currentUser!)
       strongSelf.dropps = []
-      strongSelf.filteredDropps = []
       strongSelf.toggleNotFollowingLabel(visible: true)
       strongSelf.updateInteractionButton(enabled: true, withTitle: "Follow") {
         strongSelf.tableView.reloadData()

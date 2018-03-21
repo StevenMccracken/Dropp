@@ -11,11 +11,9 @@ import UIKit
 class FeedViewController: UITableViewController {
   
   var dropps: [Dropp] = []
-  var filteredDropps: [Dropp] = []
   private var refreshing = false
   private var sortingType: DroppFeedSortingType = .closest
   private var locationAuthorizationEventHandler: Disposable?
-  private var maxFetchDistanceUpdatedEventHandler: Disposable?
   private lazy var fetchFailedLabel: UILabel = {
     let label = UILabel(withText: "\nUnable to get dropps😟", forTableViewBackground: tableView, andFontSize: 30)
     return label
@@ -23,17 +21,12 @@ class FeedViewController: UITableViewController {
   
   private lazy var noNearbyDroppsLabel: UILabel = {
     let label = UILabel(withText: "\nNo dropps😢", forTableViewBackground: tableView, andFontSize: 30)
-
     return label
   }()
   
   override func viewDidLoad() {
     super.viewDidLoad()
-    
-    navigationItem.rightBarButtonItem = UIBarButtonItem(title: "Sort", style: .plain, target: self, action: #selector(didTapSortButton))
-    navigationItem.rightBarButtonItem?.isEnabled = false
-    tableView.rowHeight = UITableViewAutomaticDimension
-    tableView.estimatedRowHeight = 150
+    tableView.register(UINib(nibName: DroppTableViewCell.identifier, bundle: nil), forCellReuseIdentifier: DroppTableViewCell.identifier)
     
     let refreshControl = UIRefreshControl()
     refreshControl.tintColor = .salmon
@@ -44,9 +37,6 @@ class FeedViewController: UITableViewController {
     } else {
       refreshData()
     }
-    
-    updateNavigationItemPrompt(withDistance: SettingsManager.shared.maxFetchDistance)
-    maxFetchDistanceUpdatedEventHandler = SettingsManager.shared.maxFetchDistanceChangedEvent.addHandler(target: self, handler: FeedViewController.updateNavigationItemPrompt)
   }
   
   override func viewWillDisappear(_ animated: Bool) {
@@ -59,21 +49,6 @@ class FeedViewController: UITableViewController {
     if authorizationGranted {
       refreshData()
       locationAuthorizationEventHandler?.dispose()
-    }
-  }
-  
-  private func updateNavigationItemPrompt(withDistance distance: Double) {
-    var message = "Dropps from friends & within"
-    if distance >= 5280 {
-      let miles = Int(distance.feetToMiles)
-      message = "\(message) \(miles) mile\(miles == 1 ? "" : "s")"
-    } else {
-      message = "\(message) \(Int(distance)) feet"
-    }
-    
-    navigationItem.prompt = message
-    DispatchQueue.main.asyncAfter(deadline: .now() + .seconds(5)) {
-      self.navigationItem.prompt = nil
     }
   }
   
@@ -110,10 +85,6 @@ class FeedViewController: UITableViewController {
       debugPrint("Got \(dropps.count) dropps")
       strongSelf.dropps = Dropp.sort(dropps, by: strongSelf.sortingType, currentLocation: LocationManager.shared.currentLocation)
       strongSelf.toggleNoNearbyDroppsLabel(visible: dropps.isEmpty)
-      DispatchQueue.main.async {
-        strongSelf.navigationItem.rightBarButtonItem?.isEnabled = !dropps.isEmpty
-      }
-      
       completion()
     }, failure: { [weak self] (getDroppsError: NSError) in
       guard let strongSelf = self else {
@@ -122,83 +93,8 @@ class FeedViewController: UITableViewController {
       
       debugPrint("Failed to get dropps", getDroppsError)
       strongSelf.toggleFetchFailedLabel(visible: strongSelf.dropps.isEmpty)
-      DispatchQueue.main.async {
-        strongSelf.navigationItem.rightBarButtonItem?.isEnabled = !strongSelf.dropps.isEmpty
-      }
-      
       completion()
     })
-  }
-  
-  @objc
-  func didTapSortButton() {
-    let disclosure = "If you choose to sort by distance and your location cannot be determined, your feed will be sorted by newest dropps first."
-    let alert = UIAlertController(title: "Sort Feed", message: disclosure, preferredStyle: .actionSheet, color: .salmon)
-    
-    let closestTitle = "Closest\(sortingType == .closest ? " ✓" : "")"
-    alert.addAction(UIAlertAction(title: closestTitle, style: .default, handler: { _ in
-      guard self.sortingType != .closest else {
-        return
-      }
-      
-      if let location = LocationManager.shared.currentLocation {
-        self.sortingType = .closest
-        self.dropps = Dropp.sort(self.dropps, by: .closest, currentLocation: location)
-      } else {
-        self.sortingType = .chronological
-        self.dropps = Dropp.sort(self.dropps, by: .chronological)
-      }
-      
-      self.tableView.reloadData()
-    }))
-    
-    let farthestTitle = "Farthest\(sortingType == .farthest ? " ✓" : "")"
-    alert.addAction(UIAlertAction(title: farthestTitle, style: .default, handler: { _ in
-      guard self.sortingType != .farthest else {
-        return
-      }
-      
-      if let location = LocationManager.shared.currentLocation {
-        self.sortingType = .farthest
-        self.dropps = Dropp.sort(self.dropps, by: .farthest, currentLocation: location)
-      } else {
-        self.sortingType = .chronological
-        self.dropps = Dropp.sort(self.dropps, by: .chronological)
-      }
-      
-      self.tableView.reloadData()
-    }))
-    
-    let newestTitle = "Newest\(sortingType == .chronological ? " ✓" : "")"
-    alert.addAction(UIAlertAction(title: newestTitle, style: .default, handler: { _ in
-      guard self.sortingType != .chronological else {
-        return
-      }
-      
-      self.sortingType = .chronological
-      self.dropps = Dropp.sort(self.dropps, by: .chronological)
-      self.tableView.reloadData()
-    }))
-    
-    let oldestTitle = "Oldest\(sortingType == .reverseChronological ? " ✓" : "")"
-    alert.addAction(UIAlertAction(title: oldestTitle, style: .default, handler: { _ in
-      guard self.sortingType != .reverseChronological else {
-        return
-      }
-      
-      self.sortingType = .reverseChronological
-      self.dropps = Dropp.sort(self.dropps, by: .reverseChronological)
-      self.tableView.reloadData()
-    }))
-    
-    alert.addAction(UIAlertAction(title: "Cancel", style: .cancel, handler: nil))
-    if Utils.isPad() {
-      let popover = alert.popoverPresentationController
-      popover?.permittedArrowDirections = .up
-      popover?.barButtonItem = navigationItem.rightBarButtonItem
-    }
-    
-    present(alert, animated: true, completion: nil)
   }
   
   func toggleFetchFailedLabel(visible: Bool) {
@@ -236,7 +132,7 @@ class FeedViewController: UITableViewController {
   }
   
   override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-    let cell = tableView.dequeueReusableCell(withIdentifier: DroppTableViewCell.reuseIdentifier, for: indexPath) as! DroppTableViewCell
+    let cell = tableView.dequeueReusableCell(withIdentifier: DroppTableViewCell.identifier, for: indexPath) as! DroppTableViewCell
     
     // Configure the cell
     let dropp = dropps[indexPath.section]

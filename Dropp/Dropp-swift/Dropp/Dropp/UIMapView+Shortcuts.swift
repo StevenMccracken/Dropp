@@ -10,6 +10,10 @@ import MapKit
 
 extension MKMapView {
   
+  /**
+   Deselets all the selected annotations in the given map view.
+   - Parameter animated: whether or not to animate the de-selection. Default is true
+   */
   func deselectSelectedAnnotations(animated: Bool = true) {
     for selectedAnnotation in selectedAnnotations {
       deselectAnnotation(selectedAnnotation, animated: animated)

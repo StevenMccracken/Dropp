@@ -10,7 +10,7 @@ import UIKit
 
 class ProfileHeaderTableViewCell: UITableViewCell {
   
-  static let reuseIdentifier = "ProfileHeaderTableViewCell"
+  static let identifier = "ProfileHeaderTableViewCell"
   @IBOutlet weak var followersButton: UIButton!
   @IBOutlet weak var followingButton: UIButton!
   @IBOutlet weak var followersCount: UILabel!

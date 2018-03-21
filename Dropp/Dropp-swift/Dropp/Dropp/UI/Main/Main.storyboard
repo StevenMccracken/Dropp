@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="13529" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES" initialViewController="QVd-R6-9ep">
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="13771" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES" initialViewController="QVd-R6-9ep">
     <device id="retina5_9" orientation="portrait">
         <adaptation id="fullscreen"/>
     </device>
     <dependencies>
-        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="13527"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="13772"/>
         <capability name="Safe area layout guides" minToolsVersion="9.0"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
@@ -20,8 +20,8 @@
                         <color key="selectedImageTintColor" red="0.91661626100000004" green="0.3107863367" blue="0.38301837439999997" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                     </tabBar>
                     <connections>
-                        <segue destination="7lR-p1-hax" kind="relationship" relationship="viewControllers" id="FMB-1V-udw"/>
                         <segue destination="sGQ-wC-lDS" kind="relationship" relationship="viewControllers" id="LBj-oJ-YVV"/>
+                        <segue destination="7lR-p1-hax" kind="relationship" relationship="viewControllers" id="FMB-1V-udw"/>
                         <segue destination="qIQ-f7-0at" kind="relationship" relationship="viewControllers" id="MNh-kK-2I1"/>
                         <segue destination="FOp-WS-HxL" kind="relationship" relationship="viewControllers" id="KA5-9B-imu"/>
                         <segue destination="7Ly-eG-hOW" kind="relationship" relationship="viewControllers" id="ldw-BV-xzU"/>
@@ -59,7 +59,7 @@
                 </navigationController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="Uf3-mR-7na" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="-1740" y="964"/>
+            <point key="canvasLocation" x="-972" y="964"/>
         </scene>
         <!--Feed-->
         <scene sceneID="viV-HW-B3U">
@@ -69,7 +69,7 @@
                 </viewControllerPlaceholder>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="NoS-LN-l7I" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="-1741" y="1414"/>
+            <point key="canvasLocation" x="-973" y="1414"/>
         </scene>
         <!--Map-->
         <scene sceneID="3uh-jV-YK8">
@@ -79,7 +79,7 @@
                 </viewControllerPlaceholder>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="L5L-2q-CZ1" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="-976" y="1414"/>
+            <point key="canvasLocation" x="-1736" y="1414"/>
         </scene>
         <!--Profile-->
         <scene sceneID="74u-aK-9oC">
@@ -166,7 +166,7 @@
                 </navigationController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="y8f-fx-vrh" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="-975" y="964"/>
+            <point key="canvasLocation" x="-1735" y="964"/>
         </scene>
     </scenes>
     <resources>

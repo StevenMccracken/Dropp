@@ -134,7 +134,7 @@ class CreateDroppViewController: UIViewController {
   }
   
   @IBAction func didTapAddPhotoButton(_ sender: Any) {
-    if Utils.isPad() {
+    if Utils.isPad {
       let popover = cameraOptionsSheet.popoverPresentationController
       popover?.permittedArrowDirections = .up
       popover?.sourceView = addPhotoButton
@@ -155,7 +155,7 @@ class CreateDroppViewController: UIViewController {
       imagePicker.cameraCaptureMode = .photo
     } else {
       imagePicker.mediaTypes = UIImagePickerController.availableMediaTypes(for: sourceType) ?? []
-      if Utils.isPad() {
+      if Utils.isPad {
         imagePicker.modalPresentationStyle = .popover
         let popover = imagePicker.popoverPresentationController
         popover?.permittedArrowDirections = .any

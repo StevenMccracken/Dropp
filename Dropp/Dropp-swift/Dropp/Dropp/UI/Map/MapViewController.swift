@@ -145,7 +145,11 @@ class MapViewController: UIViewController {
   
   @objc
   func deviceDidRotate() {
-    statusBarBlurViewHeightConstraint.constant = UIDevice.current.orientation == .portrait ? Constants.statusBarHeight : 0
+    if Utils.isPhone {
+      let orientation = UIApplication.shared.statusBarOrientation
+      let isPortrait = orientation == .portrait || orientation == .portraitUpsideDown
+      statusBarBlurViewHeightConstraint.constant = isPortrait ? Constants.statusBarHeight : 0
+    }
   }
   
   private func toggleDroppCountButton(hidden: Bool) {

@@ -276,7 +276,7 @@ class DroppDetailViewController: UIViewController {
     }))
     
     alert.addAction(UIAlertAction(title: "Cancel", style: .cancel, handler: nil))
-    if Utils.isPad() {
+    if Utils.isPad {
       let popover = alert.popoverPresentationController
       popover?.permittedArrowDirections = .up
       popover?.barButtonItem = navigationItem.rightBarButtonItem

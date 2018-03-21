@@ -10,12 +10,11 @@ import UIKit
 
 class ConnectionTableViewCell: UITableViewCell {
   
-  static let reuseIdentifier = "ConnectionTableViewCell"
+  static let identifier = "ConnectionTableViewCell"
   @IBOutlet weak var usernameLabel: UILabel!
   
   override func awakeFromNib() {
     super.awakeFromNib()
-    
     let view = UIView()
     view.backgroundColor = .mutedSalmon
     selectedBackgroundView = view

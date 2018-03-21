@@ -10,7 +10,7 @@ import UIKit
 
 class DroppTableViewCell: UITableViewCell {
   
-  static let reuseIdentifier = "DroppTableViewCell"
+  static let identifier = "DroppTableViewCell"
   @IBOutlet weak var usernameLabel: UILabel!
   @IBOutlet weak var distanceLabel: UILabel!
   @IBOutlet weak var contentLabel: UILabel!
@@ -18,7 +18,6 @@ class DroppTableViewCell: UITableViewCell {
   
   override func awakeFromNib() {
     super.awakeFromNib()
-    
     let view = UIView()
     view.backgroundColor = .mutedSalmon
     selectedBackgroundView = view
