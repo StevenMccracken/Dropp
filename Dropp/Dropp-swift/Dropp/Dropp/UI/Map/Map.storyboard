@@ -5,8 +5,6 @@
     </device>
     <dependencies>
         <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="14088"/>
-        <capability name="Aspect ratio constraints" minToolsVersion="5.1"/>
-        <capability name="Constraints with non-1.0 multipliers" minToolsVersion="5.1"/>
         <capability name="Safe area layout guides" minToolsVersion="9.0"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
@@ -20,107 +18,22 @@
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
                             <mapView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" mapType="standard" showsUserLocation="YES" showsScale="YES" translatesAutoresizingMaskIntoConstraints="NO" id="p3X-CX-hNg">
-                                <rect key="frame" x="0.0" y="0.0" width="375" height="623"/>
+                                <rect key="frame" x="0.0" y="20" width="375" height="603"/>
                             </mapView>
-                            <visualEffectView opaque="NO" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="hrJ-dI-Eui">
-                                <rect key="frame" x="0.0" y="0.0" width="375" height="20"/>
-                                <view key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" insetsLayoutMarginsFromSafeArea="NO" id="37W-Pa-h8a">
-                                    <rect key="frame" x="0.0" y="0.0" width="375" height="20"/>
-                                    <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
-                                </view>
-                                <constraints>
-                                    <constraint firstAttribute="height" constant="20" id="07o-9H-hgH"/>
-                                </constraints>
-                                <blurEffect style="light"/>
-                            </visualEffectView>
-                            <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="JRl-u7-jUJ" userLabel="Refresh Button Background View">
-                                <rect key="frame" x="320" y="523" width="45" height="90"/>
-                                <subviews>
-                                    <activityIndicatorView opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="750" verticalHuggingPriority="750" animating="YES" style="gray" translatesAutoresizingMaskIntoConstraints="NO" id="WFJ-pB-UPJ" userLabel="Activity Indicator">
-                                        <rect key="frame" x="5" y="49" width="35" height="36"/>
-                                        <color key="color" red="0.91661626100000004" green="0.3107863367" blue="0.38301837439999997" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
-                                    </activityIndicatorView>
-                                    <button hidden="YES" opaque="NO" contentMode="scaleToFill" enabled="NO" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="Jz0-CC-pXX" userLabel="Refresh Button">
-                                        <rect key="frame" x="5" y="49" width="35" height="36"/>
-                                        <color key="tintColor" red="0.91661626100000004" green="0.3107863367" blue="0.38301837439999997" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
-                                        <state key="normal" image="refresh"/>
-                                        <connections>
-                                            <action selector="didTapRefreshButton:" destination="yOi-uH-Ifr" eventType="touchUpInside" id="pV8-OF-c2E"/>
-                                        </connections>
-                                    </button>
-                                    <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="BGQ-V0-ZqR" userLabel="Separator View">
-                                        <rect key="frame" x="0.0" y="44.5" width="45" height="1"/>
-                                        <color key="backgroundColor" white="0.66666666666666663" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
-                                        <constraints>
-                                            <constraint firstAttribute="height" constant="0.40000000000000002" id="Ru2-hD-cBp"/>
-                                        </constraints>
-                                    </view>
-                                    <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="Akk-a5-wcM" userLabel="Locate Button">
-                                        <rect key="frame" x="13" y="13" width="19" height="19"/>
-                                        <constraints>
-                                            <constraint firstAttribute="width" secondItem="Akk-a5-wcM" secondAttribute="height" multiplier="1:1" id="1YK-Nr-oQw"/>
-                                        </constraints>
-                                        <state key="normal" image="location_arrow_empty"/>
-                                        <state key="highlighted" image="location_arrow_filled"/>
-                                        <connections>
-                                            <action selector="didTapLocateUserButton:" destination="yOi-uH-Ifr" eventType="touchUpInside" id="gBF-Ac-btn"/>
-                                        </connections>
-                                    </button>
-                                </subviews>
-                                <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
-                                <constraints>
-                                    <constraint firstItem="WFJ-pB-UPJ" firstAttribute="height" secondItem="JRl-u7-jUJ" secondAttribute="height" multiplier="0.4" id="1Hi-Sx-4tV"/>
-                                    <constraint firstItem="Akk-a5-wcM" firstAttribute="leading" secondItem="JRl-u7-jUJ" secondAttribute="leading" constant="13" id="4jR-99-Piy"/>
-                                    <constraint firstAttribute="bottom" secondItem="WFJ-pB-UPJ" secondAttribute="bottom" constant="5" id="7K8-sJ-SrD"/>
-                                    <constraint firstItem="BGQ-V0-ZqR" firstAttribute="width" secondItem="JRl-u7-jUJ" secondAttribute="width" id="7wP-DX-cbC"/>
-                                    <constraint firstAttribute="trailing" secondItem="Jz0-CC-pXX" secondAttribute="trailing" constant="5" id="E18-gK-yM6"/>
-                                    <constraint firstItem="Akk-a5-wcM" firstAttribute="top" secondItem="JRl-u7-jUJ" secondAttribute="top" constant="13" id="ENR-3N-5MT"/>
-                                    <constraint firstAttribute="width" secondItem="JRl-u7-jUJ" secondAttribute="height" multiplier="1:2" id="EVK-pJ-60D"/>
-                                    <constraint firstAttribute="bottom" secondItem="Jz0-CC-pXX" secondAttribute="bottom" constant="5" id="EfZ-7j-EQj"/>
-                                    <constraint firstAttribute="trailing" secondItem="WFJ-pB-UPJ" secondAttribute="trailing" constant="5" id="J52-h1-etU"/>
-                                    <constraint firstItem="WFJ-pB-UPJ" firstAttribute="leading" secondItem="JRl-u7-jUJ" secondAttribute="leading" constant="5" id="NL3-ge-a7w"/>
-                                    <constraint firstItem="BGQ-V0-ZqR" firstAttribute="centerX" secondItem="JRl-u7-jUJ" secondAttribute="centerX" id="RaY-VE-7Cx"/>
-                                    <constraint firstItem="BGQ-V0-ZqR" firstAttribute="centerY" secondItem="JRl-u7-jUJ" secondAttribute="centerY" id="bbU-8a-lBq"/>
-                                    <constraint firstItem="Jz0-CC-pXX" firstAttribute="height" secondItem="JRl-u7-jUJ" secondAttribute="height" multiplier="0.4" id="eOP-or-Lra"/>
-                                    <constraint firstAttribute="trailing" secondItem="Akk-a5-wcM" secondAttribute="trailing" constant="13" id="ezC-pS-xAq"/>
-                                    <constraint firstItem="Jz0-CC-pXX" firstAttribute="leading" secondItem="JRl-u7-jUJ" secondAttribute="leading" constant="5" id="l7P-6z-IMn"/>
-                                    <constraint firstAttribute="width" constant="45" id="yFz-45-ggE"/>
-                                </constraints>
-                            </view>
-                            <button opaque="NO" contentMode="scaleToFill" enabled="NO" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="wLZ-C7-b0N">
-                                <rect key="frame" x="335" y="30" width="30" height="30"/>
-                                <color key="backgroundColor" red="0.99999600649999998" green="1" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
-                                <state key="disabled">
-                                    <color key="titleColor" red="0.91661626100000004" green="0.3107863367" blue="0.38301837439999997" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
-                                </state>
-                            </button>
                         </subviews>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                         <constraints>
-                            <constraint firstItem="oze-Uy-NMq" firstAttribute="trailing" secondItem="wLZ-C7-b0N" secondAttribute="trailing" constant="10" id="1eZ-Zj-0sD"/>
-                            <constraint firstItem="oze-Uy-NMq" firstAttribute="trailing" secondItem="JRl-u7-jUJ" secondAttribute="trailing" constant="10" id="8Ry-np-eB3"/>
-                            <constraint firstAttribute="trailing" secondItem="hrJ-dI-Eui" secondAttribute="trailing" id="9GF-67-pxB"/>
-                            <constraint firstItem="p3X-CX-hNg" firstAttribute="top" secondItem="k4D-N2-t3H" secondAttribute="top" id="Eir-YU-lxm"/>
+                            <constraint firstItem="p3X-CX-hNg" firstAttribute="top" secondItem="oze-Uy-NMq" secondAttribute="top" id="Eir-YU-lxm"/>
                             <constraint firstItem="p3X-CX-hNg" firstAttribute="leading" secondItem="k4D-N2-t3H" secondAttribute="leading" id="GMg-wR-Jvc"/>
-                            <constraint firstItem="hrJ-dI-Eui" firstAttribute="leading" secondItem="k4D-N2-t3H" secondAttribute="leading" id="HlY-2U-qEf"/>
                             <constraint firstAttribute="trailing" secondItem="p3X-CX-hNg" secondAttribute="trailing" id="N9L-zL-PIJ"/>
-                            <constraint firstItem="hrJ-dI-Eui" firstAttribute="top" secondItem="k4D-N2-t3H" secondAttribute="top" id="Uxj-Ac-HoT"/>
-                            <constraint firstItem="oze-Uy-NMq" firstAttribute="bottom" secondItem="JRl-u7-jUJ" secondAttribute="bottom" constant="10" id="XUG-nh-PJT"/>
-                            <constraint firstItem="wLZ-C7-b0N" firstAttribute="top" secondItem="oze-Uy-NMq" secondAttribute="top" constant="10" id="lMx-1g-dqr"/>
-                            <constraint firstAttribute="bottom" secondItem="p3X-CX-hNg" secondAttribute="bottom" constant="44" id="wTy-Ff-lhQ"/>
+                            <constraint firstItem="oze-Uy-NMq" firstAttribute="bottom" secondItem="p3X-CX-hNg" secondAttribute="bottom" id="wTy-Ff-lhQ"/>
                         </constraints>
                         <viewLayoutGuide key="safeArea" id="oze-Uy-NMq"/>
                     </view>
                     <toolbarItems/>
                     <simulatedToolbarMetrics key="simulatedBottomBarMetrics"/>
                     <connections>
-                        <outlet property="activityIndicator" destination="WFJ-pB-UPJ" id="eBF-Zb-uhm"/>
-                        <outlet property="droppCountButton" destination="wLZ-C7-b0N" id="1A4-OF-UfL"/>
-                        <outlet property="locateUserButton" destination="Akk-a5-wcM" id="fv4-yq-pfv"/>
                         <outlet property="mapView" destination="p3X-CX-hNg" id="YRY-Zw-7TF"/>
-                        <outlet property="refreshButton" destination="Jz0-CC-pXX" id="daA-jH-Ylv"/>
-                        <outlet property="refreshButtonBackgroundView" destination="JRl-u7-jUJ" id="xiB-2J-IKN"/>
-                        <outlet property="statusBarBlurViewHeightConstraint" destination="07o-9H-hgH" id="pgh-Q1-5uz"/>
                         <segue destination="0Op-iU-AiX" kind="show" identifier="showDroppDetailSegue" id="f4E-5a-dUd"/>
                     </connections>
                 </viewController>
@@ -137,9 +50,4 @@
             <point key="canvasLocation" x="553" y="150"/>
         </scene>
     </scenes>
-    <resources>
-        <image name="location_arrow_empty" width="48" height="48"/>
-        <image name="location_arrow_filled" width="48" height="48"/>
-        <image name="refresh" width="48" height="48"/>
-    </resources>
 </document>

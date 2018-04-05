@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="13771" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES" initialViewController="QVd-R6-9ep">
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="14109" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES" initialViewController="QVd-R6-9ep">
     <device id="retina5_9" orientation="portrait">
         <adaptation id="fullscreen"/>
     </device>
     <dependencies>
-        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="13772"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="14088"/>
         <capability name="Safe area layout guides" minToolsVersion="9.0"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
@@ -45,7 +45,7 @@
         <scene sceneID="s69-PC-FHJ">
             <objects>
                 <navigationController title="Feed Navigation" automaticallyAdjustsScrollViewInsets="NO" id="7lR-p1-hax" sceneMemberID="viewController">
-                    <tabBarItem key="tabBarItem" title="Feed" image="FeedIcon" selectedImage="FeedIcon" id="ryg-GD-mBe"/>
+                    <tabBarItem key="tabBarItem" title="Feed" id="ryg-GD-mBe"/>
                     <toolbarItems/>
                     <navigationBar key="navigationBar" contentMode="scaleToFill" insetsLayoutMarginsFromSafeArea="NO" largeTitles="YES" id="n3v-FI-8MK">
                         <rect key="frame" x="0.0" y="44" width="375" height="96"/>
@@ -95,7 +95,7 @@
         <scene sceneID="TRV-4f-rRs">
             <objects>
                 <navigationController title="Profile Navigation" automaticallyAdjustsScrollViewInsets="NO" id="FOp-WS-HxL" sceneMemberID="viewController">
-                    <tabBarItem key="tabBarItem" title="Profile" image="profile" selectedImage="profile_selected" id="AbI-wO-odt">
+                    <tabBarItem key="tabBarItem" title="Profile" id="AbI-wO-odt">
                         <color key="badgeColor" red="0.91661626100000004" green="0.3107863367" blue="0.38301837439999997" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                     </tabBarItem>
                     <toolbarItems/>
@@ -123,16 +123,16 @@
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                         <viewLayoutGuide key="safeArea" id="2Ss-d2-eLg"/>
                     </view>
-                    <tabBarItem key="tabBarItem" title="Dropp" image="create" id="PWF-Kl-a1v"/>
+                    <tabBarItem key="tabBarItem" title="Dropp" id="PWF-Kl-a1v"/>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="CPK-Y6-vps" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
             <point key="canvasLocation" x="-226" y="964"/>
         </scene>
-        <!--Navigation Controller-->
+        <!--More Navigation-->
         <scene sceneID="62t-f8-nQY">
             <objects>
-                <navigationController automaticallyAdjustsScrollViewInsets="NO" id="7Ly-eG-hOW" sceneMemberID="viewController">
+                <navigationController title="More Navigation" automaticallyAdjustsScrollViewInsets="NO" id="7Ly-eG-hOW" sceneMemberID="viewController">
                     <tabBarItem key="tabBarItem" systemItem="more" id="xiu-GO-4dt"/>
                     <toolbarItems/>
                     <navigationBar key="navigationBar" contentMode="scaleToFill" insetsLayoutMarginsFromSafeArea="NO" largeTitles="YES" id="2el-67-Udm">
@@ -149,13 +149,14 @@
             </objects>
             <point key="canvasLocation" x="1282" y="964"/>
         </scene>
-        <!--Nearby-->
+        <!--Nearby Navigation-->
         <scene sceneID="9Hm-B0-gGe">
             <objects>
-                <navigationController automaticallyAdjustsScrollViewInsets="NO" navigationBarHidden="YES" id="sGQ-wC-lDS" sceneMemberID="viewController">
-                    <tabBarItem key="tabBarItem" title="Nearby" image="location" selectedImage="location_selected" id="hSL-Ob-Iec"/>
+                <navigationController title="Nearby Navigation" automaticallyAdjustsScrollViewInsets="NO" id="sGQ-wC-lDS" sceneMemberID="viewController">
+                    <tabBarItem key="tabBarItem" title="Nearby" id="hSL-Ob-Iec"/>
                     <toolbarItems/>
                     <navigationBar key="navigationBar" contentMode="scaleToFill" insetsLayoutMarginsFromSafeArea="NO" id="59M-If-7kr">
+                        <rect key="frame" x="0.0" y="44" width="375" height="44"/>
                         <autoresizingMask key="autoresizingMask"/>
                         <color key="tintColor" red="0.91661626100000004" green="0.3107863367" blue="0.38301837439999997" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                     </navigationBar>
@@ -169,12 +170,4 @@
             <point key="canvasLocation" x="-1735" y="964"/>
         </scene>
     </scenes>
-    <resources>
-        <image name="FeedIcon" width="16" height="16"/>
-        <image name="create" width="42" height="42"/>
-        <image name="location" width="32" height="32"/>
-        <image name="location_selected" width="32" height="32"/>
-        <image name="profile" width="37" height="37"/>
-        <image name="profile_selected" width="37" height="37"/>
-    </resources>
 </document>

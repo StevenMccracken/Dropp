@@ -12,12 +12,41 @@ import MapKit
 class MapViewController: UIViewController {
   
   @IBOutlet weak var mapView: MKMapView!
-  @IBOutlet weak var statusBarBlurViewHeightConstraint: NSLayoutConstraint!
-  @IBOutlet weak var refreshButtonBackgroundView: UIView!
-  @IBOutlet weak var locateUserButton: UIButton!
-  @IBOutlet weak var refreshButton: UIButton!
-  @IBOutlet weak var activityIndicator: UIActivityIndicatorView!
-  @IBOutlet weak var droppCountButton: UIButton!
+  
+  // MARK: Buttons
+  private lazy var refreshButton = UIBarButtonItem(barButtonSystemItem: .refresh, target: self, action: #selector(didTapRefreshButton(_:)))
+  private var activityIndicatorBarButton: UIBarButtonItem {
+    activityIndicator.startAnimating()
+    return UIBarButtonItem(customView: activityIndicator)
+  }
+  
+  private lazy var locationButton: UIButton = {
+    let button = UIButton(type: .custom)
+    button.frame = CGRect(x: 0, y: 0, width: 20, height: 20)
+    button.setImage(UIImage(named: "location_arrow_empty"), for: .normal)
+    button.setImage(UIImage(named: "location_arrow_empty"), for: .disabled)
+    button.setImage(UIImage(named: "location_arrow_filled"), for: .selected)
+    button.addTarget(self, action: #selector(didTapLocateUserButton(_:)), for: .touchUpInside)
+    return button
+  }()
+  
+  private var locationBarButton: UIBarButtonItem {
+    let button = UIBarButtonItem(customView: locationButton)
+    let widthConstraint = button.customView?.widthAnchor.constraint(equalToConstant: 20)
+    let heightConstraint = button.customView?.heightAnchor.constraint(equalToConstant: 20)
+    widthConstraint?.isActive = true
+    heightConstraint?.isActive = true
+    return button
+  }
+  
+  // MARK: Navigation bar views
+  private lazy var activityIndicator = UIActivityIndicatorView(activityIndicatorStyle: .gray)
+  private lazy var titleButton: UIButton = {
+    let button = UIButton(type: .custom)
+    button.setTitleColor(.black, for: .normal)
+    button.titleLabel?.font = .systemFont(ofSize: 17, weight: .semibold)
+    return button
+  }()
   
   // MARK: Data sources
   private var dropps = [Dropp]()
@@ -25,8 +54,14 @@ class MapViewController: UIViewController {
   private var shouldTrackUserLocation = true
   private var annotations = [MKPointAnnotation]()
   
+  // MARK: View lifecycle
+  
   override func viewDidLoad() {
     super.viewDidLoad()
+    
+    // Configure navigation bar
+    locationButton.isSelected = true
+    navigationItem.leftBarButtonItem = locationBarButton
     
     // Configure map view
     mapView.delegate = self
@@ -34,23 +69,8 @@ class MapViewController: UIViewController {
     panGestureRecognizer.delegate = self
     mapView.addGestureRecognizer(panGestureRecognizer)
     
-    refreshButtonBackgroundView.layer.cornerRadius = 10
-    droppCountButton.layer.cornerRadius = 5
-    droppCountButton.contentEdgeInsets = UIEdgeInsets(top: 5, left: 5, bottom: 5, right: 5)
-    didTapRefreshButton(self)
-  }
-  
-  override func viewWillAppear(_ animated: Bool) {
-    super.viewWillAppear(animated)
-    NotificationCenter.default.addObserver(self, selector: #selector(deviceDidRotate), name: NSNotification.Name.UIDeviceOrientationDidChange, object: nil)
-    navigationController?.setNavigationBarHidden(true, animated: true)
-    deviceDidRotate()
-  }
-  
-  override func viewWillDisappear(_ animated: Bool) {
-    super.viewWillDisappear(animated)
-    navigationController?.setNavigationBarHidden(false, animated: true)
-    NotificationCenter.default.removeObserver(self)
+    // Fetch data
+    refreshData()
   }
   
   override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
@@ -68,74 +88,50 @@ class MapViewController: UIViewController {
     detailViewController.feedViewControllerDelegate = self
   }
   
-  @IBAction func didTapRefreshButton(_ sender: Any) {
-    guard !isRefreshing else {
-      return
-    }
-    
-    toggleDroppCountButton(hidden: true)
-    toggleRefreshButton(enabled: false)
-    toggleActivityIndicator(visible: true)
-    retrieveDropps(success: { [weak self] (nearbyDropps: [Dropp]) in
-      guard let strongSelf = self else {
-        return
-      }
-      
-      DispatchQueue.main.async {
-        strongSelf.updateDroppCountButton(nearbyDropps)
-        strongSelf.toggleDroppCountButton(hidden: false)
-        strongSelf.updateMapView(withDropps: nearbyDropps)
-        strongSelf.toggleActivityIndicator(visible: false)
-        strongSelf.toggleRefreshButton(enabled: true)
-      }
-    }) { [weak self] error in
-      guard let strongSelf = self else {
-        return
-      }
-      
-      DispatchQueue.main.async {
-        strongSelf.toggleDroppCountButton(hidden: false)
-        strongSelf.toggleActivityIndicator(visible: false)
-        strongSelf.toggleRefreshButton(enabled: true)
-      }
-    }
+  // MARK: Button actions
+  
+  @objc
+  private func didTapRefreshButton(_ sender: UIBarButtonItem) {
+    refreshData()
   }
   
   @IBAction func didTapLocateUserButton(_ sender: UIButton) {
-    sender.isEnabled = false
-    shouldTrackUserLocation = true
-    mapView.deselectSelectedAnnotations(animated: true)
-    updateMapView(withDropps: dropps)
-    sender.isEnabled = true
-  }
-  
-  func retrieveDropps(success: (([Dropp]) -> Void)? = nil, failure: ((NSError) -> Void)? = nil) {
-    guard !isRefreshing else {
+    guard !shouldTrackUserLocation else {
       return
     }
     
-    isRefreshing = true
-    let range = SettingsManager.shared.maxFetchDistance
-    let userLocation = LocationManager.shared.currentLocation
+    sender.isSelected = true
+    shouldTrackUserLocation = true
     mapView.deselectSelectedAnnotations(animated: true)
-    DroppService.getDropps(near: userLocation, withRange: range, sorted: true, success: { [weak self] (nearbyDropps: [Dropp]) in
-      guard let strongSelf = self else {
-        return
-      }
-      
-      strongSelf.isRefreshing = false
-      success?(nearbyDropps)
-    }, failure: { [weak self] (getNearbyDroppsError: NSError) in
-      guard let strongSelf = self else {
-        return
-      }
-      
-      strongSelf.isRefreshing = false
-      failure?(getNearbyDroppsError)
-    })
+    updateMapView(withDropps: dropps)
   }
   
-  func updateMapView(withDropps dropps: [Dropp]) {
+  // MARK: UI updating functions
+  
+  /**
+   Toggles whether or not the refreshing state is enabled.
+   - Parameter enabled: whether or not to enable the refreshing state
+   */
+  private func toggleRefreshingState(enabled: Bool) {
+    guard enabled != isRefreshing else {
+      return
+    }
+    
+    isRefreshing = enabled
+    if enabled {
+      mapView.deselectSelectedAnnotations(animated: true)
+      navigationItem.rightBarButtonItem = activityIndicatorBarButton
+    } else {
+      activityIndicator.stopAnimating()
+      navigationItem.rightBarButtonItem = refreshButton
+    }
+  }
+  
+  /**
+   Refreshes the map view for a given list of dropps, including the user's location.
+   - Parameter dropps: the dropps to refresh the map view with
+   */
+  private func updateMapView(withDropps dropps: [Dropp]) {
     mapView.removeAnnotations(annotations)
     self.dropps = dropps
     annotations = dropps.map { $0.pointAnnotation }
@@ -154,21 +150,11 @@ class MapViewController: UIViewController {
     }
   }
   
-  @objc
-  func deviceDidRotate() {
-    if Utils.isPhone {
-      let orientation = UIApplication.shared.statusBarOrientation
-      let isPortrait = orientation == .portrait || orientation == .portraitUpsideDown
-      statusBarBlurViewHeightConstraint.constant = isPortrait ? Constants.statusBarHeight : 0
-    }
-  }
-  
-  private func toggleDroppCountButton(hidden: Bool) {
-    let alpha: CGFloat = hidden ? 0 : 1
-    droppCountButton.animateAlpha(to: alpha, duration: 0.25)
-  }
-  
-  private func updateDroppCountButton(_ dropps: [Dropp]) {
+  /**
+   Updates the title label for a given number of dropps.
+   - Parameter dropps: the nearby dropps
+   */
+  private func updateDroppCount(_ dropps: [Dropp]) {
     var text: String
     if dropps.isEmpty {
       text = "No nearby dropps😢"
@@ -176,20 +162,40 @@ class MapViewController: UIViewController {
       text = "\(dropps.count) dropp\(dropps.count == 1 ? "" : "s") nearby"
     }
     
-    droppCountButton.setTitle(text, for: .disabled)
+    titleButton.setTitle(text, for: .normal)
+    navigationItem.titleView = titleButton
   }
   
-  private func toggleRefreshButton(enabled: Bool) {
-    refreshButton.isHidden = !enabled
-    refreshButton.isEnabled = enabled
-  }
+  // MARK: Remote interaction
   
-  private func toggleActivityIndicator(visible: Bool) {
-    activityIndicator.isHidden = !visible
-    if visible {
-      activityIndicator.startAnimating()
-    } else {
-      activityIndicator.stopAnimating()
+  private func refreshData() {
+    guard !isRefreshing else {
+      return
+    }
+    
+    toggleRefreshingState(enabled: true)
+    let range = SettingsManager.shared.maxFetchDistance
+    let userLocation = LocationManager.shared.currentLocation
+    DroppService.getDropps(near: userLocation, withRange: range, sorted: true, success: { [weak self] (nearbyDropps: [Dropp]) in
+      guard let strongSelf = self else {
+        return
+      }
+      
+      DispatchQueue.main.async {
+        strongSelf.updateDroppCount(nearbyDropps)
+        strongSelf.toggleRefreshingState(enabled: false)
+        strongSelf.updateMapView(withDropps: nearbyDropps)
+      }
+    }) { [weak self] (getNearbyDroppsError: NSError) in
+      guard let strongSelf = self else {
+        return
+      }
+      
+      let alert = UIAlertController(title: "Error", message: getNearbyDroppsError.localizedDescription, preferredStyle: .alert, color: .salmon, addDefaultAction: true)
+      DispatchQueue.main.async {
+        strongSelf.toggleRefreshingState(enabled: false)
+        strongSelf.present(alert, animated: true)
+      }
     }
   }
 }
@@ -200,6 +206,7 @@ extension MapViewController: MKMapViewDelegate {
   private func userDidDragMap(_ gesture: UIGestureRecognizer) {
     if gesture.state == .began && shouldTrackUserLocation {
       shouldTrackUserLocation = false
+      locationButton.isSelected = false
     }
   }
   
@@ -227,7 +234,9 @@ extension MapViewController: MKMapViewDelegate {
 extension MapViewController: FeedViewControllerDelegate {
   
   func shouldRefreshData() {
-    didTapRefreshButton(self)
+    DispatchQueue.main.async {
+      self.refreshData()
+    }
   }
   
   func shouldRefresh(dropp: Dropp, with newDropp: Dropp?) {
@@ -254,7 +263,7 @@ extension MapViewController: FeedViewControllerDelegate {
     annotations.append(droppAnnotation)
     mapView.showAnnotations([droppAnnotation], animated: true)
     DispatchQueue.main.async {
-      self.updateDroppCountButton(self.dropps)
+      self.updateDroppCount(self.dropps)
     }
   }
   
@@ -266,7 +275,7 @@ extension MapViewController: FeedViewControllerDelegate {
     dropps.remove(at: index)
     updateMapView(withDropps: dropps)
     DispatchQueue.main.async {
-      self.updateDroppCountButton(self.dropps)
+      self.updateDroppCount(self.dropps)
     }
   }
 }
