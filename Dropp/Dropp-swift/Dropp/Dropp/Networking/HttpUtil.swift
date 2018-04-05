@@ -130,7 +130,7 @@ class HttpUtil {
     try data.appendString("\r\n")
     try data.appendString("--".appending(boundary.appending("--")))
     
-    return data as Data!
+    return data as Data
   }
   
   private class func jsonRequest(toUrl url: String) -> URLRequest? {

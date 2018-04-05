@@ -74,7 +74,7 @@ extension LocationManager: CLLocationManagerDelegate {
       return
     }
     
-    debugPrint("User location was updated", newestLocation)
+    Logger.log("User location was updated: \(newestLocation)")
     locationUpdatedEvent.raise(data: newestLocation)
   }
 }

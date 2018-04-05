@@ -2,527 +2,303 @@
 //  DroppDetailViewController.swift
 //  Dropp
 //
-//  Created by Steven McCracken on 12/31/17.
-//  Copyright © 2017 Group B. All rights reserved.
+//  Created by Steven McCracken on 4/4/18.
+//  Copyright © 2018 Group B. All rights reserved.
 //
 
-import UIKit
 import MapKit
+import CoreLocation
 
 class DroppDetailViewController: UIViewController {
   
-  @IBOutlet weak var containerView: UIView!
-  @IBOutlet weak var scrollView: UIScrollView!
-  @IBOutlet weak var loadingImageBackgroundView: UIView!
-  @IBOutlet weak var loadingImageActivityIndicatorView: UIActivityIndicatorView!
-  @IBOutlet weak var imageView: UIImageView!
+  // MARK: IBOutlets
   @IBOutlet weak var mapView: MKMapView!
-  @IBOutlet weak var locateButtonBackgroundView: UIView!
-  @IBOutlet weak var locateUserButton: UIButton!
-  @IBOutlet weak var activeDistanceButton: UIButton!
-  @IBOutlet weak var timestampLabel: UICopyableLabel!
-  @IBOutlet weak var contentLabel: UICopyableLabel!
-  @IBOutlet weak var textView: UITextView!
-  @IBOutlet weak var fetchImageErrorLabel: UILabel!
+  @IBOutlet weak var tableView: UITableView!
+  @IBOutlet weak var headerView: DroppDetailHeaderView!
   
-  weak var feedViewControllerDelegate: FeedViewControllerDelegate?
-  private var originalTitle: String!
+  // MARK: Navigation bar items
+  private var originalTitle: String?
+  private lazy var deletingActivityIndicator = UIActivityIndicatorView(activityIndicatorStyle: .gray)
+  private lazy var activityIndicatorBarButton = UIBarButtonItem(customView: deletingActivityIndicator)
+  private lazy var editButton = UIBarButtonItem(barButtonSystemItem: .edit, target: self, action: #selector(didTapEditButton(_:)))
+  private lazy var deleteButton = UIBarButtonItem(barButtonSystemItem: .trash, target: self, action: #selector(didTapDeleteButton(_:)))
+  private lazy var profileButton = UIBarButtonItem(title: dropp.user.username, style: .plain, target: self, action: #selector(didTapProfileButton(_:)))
+  
+  // MARK: Data sources
   var dropp: Dropp!
-  var droppPointAnnotation: MKPointAnnotation!
-  var deletingDropp = false
-  var editingDropp = false
-  var editVersion: UInt = 0
-  var shouldUpdateMapRegion = true
-  var shouldZoomToDroppOnAppearance = false
-  var containerViewHeightConstraint: NSLayoutConstraint?
-  private lazy var editingDroppActivityIndicator: UIActivityIndicatorView = {
-    return UIActivityIndicatorView(activityIndicatorStyle: .gray)
-  }()
+  private var image: UIImage?
+  private var isFetching = false
+  private var isDeleting = false
+  private var firstTimeView = true
+  private var didFailImageFetch = false
+  
+  // MARK: Location updates
+  private var lastLocation: CLLocation?
+  private var userLocationUpdatedEventHandler: Disposable?
+  
+  // MARK: Delegates
+  weak var feedViewControllerDelegate: FeedViewControllerDelegate?
+  
+  // MARK: View lifecyle
   
   override func viewDidLoad() {
     super.viewDidLoad()
-    mapView.delegate = self
-    droppPointAnnotation = MKPointAnnotation()
-    droppPointAnnotation.coordinate = dropp.location.coordinate
-    
-    locateButtonBackgroundView.layer.cornerRadius = 10
-    
-    activeDistanceButton.layer.cornerRadius = 5
-    activeDistanceButton.setTitleColor(.salmon, for: .disabled)
-    activeDistanceButton.contentEdgeInsets = UIEdgeInsets(top: 5, left: 5, bottom: 5, right: 5)
-    
-    loadingImageBackgroundView.layer.cornerRadius = 10
-    textView.layer.cornerRadius = 5
-    textView.backgroundColor = UIColor(white: 0.95, alpha: 1)
-    
+    navigationItem.largeTitleDisplayMode = .never
     if dropp.postedByCurrentUser {
       title = "⭐️Your dropp"
+      navigationItem.rightBarButtonItems = [deleteButton, editButton]
     } else {
       title = "\(dropp.username!)'s dropp"
+      navigationItem.rightBarButtonItem = profileButton
     }
     
-    originalTitle = title ?? ""
-    if dropp.hasMedia {
-      fetchMedia()
-    }
+    originalTitle = title
     
-    navigationItem.largeTitleDisplayMode = .never
-    addInfoButton()
+    // Configure table view
+    tableView.delegate = self
+    tableView.dataSource = self
+    headerView.setTimestamp(date: dropp.date)
+    headerView.updateDistance(forDropp: dropp, fromLocation: LocationManager.shared.currentLocation)
+    tableView.register(nibAndReuseIdentifier: DroppMessageTableViewCell.identifier)
+    tableView.register(nibAndReuseIdentifier: FetchedImageTableViewCell.identifier)
     
-    let formatter = DateFormatter()
-    formatter.dateStyle = .medium
-    formatter.timeStyle = .medium
-    timestampLabel.text = formatter.string(from: dropp.date)
-    contentLabel.text = dropp.message!
-    if dropp.message!.isOnlyEmoji {
-      contentLabel.font = UIFont(name: contentLabel.font.fontName, size: 40.0)
-    }
+    // Configure map view
+    mapView.delegate = self
+    mapView.showAnnotations([dropp.pointAnnotation], animated: true)
     
-    updateHeightConstraint()
+    // Subscribe for location updates
+    userLocationUpdatedEventHandler = LocationManager.shared.locationUpdatedEvent.addHandler(target: self, handler: DroppDetailViewController.userLocationDidUpdate)
     
-    if shouldZoomToDroppOnAppearance {
-      shouldUpdateMapRegion = false
-      mapView.showAnnotations([droppPointAnnotation], animated: true)
-      revealLocateUserButton()
-    } else if let userCoordinates = LocationManager.shared.currentCoordinates {
-      resizeMapView(withUserCoordinates: userCoordinates)
-    }
-    
-    let panGestureRecognizer = UIPanGestureRecognizer(target: self, action: #selector(userDidDragMap))
-    panGestureRecognizer.delegate = self
-    mapView.addGestureRecognizer(panGestureRecognizer)
-    
-    let spacing = UIBarButtonItem(barButtonSystemItem: .flexibleSpace, target: nil, action: nil)
-    let clearButton = UIBarButtonItem(title: "Clear", style: .plain, target: self, action: #selector(clearTextView))
-    textView.addToolbar(withItems: [spacing, clearButton])
-    
-    activeDistanceButton.setTitle(dropp.distanceAwayMessage(from: LocationManager.shared.currentLocation), for: .disabled)
+    // Fetch the image if it exists
+    fetchImage()
   }
   
-  override func viewWillAppear(_ animated: Bool) {
-    super.viewWillAppear(animated)
-    NotificationCenter.default.addObserver(self, selector: #selector(deviceDidRotate), name: NSNotification.Name.UIDeviceOrientationDidChange, object: nil)
+  deinit {
+    userLocationUpdatedEventHandler?.dispose()
   }
   
-  override func viewWillDisappear(_ animated: Bool) {
-    super.viewWillDisappear(animated)
-    NotificationCenter.default.removeObserver(self)
-  }
+  // MARK: IBActions
   
-  func addInfoButton() {
-    var infoButton: UIButton
-    if dropp.postedByCurrentUser {
-      infoButton = UIButton(type: .infoLight)
-      infoButton.addTarget(self, action: #selector(showDroppOptions), for: .touchUpInside)
-    } else {
-      infoButton = UIButton(type: .detailDisclosure)
-      infoButton.addTarget(self, action: #selector(showUserProfile), for: .touchUpInside)
-    }
-    
-    navigationItem.rightBarButtonItem = UIBarButtonItem(customView: infoButton)
-    if editingDroppActivityIndicator.isAnimating {
-      editingDroppActivityIndicator.stopAnimating()
-    }
-  }
-  
-  func addDroppActivityIndicator() {
-    editingDroppActivityIndicator.startAnimating()
-    navigationItem.rightBarButtonItem = UIBarButtonItem(customView: editingDroppActivityIndicator)
-  }
-  
-  func addEditingCancelButton() {
-    guard dropp.postedByCurrentUser else {
-      return
-    }
-    
-    navigationItem.leftBarButtonItem = UIBarButtonItem(barButtonSystemItem: .cancel, target: self, action: #selector(didTapEditingCancelButton))
-  }
-  
-  func addEditingDoneButton() {
-    guard dropp.postedByCurrentUser else {
-      return
-    }
-    
-    navigationItem.rightBarButtonItem = UIBarButtonItem(barButtonSystemItem: .done, target: self, action: #selector(didTapEditingDoneButton))
-    if editingDroppActivityIndicator.isAnimating {
-      editingDroppActivityIndicator.stopAnimating()
-    }
-  }
-  
-  func fetchMedia() {
-    toggleLoadingImageIndicator(visible: true)
-    DroppService.getImage(forDropp: self.dropp, success: { [weak self] (image: UIImage) in
-      guard let strongSelf = self else {
-        return
-      }
-      
-      DispatchQueue.main.async {
-        strongSelf.toggleLoadingImageIndicator(visible: false)
-        strongSelf.imageView.image = image
-        guard !strongSelf.deletingDropp && !strongSelf.editingDropp else {
-          return
-        }
-        
-        strongSelf.updateHeightConstraint()
-      }
-    }, failure: { [weak self] (getImageError: NSError) in
-      guard let strongSelf = self else {
-        return
-      }
-    
-      debugPrint("Failed getting image from dropp", strongSelf.dropp, getImageError)
-      strongSelf.toggleLoadingImageIndicator(visible: false)
-      DispatchQueue.main.async {
-        strongSelf.fetchImageErrorLabel.isHidden = false
-      }
-    })
+  @objc
+  private func didTapProfileButton(_ sender: UIBarButtonItem) {
+    performSegue(withIdentifier: Constants.showProfileSegueId, sender: sender)
   }
   
   @objc
-  func showUserProfile() {
-    guard !dropp.postedByCurrentUser else {
-      return
-    }
-    
-    let profileStoryboard = UIStoryboard(name: "Profile", bundle: nil)
-    guard let profileViewController = profileStoryboard.instantiateInitialViewController() as? ProfileViewController else {
-      debugPrint("Initial view controller for Profile storyboard was nil")
-      return
-    }
-    
-    profileViewController.user = dropp.user
-    navigationController?.pushViewController(profileViewController, animated: true)
+  private func didTapEditButton(_ sender: UIBarButtonItem) {
+    performSegue(withIdentifier: Constants.showEditDroppSegueId, sender: sender)
   }
   
-  @objc
-  func showDroppOptions() {
-    guard dropp.postedByCurrentUser else {
-      return
-    }
-    
+  @IBAction
+  private func didTapDeleteButton(_ sender: UIBarButtonItem) {
     let alert = UIAlertController(title: nil, message: nil, preferredStyle: .actionSheet, color: .salmon)
-    if let image = imageView.image {
-      alert.addAction(UIAlertAction(title: "Save photo", style: .default, handler: { _ in
-        Utils.save(image: image, withTimestamp: self.dropp.date, andLocation: self.dropp.location, success: nil, failure: { (savePhotoError: Error) in
-          debugPrint("Failed to save photo to user's photos", savePhotoError)
-          let errorAlert = UIAlertController(title: "Error", message: "Unable to save photo", preferredStyle: .alert, color: .salmon, addDefaultAction: true)
-          Utils.present(viewController: errorAlert, animated: true, completion: nil)
-        })
-      }))
-    }
-    
-    alert.addAction(UIAlertAction(title: "Edit dropp", style: .default, handler: { _ in
-      guard !self.deletingDropp else {
-        return
-      }
-      
-      self.enterEditingState()
-    }))
-    
-    alert.addAction(UIAlertAction(title: "Delete dropp", style: .destructive, handler: { _ in
-      guard !self.deletingDropp else {
-        return
-      }
-      
-      self.deletingDropp = true
-      self.title = "Deleting..."
-      self.addDroppActivityIndicator()
-      self.navigationItem.setHidesBackButton(true, animated: true)
-      self.mapView.isUserInteractionEnabled = false
-      DroppService.delete(self.dropp, success: { [weak self] () in
-        guard let strongSelf = self else {
-          return
-        }
-        
-        DispatchQueue.main.async {
-          strongSelf.navigationItem.setHidesBackButton(false, animated: true)
-          strongSelf.navigationController?.popViewController(animated: true)
-          strongSelf.feedViewControllerDelegate?.shouldRemoveDropp?(strongSelf.dropp)
-        }
-      }, failure: { [weak self] (deleteDroppError: NSError) in
-        guard let strongSelf = self else {
-          return
-        }
-        
-        let errorCompletion = {
-          strongSelf.addInfoButton()
-          strongSelf.title = strongSelf.originalTitle
-          strongSelf.navigationItem.setHidesBackButton(false, animated: true)
-          strongSelf.mapView.isUserInteractionEnabled = true
-        }
-        
-        guard deleteDroppError.code != 404 else {
-          let alert = UIAlertController(title: "Error", message: "We're sorry, but this dropp no longer exists", preferredStyle: .alert, color: .salmon, addDefaultAction: true) { _ in
-              strongSelf.navigationItem.setHidesBackButton(false, animated: true)
-              strongSelf.navigationController?.popViewController(animated: true)
-              strongSelf.feedViewControllerDelegate?.shouldRemoveDropp?(strongSelf.dropp)
-          }
-          
-          DispatchQueue.main.async {
-            errorCompletion()
-            strongSelf.present(alert, animated: true, completion: nil)
-          }
-         
-          return
-        }
-        
-        debugPrint("Error while trying to delete dropp", deleteDroppError)
-        let alert = UIAlertController(title: "Error", message: "We're sorry, but we were unable to delete your dropp", preferredStyle: .alert, color: .salmon, addDefaultAction: true)
-        DispatchQueue.main.async {
-          strongSelf.present(alert, animated: true, completion: nil)
-          errorCompletion()
-        }
-      })
-    }))
-    
-    alert.addAction(UIAlertAction(title: "Cancel", style: .cancel, handler: nil))
     if Utils.isPad {
       let popover = alert.popoverPresentationController
+      popover?.barButtonItem = sender
       popover?.permittedArrowDirections = .up
-      popover?.barButtonItem = navigationItem.rightBarButtonItem
     }
     
-    present(alert, animated: true, completion: nil)
+    alert.addAction(UIAlertAction(title: "Cancel", style: .cancel))
+    alert.addAction(UIAlertAction(title: "Delete dropp", style: .destructive) { _ in
+      self.performDeleteAction()
+    })
+    
+    present(alert, animated: true)
   }
   
-  func enterEditingState() {
-    guard !editingDropp else {
+  // MARK: State
+  private func toggleDeletingState(enabled: Bool) {
+    guard enabled != isDeleting else {
       return
     }
     
-    imageView.animateAlpha(to: 0.0, duration: 0.25)
-    DispatchQueue.main.async {
-      self.title = "Editing dropp"
-      self.scrollToTextView()
-      self.scrollView.isUserInteractionEnabled = false
-      self.addEditingCancelButton()
-      self.addEditingDoneButton()
-      self.navigationController?.navigationItem.setHidesBackButton(true, animated: true)
-      self.editingDropp = true
-      self.contentLabel.isHidden = true
-      self.textView.text = self.contentLabel.text ?? ""
-      self.textView.isHidden = false
-      self.textView.isEditable = true
-      self.textView.becomeFirstResponder()
-    }
-  }
-  
-  func exitEditingState(_ done: (() -> Void)? = nil) {
-    guard editingDropp else {
-      done?()
-      return
-    }
-    
-    imageView.animateAlpha(to: 1.0, duration: 0.5)
-    DispatchQueue.main.async {
-      self.title = self.originalTitle
-      self.scrollView.scrollRectToVisible(self.mapView.frame, animated: true)
-      self.scrollView.isUserInteractionEnabled = true
-      self.navigationItem.leftBarButtonItem = nil
-      self.addInfoButton()
-      self.navigationController?.navigationItem.setHidesBackButton(false, animated: true)
-      self.editingDropp = false
-      self.textView.isHidden = true
-      self.contentLabel.isHidden = false
-      self.textView.resignFirstResponder()
-      done?()
-    }
-  }
-  
-  @objc
-  func didTapEditingCancelButton() {
-    editVersion += 1
-    exitEditingState()
-  }
-  
-  @objc
-  func didTapEditingDoneButton() {
-    var shouldSendUpdateRequest = false
-    var shouldEndEditing = false
-    let editedText = textView.text.trim()
-    if editedText == dropp.message! {
-      shouldEndEditing = true
-    } else if dropp.hasMedia {
-      shouldSendUpdateRequest = true
+    isDeleting = enabled
+    navigationItem.setHidesBackButton(enabled, animated: true)
+    if enabled {
+      title = "Deleting..."
+      deletingActivityIndicator.startAnimating()
+      navigationItem.rightBarButtonItems = [activityIndicatorBarButton]
     } else {
-      shouldSendUpdateRequest = !editedText.isEmpty
+      title = originalTitle
+      navigationItem.rightBarButtonItems = [deleteButton, editButton]
+      deletingActivityIndicator.stopAnimating()
+    }
+  }
+  
+  private func performDeleteAction() {
+    toggleDeletingState(enabled: true)
+    let deleteCompletion = {
+      DispatchQueue.main.async {
+        self.feedViewControllerDelegate?.shouldRemoveDropp?(self.dropp)
+        self.navigationController?.popViewController(animated: true)
+      }
     }
     
-    if shouldEndEditing {
-      exitEditingState()
-    } else if shouldSendUpdateRequest {
-      textView.isEditable = false
-      textView.resignFirstResponder()
-      self.title = "Updating..."
-      self.addDroppActivityIndicator()
-      navigationItem.leftBarButtonItem?.isEnabled = false
+    DroppService.delete(dropp, success: { [weak self] in
+      guard let _ = self else {
+        return
+      }
       
-      let editVersion = self.editVersion
-      DroppService.update(dropp, withText: editedText, success: { [weak self] () in
-        guard let strongSelf = self else {
-          return
-        }
-        
-        guard editVersion == strongSelf.editVersion else {
-          return
-        }
-        
-        let oldDropp: Dropp = strongSelf.dropp
-        strongSelf.dropp.message = editedText
-        strongSelf.feedViewControllerDelegate?.shouldRefresh(dropp: oldDropp, with: strongSelf.dropp)
-        DispatchQueue.main.async {
-          strongSelf.contentLabel.text = editedText
-          if editedText.isOnlyEmoji {
-            strongSelf.contentLabel.font = UIFont(name: strongSelf.contentLabel.font.fontName, size: 40.0)
-          } else {
-            strongSelf.contentLabel.font = UIFont(name: strongSelf.contentLabel.font.fontName, size: 20.0)
-          }
-        }
-        
-        strongSelf.exitEditingState() {
-          strongSelf.updateHeightConstraint()
-        }
-      }, failure: { [weak self] (updateDroppError: NSError) in
-        guard let strongSelf = self else {
-          return
-        }
-        
-        guard editVersion == strongSelf.editVersion else {
-          return
-        }
-        
-        let errorCompletion = {
-          DispatchQueue.main.async {
-            strongSelf.addEditingDoneButton()
-            strongSelf.title = "Editing dropp"
-          }
-        }
-        
-        guard updateDroppError.code != 404 else {
-          let alert = UIAlertController(title: "Error", message: "We're sorry, but this dropp no longer exists", preferredStyle: .alert, color: .salmon, addDefaultAction: true) { _ in
-            strongSelf.navigationItem.setHidesBackButton(false, animated: true)
-            strongSelf.navigationController?.popViewController(animated: true)
-            strongSelf.feedViewControllerDelegate?.shouldRemoveDropp?(strongSelf.dropp)
-          }
-          
-          strongSelf.present(alert, animated: true, completion: errorCompletion)
-          return
-        }
-        
-        debugPrint("Error while trying to update dropp", updateDroppError)
-        let alert = UIAlertController(title: "Error", message: "We're sorry, but we were unable to update your dropp", preferredStyle: .alert, color: .salmon, addDefaultAction: true)
+      deleteCompletion()
+    }) { [weak self] (deleteError) in
+      guard let strongSelf = self else {
+        return
+      }
+      
+      guard deleteError.code != 404 else {
+        deleteCompletion()
+        return
+      }
+      
+      debugPrint("Error while trying to delete dropp", deleteError)
+      let alert = UIAlertController(title: "Error", message: "We're sorry, but we were unable to delete your dropp", preferredStyle: .alert, color: .salmon, addDefaultAction: true)
+      DispatchQueue.main.async {
         strongSelf.present(alert, animated: true) {
-          errorCompletion()
-          DispatchQueue.main.async {
-            strongSelf.textView.isEditable = true
-            strongSelf.navigationItem.leftBarButtonItem?.isEnabled = true
-          }
+          strongSelf.toggleDeletingState(enabled: false)
         }
-      })
-    } else {
-      let alert = UIAlertController(title: "Invalid update", message: "This dropp must have a message", preferredStyle: .alert, color: .salmon, addDefaultAction: true)
-      present(alert, animated: true, completion: nil)
+      }
     }
   }
   
-  @objc
-  func clearTextView() {
-    textView.text = ""
-  }
+  // MARK: Navigation
   
-  @objc
-  func deviceDidRotate() {
-    updateHeightConstraint()
-    if editingDropp {
-      scrollToTextView()
+  override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
+    if segue.identifier == Constants.showProfileSegueId,
+       let profileViewController = segue.destination as? ProfileViewController {
+      profileViewController.user = dropp.user
+    } else if segue.identifier == Constants.showEditDroppSegueId,
+              let editDroppViewController = segue.destination as? EditDroppViewController {
+      editDroppViewController.dropp = dropp
+      editDroppViewController.delegate = self
     }
   }
   
-  func updateHeightConstraint() {
-    if let existingHeightConstraint = containerViewHeightConstraint {
-      self.view.removeConstraint(existingHeightConstraint)
-    }
-    
-    let height = mapView.frame.height + timestampLabel.frame.height + contentLabel.frame.height + 5 * 3 + (dropp.hasMedia ? imageView.frame.height + 5 : 0)
-    containerViewHeightConstraint = NSLayoutConstraint(item: containerView, attribute: .height, relatedBy: .equal, toItem: nil, attribute: .height, multiplier: 1.0, constant: height)
-    self.view.addConstraint(containerViewHeightConstraint!)
-  }
+  // MARK: Event handlers
   
-  func scrollToTextView() {
-    let y = textView.frame.origin.y - 5
-    scrollView.setContentOffset(CGPoint(x: 0, y: y), animated: true)
-  }
-  
-  private func toggleLoadingImageIndicator(visible: Bool) {
+  private func userLocationDidUpdate(_ location: CLLocation) {
+    lastLocation = location
     DispatchQueue.main.async {
-      self.loadingImageBackgroundView.isHidden = !visible
-      self.loadingImageActivityIndicatorView.isHidden = !visible
+      self.headerView.updateDistance(forDropp: self.dropp, fromLocation: location)
     }
   }
   
-  @objc
-  private func userDidDragMap(_ gesture: UIGestureRecognizer) {
-    if gesture.state == .began && shouldUpdateMapRegion {
-      shouldUpdateMapRegion = false
-      revealLocateUserButton()
-    }
-  }
-  
-  @IBAction func didTapLocateUserButton(_ sender: UIButton) {
-    sender.isEnabled = false
-    locateButtonBackgroundView.animateAlpha(to: 0, duration: 0.2)
-    if let userCoordinates = LocationManager.shared.currentCoordinates {
-      resizeMapView(withUserCoordinates: userCoordinates)
-    }
-    
-    mapView.deselectAnnotation(droppPointAnnotation, animated: true)
-    shouldUpdateMapRegion = true
-  }
-  
-  private func resizeMapView(withUserCoordinates coordinates: CLLocationCoordinate2D) {
-    let userAnnotation = MKPointAnnotation()
-    userAnnotation.coordinate = coordinates
-    mapView.showAnnotations([userAnnotation, droppPointAnnotation], animated: true)
-    mapView.removeAnnotation(userAnnotation)
-  }
-  
-  private func revealLocateUserButton() {
-    guard locateButtonBackgroundView.alpha == 0 else {
+  // MARK: Image handling
+  private func fetchImage() {
+    guard dropp.hasMedia, !isFetching else {
       return
     }
     
-    locateButtonBackgroundView.animateAlpha(to: 1, duration: 0.2) {
-      self.locateUserButton.isEnabled = true
+    isFetching = true
+    DroppService.getImage(forDropp: dropp, success: { [weak self] (image) in
+      guard let strongSelf = self else {
+        return
+      }
+      
+      strongSelf.image = image
+      strongSelf.isFetching = false
+      strongSelf.didFailImageFetch = false
+      DispatchQueue.main.async {
+        strongSelf.tableView.reloadSections(IndexSet(integer: 1), with: .fade)
+      }
+    }) { [weak self] (fetchError) in
+      guard let strongSelf = self else {
+        return
+      }
+      
+      strongSelf.image = nil
+      strongSelf.isFetching = false
+      strongSelf.didFailImageFetch = true
+      DispatchQueue.main.async {
+        strongSelf.tableView.reloadSections(IndexSet(integer: 1), with: .fade)
+      }
     }
   }
 }
 
+// MARK: UITableViewDataSource
+extension DroppDetailViewController: UITableViewDataSource {
+  
+  func numberOfSections(in tableView: UITableView) -> Int {
+    return dropp.hasMedia ? 2 : 1
+  }
+  
+  func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+    return 1
+  }
+  
+  func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
+    var cell: UITableViewCell
+    if indexPath.section == 0,
+       let messageCell = tableView.dequeueReusableCell(withIdentifier: DroppMessageTableViewCell.identifier, for: indexPath) as? DroppMessageTableViewCell {
+      messageCell.addContent(dropp: dropp)
+      cell = messageCell
+    } else if indexPath.section == 1,
+      let imageCell = tableView.dequeueReusableCell(withIdentifier: FetchedImageTableViewCell.identifier, for: indexPath) as? FetchedImageTableViewCell {
+      imageCell.addContent(image: image)
+      imageCell.toggleLoadingIndicator(visible: isFetching)
+      imageCell.toggleErrorLabel(visible: didFailImageFetch)
+      cell = imageCell
+    } else {
+      cell = UITableViewCell()
+    }
+    
+    return cell
+  }
+}
+
+// MARK: UITableViewDelegate
+extension DroppDetailViewController: UITableViewDelegate {
+  
+  func tableView(_ tableView: UITableView, viewForHeaderInSection section: Int) -> UIView? {
+    return UIView()
+  }
+  
+  func tableView(_ tableView: UITableView, heightForHeaderInSection section: Int) -> CGFloat {
+    var height: CGFloat
+    switch section {
+    case 1:
+      height = 25
+    default:
+      height = 0
+    }
+    
+    return height
+  }
+}
+
+// MARK: FeedViewControllerDelegate
+extension DroppDetailViewController: FeedViewControllerDelegate {
+  
+  func shouldRefreshData() {
+    tableView.reloadData()
+    feedViewControllerDelegate?.shouldRefreshData()
+  }
+  
+  func shouldRefresh(dropp: Dropp, with newDropp: Dropp?) {
+    feedViewControllerDelegate?.shouldRefresh(dropp: dropp, with: newDropp)
+    guard let newDropp = newDropp else {
+      return
+    }
+    
+    self.dropp = newDropp
+    tableView.reloadData()
+  }
+  
+  func shouldRemoveDropp(_ dropp: Dropp) {
+    feedViewControllerDelegate?.shouldRemoveDropp?(dropp)
+  }
+}
+
+// MARK: MKMapViewDelegate
 extension DroppDetailViewController: MKMapViewDelegate {
   
-  func mapView(_ mapView: MKMapView, didUpdate userLocation: MKUserLocation) {
-    activeDistanceButton.setTitle(dropp.distanceAwayMessage(from: userLocation.location), for:  .disabled)
-    if shouldUpdateMapRegion {
-      resizeMapView(withUserCoordinates: userLocation.coordinate)
-    } else {
-      revealLocateUserButton()
-    }
-  }
-  
   func mapView(_ mapView: MKMapView, didSelect view: MKAnnotationView) {
-    guard let pointAnnotation = view.annotation as? MKPointAnnotation, pointAnnotation == droppPointAnnotation else {
+    guard let coordinate = view.annotation?.coordinate else {
       return
     }
     
-    shouldUpdateMapRegion = false
-    let region = MKCoordinateRegion(center: dropp.location.coordinate, span: MKCoordinateSpan(latitudeDelta: 0.01, longitudeDelta: 0.01))
+    let region = MKCoordinateRegion(center: coordinate, span: MKCoordinateSpan(latitudeDelta: 0.01, longitudeDelta: 0.01))
     mapView.setRegion(region, animated: true)
-    revealLocateUserButton()
   }
 }
 
-extension DroppDetailViewController: UIGestureRecognizerDelegate {
-  
-  func gestureRecognizer(_ gestureRecognizer: UIGestureRecognizer, shouldRecognizeSimultaneouslyWith otherGestureRecognizer: UIGestureRecognizer) -> Bool {
-    return true
-  }
-}

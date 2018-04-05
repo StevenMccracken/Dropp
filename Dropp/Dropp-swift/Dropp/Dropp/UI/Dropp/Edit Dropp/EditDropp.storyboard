@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="14109" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES" initialViewController="jMs-nM-iIr">
+    <device id="retina4_7" orientation="portrait">
+        <adaptation id="fullscreen"/>
+    </device>
+    <dependencies>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="14088"/>
+        <capability name="Constraints with non-1.0 multipliers" minToolsVersion="5.1"/>
+        <capability name="Safe area layout guides" minToolsVersion="9.0"/>
+        <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
+    </dependencies>
+    <scenes>
+        <!--Editing dropp-->
+        <scene sceneID="5Y6-Ky-2LY">
+            <objects>
+                <viewController title="Editing dropp" automaticallyAdjustsScrollViewInsets="NO" hidesBottomBarWhenPushed="YES" id="jMs-nM-iIr" customClass="EditDroppViewController" customModule="Dropp" customModuleProvider="target" sceneMemberID="viewController">
+                    <view key="view" contentMode="scaleToFill" id="4Fw-C4-9xc">
+                        <rect key="frame" x="0.0" y="0.0" width="375" height="667"/>
+                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <subviews>
+                            <scrollView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" keyboardDismissMode="interactive" translatesAutoresizingMaskIntoConstraints="NO" id="gsW-Fe-9ih">
+                                <rect key="frame" x="0.0" y="20" width="375" height="647"/>
+                                <subviews>
+                                    <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="QK7-85-bNO" userLabel="Container View">
+                                        <rect key="frame" x="0.0" y="0.0" width="375" height="647"/>
+                                        <subviews>
+                                            <textView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" showsHorizontalScrollIndicator="NO" keyboardDismissMode="interactive" translatesAutoresizingMaskIntoConstraints="NO" id="bMd-wa-RFT">
+                                                <rect key="frame" x="10" y="10" width="355" height="162"/>
+                                                <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                                                <fontDescription key="fontDescription" type="system" pointSize="17"/>
+                                                <textInputTraits key="textInputTraits" autocapitalizationType="sentences" enablesReturnKeyAutomatically="YES"/>
+                                            </textView>
+                                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Say something" textAlignment="natural" lineBreakMode="tailTruncation" numberOfLines="0" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="xLa-3p-vru">
+                                                <rect key="frame" x="15" y="18" width="345" height="20.5"/>
+                                                <fontDescription key="fontDescription" type="system" pointSize="17"/>
+                                                <color key="textColor" white="0.33333333329999998" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                                                <nil key="highlightedColor"/>
+                                            </label>
+                                        </subviews>
+                                        <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                                        <constraints>
+                                            <constraint firstItem="xLa-3p-vru" firstAttribute="top" secondItem="bMd-wa-RFT" secondAttribute="top" constant="8" id="IZs-YH-rwb"/>
+                                            <constraint firstItem="bMd-wa-RFT" firstAttribute="trailing" secondItem="xLa-3p-vru" secondAttribute="trailing" constant="5" id="Jfz-bU-uDF"/>
+                                            <constraint firstItem="bMd-wa-RFT" firstAttribute="top" secondItem="QK7-85-bNO" secondAttribute="top" constant="10" id="PcI-Dg-hYE"/>
+                                            <constraint firstItem="xLa-3p-vru" firstAttribute="leading" secondItem="bMd-wa-RFT" secondAttribute="leading" constant="5" id="tin-Ph-EGj"/>
+                                            <constraint firstItem="bMd-wa-RFT" firstAttribute="leading" secondItem="QK7-85-bNO" secondAttribute="leading" constant="10" id="uYy-e4-p3V"/>
+                                            <constraint firstAttribute="trailing" secondItem="bMd-wa-RFT" secondAttribute="trailing" constant="10" id="uxq-LI-01g"/>
+                                        </constraints>
+                                    </view>
+                                </subviews>
+                                <constraints>
+                                    <constraint firstItem="QK7-85-bNO" firstAttribute="width" secondItem="gsW-Fe-9ih" secondAttribute="width" id="01y-ex-k2e"/>
+                                    <constraint firstItem="QK7-85-bNO" firstAttribute="leading" secondItem="gsW-Fe-9ih" secondAttribute="leading" id="0zA-6O-PFJ"/>
+                                    <constraint firstItem="QK7-85-bNO" firstAttribute="top" secondItem="gsW-Fe-9ih" secondAttribute="top" id="D9a-rP-rNU"/>
+                                    <constraint firstAttribute="bottom" secondItem="QK7-85-bNO" secondAttribute="bottom" id="LXJ-A2-2Dt"/>
+                                    <constraint firstItem="QK7-85-bNO" firstAttribute="trailing" secondItem="gsW-Fe-9ih" secondAttribute="trailing" id="brd-eM-61J"/>
+                                </constraints>
+                            </scrollView>
+                        </subviews>
+                        <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                        <constraints>
+                            <constraint firstItem="bMd-wa-RFT" firstAttribute="height" secondItem="VwD-4S-InW" secondAttribute="height" multiplier="0.25" id="BhP-Lb-NQa"/>
+                            <constraint firstItem="gsW-Fe-9ih" firstAttribute="bottom" secondItem="VwD-4S-InW" secondAttribute="bottom" id="HOU-xC-6MH"/>
+                            <constraint firstItem="gsW-Fe-9ih" firstAttribute="trailing" secondItem="VwD-4S-InW" secondAttribute="trailing" id="Hu4-LH-1Gy"/>
+                            <constraint firstItem="gsW-Fe-9ih" firstAttribute="leading" secondItem="VwD-4S-InW" secondAttribute="leading" id="Zy8-RF-C1q"/>
+                            <constraint firstItem="QK7-85-bNO" firstAttribute="height" secondItem="VwD-4S-InW" secondAttribute="height" id="svE-wM-dj1"/>
+                            <constraint firstItem="gsW-Fe-9ih" firstAttribute="top" secondItem="VwD-4S-InW" secondAttribute="top" id="w1T-2k-Ziw"/>
+                        </constraints>
+                        <viewLayoutGuide key="safeArea" id="VwD-4S-InW"/>
+                    </view>
+                    <connections>
+                        <outlet property="placeholderLabel" destination="xLa-3p-vru" id="bMZ-LZ-SLo"/>
+                        <outlet property="textView" destination="bMd-wa-RFT" id="nB9-mk-hw2"/>
+                    </connections>
+                </viewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="jUD-mf-tAx" userLabel="First Responder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="184.80000000000001" y="164.16791604197903"/>
+        </scene>
+    </scenes>
+</document>

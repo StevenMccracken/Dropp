@@ -54,6 +54,11 @@ class Constants {
   static let showDroppDetailSegueId = "showDroppDetailSegue"
   
   /**
+   The segue ID for pushing an edit dropp view controller
+   */
+  static let showEditDroppSegueId = "showEditDroppSegue"
+  
+  /**
    The segue ID for pushing a connections view controller
    */
   static let showConnectionsSegueId = "showConnectionsSegue"

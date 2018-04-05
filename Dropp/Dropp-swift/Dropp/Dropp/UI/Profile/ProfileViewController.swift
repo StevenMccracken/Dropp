@@ -102,6 +102,12 @@ class ProfileViewController: UITableViewController {
       navigationController?.pushViewController(profileDetailsViewController, animated: true)
     } else {
       let alert = UIAlertController(title: nil, message: nil, preferredStyle: .actionSheet, color: .salmon)
+      if Utils.isPad {
+        let popover = alert.popoverPresentationController
+        popover?.permittedArrowDirections = .up
+        popover?.barButtonItem = infoButton
+      }
+      
       alert.addAction(UIAlertAction(title: "Remove follow request", style: .destructive, handler: { _ in
         self.navigationItem.setHidesBackButton(true, animated: true)
         let activityIndicator = UIActivityIndicatorView(activityIndicatorStyle: .gray)
@@ -135,14 +141,8 @@ class ProfileViewController: UITableViewController {
         })
       }))
       
-      alert.addAction(UIAlertAction(title: "Cancel", style: .cancel, handler: nil))
-      if Utils.isPad {
-        let popover = alert.popoverPresentationController
-        popover?.permittedArrowDirections = .up
-        popover?.barButtonItem = infoButton
-      }
-      
-      present(alert, animated: true, completion: nil)
+      alert.addAction(UIAlertAction(title: "Cancel", style: .cancel))
+      present(alert, animated: true)
     }
   }
   
@@ -488,12 +488,12 @@ class ProfileViewController: UITableViewController {
       return
     }
     
-    guard let destination = segue.destination as? DroppDetailViewController else {
+    guard let detailViewController = segue.destination as? DroppDetailViewController else {
       return
     }
     
-    destination.dropp = dropps[indexPath.section - 1]
-    destination.feedViewControllerDelegate = self
+    detailViewController.dropp = dropps[indexPath.section - 1]
+    detailViewController.feedViewControllerDelegate = self
   }
   
   func toggleLoadingView(hidden: Bool, newRightBarButtonItem: UIBarButtonItem? = nil, _ completion: (() -> Void)? = nil) {

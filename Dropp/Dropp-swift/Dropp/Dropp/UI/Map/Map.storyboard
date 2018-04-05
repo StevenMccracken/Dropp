@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="13529" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES" initialViewController="yOi-uH-Ifr">
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="14109" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES" initialViewController="yOi-uH-Ifr">
     <device id="retina4_7" orientation="portrait">
         <adaptation id="fullscreen"/>
     </device>
     <dependencies>
-        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="13527"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="14088"/>
         <capability name="Aspect ratio constraints" minToolsVersion="5.1"/>
         <capability name="Constraints with non-1.0 multipliers" minToolsVersion="5.1"/>
         <capability name="Safe area layout guides" minToolsVersion="9.0"/>
@@ -121,11 +121,20 @@
                         <outlet property="refreshButton" destination="Jz0-CC-pXX" id="daA-jH-Ylv"/>
                         <outlet property="refreshButtonBackgroundView" destination="JRl-u7-jUJ" id="xiB-2J-IKN"/>
                         <outlet property="statusBarBlurViewHeightConstraint" destination="07o-9H-hgH" id="pgh-Q1-5uz"/>
+                        <segue destination="0Op-iU-AiX" kind="show" identifier="showDroppDetailSegue" id="f4E-5a-dUd"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="We4-HP-6IC" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
             <point key="canvasLocation" x="-124" y="150.67466266866569"/>
+        </scene>
+        <!--DroppDetail-->
+        <scene sceneID="ZSG-Hn-oQh">
+            <objects>
+                <viewControllerPlaceholder storyboardName="DroppDetail" id="0Op-iU-AiX" sceneMemberID="viewController"/>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="5Hm-lh-qhl" userLabel="First Responder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="553" y="150"/>
         </scene>
     </scenes>
     <resources>

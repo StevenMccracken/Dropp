@@ -39,6 +39,13 @@ class Utils {
   }
   
   /**
+   Whether or not the current device is a simulator
+   */
+  class var isSimulator: Bool {
+    return ProcessInfo.processInfo.environment["SIMULATOR_DEVICE_NAME"] != nil
+  }
+  
+  /**
    Whether or not the current device is an iPhone X
    */
   class var isDeviceIPhoneX: Bool {

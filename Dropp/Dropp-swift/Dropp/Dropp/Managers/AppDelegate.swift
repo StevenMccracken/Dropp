@@ -78,7 +78,7 @@ extension AppDelegate: UITabBarControllerDelegate {
       createDroppViewController.feedViewControllerDelegate = feedViewControllerDelegate
     }
     
-    let navigationController = UINavigationController(rootViewController: createDroppViewController, customize: true)
+    let navigationController = UIPortraitNavigationController(rootViewController: createDroppViewController, customize: true)
     navigationController.navigationBar.prefersLargeTitles = false
     tabBarController.present(navigationController, animated: true, completion: nil)
     return false

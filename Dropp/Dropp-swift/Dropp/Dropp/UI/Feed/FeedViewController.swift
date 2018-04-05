@@ -154,7 +154,7 @@ class FeedViewController: UITableViewController {
     
     // Get the new view controller using segue.destinationViewController.
     // Pass the selected object to the new view controller.
-    guard let destination = segue.destination as? DroppDetailViewController else {
+    guard let detailViewController = segue.destination as? DroppDetailViewController else {
       return
     }
     
@@ -163,8 +163,8 @@ class FeedViewController: UITableViewController {
     }
     
     let dropp = dropps[indexPath.section]
-    destination.dropp = dropp
-    destination.feedViewControllerDelegate = self
+    detailViewController.dropp = dropp
+    detailViewController.feedViewControllerDelegate = self
   }
 }
 

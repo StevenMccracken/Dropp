@@ -19,17 +19,24 @@ class MapViewController: UIViewController {
   @IBOutlet weak var activityIndicator: UIActivityIndicatorView!
   @IBOutlet weak var droppCountButton: UIButton!
   
-  var isRefreshing = false
-  var dropps = [Dropp]()
+  // MARK: Data sources
+  private var dropps = [Dropp]()
+  private var isRefreshing = false
+  private var shouldTrackUserLocation = true
   private var annotations = [MKPointAnnotation]()
   
   override func viewDidLoad() {
     super.viewDidLoad()
+    
+    // Configure map view
     mapView.delegate = self
+    let panGestureRecognizer = UIPanGestureRecognizer(target: self, action: #selector(userDidDragMap))
+    panGestureRecognizer.delegate = self
+    mapView.addGestureRecognizer(panGestureRecognizer)
+    
     refreshButtonBackgroundView.layer.cornerRadius = 10
     droppCountButton.layer.cornerRadius = 5
     droppCountButton.contentEdgeInsets = UIEdgeInsets(top: 5, left: 5, bottom: 5, right: 5)
-    
     didTapRefreshButton(self)
   }
   
@@ -46,9 +53,19 @@ class MapViewController: UIViewController {
     NotificationCenter.default.removeObserver(self)
   }
   
-  override func didReceiveMemoryWarning() {
-    super.didReceiveMemoryWarning()
-    // Dispose of any resources that can be recreated.
+  override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
+    guard segue.identifier == Constants.showDroppDetailSegueId,
+          let detailViewController = segue.destination as? DroppDetailViewController,
+          let view = sender as? MKAnnotationView,
+          let annotation = view.annotation,
+          let pointAnnotation = annotation as? MKPointAnnotation,
+          let index = annotations.index(of: pointAnnotation),
+          index < dropps.count else {
+      return
+    }
+    
+    detailViewController.dropp = dropps[index]
+    detailViewController.feedViewControllerDelegate = self
   }
   
   @IBAction func didTapRefreshButton(_ sender: Any) {
@@ -71,19 +88,25 @@ class MapViewController: UIViewController {
         strongSelf.toggleActivityIndicator(visible: false)
         strongSelf.toggleRefreshButton(enabled: true)
       }
-    })
+    }) { [weak self] error in
+      guard let strongSelf = self else {
+        return
+      }
+      
+      DispatchQueue.main.async {
+        strongSelf.toggleDroppCountButton(hidden: false)
+        strongSelf.toggleActivityIndicator(visible: false)
+        strongSelf.toggleRefreshButton(enabled: true)
+      }
+    }
   }
   
   @IBAction func didTapLocateUserButton(_ sender: UIButton) {
     sender.isEnabled = false
+    shouldTrackUserLocation = true
     mapView.deselectSelectedAnnotations(animated: true)
-    updateMapView(withDropps: dropps) { [weak self] () in
-      guard let _ = self else {
-        return
-      }
-      
-      sender.isEnabled = true
-    }
+    updateMapView(withDropps: dropps)
+    sender.isEnabled = true
   }
   
   func retrieveDropps(success: (([Dropp]) -> Void)? = nil, failure: ((NSError) -> Void)? = nil) {
@@ -112,17 +135,7 @@ class MapViewController: UIViewController {
     })
   }
   
-  /*
-   // MARK: - Navigation
-   
-   // In a storyboard-based application, you will often want to do a little preparation before navigation
-   override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
-   // Get the new view controller using segue.destinationViewController.
-   // Pass the selected object to the new view controller.
-   }
-   */
-  
-  func updateMapView(withDropps dropps: [Dropp], done: (() -> Void)? = nil) {
+  func updateMapView(withDropps dropps: [Dropp]) {
     mapView.removeAnnotations(annotations)
     self.dropps = dropps
     annotations = dropps.map { $0.pointAnnotation }
@@ -139,8 +152,6 @@ class MapViewController: UIViewController {
     if let userAnnotation = userAnnotation {
       mapView.removeAnnotation(userAnnotation)
     }
-    
-    done?()
   }
   
   @objc
@@ -185,33 +196,38 @@ class MapViewController: UIViewController {
 
 extension MapViewController: MKMapViewDelegate {
   
+  @objc
+  private func userDidDragMap(_ gesture: UIGestureRecognizer) {
+    if gesture.state == .began && shouldTrackUserLocation {
+      shouldTrackUserLocation = false
+    }
+  }
+  
   func mapView(_ mapView: MKMapView, didSelect view: MKAnnotationView) {
-    guard let annotation = view.annotation else {
+    // Make sure the selected annotation is found in the current list of dropps so the segue will not crash
+    guard let annotation = view.annotation,
+          let pointAnnotation = annotation as? MKPointAnnotation,
+          let index = annotations.index(of: pointAnnotation),
+          index < dropps.count else {
       return
     }
     
+    shouldTrackUserLocation = false
     mapView.showAnnotations([annotation], animated: true)
-    guard let pointAnnotation = annotation as? MKPointAnnotation, let index = annotations.index(of: pointAnnotation), index < dropps.count else {
-      return
+    performSegue(withIdentifier: Constants.showDroppDetailSegueId, sender: view)
+  }
+  
+  func mapView(_ mapView: MKMapView, didUpdate userLocation: MKUserLocation) {
+    if shouldTrackUserLocation {
+      updateMapView(withDropps: dropps)
     }
-    
-    let droppDetailStoryboard = UIStoryboard(name: "DroppDetail", bundle: nil)
-    guard let droppDetailViewController = droppDetailStoryboard.instantiateInitialViewController() as? DroppDetailViewController else {
-      return
-    }
-    
-    droppDetailViewController.dropp = dropps[index]
-    droppDetailViewController.shouldZoomToDroppOnAppearance = true
-    droppDetailViewController.feedViewControllerDelegate = self
-    navigationController?.pushViewController(droppDetailViewController, animated: true)
-    mapView.deselectAnnotation(annotation, animated: true)
   }
 }
 
 extension MapViewController: FeedViewControllerDelegate {
   
   func shouldRefreshData() {
-    
+    didTapRefreshButton(self)
   }
   
   func shouldRefresh(dropp: Dropp, with newDropp: Dropp?) {
@@ -252,5 +268,12 @@ extension MapViewController: FeedViewControllerDelegate {
     DispatchQueue.main.async {
       self.updateDroppCountButton(self.dropps)
     }
+  }
+}
+
+extension MapViewController: UIGestureRecognizerDelegate {
+  
+  func gestureRecognizer(_ gestureRecognizer: UIGestureRecognizer, shouldRecognizeSimultaneouslyWith otherGestureRecognizer: UIGestureRecognizer) -> Bool {
+    return true
   }
 }

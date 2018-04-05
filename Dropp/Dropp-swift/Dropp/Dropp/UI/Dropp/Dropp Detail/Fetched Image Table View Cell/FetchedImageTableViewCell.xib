@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.XIB" version="3.0" toolsVersion="14109" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES">
+    <device id="retina5_9" orientation="portrait">
+        <adaptation id="fullscreen"/>
+    </device>
+    <dependencies>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="14088"/>
+        <capability name="Aspect ratio constraints" minToolsVersion="5.1"/>
+        <capability name="Constraints with non-1.0 multipliers" minToolsVersion="5.1"/>
+        <capability name="Safe area layout guides" minToolsVersion="9.0"/>
+        <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
+    </dependencies>
+    <objects>
+        <placeholder placeholderIdentifier="IBFilesOwner" id="-1" userLabel="File's Owner"/>
+        <placeholder placeholderIdentifier="IBFirstResponder" id="-2" customClass="UIResponder"/>
+        <tableViewCell contentMode="scaleToFill" selectionStyle="none" indentationWidth="10" reuseIdentifier="FetchedImageTableViewCell" id="KGk-i7-Jjw" customClass="FetchedImageTableViewCell" customModule="Dropp" customModuleProvider="target">
+            <rect key="frame" x="0.0" y="0.0" width="569" height="211"/>
+            <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+            <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="KGk-i7-Jjw" id="H2p-sc-9uM">
+                <rect key="frame" x="0.0" y="0.0" width="569" height="210.66666666666666"/>
+                <autoresizingMask key="autoresizingMask"/>
+                <subviews>
+                    <imageView userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" translatesAutoresizingMaskIntoConstraints="NO" id="IsW-YN-DXH">
+                        <rect key="frame" x="0.0" y="0.0" width="569" height="210.66666666666666"/>
+                        <constraints>
+                            <constraint firstAttribute="height" relation="lessThanOrEqual" constant="350" id="jgA-3o-Fal"/>
+                        </constraints>
+                    </imageView>
+                    <label hidden="YES" opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Unable to get image😦" textAlignment="center" lineBreakMode="wordWrap" numberOfLines="0" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="8E1-Pa-fHy" userLabel="Fetch image error label">
+                        <rect key="frame" x="16" y="93.333333333333329" width="537" height="24"/>
+                        <fontDescription key="fontDescription" type="system" weight="medium" pointSize="20"/>
+                        <color key="textColor" red="0.91661626100000004" green="0.3107863367" blue="0.38301837439999997" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                        <nil key="highlightedColor"/>
+                    </label>
+                    <view hidden="YES" opaque="NO" alpha="0.60000002384185791" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="EfX-W2-Fw1" userLabel="Activity Indicator Background View">
+                        <rect key="frame" x="257" y="78" width="55" height="55"/>
+                        <subviews>
+                            <activityIndicatorView contentMode="scaleToFill" horizontalHuggingPriority="750" verticalHuggingPriority="750" animating="YES" style="whiteLarge" translatesAutoresizingMaskIntoConstraints="NO" id="LU8-ip-Qca">
+                                <rect key="frame" x="9" y="9" width="37" height="37"/>
+                            </activityIndicatorView>
+                        </subviews>
+                        <color key="backgroundColor" white="0.0" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                        <constraints>
+                            <constraint firstAttribute="width" secondItem="EfX-W2-Fw1" secondAttribute="height" multiplier="1:1" id="F8F-qg-mAl"/>
+                            <constraint firstItem="LU8-ip-Qca" firstAttribute="centerY" secondItem="EfX-W2-Fw1" secondAttribute="centerY" id="X37-d4-cJR"/>
+                            <constraint firstAttribute="width" constant="55" id="fYh-DV-elM"/>
+                            <constraint firstItem="LU8-ip-Qca" firstAttribute="centerX" secondItem="EfX-W2-Fw1" secondAttribute="centerX" id="tiP-0k-OW2"/>
+                        </constraints>
+                    </view>
+                </subviews>
+                <constraints>
+                    <constraint firstAttribute="trailing" secondItem="IsW-YN-DXH" secondAttribute="trailing" id="3q1-wB-WO0"/>
+                    <constraint firstItem="EfX-W2-Fw1" firstAttribute="centerX" secondItem="H2p-sc-9uM" secondAttribute="centerX" id="904-Pz-5GS"/>
+                    <constraint firstItem="IsW-YN-DXH" firstAttribute="leading" secondItem="H2p-sc-9uM" secondAttribute="leading" id="Omo-Jd-ifT"/>
+                    <constraint firstItem="IsW-YN-DXH" firstAttribute="height" relation="greaterThanOrEqual" secondItem="EfX-W2-Fw1" secondAttribute="height" multiplier="1.1" id="PmK-Re-nch"/>
+                    <constraint firstAttribute="bottom" secondItem="IsW-YN-DXH" secondAttribute="bottom" id="Vf8-5Y-bnv"/>
+                    <constraint firstItem="8E1-Pa-fHy" firstAttribute="centerY" secondItem="H2p-sc-9uM" secondAttribute="centerY" id="qNz-5V-vRw"/>
+                    <constraint firstItem="EfX-W2-Fw1" firstAttribute="centerY" secondItem="H2p-sc-9uM" secondAttribute="centerY" id="sLS-G9-yBB"/>
+                    <constraint firstItem="IsW-YN-DXH" firstAttribute="top" secondItem="H2p-sc-9uM" secondAttribute="top" id="u0h-or-6ke"/>
+                    <constraint firstItem="8E1-Pa-fHy" firstAttribute="leading" secondItem="H2p-sc-9uM" secondAttribute="leading" constant="16" id="wlm-KY-ir2"/>
+                    <constraint firstAttribute="trailing" secondItem="8E1-Pa-fHy" secondAttribute="trailing" constant="16" id="yw8-Bd-4UJ"/>
+                </constraints>
+            </tableViewCellContentView>
+            <viewLayoutGuide key="safeArea" id="njF-e1-oar"/>
+            <connections>
+                <outlet property="activityIndicatorView" destination="LU8-ip-Qca" id="2fI-cb-9eO"/>
+                <outlet property="currentImage" destination="IsW-YN-DXH" id="B5Z-L3-rDc"/>
+                <outlet property="errorLabel" destination="8E1-Pa-fHy" id="gsZ-ES-NRG"/>
+                <outlet property="loadingBackgroundView" destination="EfX-W2-Fw1" id="Hnt-AC-vqK"/>
+            </connections>
+            <point key="canvasLocation" x="158.5" y="137.5"/>
+        </tableViewCell>
+    </objects>
+</document>
