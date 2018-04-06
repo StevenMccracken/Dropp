@@ -16,22 +16,19 @@
                         <rect key="frame" x="0.0" y="0.0" width="375" height="812"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                        <view key="tableHeaderView" contentMode="scaleToFill" id="Kei-AP-cjl" customClass="ProfileHeaderView" customModule="Dropp" customModuleProvider="target">
+                            <rect key="frame" x="0.0" y="0.0" width="375" height="50"/>
+                            <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                            <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                        </view>
                         <view key="tableFooterView" contentMode="scaleToFill" id="KFI-Fc-Fwy" userLabel="Footer View">
-                            <rect key="frame" x="0.0" y="116" width="375" height="0.0"/>
+                            <rect key="frame" x="0.0" y="122" width="375" height="0.0"/>
                             <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                             <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                         </view>
                         <prototypes>
-                            <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" insetsLayoutMarginsFromSafeArea="NO" selectionStyle="none" hidesAccessoryWhenEditing="NO" indentationLevel="1" indentationWidth="0.0" reuseIdentifier="ProfileHeaderTableViewCell" id="c3b-sN-wSy" userLabel="ProfileHeaderTableViewCell" customClass="ProfileHeaderTableViewCell" customModule="Dropp" customModuleProvider="target">
-                                <rect key="frame" x="0.0" y="28" width="375" height="44"/>
-                                <autoresizingMask key="autoresizingMask"/>
-                                <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" insetsLayoutMarginsFromSafeArea="NO" tableViewCell="c3b-sN-wSy" id="Mhm-Pq-miM">
-                                    <rect key="frame" x="0.0" y="0.0" width="375" height="43.666666666666664"/>
-                                    <autoresizingMask key="autoresizingMask"/>
-                                </tableViewCellContentView>
-                            </tableViewCell>
                             <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" insetsLayoutMarginsFromSafeArea="NO" selectionStyle="none" hidesAccessoryWhenEditing="NO" indentationLevel="1" indentationWidth="0.0" reuseIdentifier="DroppTableViewCell" id="FAU-m8-RLg" userLabel="DroppTableViewCell" customClass="DroppTableViewCell" customModule="Dropp" customModuleProvider="target">
-                                <rect key="frame" x="0.0" y="72" width="375" height="44"/>
+                                <rect key="frame" x="0.0" y="78" width="375" height="44"/>
                                 <autoresizingMask key="autoresizingMask"/>
                                 <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" insetsLayoutMarginsFromSafeArea="NO" tableViewCell="FAU-m8-RLg" id="aFU-rH-vLC">
                                     <rect key="frame" x="0.0" y="0.0" width="375" height="43.666666666666664"/>
@@ -46,6 +43,7 @@
                     </tableView>
                     <navigationItem key="navigationItem" title="Profile" id="mL8-XC-Bxu"/>
                     <connections>
+                        <outlet property="profileHeaderView" destination="Kei-AP-cjl" id="8X5-g4-bFF"/>
                         <segue destination="2i9-O7-5nw" kind="show" identifier="showConnectionsSegue" id="GIq-Gf-Cg0"/>
                         <segue destination="RLl-3N-4MR" kind="show" identifier="showDroppDetailSegue" id="oS9-SX-5nz"/>
                     </connections>

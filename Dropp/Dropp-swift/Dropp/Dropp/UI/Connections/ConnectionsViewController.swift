@@ -60,12 +60,13 @@ class ConnectionsViewController: UITableViewController {
     
     let user = isFiltering ? filteredConnections[indexPath.row] : connections![indexPath.row]
     cell.addContent(user)
-    cell.isUserInteractionEnabled = !user.isCurrentUser
-    if user.isCurrentUser {
+    if LoginManager.shared.isCurrentUser(user) {
       cell.accessoryType = .none
       cell.selectionStyle = .none
+      cell.isUserInteractionEnabled = false
     } else {
       cell.selectionStyle = .default
+      cell.isUserInteractionEnabled = true
       cell.accessoryType = .disclosureIndicator
     }
     

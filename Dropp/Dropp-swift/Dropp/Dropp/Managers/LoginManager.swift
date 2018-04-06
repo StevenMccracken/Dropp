@@ -42,6 +42,10 @@ class LoginManager {
     }
   }
   
+  func isCurrentUser(_ user: User) -> Bool {
+    return user.username == currentUser?.username
+  }
+  
   func login(username: String, password: String, success: (() -> Void)? = nil, failure: ((NSError) -> Void)? = nil) {
     debugPrint("Login attempted at", Date())
     guard !isLoggedIn else {

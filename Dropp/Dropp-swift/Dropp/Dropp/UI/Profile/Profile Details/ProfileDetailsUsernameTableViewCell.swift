@@ -10,7 +10,8 @@ import UIKit
 
 class ProfileDetailsUsernameTableViewCell: UITableViewCell {
   
-  static let reuseIdentifier = "ProfileDetailsTableViewCell"
+  static let identifier = "ProfileDetailsTableViewCell"
+  
   @IBOutlet weak var usernameLabel: UILabel!
   
   override func awakeFromNib() {

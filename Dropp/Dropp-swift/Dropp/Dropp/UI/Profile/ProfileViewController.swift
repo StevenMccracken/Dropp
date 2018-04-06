@@ -10,44 +10,35 @@ import UIKit
 
 class ProfileViewController: UITableViewController {
   
+  // MARK: IBOutlets
+  @IBOutlet weak var profileHeaderView: ProfileHeaderView!
+  
+  // MARK: Data sources
   var user: User!
   private var dropps = [Dropp]()
-  private var sortButton: UIBarButtonItem!
-  private var infoButton: UIBarButtonItem!
   private var currentUserUpdatedEventHandler: Disposable?
   
   private var sortingType: DroppFeedSortingType = .chronological
-  private var refreshing = false
+  private var isRefreshing = false
   
-  private lazy var fetchFailedLabel: UILabel = {
-    let label = UILabel(withText: "\nUnable to get dropps😢", forTableViewBackground: tableView, andFontSize: 30)
-    return label
+  // MARK: Buttons
+  
+  private lazy var sortButton = UIBarButtonItem(title: "Sort", style: .plain, target: self, action: #selector(didTapSortButton))
+  private lazy var infoButton: UIBarButtonItem = {
+    let button = UIButton(type: .detailDisclosure)
+    button.addTarget(self, action: #selector(didTapInfoButton), for: .touchUpInside)
+    return UIBarButtonItem(customView: button)
   }()
   
-  private lazy var noDroppsPostedLabel: UILabel = {
-    let label = UILabel(withText: "\nNo dropps posted😒", forTableViewBackground: tableView, andFontSize: 30)
-    return label
-  }()
-  
-  private lazy var notFollowingLabel: UILabel = {
-    let label = UILabel(withText: "\nFollow this user to see all of their dropps🔑", forTableViewBackground: tableView, andFontSize: 25)
-    return label
-  }()
-  
-  private lazy var followRequestSentLabel: UILabel = {
-    let label = UILabel(withText: "\nFollow request sent👌🏽", forTableViewBackground: tableView, andFontSize: 30)
-    return label
-  }()
+  // MARK: Table view labels
+  private lazy var fetchFailedLabel = UILabel("\nUnable to get dropps😢", forTableView: tableView, fontSize: 30)
+  private lazy var noDroppsPostedLabel = UILabel("\nNo dropps posted😒", forTableView: tableView, fontSize: 30)
+  private lazy var notFollowingLabel = UILabel("\nFollow this user to see all of their dropps🔑", forTableView: tableView, fontSize: 25)
+  private lazy var followRequestSentLabel = UILabel("\nFollow request sent👌🏽", forTableView: tableView, fontSize: 30)
   
   override func viewDidLoad() {
     super.viewDidLoad()
-    
-    sortButton = UIBarButtonItem(title: "Sort", style: .plain, target: self, action: #selector(didTapSortButton))
-    let disclosureButton = UIButton(type: .detailDisclosure)
-    disclosureButton.addTarget(self, action: #selector(didTapInfoButton), for: .touchUpInside)
-    infoButton = UIBarButtonItem(customView: disclosureButton)
-    
-    if user.isCurrentUser {
+    if LoginManager.shared.isCurrentUser(user) {
       navigationItem.leftBarButtonItem = sortButton
       navigationItem.rightBarButtonItem = infoButton
       navigationItem.largeTitleDisplayMode = .automatic
@@ -56,8 +47,9 @@ class ProfileViewController: UITableViewController {
       navigationItem.largeTitleDisplayMode = .never
     }
     
-    tableView.register(UINib(nibName: ProfileHeaderTableViewCell.identifier, bundle: nil), forCellReuseIdentifier: ProfileHeaderTableViewCell.identifier)
-    tableView.register(UINib(nibName: DroppTableViewCell.identifier, bundle: nil), forCellReuseIdentifier: DroppTableViewCell.identifier)
+    profileHeaderView.delegate = self
+    profileHeaderView.toggleInteractionButton(visible: false)
+    tableView.register(nibAndReuseIdentifier: DroppTableViewCell.identifier)
     
     let refreshControl = UIRefreshControl()
     refreshControl.tintColor = .salmon
@@ -71,27 +63,29 @@ class ProfileViewController: UITableViewController {
   
   override func viewDidAppear(_ animated: Bool) {
     super.viewDidAppear(animated)
-    if user.isCurrentUser {
+    if LoginManager.shared.isCurrentUser(user) {
       currentUserUpdatedEventHandler = LoginManager.shared.currentUserUpdatedEvent.addHandler(target: self, handler: ProfileViewController.updateUserProfile)
     }
   }
   
   override func viewWillDisappear(_ animated: Bool) {
     super.viewWillDisappear(animated)
-    refreshing = false
+    isRefreshing = false
     self.refreshControl?.endRefreshing()
     currentUserUpdatedEventHandler?.dispose()
   }
   
   private func updateUserProfile(newUser: User) {
     user = newUser
-    updateFollowersCount()
-    updateFollowingCount()
+    DispatchQueue.main.async {
+      self.profileHeaderView.updateFollowers(newUser.followers)
+      self.profileHeaderView.updateFollowing(newUser.following)
+    }
   }
   
   @objc
   func didTapInfoButton() {
-    if user.isCurrentUser {
+    if LoginManager.shared.isCurrentUser(user) {
       let profileDetailsStoryboard = UIStoryboard(name: "ProfileDetails", bundle: nil)
       guard let profileDetailsViewController = profileDetailsStoryboard.instantiateInitialViewController() as? ProfileDetailsViewController else {
         debugPrint("Initial view controller for ProfileDetails was invalid")
@@ -147,16 +141,16 @@ class ProfileViewController: UITableViewController {
   }
   
   func getDropps(_ done: (() -> Void)? = nil) {
-    guard !refreshing else {
+    guard !isRefreshing else {
       return
     }
     
     let completion = {
-      self.refreshing = false
+      self.isRefreshing = false
       done?()
     }
     
-    refreshing = true
+    isRefreshing = true
     DroppService.getDropps(forUser: user, success: { [weak self] (dropps: [Dropp]) in
       guard let strongSelf = self else {
         return
@@ -194,15 +188,14 @@ class ProfileViewController: UITableViewController {
   func refreshTableView(with dropps: [Dropp], done: (() -> Void)? = nil) {
     let originalCount = self.dropps.count
     DispatchQueue.main.async {
-      self.tableView.reloadSections(IndexSet(integer: 0), with: .fade)
       self.dropps.removeAll()
       if originalCount > 0 {
-        let deleteSet = IndexSet(integersIn: 1 ..< originalCount + 1)
+        let deleteSet = IndexSet(integersIn: 0 ..< originalCount)
         self.tableView.deleteSections(deleteSet, with: .fade)
       }
       
       self.dropps.append(contentsOf: dropps)
-      let insertSet = IndexSet(integersIn: 1 ..< self.dropps.count + 1)
+      let insertSet = IndexSet(integersIn: 0 ..< self.dropps.count)
       self.tableView.insertSections(insertSet, with: .fade)
       done?()
     }
@@ -276,22 +269,18 @@ class ProfileViewController: UITableViewController {
         return
       }
       
-      if strongSelf.user.isCurrentUser {
+      if LoginManager.shared.isCurrentUser(strongSelf.user) {
         LoginManager.shared.updateCurrentUser(with: updatedUser)
       } else {
         strongSelf.updateUserProfile(newUser: updatedUser)
-        if let doesFollowUser = LoginManager.shared.currentUser?.follows(updatedUser), doesFollowUser == true {
-          DispatchQueue.main.async {
-            strongSelf.navigationItem.rightBarButtonItem = strongSelf.sortButton
-            let headerCell = strongSelf.tableView.dequeueReusableCell(withIdentifier: ProfileHeaderTableViewCell.identifier, for: IndexPath(row: 0, section: 0)) as! ProfileHeaderTableViewCell
-            headerCell.toggleInteractionButton(enabled: true, withTitle: "Unfollow")
+        DispatchQueue.main.async {
+          if let doesFollowUser = LoginManager.shared.currentUser?.follows(updatedUser), doesFollowUser == true {
+            strongSelf.profileHeaderView.toggleInteractionButton(enabled: true, withTitle: "Unfollow")
+          } else if let hasRequestedFollow = LoginManager.shared.currentUser?.hasRequestedFollow(updatedUser), hasRequestedFollow == true {
+            strongSelf.profileHeaderView.toggleInteractionButton(enabled: false, withTitle: "Request pending")
           }
-        } else if let hasRequestedFollow = LoginManager.shared.currentUser?.hasRequestedFollow(updatedUser), hasRequestedFollow == true {
-          DispatchQueue.main.async {
-            strongSelf.navigationItem.rightBarButtonItem = strongSelf.infoButton
-            let headerCell = strongSelf.tableView.dequeueReusableCell(withIdentifier: ProfileHeaderTableViewCell.identifier, for: IndexPath(row: 0, section: 0)) as! ProfileHeaderTableViewCell
-            headerCell.toggleInteractionButton(enabled: false, withTitle: "Request pending...")
-          }
+          
+          strongSelf.profileHeaderView.toggleInteractionButton(visible: true)
         }
       }
       
@@ -306,57 +295,7 @@ class ProfileViewController: UITableViewController {
     })
   }
   
-  func getFollowers(_ done: (() -> Void)? = nil) {
-    UserService.getFollowers(forUser: user, success: { [weak self] (followers: [User]) in
-      guard let strongSelf = self else {
-        return
-      }
-      
-      debugPrint("The user has \(followers.count) follower(s)")
-      strongSelf.user.followers = followers
-      strongSelf.updateFollowersCount()
-      done?()
-    }, failure: { [weak self] (getFollowersError: NSError) in
-      guard let _ = self else {
-        return
-      }
-      
-      debugPrint("Failed to get user's followers", getFollowersError)
-      done?()
-    })
-  }
   
-  func getFollowing(_ done: (() -> Void)? = nil) {
-    UserService.getFollowing(forUser: user, success: { [weak self] (following: [User]) in
-      guard let strongSelf = self else {
-        return
-      }
-      
-      debugPrint("The user is following \(following.count) user(s)")
-      strongSelf.user.following = following
-      strongSelf.updateFollowingCount()
-      done?()
-    }, failure: { [weak self] (getFollowingError: NSError) in
-      guard let _ = self else {
-        return
-      }
-      
-      debugPrint("Failed to get user's following", getFollowingError)
-      done?()
-    })
-  }
-  
-  func updateFollowersCount() {
-    DispatchQueue.main.async {
-      self.tableView.reloadSections(IndexSet(integer: 0), with: .automatic)
-    }
-  }
-  
-  func updateFollowingCount() {
-    DispatchQueue.main.async {
-      self.tableView.reloadSections(IndexSet(integer: 0), with: .automatic)
-    }
-  }
   
   @objc
   func tableViewWasPulled() {
@@ -418,7 +357,7 @@ class ProfileViewController: UITableViewController {
   // MARK: - Table view data source
   
   override func numberOfSections(in tableView: UITableView) -> Int {
-    return dropps.count + 1
+    return dropps.count
   }
   
   override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
@@ -427,39 +366,40 @@ class ProfileViewController: UITableViewController {
   
   override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
     var cell: UITableViewCell
-    if indexPath.section == 0 {
-      let headerCell = tableView.dequeueReusableCell(withIdentifier: ProfileHeaderTableViewCell.identifier, for: indexPath) as! ProfileHeaderTableViewCell
-      if let followersCount = user.followers?.count {
-        headerCell.updateFollowers(followersCount)
-        headerCell.toggleFollowersButton(enabled: followersCount > 0)
-      } else {
-        headerCell.toggleFollowersButton(enabled: false)
-      }
-      
-      if let followingCount = user.following?.count {
-        headerCell.updateFollowing(followingCount)
-        headerCell.toggleFollowingButton(enabled: followingCount > 0)
-      } else {
-        headerCell.toggleFollowingButton(enabled: false)
-      }
-      
-      headerCell.toggleInteractionButton(visible: !user.isCurrentUser)
-      if let _ = user.followers {
-        let following = LoginManager.shared.currentUser!.follows(user) ?? false
-        headerCell.toggleInteractionButton(enabled: true, withTitle: following ? "Unfollow" : "Follow")
-      } else {
-        headerCell.toggleInteractionButton(enabled: false, withTitle: "Loading...")
-      }
-      
-      if user.isCurrentUser {
-        headerCell.setInteractionButtonHeight(0)
-      }
-      
-      headerCell.delegate = self
-      cell = headerCell
+    if indexPath.section == 2 {
+      cell = UITableViewCell()
+//      let headerCell = tableView.dequeueReusableCell(withIdentifier: ProfileHeaderTableViewCell.identifier, for: indexPath) as! ProfileHeaderTableViewCell
+//      if let followersCount = user.followers?.count {
+//        headerCell.updateFollowers(followersCount)
+//        headerCell.toggleFollowersButton(enabled: followersCount > 0)
+//      } else {
+//        headerCell.toggleFollowersButton(enabled: false)
+//      }
+//
+//      if let followingCount = user.following?.count {
+//        headerCell.updateFollowing(followingCount)
+//        headerCell.toggleFollowingButton(enabled: followingCount > 0)
+//      } else {
+//        headerCell.toggleFollowingButton(enabled: false)
+//      }
+//
+//      headerCell.toggleInteractionButton(visible: !user.isCurrentUser)
+//      if let _ = user.followers {
+//        let following = LoginManager.shared.currentUser!.follows(user) ?? false
+//        headerCell.toggleInteractionButton(enabled: true, withTitle: following ? "Unfollow" : "Follow")
+//      } else {
+//        headerCell.toggleInteractionButton(enabled: false, withTitle: "Loading...")
+//      }
+//
+//      if user.isCurrentUser {
+//        headerCell.setInteractionButtonHeight(0)
+//      }
+//
+//      headerCell.delegate = self
+//      cell = headerCell
     } else {
       let droppCell = tableView.dequeueReusableCell(withIdentifier: DroppTableViewCell.identifier, for: indexPath) as! DroppTableViewCell
-      let dropp = dropps[indexPath.section - 1]
+      let dropp = dropps[indexPath.section]
       droppCell.addContent(from: dropp)
       cell = droppCell
     }
@@ -468,9 +408,7 @@ class ProfileViewController: UITableViewController {
   }
   
   override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-    if indexPath.section > 0 {
-      performSegue(withIdentifier: Constants.showDroppDetailSegueId, sender: self)
-    }
+    performSegue(withIdentifier: Constants.showDroppDetailSegueId, sender: self)
   }
   
   // MARK: - Navigation
@@ -484,15 +422,11 @@ class ProfileViewController: UITableViewController {
       return
     }
     
-    guard indexPath.section > 0 else {
-      return
-    }
-    
     guard let detailViewController = segue.destination as? DroppDetailViewController else {
       return
     }
     
-    detailViewController.dropp = dropps[indexPath.section - 1]
+    detailViewController.dropp = dropps[indexPath.section]
     detailViewController.feedViewControllerDelegate = self
   }
   
@@ -514,8 +448,7 @@ class ProfileViewController: UITableViewController {
   
   func updateInteractionButton(enabled: Bool, withTitle title: String? = nil, _ completion: (() -> Void)? = nil) {
     DispatchQueue.main.async {
-      let headerCell = self.tableView.dequeueReusableCell(withIdentifier: ProfileHeaderTableViewCell.identifier, for: IndexPath(row: 0, section: 0)) as! ProfileHeaderTableViewCell
-      headerCell.toggleInteractionButton(enabled: enabled, withTitle: title)
+      self.profileHeaderView.toggleInteractionButton(enabled: enabled, withTitle: title)
       completion?()
     }
   }
@@ -536,7 +469,7 @@ extension ProfileViewController: FeedViewControllerDelegate {
       dropps[index] = newDropp
     }
     
-    let indexPath = IndexPath(row: 0, section: index + 1)
+    let indexPath = IndexPath(row: 0, section: index)
     DispatchQueue.main.async {
       self.tableView.reloadRows(at: [indexPath], with: .fade)
     }
@@ -554,7 +487,7 @@ extension ProfileViewController: FeedViewControllerDelegate {
       var scrollPosition: UITableViewScrollPosition
       if self.sortingType == .reverseChronological || self.sortingType == .farthest {
         self.dropps.append(dropp)
-        index = self.dropps.count - 1
+        index = self.dropps.count
         rowAnimation = .bottom
         scrollPosition = .bottom
       } else {
@@ -564,9 +497,9 @@ extension ProfileViewController: FeedViewControllerDelegate {
         scrollPosition = .top
       }
       
-      self.tableView.insertSections(IndexSet(integer: index + 1), with: rowAnimation)
+      self.tableView.insertSections(IndexSet(integer: index), with: rowAnimation)
       let visibleIndexPaths = self.tableView.indexPathsForVisibleRows ?? []
-      let indexPathToScrollTo = IndexPath(row: 0, section: index + 1)
+      let indexPathToScrollTo = IndexPath(row: 0, section: index)
       guard !visibleIndexPaths.contains(indexPathToScrollTo) else {
         return
       }
@@ -585,7 +518,7 @@ extension ProfileViewController: FeedViewControllerDelegate {
     
     DispatchQueue.main.async {
       self.dropps.remove(at: index)
-      self.tableView.deleteSections(IndexSet(integer: index + 1), with: .left)
+      self.tableView.deleteSections(IndexSet(integer: index), with: .left)
       if self.dropps.isEmpty {
         self.toggleNoDroppsPostedLabel(visible: true)
       }
@@ -593,13 +526,9 @@ extension ProfileViewController: FeedViewControllerDelegate {
   }
 }
 
-extension ProfileViewController: ProfileHeaderTableViewCellDelegate {
+extension ProfileViewController: ProfileHeaderViewDelegate {
   
-  func didTapFollowersButton() {
-    guard let _ = user.followers else {
-      return
-    }
-    
+  func didTapFollowersButton(_ sender: UIButton) {
     let followersStoryboard = UIStoryboard(name: "Connections", bundle: nil)
     guard let connectionsViewController = followersStoryboard.instantiateInitialViewController() as? ConnectionsViewController else {
       debugPrint("Initial view controller for Followers storyboard was nil")
@@ -611,11 +540,7 @@ extension ProfileViewController: ProfileHeaderTableViewCellDelegate {
     navigationController?.pushViewController(connectionsViewController, animated: true)
   }
   
-  func didTapFollowingButton() {
-    guard let _ = user.following else {
-      return
-    }
-    
+  func didTapFollowingButton(_ sender: UIButton) {
     let followersStoryboard = UIStoryboard(name: "Connections", bundle: nil)
     guard let connectionsViewController = followersStoryboard.instantiateInitialViewController() as? ConnectionsViewController else {
       debugPrint("Initial view controller for Followers storyboard was nil")
@@ -627,17 +552,17 @@ extension ProfileViewController: ProfileHeaderTableViewCellDelegate {
     navigationController?.pushViewController(connectionsViewController, animated: true)
   }
   
-  func didTapInteractionButton(_ sender: ProfileHeaderTableViewCell) {
+  func didTapInteractionButton(_ sender: UIButton) {
     if let hasRequestedToFollow = LoginManager.shared.currentUser?.hasRequestedFollow(user), hasRequestedToFollow == true {
-      removePendingFollowRequest(sender)
+      removePendingFollowRequest()
     } else if let isFollowing = LoginManager.shared.currentUser!.follows(user), isFollowing == true {
-      unfollowUser(sender)
+      unfollowUser()
     } else {
-      requestToFollowUser(sender)
+      requestToFollowUser()
     }
   }
   
-  func requestToFollowUser(_ headerTableViewCell: ProfileHeaderTableViewCell) {
+  func requestToFollowUser() {
     toggleLoadingView(hidden: false)
     UserService.requestToFollow(user: user, success: { [weak self] () in
       guard let strongSelf = self else {
@@ -647,7 +572,7 @@ extension ProfileViewController: ProfileHeaderTableViewCellDelegate {
       LoginManager.shared.currentUser?.followRequests?.append(strongSelf.user)
       strongSelf.toggleLoadingView(hidden: true, newRightBarButtonItem: strongSelf.infoButton) {
         DispatchQueue.main.async {
-          headerTableViewCell.toggleInteractionButton(enabled: true, withTitle: "Remove follow request")
+          strongSelf.profileHeaderView.toggleInteractionButton(enabled: true, withTitle: "Remove follow request")
         }
       }
     }, failure: { [weak self] (requestToFollowError: NSError) in
@@ -665,7 +590,7 @@ extension ProfileViewController: ProfileHeaderTableViewCellDelegate {
     })
   }
   
-  func removePendingFollowRequest(_ headerTableViewCell: ProfileHeaderTableViewCell) {
+  func removePendingFollowRequest() {
     toggleLoadingView(hidden: false)
     UserService.removePendingFollowRequest(toUser: self.user, success: { [weak self] () in
       guard let strongSelf = self else {
@@ -692,8 +617,8 @@ extension ProfileViewController: ProfileHeaderTableViewCellDelegate {
     })
   }
   
-  func unfollowUser(_ headerTableViewCell: ProfileHeaderTableViewCell) {
-    headerTableViewCell.toggleInteractionButton(enabled: false)
+  func unfollowUser() {
+    profileHeaderView.toggleInteractionButton(enabled: false)
     UserService.unfollow(user, success: { [weak self] () in
       guard let strongSelf = self else {
         return
@@ -715,7 +640,7 @@ extension ProfileViewController: ProfileHeaderTableViewCellDelegate {
       let alert = UIAlertController(title: "Error", message: "Unable to unfollow that user. Please try again later.", preferredStyle: .alert, color: .salmon, addDefaultAction: true)
       DispatchQueue.main.async {
         strongSelf.present(alert, animated: true) {
-          headerTableViewCell.toggleInteractionButton(enabled: true)
+          strongSelf.profileHeaderView.toggleInteractionButton(enabled: true)
         }
       }
     })

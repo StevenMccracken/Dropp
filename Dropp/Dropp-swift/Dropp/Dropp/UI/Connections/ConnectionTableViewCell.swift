@@ -21,6 +21,6 @@ class ConnectionTableViewCell: UITableViewCell {
   }
   
   func addContent(_ user: User) {
-    usernameLabel.text = user.isCurrentUser ? "⭐️You" :  user.username
+    usernameLabel.text = LoginManager.shared.isCurrentUser(user) ? "⭐️You" :  user.username
   }
 }

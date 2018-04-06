@@ -10,7 +10,7 @@ import UIKit
 
 extension UILabel {
   
-  convenience init(withText text: String, forTableViewBackground tableView: UITableView, andFontSize fontSize: CGFloat) {
+  convenience init(_ text: String, forTableView tableView: UITableView, fontSize: CGFloat) {
     self.init(frame: CGRect(x: 0, y: 0, width: tableView.bounds.size.width, height: tableView.bounds.size.height))
     self.text = text
     numberOfLines = 0
