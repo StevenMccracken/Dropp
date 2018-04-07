@@ -164,6 +164,7 @@ class MapViewController: UIViewController {
     
     titleButton.setTitle(text, for: .normal)
     navigationItem.titleView = titleButton
+    navigationItem.titleView?.sizeToFit()
   }
   
   // MARK: Remote interaction
@@ -186,15 +187,27 @@ class MapViewController: UIViewController {
         strongSelf.toggleRefreshingState(enabled: false)
         strongSelf.updateMapView(withDropps: nearbyDropps)
       }
-    }) { [weak self] (getNearbyDroppsError: NSError) in
+    }) { [weak self] (getNearbyDroppsError) in
       guard let strongSelf = self else {
         return
       }
       
+      let completion = {
+        DispatchQueue.main.async {
+          strongSelf.toggleRefreshingState(enabled: false)
+        }
+      }
+      
+      guard getNearbyDroppsError.code != Constants.locationNotEnabled else {
+        completion()
+        return()
+      }
+      
       let alert = UIAlertController(title: "Error", message: getNearbyDroppsError.localizedDescription, preferredStyle: .alert, color: .salmon, addDefaultAction: true)
       DispatchQueue.main.async {
-        strongSelf.toggleRefreshingState(enabled: false)
-        strongSelf.present(alert, animated: true)
+        strongSelf.present(alert, animated: true) {
+          completion()
+        }
       }
     }
   }

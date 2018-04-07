@@ -27,7 +27,7 @@ class Dropp: NSObject, Comparable {
   }
   
   var postedByCurrentUser: Bool {
-    return username == LoginManager.shared.currentUser?.username
+    return user == LoginManager.shared.currentUser
   }
   
   var pointAnnotation: MKPointAnnotation {

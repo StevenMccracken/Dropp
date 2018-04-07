@@ -15,12 +15,12 @@ class FeedViewController: UITableViewController {
   private var sortingType: DroppFeedSortingType = .closest
   private var locationAuthorizationEventHandler: Disposable?
   private lazy var fetchFailedLabel: UILabel = {
-    let label = UILabel("\nUnable to get dropps😟", forTableView: tableView, fontSize: 30)
+    let label = UILabel("\nUnable to get dropps😟", forTableView: tableView, fontSize: 20)
     return label
   }()
   
   private lazy var noNearbyDroppsLabel: UILabel = {
-    let label = UILabel("\nNo dropps😢", forTableView: tableView, fontSize: 30)
+    let label = UILabel("\nNo dropps😢", forTableView: tableView, fontSize: 20)
     return label
   }()
   

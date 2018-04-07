@@ -384,14 +384,23 @@ class CreateDroppViewController: UIViewController {
    - Parameter editImage: Determines whether to configure the alert to add a new image or edit an existing one
    */
   private func configureImageOptionsAlert(editImage: Bool) {
-    let editTitle = editImage ? " New" : ""
+    var editTitle: String
+    var button: UIBarButtonItem
+    if editImage {
+      editTitle = " New"
+      button = editImageButton
+    } else {
+      editTitle = ""
+      button = addImageButton
+    }
+    
     addImageOptionsAlert = UIAlertController(title: nil, message: nil, preferredStyle: .actionSheet, color: .salmon)
     let cameraOption = UIAlertAction(title: "Take\(editTitle) Photo", style: .default) { _ in
-      self.presentImagePicker(for: .camera)
+      self.presentImagePicker(from: button, for: .camera)
     }
     
     let photoLibraryOption = UIAlertAction(title: "Choose\(editTitle) Photo", style: .default) { _ in
-      self.presentImagePicker(for: .photoLibrary)
+      self.presentImagePicker(from: button, for: .photoLibrary)
     }
     
     addImageOptionsAlert.addAction(cameraOption)
@@ -411,7 +420,7 @@ class CreateDroppViewController: UIViewController {
    Presents an image picker, using a popover if the current device is an iPad.
    - Parameter sourceType: the type of media to use for the image picker
    */
-  private func presentImagePicker(for sourceType: UIImagePickerControllerSourceType) {
+  private func presentImagePicker(from barButton: UIBarButtonItem, for sourceType: UIImagePickerControllerSourceType) {
     guard UIImagePickerController.isSourceTypeAvailable(sourceType) else {
       present(mediaSourceUnavailableAlert, animated: true, completion: nil)
       return
@@ -428,7 +437,7 @@ class CreateDroppViewController: UIViewController {
       imagePicker.modalPresentationStyle = .popover
       let popover = imagePicker.popoverPresentationController
       popover?.permittedArrowDirections = .any
-      popover?.barButtonItem = addImageButton
+      popover?.barButtonItem = barButton
     }
     
     present(imagePicker, animated: true, completion: nil)

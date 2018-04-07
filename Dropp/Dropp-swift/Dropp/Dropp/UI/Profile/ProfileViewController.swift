@@ -8,72 +8,126 @@
 
 import UIKit
 
-class ProfileViewController: UITableViewController {
+protocol ProfileViewDelegate: class {
+  func didUnfollowUser(_ user: User)
+}
+
+class ProfileViewController: UIViewController {
   
   // MARK: IBOutlets
+  @IBOutlet weak var tableView: UITableView!
   @IBOutlet weak var profileHeaderView: ProfileHeaderView!
+  @IBOutlet weak var toolbar: UIToolbar!
+  @IBOutlet weak var toolbarHeight: NSLayoutConstraint!
   
   // MARK: Data sources
   var user: User!
   private var dropps = [Dropp]()
+  weak var profileViewDelegate: ProfileViewDelegate?
+  private var sortingType: DroppFeedSortingType = .chronological
+  
+  // MARK: State members
+  private var isFetchingDropps = false
+  private var isFetchingUserInfo = false
   private var currentUserUpdatedEventHandler: Disposable?
   
-  private var sortingType: DroppFeedSortingType = .chronological
-  private var isRefreshing = false
-  
   // MARK: Buttons
-  
-  private lazy var sortButton = UIBarButtonItem(title: "Sort", style: .plain, target: self, action: #selector(didTapSortButton))
+  private lazy var sortButton = UIBarButtonItem(title: "Sort", style: .plain, target: self, action: #selector(didTapSortButton(_:)))
   private lazy var infoButton: UIBarButtonItem = {
     let button = UIButton(type: .detailDisclosure)
-    button.addTarget(self, action: #selector(didTapInfoButton), for: .touchUpInside)
+    button.addTarget(self, action: #selector(didTapInfoButton(_:)), for: .touchUpInside)
     return UIBarButtonItem(customView: button)
   }()
   
-  // MARK: Table view labels
-  private lazy var fetchFailedLabel = UILabel("\nUnable to get dropps😢", forTableView: tableView, fontSize: 30)
-  private lazy var noDroppsPostedLabel = UILabel("\nNo dropps posted😒", forTableView: tableView, fontSize: 30)
-  private lazy var notFollowingLabel = UILabel("\nFollow this user to see all of their dropps🔑", forTableView: tableView, fontSize: 25)
-  private lazy var followRequestSentLabel = UILabel("\nFollow request sent👌🏽", forTableView: tableView, fontSize: 30)
+  // MARK: Table view subviews
+  private lazy var fetchFailedLabel = UILabel("\nUnable to get dropps😢", forTableView: tableView, fontSize: 20)
+  private lazy var noDroppsPostedLabel = UILabel("\nNo dropps posted😒", forTableView: tableView, fontSize: 20)
+  private lazy var notFollowingLabel = UILabel("\nFollow this user to see all of their dropps🔑", forTableView: tableView, fontSize: 20)
+  private lazy var followRequestSentLabel = UILabel("\nFollow request sent👌🏽", forTableView: tableView, fontSize: 20)
+  private lazy var refreshIndicator: UIRefreshControl = {
+    let refreshControl = UIRefreshControl()
+    refreshControl.tintColor = .salmon
+    refreshControl.addTarget(self, action: #selector(didPullTableViewToRefresh), for: .valueChanged)
+    return refreshControl
+  }()
+  
+  // MARK: Toolbar items
+  private lazy var followButton = UIBarButtonItem(title: "Follow", style: .plain, target: self, action: #selector(didTapFollowButton(_:)))
+  private lazy var unfollowButton = UIBarButtonItem(title: "Unfollow", style: .plain, target: self, action: #selector(didTapUnfollowButton(_:)))
+  private lazy var removeFollowRequestButton = UIBarButtonItem(title: "Remove follow request", style: .plain, target: self, action: #selector(didTapRemoveFollowRequestButton(_:)))
+  private lazy var toolbarActivityIndicator = UIActivityIndicatorView(activityIndicatorStyle: .gray)
+  private var toolbarActivityIndicatorBarButton: UIBarButtonItem {
+    toolbarActivityIndicator.startAnimating()
+    return UIBarButtonItem(customView: toolbarActivityIndicator)
+  }
+  
+  // MARK: View lifecycle
   
   override func viewDidLoad() {
     super.viewDidLoad()
+    
+    // Configure navigation bar
+    sortButton.isEnabled = false
     if LoginManager.shared.isCurrentUser(user) {
+      toolbarHeight.constant = 0
       navigationItem.leftBarButtonItem = sortButton
       navigationItem.rightBarButtonItem = infoButton
       navigationItem.largeTitleDisplayMode = .automatic
+      currentUserUpdatedEventHandler = LoginManager.shared.currentUserUpdatedEvent.addHandler(target: self, handler: ProfileViewController.updateUserProfile)
     } else {
       title = "\(user.username)"
       navigationItem.largeTitleDisplayMode = .never
+      updateToolbar(withItem: toolbarActivityIndicatorBarButton)
     }
     
+    // Configure table view
+    tableView.delegate = self
+    tableView.dataSource = self
+    tableView.isScrollEnabled = false
     profileHeaderView.delegate = self
-    profileHeaderView.toggleInteractionButton(visible: false)
+    tableView.refreshControl = refreshIndicator
     tableView.register(nibAndReuseIdentifier: DroppTableViewCell.identifier)
     
-    let refreshControl = UIRefreshControl()
-    refreshControl.tintColor = .salmon
-    refreshControl.addTarget(self, action: #selector(tableViewWasPulled), for: .valueChanged)
-    self.refreshControl = refreshControl
+    // Fetch data
+    let group = DispatchGroup()
+    group.enter()
+    fetchUserInfo {
+      group.leave()
+    }
     
-    sortButton.isEnabled = false
-    getDropps()
-    getUserInfo()
+    group.enter()
+    fetchUserDropps {
+      group.leave()
+    }
+    
+    group.notify(queue: .main) { [weak self] in
+      self?.tableView?.isScrollEnabled = true
+    }
+  }
+  
+  override func viewWillAppear(_ animated: Bool) {
+    super.viewWillAppear(animated)
+    if let indexPath = tableView.indexPathForSelectedRow {
+      tableView.deselectRow(at: indexPath, animated: true)
+    }
   }
   
   override func viewDidAppear(_ animated: Bool) {
     super.viewDidAppear(animated)
-    if LoginManager.shared.isCurrentUser(user) {
+    if LoginManager.shared.isCurrentUser(user) && currentUserUpdatedEventHandler == nil {
       currentUserUpdatedEventHandler = LoginManager.shared.currentUserUpdatedEvent.addHandler(target: self, handler: ProfileViewController.updateUserProfile)
     }
   }
   
   override func viewWillDisappear(_ animated: Bool) {
     super.viewWillDisappear(animated)
-    isRefreshing = false
-    self.refreshControl?.endRefreshing()
+    isFetchingDropps = false
+    tableView.refreshControl?.endRefreshing()
     currentUserUpdatedEventHandler?.dispose()
+    currentUserUpdatedEventHandler = nil
   }
+  
+  // MARK: Event handlers
   
   private func updateUserProfile(newUser: User) {
     user = newUser
@@ -84,128 +138,83 @@ class ProfileViewController: UITableViewController {
   }
   
   @objc
-  func didTapInfoButton() {
-    if LoginManager.shared.isCurrentUser(user) {
-      let profileDetailsStoryboard = UIStoryboard(name: "ProfileDetails", bundle: nil)
-      guard let profileDetailsViewController = profileDetailsStoryboard.instantiateInitialViewController() as? ProfileDetailsViewController else {
-        debugPrint("Initial view controller for ProfileDetails was invalid")
-        return
-      }
-      
-      profileDetailsViewController.user = user
-      navigationController?.pushViewController(profileDetailsViewController, animated: true)
-    } else {
-      let alert = UIAlertController(title: nil, message: nil, preferredStyle: .actionSheet, color: .salmon)
-      if Utils.isPad {
-        let popover = alert.popoverPresentationController
-        popover?.permittedArrowDirections = .up
-        popover?.barButtonItem = infoButton
-      }
-      
-      alert.addAction(UIAlertAction(title: "Remove follow request", style: .destructive, handler: { _ in
-        self.navigationItem.setHidesBackButton(true, animated: true)
-        let activityIndicator = UIActivityIndicatorView(activityIndicatorStyle: .gray)
-        activityIndicator.startAnimating()
-        self.navigationItem.rightBarButtonItem = UIBarButtonItem(customView: activityIndicator)
-        UserService.removePendingFollowRequest(toUser: self.user, success: { [weak self] () in
-          guard let strongSelf = self else {
-            return
-          }
-          
-          strongSelf.dropps = []
-          strongSelf.toggleNotFollowingLabel(visible: true)
-          DispatchQueue.main.async {
-            strongSelf.tableView.reloadData()
-            strongSelf.navigationItem.rightBarButtonItem = nil
-            strongSelf.navigationItem.setHidesBackButton(false, animated: true)
-          }
-        }, failure: { [weak self] (removeFollowRequestError: NSError) in
-          guard let strongSelf = self else {
-            return
-          }
-          
-          debugPrint("Error while removing pending follow request", removeFollowRequestError)
-          let errorAlert = UIAlertController(title: "Error", message: "Unable to remove follow request at this time. Please try again later.", preferredStyle: .alert, color: .salmon, addDefaultAction: true)
-          DispatchQueue.main.async {
-            strongSelf.present(errorAlert, animated: true) { () in
-              strongSelf.navigationItem.setHidesBackButton(false, animated: true)
-              strongSelf.navigationItem.rightBarButtonItem = strongSelf.infoButton
-            }
-          }
-        })
-      }))
-      
-      alert.addAction(UIAlertAction(title: "Cancel", style: .cancel))
-      present(alert, animated: true)
+  private func didPullTableViewToRefresh() {
+    let group = DispatchGroup()
+    group.enter()
+    fetchUserDropps {
+      group.leave()
+    }
+    
+    group.enter()
+    fetchUserInfo {
+      group.leave()
+    }
+    
+    group.notify(queue: .main) { [weak self] in
+      self?.tableView?.refreshControl?.endRefreshing()
     }
   }
   
-  func getDropps(_ done: (() -> Void)? = nil) {
-    guard !isRefreshing else {
-      return
-    }
-    
-    let completion = {
-      self.isRefreshing = false
-      done?()
-    }
-    
-    isRefreshing = true
-    DroppService.getDropps(forUser: user, success: { [weak self] (dropps: [Dropp]) in
-      guard let strongSelf = self else {
-        return
-      }
-      
-      debugPrint("Got \(dropps.count) dropps posted by the user")
-      let sortedDropps = Dropp.sort(dropps, by: strongSelf.sortingType, currentLocation: LocationManager.shared.currentLocation)
-      strongSelf.refreshTableView(with: sortedDropps, done: { () in
-        strongSelf.toggleNoDroppsPostedLabel(visible: sortedDropps.isEmpty)
-        completion()
-      })
-      
-      DispatchQueue.main.async {
-        strongSelf.sortButton.isEnabled = !sortedDropps.isEmpty
-      }
-    }, failure: { [weak self] (getDroppsError: NSError) in
-      guard let strongSelf = self else {
-        return
-      }
-      
-      debugPrint("Failed to get user's dropps", getDroppsError)
-      if getDroppsError.code == 403 {
-        strongSelf.toggleNotFollowingLabel(visible: true)
-      } else if strongSelf.dropps.isEmpty {
-        strongSelf.toggleFetchFailedLabel(visible: true)
-      }
-      
-      DispatchQueue.main.async {
-        strongSelf.sortButton.isEnabled = getDroppsError.code != 403 && !strongSelf.dropps.isEmpty
-      }
-      completion()
-    })
-  }
+  // MARK: Button actions
   
-  func refreshTableView(with dropps: [Dropp], done: (() -> Void)? = nil) {
-    let originalCount = self.dropps.count
-    DispatchQueue.main.async {
-      self.dropps.removeAll()
-      if originalCount > 0 {
-        let deleteSet = IndexSet(integersIn: 0 ..< originalCount)
-        self.tableView.deleteSections(deleteSet, with: .fade)
-      }
-      
-      self.dropps.append(contentsOf: dropps)
-      let insertSet = IndexSet(integersIn: 0 ..< self.dropps.count)
-      self.tableView.insertSections(insertSet, with: .fade)
-      done?()
-    }
+  @objc
+  private func didTapInfoButton(_ sender: UIButton) {
+    performSegue(withIdentifier: Constants.showProfileDetailsSegueId, sender: sender)
   }
   
   @objc
-  func didTapSortButton() {
+  private func didTapFollowButton(_ sender: UIBarButtonItem) {
+    updateToolbar(withItem: toolbarActivityIndicatorBarButton)
+    requestToFollowUser()
+  }
+  
+  @objc
+  private func didTapUnfollowButton(_ sender: UIBarButtonItem) {
     let alert = UIAlertController(title: nil, message: nil, preferredStyle: .actionSheet, color: .salmon)
+    if Utils.isPad {
+      let popover = alert.popoverPresentationController
+      popover?.permittedArrowDirections = .up
+      popover?.barButtonItem = sender
+    }
+    
+    alert.addAction(UIAlertAction(title: sender.title ?? "", style: .destructive) { _ in
+      self.updateToolbar(withItem: self.toolbarActivityIndicatorBarButton)
+      self.unfollowUser()
+    })
+    
+    alert.addAction(UIAlertAction(title: "Cancel", style: .cancel))
+    present(alert, animated: true)
+  }
+  
+  @objc
+  private func didTapRemoveFollowRequestButton(_ sender: UIBarButtonItem) {
+    let alert = UIAlertController(title: nil, message: nil, preferredStyle: .actionSheet, color: .salmon)
+    if Utils.isPad {
+      let popover = alert.popoverPresentationController
+      popover?.permittedArrowDirections = .up
+      popover?.barButtonItem = sender
+    }
+    
+    alert.addAction(UIAlertAction(title: sender.title ?? "", style: .destructive) { _ in
+      self.updateToolbar(withItem: self.toolbarActivityIndicatorBarButton)
+      self.removePendingFollowRequest()
+    })
+    
+    alert.addAction(UIAlertAction(title: "Cancel", style: .cancel))
+    present(alert, animated: true)
+  }
+  
+  @objc
+  private func didTapSortButton(_ sender: UIBarButtonItem) {
+    let alert = UIAlertController(title: nil, message: "Sort By", preferredStyle: .actionSheet, color: .salmon)
+    if Utils.isPad {
+      let popover = alert.popoverPresentationController
+      popover?.permittedArrowDirections = .up
+      popover?.barButtonItem = sender
+    }
+    
     let closestTitle = "Closest\(sortingType == .closest ? " ✓" : "")"
-    alert.addAction(UIAlertAction(title: closestTitle, style: .default, handler: { _ in
+    alert.addAction(UIAlertAction(title: closestTitle, style: .default) { _ in
       guard self.sortingType != .closest else {
         return
       }
@@ -216,10 +225,10 @@ class ProfileViewController: UITableViewController {
         self.tableView.reloadData()
       }
       
-    }))
+    })
     
     let farthestTitle = "Farthest\(sortingType == .farthest ? " ✓" : "")"
-    alert.addAction(UIAlertAction(title: farthestTitle, style: .default, handler: { _ in
+    alert.addAction(UIAlertAction(title: farthestTitle, style: .default) { _ in
       guard self.sortingType != .farthest else {
         return
       }
@@ -229,10 +238,10 @@ class ProfileViewController: UITableViewController {
         self.dropps = Dropp.sort(self.dropps, by: .farthest, currentLocation: location)
         self.tableView.reloadData()
       }
-    }))
+    })
     
     let newestTitle = "Newest\(sortingType == .chronological ? " ✓" : "")"
-    alert.addAction(UIAlertAction(title: newestTitle, style: .default, handler: { _ in
+    alert.addAction(UIAlertAction(title: newestTitle, style: .default) { _ in
       guard self.sortingType != .chronological else {
         return
       }
@@ -240,10 +249,10 @@ class ProfileViewController: UITableViewController {
       self.sortingType = .chronological
       self.dropps = Dropp.sort(self.dropps, by: .chronological)
       self.tableView.reloadData()
-    }))
+    })
     
     let oldestTitle = "Oldest\(sortingType == .reverseChronological ? " ✓" : "")"
-    alert.addAction(UIAlertAction(title: oldestTitle, style: .default, handler: { _ in
+    alert.addAction(UIAlertAction(title: oldestTitle, style: .default) { _ in
       guard self.sortingType != .reverseChronological else {
         return
       }
@@ -251,213 +260,225 @@ class ProfileViewController: UITableViewController {
       self.sortingType = .reverseChronological
       self.dropps = Dropp.sort(self.dropps, by: .reverseChronological)
       self.tableView.reloadData()
-    }))
+    })
     
     alert.addAction(UIAlertAction(title: "Cancel", style: .cancel, handler: nil))
-    if Utils.isPad {
-      let popover = alert.popoverPresentationController
-      popover?.permittedArrowDirections = .up
-      popover?.barButtonItem = sortButton
-    }
-    
     present(alert, animated: true, completion: nil)
   }
   
-  func getUserInfo(_ done: (() -> Void)? = nil) {
-    UserService.getUser(username: user.username, success: { [weak self] (updatedUser: User) in
+  // MARK: Data accessors
+  
+  private func fetchUserInfo(_ completion: (() -> Void)? = nil) {
+    guard !isFetchingUserInfo else {
+      return
+    }
+    
+    isFetchingUserInfo = true
+    UserService.getUser(username: user.username, success: { [weak self] (updatedUser) in
       guard let strongSelf = self else {
         return
       }
       
       if LoginManager.shared.isCurrentUser(strongSelf.user) {
         LoginManager.shared.updateCurrentUser(with: updatedUser)
+        strongSelf.isFetchingUserInfo = false
+        completion?()
       } else {
         strongSelf.updateUserProfile(newUser: updatedUser)
         DispatchQueue.main.async {
-          if let doesFollowUser = LoginManager.shared.currentUser?.follows(updatedUser), doesFollowUser == true {
-            strongSelf.profileHeaderView.toggleInteractionButton(enabled: true, withTitle: "Unfollow")
-          } else if let hasRequestedFollow = LoginManager.shared.currentUser?.hasRequestedFollow(updatedUser), hasRequestedFollow == true {
-            strongSelf.profileHeaderView.toggleInteractionButton(enabled: false, withTitle: "Request pending")
+          if let doesFollowUser = LoginManager.shared.currentUser?.follows(updatedUser),
+             doesFollowUser == true {
+            strongSelf.updateToolbar(withItem: strongSelf.unfollowButton)
+          } else if let hasRequestedFollow = LoginManager.shared.currentUser?.hasRequestedFollow(updatedUser),
+                    hasRequestedFollow == true {
+            strongSelf.updateToolbar(withItem: strongSelf.removeFollowRequestButton)
+            strongSelf.toggleFollowRequestSentLabel(visible: true)
+          } else {
+            strongSelf.toggleNotFollowingLabel(visible: true)
+            strongSelf.updateToolbar(withItem: strongSelf.followButton)
           }
           
-          strongSelf.profileHeaderView.toggleInteractionButton(visible: true)
+          strongSelf.isFetchingUserInfo = false
+          completion?()
         }
       }
       
-      done?()
-    }, failure: { [weak self] (getUserError: NSError) in
-      guard let _ = self else {
+      DispatchQueue.main.async {
+        strongSelf.updatePrompt()
+      }
+    }) { [weak self] (getUserError) in
+      guard let strongSelf = self else {
         return
       }
       
       debugPrint("Failed to get updated user profile", getUserError)
-      done?()
-    })
+      strongSelf.isFetchingUserInfo = false
+      completion?()
+    }
   }
   
-  
-  
-  @objc
-  func tableViewWasPulled() {
-    getDropps({ [weak self] () in
-      guard let strongSelf = self else {
-        return
-      }
-      
-      DispatchQueue.main.async {
-        strongSelf.refreshControl?.endRefreshing()
-      }
-    })
+  private func fetchUserDropps(_ completion: (() -> Void)? = nil) {
+    guard !isFetchingDropps else {
+      return
+    }
     
-    getUserInfo({ [weak self] () in
+    isFetchingDropps = true
+    DroppService.getDropps(forUser: user, success: { [weak self] (dropps) in
       guard let strongSelf = self else {
         return
       }
       
+      debugPrint("Got \(dropps.count) dropps posted by the user")
+      let sortedDropps = Dropp.sort(dropps, by: strongSelf.sortingType, currentLocation: LocationManager.shared.currentLocation)
       DispatchQueue.main.async {
-        strongSelf.refreshControl?.endRefreshing()
+        strongSelf.updateTableView(sortedDropps)
+        strongSelf.sortButton.isEnabled = !sortedDropps.isEmpty
+        strongSelf.toggleNoDroppsPostedLabel(visible: sortedDropps.isEmpty)
+        strongSelf.isFetchingDropps = false
+        completion?()
       }
-    })
+    }) { [weak self] (getDroppsError) in
+      guard let strongSelf = self else {
+        return
+      }
+      
+      debugPrint("Failed to get user's dropps", getDroppsError)
+      if getDroppsError.code != 403 && strongSelf.dropps.isEmpty {
+        strongSelf.toggleFetchFailedLabel(visible: true)
+      }
+      
+      DispatchQueue.main.async {
+        strongSelf.sortButton.isEnabled = getDroppsError.code != 403 && !strongSelf.dropps.isEmpty
+        strongSelf.isFetchingDropps = false
+        completion?()
+      }
+    }
   }
   
-  func toggleFetchFailedLabel(visible: Bool) {
+  // MARK: UI updating functions
+  
+  private func updateToolbar(withItem item: UIBarButtonItem) {
+    toolbar.setItems([.flexibleSpace, item, .flexibleSpace], animated: true)
+  }
+  
+  private func updateTableView(_ dropps: [Dropp]) {
+    self.dropps = dropps
+    tableView.reloadData()
+  }
+  
+  private func enableNotFollowingState() {
+    updateTableView([])
+    updateToolbar(withItem: followButton)
+    toggleNotFollowingLabel(visible: true)
+    profileHeaderView.updateFollowers(user.followers)
+    profileHeaderView.updateFollowing(user.following)
+  }
+  
+  private func toggleFetchFailedLabel(visible: Bool) {
     DispatchQueue.main.async {
       self.toggleTableViewLabel(self.fetchFailedLabel, visible: visible)
     }
   }
   
-  func toggleNoDroppsPostedLabel(visible: Bool) {
+  private func toggleNoDroppsPostedLabel(visible: Bool) {
     DispatchQueue.main.async {
       self.toggleTableViewLabel(self.noDroppsPostedLabel, visible: visible)
     }
   }
   
-  func toggleNotFollowingLabel(visible: Bool) {
+  private func toggleNotFollowingLabel(visible: Bool) {
     DispatchQueue.main.async {
       self.toggleTableViewLabel(self.notFollowingLabel, visible: visible)
     }
   }
   
-  func toggleFollowRequestSentLabel(visible: Bool) {
+  private func toggleFollowRequestSentLabel(visible: Bool) {
     DispatchQueue.main.async {
       self.toggleTableViewLabel(self.followRequestSentLabel, visible: visible)
     }
   }
   
-  func toggleTableViewLabel(_ label: UILabel, visible: Bool) {
+  private func toggleTableViewLabel(_ label: UILabel, visible: Bool) {
     if visible {
       tableView.separatorStyle = .none
       tableView.backgroundView = label
+      profileHeaderView.toggleFooterView(visible: false)
     } else {
-      tableView.separatorStyle = .singleLine
       tableView.backgroundView = nil
+      tableView.separatorStyle = .singleLine
+      profileHeaderView.toggleFooterView(visible: true)
     }
   }
   
-  // MARK: - Table view data source
-  
-  override func numberOfSections(in tableView: UITableView) -> Int {
-    return dropps.count
-  }
-  
-  override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-    return 1
-  }
-  
-  override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-    var cell: UITableViewCell
-    if indexPath.section == 2 {
-      cell = UITableViewCell()
-//      let headerCell = tableView.dequeueReusableCell(withIdentifier: ProfileHeaderTableViewCell.identifier, for: indexPath) as! ProfileHeaderTableViewCell
-//      if let followersCount = user.followers?.count {
-//        headerCell.updateFollowers(followersCount)
-//        headerCell.toggleFollowersButton(enabled: followersCount > 0)
-//      } else {
-//        headerCell.toggleFollowersButton(enabled: false)
-//      }
-//
-//      if let followingCount = user.following?.count {
-//        headerCell.updateFollowing(followingCount)
-//        headerCell.toggleFollowingButton(enabled: followingCount > 0)
-//      } else {
-//        headerCell.toggleFollowingButton(enabled: false)
-//      }
-//
-//      headerCell.toggleInteractionButton(visible: !user.isCurrentUser)
-//      if let _ = user.followers {
-//        let following = LoginManager.shared.currentUser!.follows(user) ?? false
-//        headerCell.toggleInteractionButton(enabled: true, withTitle: following ? "Unfollow" : "Follow")
-//      } else {
-//        headerCell.toggleInteractionButton(enabled: false, withTitle: "Loading...")
-//      }
-//
-//      if user.isCurrentUser {
-//        headerCell.setInteractionButtonHeight(0)
-//      }
-//
-//      headerCell.delegate = self
-//      cell = headerCell
-    } else {
-      let droppCell = tableView.dequeueReusableCell(withIdentifier: DroppTableViewCell.identifier, for: indexPath) as! DroppTableViewCell
-      let dropp = dropps[indexPath.section]
-      droppCell.addContent(from: dropp)
-      cell = droppCell
+  private func updatePrompt() {
+    let requests = LoginManager.shared.currentUser?.followerRequests ?? []
+    guard requests.contains(user) else {
+      return
     }
     
-    return cell
+    navigationItem.prompt = "\(user.username) has requested to follow you"
   }
   
-  override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-    performSegue(withIdentifier: Constants.showDroppDetailSegueId, sender: self)
-  }
-  
-  // MARK: - Navigation
+  // MARK: Navigation
    
   override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
-    guard segue.identifier == Constants.showDroppDetailSegueId else {
-      return
-    }
-    
-    guard let indexPath = tableView.indexPathForSelectedRow else {
-      return
-    }
-    
-    guard let detailViewController = segue.destination as? DroppDetailViewController else {
-      return
-    }
-    
-    detailViewController.dropp = dropps[indexPath.section]
-    detailViewController.feedViewControllerDelegate = self
-  }
-  
-  func toggleLoadingView(hidden: Bool, newRightBarButtonItem: UIBarButtonItem? = nil, _ completion: (() -> Void)? = nil) {
-    updateInteractionButton(enabled: hidden) {
-      if hidden {
-        self.navigationItem.setHidesBackButton(false, animated: true)
-        self.navigationItem.rightBarButtonItem = newRightBarButtonItem
-      } else {
-        self.navigationItem.setHidesBackButton(true, animated: true)
-        let activityIndicator = UIActivityIndicatorView(activityIndicatorStyle: .gray)
-        activityIndicator.startAnimating()
-        self.navigationItem.rightBarButtonItem = UIBarButtonItem(customView: activityIndicator)
+    if segue.identifier == Constants.showDroppDetailSegueId,
+       let indexPath = sender as? IndexPath,
+       let detailViewController = segue.destination as? DroppDetailViewController {
+      detailViewController.dropp = dropps[indexPath.section]
+      detailViewController.feedViewControllerDelegate = self
+    } else if segue.identifier == Constants.showProfileDetailsSegueId,
+              let profileDetailsViewController = segue.destination as? ProfileDetailsViewController {
+      profileDetailsViewController.user = user
+    } else if segue.identifier == Constants.showConnectionsSegueId,
+              let connectionsViewController = segue.destination as? ConnectionsViewController {
+      connectionsViewController.user = user
+      connectionsViewController.profileViewDelegate = self
+      if let connectionType = sender as? UserConnectionType {
+        connectionsViewController.connectionType = connectionType
       }
-      
-      completion?()
-    }
-  }
-  
-  func updateInteractionButton(enabled: Bool, withTitle title: String? = nil, _ completion: (() -> Void)? = nil) {
-    DispatchQueue.main.async {
-      self.profileHeaderView.toggleInteractionButton(enabled: enabled, withTitle: title)
-      completion?()
     }
   }
 }
 
+// MARK: UITableViewDataSource
+extension ProfileViewController: UITableViewDataSource {
+  
+  func numberOfSections(in tableView: UITableView) -> Int {
+    return dropps.count
+  }
+  
+  func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+    return 1
+  }
+  
+  func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
+    var cell: UITableViewCell
+    if let droppCell = tableView.dequeueReusableCell(withIdentifier: DroppTableViewCell.identifier, for: indexPath) as? DroppTableViewCell {
+      let dropp = dropps[indexPath.section]
+      droppCell.addContent(from: dropp)
+      cell = droppCell
+    } else {
+      cell = UITableViewCell()
+    }
+    
+    return cell
+  }
+}
+
+// MARK: UITableViewDelegate
+extension ProfileViewController: UITableViewDelegate {
+  
+  func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+    performSegue(withIdentifier: Constants.showDroppDetailSegueId, sender: indexPath)
+  }
+}
+
+// MARK: FeedViewControllerDelegate
 extension ProfileViewController: FeedViewControllerDelegate {
   
   func shouldRefreshData() {
-    getDropps()
+    fetchUserDropps()
   }
   
   func shouldRefresh(dropp: Dropp, with newDropp: Dropp? = nil) {
@@ -487,7 +508,7 @@ extension ProfileViewController: FeedViewControllerDelegate {
       var scrollPosition: UITableViewScrollPosition
       if self.sortingType == .reverseChronological || self.sortingType == .farthest {
         self.dropps.append(dropp)
-        index = self.dropps.count
+        index = self.dropps.count - 1
         rowAnimation = .bottom
         scrollPosition = .bottom
       } else {
@@ -498,16 +519,7 @@ extension ProfileViewController: FeedViewControllerDelegate {
       }
       
       self.tableView.insertSections(IndexSet(integer: index), with: rowAnimation)
-      let visibleIndexPaths = self.tableView.indexPathsForVisibleRows ?? []
-      let indexPathToScrollTo = IndexPath(row: 0, section: index)
-      guard !visibleIndexPaths.contains(indexPathToScrollTo) else {
-        return
-      }
-      
-      self.tableView.selectRow(at: indexPathToScrollTo, animated: true, scrollPosition: scrollPosition)
-      DispatchQueue.main.asyncAfter(deadline: .now() + .milliseconds(500)) {
-        self.tableView.deselectRow(at: indexPathToScrollTo, animated: true)
-      }
+      self.tableView.scrollToRow(at: IndexPath(row: 0, section: index), at: scrollPosition, animated: true)
     }
   }
   
@@ -526,123 +538,113 @@ extension ProfileViewController: FeedViewControllerDelegate {
   }
 }
 
+// MARK: ProfileHeaderViewDelegate
 extension ProfileViewController: ProfileHeaderViewDelegate {
   
   func didTapFollowersButton(_ sender: UIButton) {
-    let followersStoryboard = UIStoryboard(name: "Connections", bundle: nil)
-    guard let connectionsViewController = followersStoryboard.instantiateInitialViewController() as? ConnectionsViewController else {
-      debugPrint("Initial view controller for Followers storyboard was nil")
-      return
-    }
-    
-    connectionsViewController.user = user
-    connectionsViewController.connectionType = .follower
-    navigationController?.pushViewController(connectionsViewController, animated: true)
+    performSegue(withIdentifier: Constants.showConnectionsSegueId, sender: UserConnectionType.follower)
   }
   
   func didTapFollowingButton(_ sender: UIButton) {
-    let followersStoryboard = UIStoryboard(name: "Connections", bundle: nil)
-    guard let connectionsViewController = followersStoryboard.instantiateInitialViewController() as? ConnectionsViewController else {
-      debugPrint("Initial view controller for Followers storyboard was nil")
-      return
-    }
-    
-    connectionsViewController.user = user
-    connectionsViewController.connectionType = .following
-    navigationController?.pushViewController(connectionsViewController, animated: true)
+    performSegue(withIdentifier: Constants.showConnectionsSegueId, sender: UserConnectionType.following)
   }
+}
+
+// MARK: ProfileViewDelegate
+extension ProfileViewController: ProfileViewDelegate {
   
-  func didTapInteractionButton(_ sender: UIButton) {
-    if let hasRequestedToFollow = LoginManager.shared.currentUser?.hasRequestedFollow(user), hasRequestedToFollow == true {
-      removePendingFollowRequest()
-    } else if let isFollowing = LoginManager.shared.currentUser!.follows(user), isFollowing == true {
-      unfollowUser()
-    } else {
-      requestToFollowUser()
+  func didUnfollowUser(_ user: User) {
+    profileViewDelegate?.didUnfollowUser(user)
+    if LoginManager.shared.isCurrentUser(self.user) {
+      profileHeaderView.updateFollowing(self.user.following)
+    } else if user == self.user {
+      enableNotFollowingState()
     }
   }
+}
+
+// MARK: Connection server interaction
+extension ProfileViewController {
   
-  func requestToFollowUser() {
-    toggleLoadingView(hidden: false)
-    UserService.requestToFollow(user: user, success: { [weak self] () in
+  private func requestToFollowUser() {
+    UserService.requestToFollow(user: user, success: { [weak self] in
       guard let strongSelf = self else {
         return
       }
       
       LoginManager.shared.currentUser?.followRequests?.append(strongSelf.user)
-      strongSelf.toggleLoadingView(hidden: true, newRightBarButtonItem: strongSelf.infoButton) {
-        DispatchQueue.main.async {
-          strongSelf.profileHeaderView.toggleInteractionButton(enabled: true, withTitle: "Remove follow request")
-        }
+      DispatchQueue.main.async {
+        strongSelf.toggleFollowRequestSentLabel(visible: true)
+        strongSelf.updateToolbar(withItem: strongSelf.removeFollowRequestButton)
       }
-    }, failure: { [weak self] (requestToFollowError: NSError) in
+    }) { [weak self] (requestToFollowError) in
       guard let strongSelf = self else {
         return
       }
       
       debugPrint("Error while trying to follow user", requestToFollowError)
-      let alert = UIAlertController(title: "Error", message: "Unable to request to follow that user. Please try again later.", preferredStyle: .alert, color: .salmon, addDefaultAction: true)
+      let alert = UIAlertController(title: "Error", message: "Unable to send your follow request. Please try again later.", preferredStyle: .alert, color: .salmon, addDefaultAction: true)
       DispatchQueue.main.async {
         strongSelf.present(alert, animated: true) {
-          strongSelf.toggleLoadingView(hidden: true, newRightBarButtonItem: strongSelf.infoButton)
+          strongSelf.updateToolbar(withItem: strongSelf.followButton)
         }
       }
-    })
+    }
   }
   
-  func removePendingFollowRequest() {
-    toggleLoadingView(hidden: false)
-    UserService.removePendingFollowRequest(toUser: self.user, success: { [weak self] () in
+  private func removePendingFollowRequest() {
+    UserService.removePendingFollowRequest(toUser: user, success: { [weak self] in
       guard let strongSelf = self else {
         return
       }
       
-      strongSelf.dropps = []
-      strongSelf.toggleNotFollowingLabel(visible: true)
-      strongSelf.toggleLoadingView(hidden: true) {
-        strongSelf.updateInteractionButton(enabled: true, withTitle: "Follow")
+      LoginManager.shared.currentUser?.removeFollowRequest(toUser: strongSelf.user)
+      DispatchQueue.main.async {
+        strongSelf.toggleNotFollowingLabel(visible: true)
+        strongSelf.updateToolbar(withItem: strongSelf.followButton)
       }
-    }, failure: { [weak self] (removeFollowRequestError: NSError) in
+    }) { [weak self] (removeFollowRequestError) in
       guard let strongSelf = self else {
         return
       }
       
       debugPrint("Error while removing pending follow request", removeFollowRequestError)
-      let errorAlert = UIAlertController(title: "Error", message: "Unable to remove follow request at this time. Please try again later.", preferredStyle: .alert, color: .salmon, addDefaultAction: true)
+      let errorAlert = UIAlertController(title: "Error", message: "Unable to remove your follow request. Please try again later.", preferredStyle: .alert, color: .salmon, addDefaultAction: true)
       DispatchQueue.main.async {
-        strongSelf.present(errorAlert, animated: true) { () in
-          strongSelf.toggleLoadingView(hidden: true, newRightBarButtonItem: strongSelf.infoButton)
+        strongSelf.present(errorAlert, animated: true) {
+          strongSelf.updateToolbar(withItem: strongSelf.removeFollowRequestButton)
         }
       }
-    })
+    }
   }
   
-  func unfollowUser() {
-    profileHeaderView.toggleInteractionButton(enabled: false)
-    UserService.unfollow(user, success: { [weak self] () in
+  private func unfollowUser() {
+    UserService.unfollow(user, success: { [weak self] in
       guard let strongSelf = self else {
         return
       }
       
       LoginManager.shared.currentUser?.removeFollow(strongSelf.user)
-      strongSelf.user.removeFollower(LoginManager.shared.currentUser!)
-      strongSelf.dropps = []
-      strongSelf.toggleNotFollowingLabel(visible: true)
-      strongSelf.updateInteractionButton(enabled: true, withTitle: "Follow") {
-        strongSelf.tableView.reloadData()
+      if let currentUser = LoginManager.shared.currentUser {
+        strongSelf.user.removeFollower(currentUser)
       }
-    }, failure: { [weak self] (unfollowError: NSError) in
+      
+      DispatchQueue.main.async {
+        strongSelf.enableNotFollowingState()
+        strongSelf.profileViewDelegate?.didUnfollowUser(strongSelf.user)
+      }
+    }) { [weak self] (unfollowError) in
       guard let strongSelf = self else {
         return
       }
       
       debugPrint("Error while trying to unfollow user", unfollowError)
-      let alert = UIAlertController(title: "Error", message: "Unable to unfollow that user. Please try again later.", preferredStyle: .alert, color: .salmon, addDefaultAction: true)
+      let alert = UIAlertController(title: "Error", message: "Unable to send your unfollow request. Please try again later.", preferredStyle: .alert, color: .salmon, addDefaultAction: true)
       DispatchQueue.main.async {
         strongSelf.present(alert, animated: true) {
-          strongSelf.profileHeaderView.toggleInteractionButton(enabled: true)
+          strongSelf.updateToolbar(withItem: strongSelf.unfollowButton)
         }
       }
-    })
+    }
   }
 }

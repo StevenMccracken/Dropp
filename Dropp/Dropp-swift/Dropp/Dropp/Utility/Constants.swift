@@ -68,6 +68,11 @@ class Constants {
    */
   static let showProfileSegueId = "showProfileSegue"
   
+  /**
+   The segue ID for pushing a profile details view controller
+   */
+  static let showProfileDetailsSegueId = "showProfileDetailsSegue"
+  
   // MARK: Restoration IDs
   
   /**

@@ -17,29 +17,38 @@ class ConnectionsViewController: UITableViewController {
   
   var user: User!
   var connectionType: UserConnectionType!
+  weak var profileViewDelegate: ProfileViewDelegate?
+  
+  // MARK: Data sources
+  private var connections = [User]()
   private var filteredConnections = [User]()
-  private var connections: [User]? {
-    return connectionType == .following ? user.following : user.followers
-  }
   
   private var searchController: UISearchController!
   private var isFiltering: Bool {
     return searchController.isActive && !((searchController.searchBar.text ?? "").isEmpty)
   }
   
+  private var placeholderMessage: String {
+    return "Search \(connections.count) user\(connections.count == 1 ? "" : "s")"
+  }
+  
   override func viewDidLoad() {
     super.viewDidLoad()
-    title = connectionType == .following ? "Following" : "Followers"
-    navigationItem.largeTitleDisplayMode = .never
+    connections = (connectionType == .following ? user.following : user.followers) ?? []
     
-    searchController = UISearchController(searchResultsController: nil)
-    searchController.searchResultsUpdater = self
-    searchController.obscuresBackgroundDuringPresentation = false
-    searchController.searchBar.placeholder = "Search"
-    searchController.searchBar.tintColor = .salmon
-    searchController.searchBar.delegate = self
-    navigationItem.searchController = searchController
+    // Configure navigation bar
+    navigationItem.largeTitleDisplayMode = .never
+    title = connectionType == .following ? "Following" : "Followers"
+    
+    // Configure search
     definesPresentationContext = true
+    searchController = UISearchController(searchResultsController: nil)
+    searchController.searchBar.delegate = self
+    searchController.searchResultsUpdater = self
+    searchController.searchBar.tintColor = .salmon
+    searchController.searchBar.placeholder = placeholderMessage
+    searchController.obscuresBackgroundDuringPresentation = false
+    navigationItem.searchController = searchController
   }
   
   // MARK: - Table view data source
@@ -49,7 +58,6 @@ class ConnectionsViewController: UITableViewController {
   }
   
   override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-    let connections: [User] = self.connections ?? []
     return isFiltering ? filteredConnections.count : connections.count
   }
   
@@ -58,7 +66,7 @@ class ConnectionsViewController: UITableViewController {
       return UITableViewCell()
     }
     
-    let user = isFiltering ? filteredConnections[indexPath.row] : connections![indexPath.row]
+    let user = isFiltering ? filteredConnections[indexPath.row] : connections[indexPath.row]
     cell.addContent(user)
     if LoginManager.shared.isCurrentUser(user) {
       cell.accessoryType = .none
@@ -91,7 +99,8 @@ class ConnectionsViewController: UITableViewController {
       return
     }
     
-    destination.user = isFiltering ? filteredConnections[indexPath.row] : connections![indexPath.row]
+    destination.profileViewDelegate = self
+    destination.user = isFiltering ? filteredConnections[indexPath.row] : connections[indexPath.row]
   }
 }
 
@@ -113,11 +122,43 @@ extension ConnectionsViewController: UISearchResultsUpdating {
   }
   
   func filterContent(_ filter: String) {
-    let connections: [User] = self.connections ?? []
     filteredConnections = connections.filter {
       return $0.username.contains(filter, options: .caseInsensitive)
     }
     
     tableView.reloadData()
+  }
+}
+
+extension ConnectionsViewController: ProfileViewDelegate {
+  
+  func didUnfollowUser(_ user: User) {
+    profileViewDelegate?.didUnfollowUser(user)
+    var potentialUser: User?
+    if LoginManager.shared.isCurrentUser(self.user) && connectionType == .following {
+      potentialUser = user
+    } else if user == self.user && connectionType == .follower {
+      potentialUser = LoginManager.shared.currentUser
+    }
+    
+    guard let userToRemove = potentialUser else {
+      return
+    }
+    
+    var shouldReloadData = false
+    if let index = connections.index(of: userToRemove) {
+      connections.remove(at: index)
+      shouldReloadData = true
+    }
+    
+    if isFiltering, let index = filteredConnections.index(of: userToRemove) {
+      filteredConnections.remove(at: index)
+      shouldReloadData = true
+    }
+    
+    if shouldReloadData {
+      tableView.reloadData()
+      searchController.searchBar.placeholder = placeholderMessage
+    }
   }
 }

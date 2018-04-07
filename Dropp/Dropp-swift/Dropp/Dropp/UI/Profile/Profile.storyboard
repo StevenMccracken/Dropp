@@ -1,72 +1,104 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="14109" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES" initialViewController="TCL-pK-Hy5">
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="14109" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES" initialViewController="wsf-hW-aVe">
     <device id="retina5_9" orientation="portrait">
         <adaptation id="fullscreen"/>
     </device>
     <dependencies>
         <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="14088"/>
+        <capability name="Safe area layout guides" minToolsVersion="9.0"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
     <scenes>
         <!--Profile-->
-        <scene sceneID="1g5-pd-S4E">
+        <scene sceneID="OFa-fO-jD4">
             <objects>
-                <tableViewController title="Profile" id="TCL-pK-Hy5" customClass="ProfileViewController" customModule="Dropp" customModuleProvider="target" sceneMemberID="viewController">
-                    <tableView key="view" clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" showsHorizontalScrollIndicator="NO" keyboardDismissMode="interactive" dataMode="prototypes" style="plain" separatorStyle="default" rowHeight="-1" estimatedRowHeight="-1" sectionHeaderHeight="28" sectionFooterHeight="28" id="cPX-14-h9Y">
+                <viewController title="Profile" id="wsf-hW-aVe" customClass="ProfileViewController" customModule="Dropp" customModuleProvider="target" sceneMemberID="viewController">
+                    <view key="view" contentMode="scaleToFill" id="Bsm-JM-01P">
                         <rect key="frame" x="0.0" y="0.0" width="375" height="812"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <subviews>
+                            <tableView clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" showsHorizontalScrollIndicator="NO" keyboardDismissMode="interactive" dataMode="prototypes" style="plain" separatorStyle="default" rowHeight="-1" estimatedRowHeight="-1" sectionHeaderHeight="28" sectionFooterHeight="28" translatesAutoresizingMaskIntoConstraints="NO" id="UlV-s5-9wJ">
+                                <rect key="frame" x="0.0" y="44" width="375" height="689"/>
+                                <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                                <view key="tableHeaderView" contentMode="scaleToFill" id="XZt-Qe-PYh" customClass="ProfileHeaderView" customModule="Dropp" customModuleProvider="target">
+                                    <rect key="frame" x="0.0" y="0.0" width="375" height="75"/>
+                                    <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                    <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                                </view>
+                                <view key="tableFooterView" contentMode="scaleToFill" id="IiL-4m-KJ9" userLabel="Footer View">
+                                    <rect key="frame" x="0.0" y="147" width="375" height="0.0"/>
+                                    <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                    <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                                </view>
+                                <prototypes>
+                                    <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" insetsLayoutMarginsFromSafeArea="NO" selectionStyle="none" hidesAccessoryWhenEditing="NO" indentationLevel="1" indentationWidth="0.0" reuseIdentifier="DroppTableViewCell" id="s4c-bi-z63" userLabel="DroppTableViewCell" customClass="DroppTableViewCell" customModule="Dropp" customModuleProvider="target">
+                                        <rect key="frame" x="0.0" y="103" width="375" height="44"/>
+                                        <autoresizingMask key="autoresizingMask"/>
+                                        <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" insetsLayoutMarginsFromSafeArea="NO" tableViewCell="s4c-bi-z63" id="eD3-4z-T64">
+                                            <rect key="frame" x="0.0" y="0.0" width="375" height="43.666666666666664"/>
+                                            <autoresizingMask key="autoresizingMask"/>
+                                        </tableViewCellContentView>
+                                    </tableViewCell>
+                                </prototypes>
+                            </tableView>
+                            <toolbar opaque="NO" clearsContextBeforeDrawing="NO" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="wkS-TU-W7U">
+                                <rect key="frame" x="0.0" y="733" width="375" height="45"/>
+                                <constraints>
+                                    <constraint firstAttribute="height" constant="45" id="Vhr-ac-Nu7"/>
+                                </constraints>
+                                <items/>
+                                <color key="tintColor" red="0.91661626100000004" green="0.3107863367" blue="0.38301837439999997" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                            </toolbar>
+                        </subviews>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
-                        <view key="tableHeaderView" contentMode="scaleToFill" id="Kei-AP-cjl" customClass="ProfileHeaderView" customModule="Dropp" customModuleProvider="target">
-                            <rect key="frame" x="0.0" y="0.0" width="375" height="50"/>
-                            <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
-                            <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
-                        </view>
-                        <view key="tableFooterView" contentMode="scaleToFill" id="KFI-Fc-Fwy" userLabel="Footer View">
-                            <rect key="frame" x="0.0" y="122" width="375" height="0.0"/>
-                            <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
-                            <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
-                        </view>
-                        <prototypes>
-                            <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" insetsLayoutMarginsFromSafeArea="NO" selectionStyle="none" hidesAccessoryWhenEditing="NO" indentationLevel="1" indentationWidth="0.0" reuseIdentifier="DroppTableViewCell" id="FAU-m8-RLg" userLabel="DroppTableViewCell" customClass="DroppTableViewCell" customModule="Dropp" customModuleProvider="target">
-                                <rect key="frame" x="0.0" y="78" width="375" height="44"/>
-                                <autoresizingMask key="autoresizingMask"/>
-                                <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" insetsLayoutMarginsFromSafeArea="NO" tableViewCell="FAU-m8-RLg" id="aFU-rH-vLC">
-                                    <rect key="frame" x="0.0" y="0.0" width="375" height="43.666666666666664"/>
-                                    <autoresizingMask key="autoresizingMask"/>
-                                </tableViewCellContentView>
-                            </tableViewCell>
-                        </prototypes>
-                        <connections>
-                            <outlet property="dataSource" destination="TCL-pK-Hy5" id="AvX-RI-Bny"/>
-                            <outlet property="delegate" destination="TCL-pK-Hy5" id="Fp9-dz-A8e"/>
-                        </connections>
-                    </tableView>
-                    <navigationItem key="navigationItem" title="Profile" id="mL8-XC-Bxu"/>
+                        <constraints>
+                            <constraint firstItem="UlV-s5-9wJ" firstAttribute="top" secondItem="emX-Il-ern" secondAttribute="top" id="2YQ-1j-hDL"/>
+                            <constraint firstItem="UlV-s5-9wJ" firstAttribute="leading" secondItem="emX-Il-ern" secondAttribute="leading" id="D44-Z4-w4t"/>
+                            <constraint firstItem="emX-Il-ern" firstAttribute="bottom" secondItem="wkS-TU-W7U" secondAttribute="bottom" id="KZT-uW-hJ8"/>
+                            <constraint firstItem="wkS-TU-W7U" firstAttribute="leading" secondItem="Bsm-JM-01P" secondAttribute="leading" id="YHi-ne-O9G"/>
+                            <constraint firstItem="wkS-TU-W7U" firstAttribute="trailing" secondItem="Bsm-JM-01P" secondAttribute="trailing" id="b0e-vD-yOR"/>
+                            <constraint firstItem="wkS-TU-W7U" firstAttribute="top" secondItem="UlV-s5-9wJ" secondAttribute="bottom" id="d3r-Uh-wja"/>
+                            <constraint firstItem="UlV-s5-9wJ" firstAttribute="trailing" secondItem="emX-Il-ern" secondAttribute="trailing" id="nxh-aL-1OF"/>
+                        </constraints>
+                        <viewLayoutGuide key="safeArea" id="emX-Il-ern"/>
+                    </view>
                     <connections>
-                        <outlet property="profileHeaderView" destination="Kei-AP-cjl" id="8X5-g4-bFF"/>
-                        <segue destination="2i9-O7-5nw" kind="show" identifier="showConnectionsSegue" id="GIq-Gf-Cg0"/>
-                        <segue destination="RLl-3N-4MR" kind="show" identifier="showDroppDetailSegue" id="oS9-SX-5nz"/>
+                        <outlet property="profileHeaderView" destination="XZt-Qe-PYh" id="CJy-Mm-rny"/>
+                        <outlet property="tableView" destination="UlV-s5-9wJ" id="eL7-CQ-YrB"/>
+                        <outlet property="toolbar" destination="wkS-TU-W7U" id="2xi-U7-Bic"/>
+                        <outlet property="toolbarHeight" destination="Vhr-ac-Nu7" id="Yxc-OB-iPk"/>
+                        <segue destination="cbq-1f-RLC" kind="show" identifier="showConnectionsSegue" id="E4F-UW-VHs"/>
+                        <segue destination="ehr-h9-2tZ" kind="show" identifier="showDroppDetailSegue" id="WUr-1H-rg0"/>
+                        <segue destination="GIt-1r-SA6" kind="show" identifier="showProfileDetailsSegue" id="fXG-Yt-oWg"/>
                     </connections>
-                </tableViewController>
-                <placeholder placeholderIdentifier="IBFirstResponder" id="yvF-cK-uYP" userLabel="First Responder" sceneMemberID="firstResponder"/>
+                </viewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="hgq-mF-n5M" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="2004" y="192.95352323838082"/>
+            <point key="canvasLocation" x="2004" y="917.73399014778329"/>
+        </scene>
+        <!--ProfileDetails-->
+        <scene sceneID="Gqm-Ii-tdN">
+            <objects>
+                <viewControllerPlaceholder storyboardName="ProfileDetails" id="GIt-1r-SA6" sceneMemberID="viewController"/>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="zuX-QE-WmJ" userLabel="First Responder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="2760" y="861"/>
         </scene>
         <!--Connections-->
-        <scene sceneID="V2W-YO-VLZ">
+        <scene sceneID="Dy7-1y-MTq">
             <objects>
-                <viewControllerPlaceholder storyboardName="Connections" id="2i9-O7-5nw" sceneMemberID="viewController"/>
-                <placeholder placeholderIdentifier="IBFirstResponder" id="aLF-69-WA1" userLabel="First Responder" sceneMemberID="firstResponder"/>
+                <viewControllerPlaceholder storyboardName="Connections" id="cbq-1f-RLC" sceneMemberID="viewController"/>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="00I-4p-7y3" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="2760" y="148"/>
+            <point key="canvasLocation" x="2755" y="918"/>
         </scene>
         <!--DroppDetail-->
-        <scene sceneID="VFs-Ry-0K3">
+        <scene sceneID="X4Y-cA-qsl">
             <objects>
-                <viewControllerPlaceholder storyboardName="DroppDetail" id="RLl-3N-4MR" sceneMemberID="viewController"/>
-                <placeholder placeholderIdentifier="IBFirstResponder" id="nvP-Jl-6GA" userLabel="First Responder" sceneMemberID="firstResponder"/>
+                <viewControllerPlaceholder storyboardName="DroppDetail" id="ehr-h9-2tZ" sceneMemberID="viewController"/>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="pay-JJ-zuF" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="2758" y="237"/>
+            <point key="canvasLocation" x="2753" y="975"/>
         </scene>
     </scenes>
 </document>
