@@ -58,7 +58,6 @@
 		6970261E206CCC7A00423202 /* UIBarButtonItem+Shortcuts.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6970261D206CCC7A00423202 /* UIBarButtonItem+Shortcuts.swift */; };
 		69772D7D20760A6800788836 /* DroppDetailHeaderView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 69772D7C20760A6800788836 /* DroppDetailHeaderView.swift */; };
 		69772D7F20760AD900788836 /* DroppDetailHeaderView.xib in Resources */ = {isa = PBXBuildFile; fileRef = 69772D7E20760AD900788836 /* DroppDetailHeaderView.xib */; };
-		69772D812076842000788836 /* Logger.swift in Sources */ = {isa = PBXBuildFile; fileRef = 69772D802076842000788836 /* Logger.swift */; };
 		6982FF5C2006C1090015D069 /* UIView+Shortcuts.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6982FF5B2006C1090015D069 /* UIView+Shortcuts.swift */; };
 		6982FF5E2006FB400015D069 /* ProfileDetails.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 6982FF5D2006FB400015D069 /* ProfileDetails.storyboard */; };
 		6982FF602006FC120015D069 /* ProfileDetailsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6982FF5F2006FC120015D069 /* ProfileDetailsViewController.swift */; };
@@ -154,7 +153,6 @@
 		6970261D206CCC7A00423202 /* UIBarButtonItem+Shortcuts.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIBarButtonItem+Shortcuts.swift"; sourceTree = "<group>"; };
 		69772D7C20760A6800788836 /* DroppDetailHeaderView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DroppDetailHeaderView.swift; sourceTree = "<group>"; };
 		69772D7E20760AD900788836 /* DroppDetailHeaderView.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = DroppDetailHeaderView.xib; sourceTree = "<group>"; };
-		69772D802076842000788836 /* Logger.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Logger.swift; sourceTree = "<group>"; };
 		6982FF5B2006C1090015D069 /* UIView+Shortcuts.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIView+Shortcuts.swift"; sourceTree = "<group>"; };
 		6982FF5D2006FB400015D069 /* ProfileDetails.storyboard */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; path = ProfileDetails.storyboard; sourceTree = "<group>"; };
 		6982FF5F2006FC120015D069 /* ProfileDetailsViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProfileDetailsViewController.swift; sourceTree = "<group>"; };
@@ -545,7 +543,6 @@
 				69C3BAF91FE7CC6500537C99 /* Utils.swift */,
 				693AFB4A1FFF5E8E008901A0 /* Event.swift */,
 				69AB37BD2011009E005B99BD /* Platform.swift */,
-				69772D802076842000788836 /* Logger.swift */,
 			);
 			path = Utility;
 			sourceTree = "<group>";
@@ -842,7 +839,6 @@
 				6918F1D81FEE4A3600041010 /* UIAlertController+CustomInit.swift in Sources */,
 				69C3BAF31FE7BED300537C99 /* LoginViewController.swift in Sources */,
 				6918CEE72012AAA6005E547C /* MapViewController.swift in Sources */,
-				69772D812076842000788836 /* Logger.swift in Sources */,
 				693AFB4E1FFF69E9008901A0 /* NSError+Shortcuts.swift in Sources */,
 				691B1ABB1FEF3D240043EBA0 /* DroppTableViewCell.swift in Sources */,
 				69D8E2FF200C830B00CCEC6C /* UILabel+Shortcuts.swift in Sources */,
