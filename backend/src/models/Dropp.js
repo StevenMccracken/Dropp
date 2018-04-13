@@ -1,5 +1,5 @@
 const Utils = require('../utilities/utils');
-const DroppError = require('../errors/DroppError');
+const ModelError = require('../errors/ModelError');
 const Validator = require('../utilities/validator');
 
 /**
@@ -11,7 +11,7 @@ class Dropp extends Object {
     super();
 
     if (!Utils.hasValue(_details)) {
-      DroppError.throwServerError('Dropp constructor', null, 'Details arg is invalid');
+      ModelError.throwConstructorError('Dropp', 'details arg has no value');
     }
 
     const invalidMembers = [];
@@ -21,7 +21,7 @@ class Dropp extends Object {
     if (!Validator.isValidTextPost(_details.text)) invalidMembers.push('text');
     if (!Validator.isValidBooleanString(_details.media)) invalidMembers.push('media');
     if (invalidMembers.length > 0) {
-      DroppError.throwServerError('Dropp constructor', null, `Invalid details args: ${invalidMembers.join(',')}`);
+      ModelError.throwInvalidMemebersError('Dropp', invalidMembers);
     }
 
     this.id = _details.id;

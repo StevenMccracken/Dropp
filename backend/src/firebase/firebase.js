@@ -5,7 +5,7 @@
 const Log = require('../logging/logger');
 const Firebase = require('firebase-admin');
 const Validator = require('../utilities/validator');
-const DroppError = require('../errors/DroppError');
+const DatabaseError = require('../errors/DatabaseError');
 const firebaseApiKey = require('../../config/secrets/firebaseApiKey.json');
 
 // Firebase initialization
@@ -18,8 +18,8 @@ const configOptions = {
 };
 
 /**
- * Configures and initializes the firebase module
- * @throws {DroppError} if the firebase module has already been started
+ * Configures and initializes the firebase module. Returns
+ * immediately if Firebase has already been started
  */
 const start = function start() {
   if (didStart) return;
@@ -31,6 +31,10 @@ const start = function start() {
 
 // Helper functions
 
+/**
+ * Determines whether Firebase has been started yet or not
+ * @return {Boolean} whether or not Firebase has been started
+ */
 const hasStarted = function hasStarted() {
   return didStart;
 };
@@ -48,19 +52,19 @@ function log(_message, _url) {
  * Throws an error with the invalid URL in the details
  * @param {String} _source the source of the error
  * @param {String} _url the firebase path to interact with
- * @throws {Error} because a given Firebase URL is invalid
+ * @throws {DatabaseError} because a given Firebase URL is invalid
  */
 function throwInvalidUrlError(_source, _url) {
-  throw new Error(`Firebase ${_source}: Invalid URL (${_url})`);
+  DatabaseError.throwUrlError(`Firebase ${_source}`, _url);
 }
 
 /**
  * Throws an error with the has not started message in the details
  * @param {String} _source the source of the error
- * @throws {Error} because Firebase has not started yet
+ * @throws {DatabaseError} because Firebase has not started yet
  */
 function throwHasNotStartedError(_source) {
-  throw new Error(`Firebase ${_source}: Firebase has not started yet`);
+  DatabaseError.throwInvalidStateError(`Firebase ${_source}`);
 }
 
 // Firebase functions
@@ -69,7 +73,7 @@ function throwHasNotStartedError(_source) {
  * Gets data from firebase
  * @param {String} _url the firebase path to get data from
  * @return {Object} the data at the given url
- * @throws {Error} if Firebase has not started or _url is invalid
+ * @throws {DatabaseError} if Firebase has not started or _url is invalid
  */
 const get = async function get(_url) {
   const source = 'get()';
@@ -87,7 +91,7 @@ const get = async function get(_url) {
  * @param {String} _url the firebase path to add data to
  * @param {Object} _data the data for the given url
  * @return {String} the fully-qualified URL where the data exists in Firebase
- * @throws {Error} if Firebase has not started or _url is invalid
+ * @throws {DatabaseError} if Firebase has not started or _url is invalid
  */
 const add = async function add(_url, _data) {
   const source = 'add()';
@@ -104,7 +108,7 @@ const add = async function add(_url, _data) {
  * Updates data in firebase
  * @param {String} _url the firebase path to update data for
  * @param {Object} _data the data to update with for the given url
- * @throws {Error} if Firebase has not started or _url is invalid
+ * @throws {DatabaseError} if Firebase has not started or _url is invalid
  */
 const update = async function update(_url, _data) {
   const source = 'update()';
@@ -120,7 +124,7 @@ const update = async function update(_url, _data) {
  * Updates multiple URLs with different data in firebase
  * @param {Object} _urlDataMap a mapping of the firebase
  * paths to update data for, with their corresponding new data
- * @throws {Error} if Firebase has not started or _url is invalid
+ * @throws {DatabaseError} if Firebase has not started or _url is invalid
  */
 const bulkUpdate = async function bulkUpdate(_urlDataMap = {}) {
   const source = 'bulkUpdate()';
@@ -138,7 +142,7 @@ const bulkUpdate = async function bulkUpdate(_urlDataMap = {}) {
 /**
  * Removes data from firebase
  * @param {String} _url the firebase path to remove data from
- * @throws {Error} if Firebase has not started or _url is invalid
+ * @throws {DatabaseError} if Firebase has not started or _url is invalid
  */
 const remove = async function remove(_url) {
   const source = 'delete()';
@@ -153,7 +157,7 @@ const remove = async function remove(_url) {
 /**
  * Removes multiple data values in firebase
  * @param {Array} [_urls=[]] the paths to delete data from
- * @throws {Error} if Firebase has not started or _url is invalid
+ * @throws {DatabaseError} if Firebase has not started or _url is invalid
  */
 const bulkRemove = async function bulkRemove(_urls = []) {
   const source = 'bulkRemove()';

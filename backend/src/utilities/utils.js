@@ -36,14 +36,15 @@ const hasValue = function hasValue(_value) {
 
 /**
  * getIp - Helper function to get the IP address from an Express request object
- * @param {Object} [_request = {}] the Express request object
- * @return {String} the IP address of the request
+ * @param {Object} [_request={}] an HTTP request object
+ * @return {String} the IP address from the
+ * request if one exists, or an empty string
  */
 const getIpAddress = function getIpAddress(_request = {}) {
   const headers = _request.headers || {};
   const connection = _request.connection || {};
   const ipAddress = headers['x-forwarded-for'] || connection.remoteAddress;
-  return ipAddress;
+  return ipAddress || '';
 };
 
 module.exports = {

@@ -1,5 +1,5 @@
 const Utils = require('../utilities/utils');
-const DroppError = require('../errors/DroppError');
+const ModelError = require('../errors/ModelError');
 const Validator = require('../utilities/validator');
 
 /**
@@ -11,14 +11,14 @@ class User extends Object {
     super();
 
     if (!Utils.hasValue(_details)) {
-      DroppError.throwServerError('User constructor', null, 'Details arg is invalid');
+      ModelError.throwConstructorError('User', 'details arg has no value');
     }
 
     const invalidMembers = [];
     if (!Validator.isValidEmail(_details.email)) invalidMembers.push('email');
     if (!Validator.isValidUsername(_details.username)) invalidMembers.push('username');
     if (invalidMembers.length > 0) {
-      DroppError.throwServerError('User constructor', null, `Invalid details args: ${invalidMembers.join(',')}`);
+      ModelError.throwInvalidMemebersError('Dropp', invalidMembers);
     }
 
     this.email = _details.email;

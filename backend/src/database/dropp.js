@@ -27,7 +27,7 @@ const forbiddenDroppId = '-Kjsh';
  * Retrieves a dropp from the database by it's ID
  * @param {String} _id the unique ID of the dropp
  * @return {Dropp} the dropp
- * @throws {DroppError|Error}
+ * @throws {DroppError|ModelError}
  */
 const get = async function get(_id) {
   const source = 'get()';

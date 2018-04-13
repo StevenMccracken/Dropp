@@ -122,7 +122,7 @@ describe(invalidUrlThrows, () => {
     }
 
     expect(error).toBeDefined();
-    expect(error.name).toBe('DroppError');
+    expect(error.name).toBe('DatabaseError');
     Log(invalidUrlThrows, error);
     done();
   });

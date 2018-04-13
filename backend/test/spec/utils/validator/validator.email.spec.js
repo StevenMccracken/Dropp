@@ -261,5 +261,13 @@ describe(emailInputValidator, () => {
     Log(emailInputValidator, `${value} returns ${result}`);
     done();
   });
+
+  it('should return true and not infinitely recurse for an email address with 2 UUIDs', (done) => {
+    const value = '89022932-6bf8-4639-a42e-7ef3c182a719@89022932-6bf8-4639-a42e-7ef3c182a719.com';
+    const result = Validator.isValidEmail(value);
+    expect(result).toBe(true);
+    Log(emailInputValidator, `${value} returns ${result}`);
+    done();
+  });
 });
 /* eslint-enable no-undef */
