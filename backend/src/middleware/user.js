@@ -367,6 +367,81 @@ const respondToFollowerRequest = async function respondToFollowerRequest(_curren
   return data;
 };
 
+/**
+ * Removes a follow from the current user to a given username
+ * @param {User} _currentUser the current user for the request
+ * @param {String} _username the username of the user to unfollow
+ * @return {Object} the success details
+ * @throws {DroppError} if the given username is invalid,
+ * or if the current user does not follow the given username
+ */
+const unfollow = async function unfollow(_currentUser, _username) {
+  const source = 'unfollow()';
+  log(source, _username);
+
+  if (!(_currentUser instanceof User)) DroppError.throwServerError(source, null, 'Object is not a User');
+  if (!Validator.isValidUsername(_username)) {
+    DroppError.throwInvalidRequestError(source, 'username');
+  }
+
+  const user = await UserAccessor.get(_username);
+  if (!Utils.hasValue(user)) DroppError.throwResourceDneError(source, 'user');
+  if (!user.hasFollower(_currentUser.username)) {
+    DroppError.throwResourceError(source, 'You do not follow that user');
+  }
+
+  await UserAccessor.removeFollow(_currentUser, user);
+  const data = {
+    success: {
+      message: 'Successful unfollow',
+    },
+  };
+
+  return data;
+};
+
+/**
+ * Removes a follow from the current user to a given username
+ * @param {User} _currentUser the current user for the request
+ * @param {String} _username the username of the user to unfollow
+ * @return {Object} the success details
+ * @throws {DroppError} if the given username is invalid,
+ * or if the current user does not follow the given username
+ */
+
+/**
+ * Removes a follower for the current user from the given username
+ * @param {User} _currentUser the current user for the request
+ * @param {String} _username the username of the user to remove as a follower
+ * @return {Object} the success details
+ * @throws {DroppError} if the given username is invalid, or if
+ * the current user does not have the given username as a follower
+ */
+const removeFollower = async function removeFollower(_currentUser, _username) {
+  const source = 'removeFollower()';
+  log(source, _username);
+
+  if (!(_currentUser instanceof User)) DroppError.throwServerError(source, null, 'Object is not a User');
+  if (!Validator.isValidUsername(_username)) {
+    DroppError.throwInvalidRequestError(source, 'username');
+  }
+
+  const user = await UserAccessor.get(_username);
+  if (!Utils.hasValue(user)) DroppError.throwResourceDneError(source, 'user');
+  if (!user.doesFollow(_currentUser.username)) {
+    DroppError.throwResourceError(source, 'That user does not follow you');
+  }
+
+  await UserAccessor.removeFollow(user, _currentUser);
+  const data = {
+    success: {
+      message: 'Successful follower removal',
+    },
+  };
+
+  return data;
+};
+
 module.exports = {
   get,
   getAuthToken,
@@ -378,4 +453,6 @@ module.exports = {
   requestToFollow,
   removeFollowRequest,
   respondToFollowerRequest,
+  unfollow,
+  removeFollower,
 };

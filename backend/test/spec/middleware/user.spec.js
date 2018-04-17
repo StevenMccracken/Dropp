@@ -278,6 +278,40 @@ describe('User Middleware tests', () => {
         done();
       });
     });
+
+    const updateFollowFollowerTitle = 'Update follow/follower';
+    describe(updateFollowFollowerTitle, () => {
+      beforeEach(async (done) => {
+        const details = { accept: true };
+        await UserMiddleware.requestToFollow(this.testUser, this.testUser2.username);
+        /* eslint-disable max-len */
+        await UserMiddleware.respondToFollowerRequest(this.testUser2, this.testUser.username, details);
+        /* eslint-enable max-len */
+        done();
+      });
+
+      it('unfollows a user', async (done) => {
+        const result = await UserMiddleware.unfollow(this.testUser, this.testUser2.username);
+        expect(result).toBeDefined();
+        expect(result.success).toBeDefined();
+        expect(result.success.message).toBeDefined();
+        expect(typeof result.success.message).toBe('string');
+        expect(result.success.message).toContain('unfollow');
+        expect(this.testUser.follows.includes(this.testUser2.username)).toBe(false);
+        done();
+      });
+
+      it('removes a follower', async (done) => {
+        const result = await UserMiddleware.removeFollower(this.testUser2, this.testUser.username);
+        expect(result).toBeDefined();
+        expect(result.success).toBeDefined();
+        expect(result.success.message).toBeDefined();
+        expect(typeof result.success.message).toBe('string');
+        expect(result.success.message).toContain('follower removal');
+        expect(this.testUser2.followers.includes(this.testUser.username)).toBe(false);
+        done();
+      });
+    });
   });
 
   const removeUserTitle = 'Remove user';
