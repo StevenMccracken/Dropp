@@ -191,6 +191,22 @@ class User extends Object {
 
     return data;
   }
+
+  doesFollow(_username) {
+    return this._follows.includes(_username);
+  }
+
+  hasFollower(_username) {
+    return this._followers.includes(_username);
+  }
+
+  hasFollowRequest(_username) {
+    return this._followRequests.includes(_username);
+  }
+
+  hasFollowerRequest(_username) {
+    return this._followerRequests.includes(_username);
+  }
 }
 
 module.exports = User;

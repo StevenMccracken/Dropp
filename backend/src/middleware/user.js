@@ -19,6 +19,8 @@ function log(_source, _message) {
   Log.log('User controller', `${_source} ${_message}`);
 }
 
+// Single user functions
+
 /**
  * Retrieves a user by their username
  * @param {User} _currentUser the current user for the request
@@ -239,6 +241,132 @@ const remove = async function remove(_currentUser, _username) {
   await UserAccessor.remove(user);
 };
 
+// Inter-user functions
+
+/**
+ * Adds a follow request from the current user to the given username
+ * @param {User} _currentUser the current user for the request
+ * @param {String} _username the username of the user to follow
+ * @return {Object} the success details
+ * @throws {DroppError} if the given username is invalid, or if
+ * the current user already has a follow request/follows the user
+ */
+const requestToFollow = async function requestToFollow(_currentUser, _username) {
+  const source = 'requestToFollow()';
+  log(source, _username);
+
+  if (!(_currentUser instanceof User)) DroppError.throwServerError(source, null, 'Object is not a User');
+  if (!Validator.isValidUsername(_username)) {
+    DroppError.throwInvalidRequestError(source, 'username');
+  }
+
+  const user = await UserAccessor.get(_username);
+  if (!Utils.hasValue(user)) DroppError.throwResourceDneError(source, 'user');
+  if (user.hasFollower(_currentUser.username)) {
+    DroppError.throwResourceError(source, 'You already follow that user');
+  }
+
+  if (user.hasFollowerRequest(_currentUser.username)) {
+    DroppError.throwResourceError(source, 'You already have a pending follow request for that user');
+  }
+
+  await UserAccessor.addFollowRequest(_currentUser, user);
+  const data = {
+    success: {
+      message: 'Successful follow request',
+    },
+  };
+
+  return data;
+};
+
+/**
+ * Removes a follow request from the current user to the given username
+ * @param {User} _currentUser the current user for the request
+ * @param {String} _username the username of the user to remove the follow
+ * @return {Object} the success details
+ * @throws {DroppError} if the given username is invalid, if the
+ * current user does not have a follow request, or already follows the user
+ */
+const removeFollowRequest = async function removeFollowRequest(_currentUser, _username) {
+  const source = 'removeFollowRequest()';
+  log(source, _username);
+
+  if (!(_currentUser instanceof User)) DroppError.throwServerError(source, null, 'Object is not a User');
+  if (!Validator.isValidUsername(_username)) {
+    DroppError.throwInvalidRequestError(source, 'username');
+  }
+
+  const user = await UserAccessor.get(_username);
+  if (!Utils.hasValue(user)) DroppError.throwResourceDneError(source, 'user');
+  if (user.hasFollower(_currentUser.username)) {
+    DroppError.throwResourceError(source, 'You already follow that user');
+  }
+
+  if (!user.hasFollowerRequest(_currentUser.username)) {
+    DroppError.throwResourceError(source, 'You do not have a pending follow request for that user');
+  }
+
+  await UserAccessor.removeFollowRequest(_currentUser, user);
+  const data = {
+    success: {
+      message: 'Successful follow request removal',
+    },
+  };
+
+  return data;
+};
+
+/**
+ * Responds to a follower request for the current user from the given username
+ * @param {User} _currentUser the current user for the request
+ * @param {String} _username the username
+ * of the user to repond to the request for
+ * @return {Object} the success details
+ * @throws {DroppError} if the given username or accept parameter is invalid, if
+ * the user already follows the current user, or if there is no follower request
+ */
+/* eslint-disable max-len */
+const respondToFollowerRequest = async function respondToFollowerRequest(_currentUser, _username, _details = {}) {
+/* eslint-disable max-len */
+  const source = 'respondToFollowerRequest()';
+  log(source, _username);
+
+  if (!(_currentUser instanceof User)) DroppError.throwServerError(source, null, 'Object is not a User');
+
+  const invalidMembers = [];
+  if (!Validator.isValidUsername(_username)) invalidMembers.push('username');
+  if (!Validator.isValidBoolean(_details.accept)) invalidMembers.push('accept');
+  if (invalidMembers.length > 0) DroppError.throwInvalidRequestError(source, invalidMembers);
+
+  const user = await UserAccessor.get(_username);
+  if (!Utils.hasValue(user)) DroppError.throwResourceDneError(source, 'user');
+  if (user.doesFollow(_currentUser.username)) {
+    DroppError.throwResourceError(source, 'That user already follows you');
+  }
+
+  if (!user.hasFollowRequest(_currentUser.username)) {
+    DroppError.throwResourceError(source, 'That user has not requested to follow you');
+  }
+
+  let response;
+  if (_details.accept) {
+    await UserAccessor.addFollow(user, _currentUser);
+    response = 'acceptance';
+  } else {
+    await UserAccessor.removeFollowRequest(user, _currentUser);
+    response = 'denial';
+  }
+
+  const data = {
+    success: {
+      message: `Successful follow request ${response}`,
+    },
+  };
+
+  return data;
+};
+
 module.exports = {
   get,
   getAuthToken,
@@ -247,4 +375,7 @@ module.exports = {
   updateEmail,
   updatePassword,
   remove,
+  requestToFollow,
+  removeFollowRequest,
+  respondToFollowerRequest,
 };

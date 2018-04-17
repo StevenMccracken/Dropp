@@ -138,6 +138,15 @@ const validateBooleanString = function validateBooleanString(_booleanString) {
   return _booleanString === 'true' || _booleanString === 'false';
 };
 
+/**
+ * Validates a given boolean
+ * @param {Boolean} _boolean the boolean to validate
+ * @return {Boolean} whether the boolean is valid or not
+ */
+const validateBoolean = function validateBoolean(_boolean) {
+  return Utils.hasValue(_boolean) && typeof _boolean === 'boolean';
+};
+
 module.exports = {
   isValidEmail: validateEmail,
   isValidInteger: validateInteger,
@@ -149,4 +158,5 @@ module.exports = {
   isValidFirebaseId: validateFirebaseId,
   isValidPositiveFloat: validatePositiveFloat,
   isValidBooleanString: validateBooleanString,
+  isValidBoolean: validateBoolean,
 };

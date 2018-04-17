@@ -23,6 +23,7 @@ describe('User Middleware tests', () => {
 
   afterEach(async (done) => {
     await UserMiddleware.remove(this.testUser, this.testUser.username);
+    delete this.testUser;
     done();
   });
 
@@ -178,6 +179,104 @@ describe('User Middleware tests', () => {
       expect(result.success.message).toContain('email');
       Log(`User Middleware ${updateEmailTitle}`, result);
       done();
+    });
+  });
+
+  const interUserFunctionsTitle = 'Inter-user functions';
+  describe(interUserFunctionsTitle, () => {
+    beforeEach(async (done) => {
+      const uuid = Utils.newUuid();
+      const data = {
+        username: uuid,
+        password: uuid,
+        email: `${uuid}@${uuid}.com`,
+      };
+
+      this.testUser2 = await UserMiddleware.create(data);
+      done();
+    });
+
+    afterEach(async (done) => {
+      await UserMiddleware.remove(this.testUser2, this.testUser2.username);
+      delete this.testUser2;
+      done();
+    });
+
+    const requestToFollowTitle = 'Request to follow user';
+    describe(requestToFollowTitle, () => {
+      it('adds a follow request for the user', async (done) => {
+        const result = await UserMiddleware.requestToFollow(this.testUser, this.testUser2.username);
+        expect(result).toBeDefined();
+        expect(result.success).toBeDefined();
+        expect(result.success.message).toBeDefined();
+        expect(typeof result.success.message).toBe('string');
+        expect(result.success.message).toContain('follow request');
+        expect(this.testUser.followRequests.includes(this.testUser2.username)).toBe(true);
+        Log(`User Middleware ${requestToFollowTitle}`, result);
+        done();
+      });
+    });
+
+    const removeFollowRequestTitle = 'Remove follow request';
+    describe(removeFollowRequestTitle, () => {
+      beforeEach(async (done) => {
+        await UserMiddleware.requestToFollow(this.testUser, this.testUser2.username);
+        done();
+      });
+
+      it('removes a follow request to the user', async (done) => {
+        /* eslint-disable max-len */
+        const result = await UserMiddleware.removeFollowRequest(this.testUser, this.testUser2.username);
+        /* eslint-enable max-len */
+        expect(result).toBeDefined();
+        expect(result.success).toBeDefined();
+        expect(result.success.message).toBeDefined();
+        expect(typeof result.success.message).toBe('string');
+        expect(result.success.message).toContain('removal');
+        expect(this.testUser.followRequests.includes(this.testUser2.username)).toBe(false);
+        Log(`User Middleware ${removeFollowRequestTitle}`, result);
+        done();
+      });
+    });
+
+    const respondToFollowerRequestTitle = 'Respond to follow request';
+    describe(respondToFollowerRequestTitle, () => {
+      beforeEach(async (done) => {
+        await UserMiddleware.requestToFollow(this.testUser, this.testUser2.username);
+        done();
+      });
+
+      it('accepts a follower request', async (done) => {
+        const details = { accept: true };
+        /* eslint-disable max-len */
+        const result = await UserMiddleware.respondToFollowerRequest(this.testUser2, this.testUser.username, details);
+        /* eslint-enable max-len */
+        expect(result).toBeDefined();
+        expect(result.success).toBeDefined();
+        expect(result.success.message).toBeDefined();
+        expect(typeof result.success.message).toBe('string');
+        expect(result.success.message).toContain('acceptance');
+        expect(this.testUser2.followerRequests.includes(this.testUser.username)).toBe(false);
+        expect(this.testUser2.followers.includes(this.testUser.username)).toBe(true);
+        Log(`User Middleware ${respondToFollowerRequestTitle}`, result);
+        done();
+      });
+
+      it('declines a follower request', async (done) => {
+        const details = { accept: false };
+        /* eslint-disable max-len */
+        const result = await UserMiddleware.respondToFollowerRequest(this.testUser2, this.testUser.username, details);
+        /* eslint-enable max-len */
+        expect(result).toBeDefined();
+        expect(result.success).toBeDefined();
+        expect(result.success.message).toBeDefined();
+        expect(typeof result.success.message).toBe('string');
+        expect(result.success.message).toContain('denial');
+        expect(this.testUser2.followerRequests.includes(this.testUser.username)).toBe(false);
+        expect(this.testUser2.followers.includes(this.testUser.username)).toBe(false);
+        Log(`User Middleware ${respondToFollowerRequestTitle}`, result);
+        done();
+      });
     });
   });
 
