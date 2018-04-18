@@ -5,15 +5,23 @@ const UserAccessor = require('../../../src/database/user');
 const DroppError = require('../../../src/errors/DroppError');
 const UserMiddleware = require('../../../src/middleware/user');
 
+/**
+ * Logs a message for a User Middleware test
+ * @param {String} _title the describe label
+ * @param {String|Object} _details the log details
+ */
+function log(_title, _details) {
+  Log(`User Middleware ${_title}`, _details);
+}
+
 /* eslint-disable no-undef */
 Firebase.start();
-describe('User Middleware tests', () => {
-  this.password = 'test';
-  this.uuid = Utils.newUuid();
+describe('User Middleware Tests', () => {
+  const uuid = Utils.newUuid();
   this.testUserData = {
-    username: this.uuid,
-    password: this.password,
-    email: `${this.uuid}@${this.uuid}.com`,
+    username: uuid,
+    password: uuid,
+    email: `${uuid}@${uuid}.com`,
   };
 
   beforeEach(async (done) => {
@@ -30,20 +38,181 @@ describe('User Middleware tests', () => {
   this.uuid2 = Utils.newUuid();
   const createUserTitle = 'Create user';
   describe(createUserTitle, () => {
-    const testUserData2 = {
+    this.testUserData2 = {
       username: this.uuid2,
-      password: this.password,
+      password: this.uuid2,
       email: `${this.uuid2}@${this.uuid2}.com`,
     };
 
     it('creates a user', async (done) => {
-      this.newUser = await UserMiddleware.create(testUserData2);
+      this.newUser = await UserMiddleware.create(this.testUserData2);
       expect(this.newUser).toBeDefined();
-      expect(this.newUser.email).toBe(testUserData2.email);
-      expect(this.newUser.username).toBe(testUserData2.username);
-      expect(this.newUser.password).not.toBe(testUserData2.password);
-      Log(`User Middleware ${createUserTitle}`, this.newUser);
+      expect(this.newUser.email).toBe(this.testUserData2.email);
+      expect(this.newUser.username).toBe(this.testUserData2.username);
+      expect(this.newUser.password).not.toBe(this.testUserData2.password);
+      log(createUserTitle, this.newUser);
       done();
+    });
+
+    const invalidCreateUserTitle = 'Invalid details';
+    describe(invalidCreateUserTitle, () => {
+      beforeEach(() => {
+        const uuid2 = Utils.newUuid();
+        this.invalidUserDetails = {
+          username: uuid2,
+          password: uuid2,
+          email: `${uuid2}@${uuid2}.com`,
+        };
+      });
+
+      afterEach(() => {
+        delete this.invalidUserDetails;
+      });
+
+      it('throws an error for missing username', async (done) => {
+        try {
+          delete this.invalidUserDetails.username;
+          const result = await UserMiddleware.create(this.invalidUserDetails);
+          expect(result).not.toBeDefined();
+          log(invalidCreateUserTitle, 'Should have thrown error');
+          done();
+        } catch (error) {
+          expect(error).toBeDefined();
+          expect(error.name).toBe('DroppError');
+          expect(error.details).toBeDefined();
+          expect(error.details.error).toBeDefined();
+          expect(error.details.error.type).toBe(DroppError.type.InvalidRequest.type);
+          expect(error.details.error.message).toBeDefined();
+          expect(typeof error.details.error.message).toBe('string');
+
+          const invalidParameters = error.details.error.message.split(',');
+          expect(invalidParameters.length).toBe(1);
+          expect(invalidParameters[0]).toBe('username');
+          log(invalidCreateUserTitle, error.details);
+          done();
+        }
+      });
+
+      it('throws an error for missing password', async (done) => {
+        try {
+          delete this.invalidUserDetails.password;
+          const result = await UserMiddleware.create(this.invalidUserDetails);
+          expect(result).not.toBeDefined();
+          log(invalidCreateUserTitle, 'Should have thrown error');
+          done();
+        } catch (error) {
+          expect(error).toBeDefined();
+          expect(error.name).toBe('DroppError');
+          expect(error.details).toBeDefined();
+          expect(error.details.error).toBeDefined();
+          expect(error.details.error.type).toBe(DroppError.type.InvalidRequest.type);
+          expect(error.details.error.message).toBeDefined();
+          expect(typeof error.details.error.message).toBe('string');
+
+          const invalidParameters = error.details.error.message.split(',');
+          expect(invalidParameters.length).toBe(1);
+          expect(invalidParameters[0]).toBe('password');
+          log(invalidCreateUserTitle, error.details);
+          done();
+        }
+      });
+
+      it('throws an error for missing email', async (done) => {
+        try {
+          delete this.invalidUserDetails.email;
+          const result = await UserMiddleware.create(this.invalidUserDetails);
+          expect(result).not.toBeDefined();
+          log(invalidCreateUserTitle, 'Should have thrown error');
+          done();
+        } catch (error) {
+          expect(error).toBeDefined();
+          expect(error.name).toBe('DroppError');
+          expect(error.details).toBeDefined();
+          expect(error.details.error).toBeDefined();
+          expect(error.details.error.type).toBe(DroppError.type.InvalidRequest.type);
+          expect(error.details.error.message).toBeDefined();
+          expect(typeof error.details.error.message).toBe('string');
+
+          const invalidParameters = error.details.error.message.split(',');
+          expect(invalidParameters.length).toBe(1);
+          expect(invalidParameters[0]).toBe('email');
+          log(invalidCreateUserTitle, error.details);
+          done();
+        }
+      });
+
+      it('throws an error for 2 missing details', async (done) => {
+        try {
+          delete this.invalidUserDetails.username;
+          delete this.invalidUserDetails.password;
+          const result = await UserMiddleware.create(this.invalidUserDetails);
+          expect(result).not.toBeDefined();
+          log(invalidCreateUserTitle, 'Should have thrown error');
+          done();
+        } catch (error) {
+          expect(error).toBeDefined();
+          expect(error.name).toBe('DroppError');
+          expect(error.details).toBeDefined();
+          expect(error.details.error).toBeDefined();
+          expect(error.details.error.type).toBe(DroppError.type.InvalidRequest.type);
+          expect(error.details.error.message).toBeDefined();
+          expect(typeof error.details.error.message).toBe('string');
+
+          const invalidParameters = error.details.error.message.split(',');
+          expect(invalidParameters.length).toBe(2);
+          expect(invalidParameters.includes('username')).toBe(true);
+          expect(invalidParameters.includes('password')).toBe(true);
+          log(invalidCreateUserTitle, error.details);
+          done();
+        }
+      });
+
+      it('throws an error for 3 missing details', async (done) => {
+        try {
+          delete this.invalidUserDetails.email;
+          delete this.invalidUserDetails.username;
+          delete this.invalidUserDetails.password;
+          const result = await UserMiddleware.create(this.invalidUserDetails);
+          expect(result).not.toBeDefined();
+          log(invalidCreateUserTitle, 'Should have thrown error');
+          done();
+        } catch (error) {
+          expect(error).toBeDefined();
+          expect(error.name).toBe('DroppError');
+          expect(error.details).toBeDefined();
+          expect(error.details.error).toBeDefined();
+          expect(error.details.error.type).toBe(DroppError.type.InvalidRequest.type);
+          expect(error.details.error.message).toBeDefined();
+          expect(typeof error.details.error.message).toBe('string');
+
+          const invalidParameters = error.details.error.message.split(',');
+          expect(invalidParameters.length).toBe(3);
+          expect(invalidParameters.includes('email')).toBe(true);
+          expect(invalidParameters.includes('username')).toBe(true);
+          expect(invalidParameters.includes('password')).toBe(true);
+          log(invalidCreateUserTitle, error.details);
+          done();
+        }
+      });
+
+      it('throws an error for already existing username', async (done) => {
+        try {
+          this.invalidUserDetails.username = this.testUserData.username;
+          const result = await UserMiddleware.create(this.invalidUserDetails);
+          expect(result).not.toBeDefined();
+          log(invalidCreateUserTitle, 'Should have thrown error');
+          done();
+        } catch (error) {
+          expect(error).toBeDefined();
+          expect(error.name).toBe('DroppError');
+          expect(error.details).toBeDefined();
+          expect(error.details.error).toBeDefined();
+          expect(error.details.error.type).toBe(DroppError.type.Resource.type);
+          expect(error.details.error.message).toBe('A user with that username already exists');
+          log(invalidCreateUserTitle, error.details);
+          done();
+        }
+      });
     });
   });
 
@@ -71,7 +240,7 @@ describe('User Middleware tests', () => {
       expect(typeof user.followRequestCount).toBe('number');
       expect(user.followerRequestCount).toBeDefined();
       expect(typeof user.followerRequestCount).toBe('number');
-      Log(`User Middleware ${getSameUserTitle}`, user);
+      log(getSameUserTitle, user);
       done();
     });
   });
@@ -92,34 +261,34 @@ describe('User Middleware tests', () => {
       expect(user.followerRequests).not.toBeDefined();
       expect(user.followRequestCount).not.toBeDefined();
       expect(user.followerRequestCount).not.toBeDefined();
-      Log(`User Middleware ${getDifferentUserTitle}`, user);
+      log(getDifferentUserTitle, user);
       done();
     });
   });
 
-  const createNewUserTitle = 'Create new user';
-  describe(createNewUserTitle, () => {
-    const uuid3 = Utils.newUuid();
-    const testUserData3 = {
-      username: uuid3,
-      password: this.password,
-      email: `${uuid3}@${uuid3}.com`,
+  const addNewUserTitle = 'Add new user';
+  describe(addNewUserTitle, () => {
+    const uuid2 = Utils.newUuid();
+    const details = {
+      username: uuid2,
+      password: uuid2,
+      email: `${uuid2}@${uuid2}.com`,
     };
 
     afterEach(async (done) => {
-      const user = await UserAccessor.get(testUserData3.username);
-      await UserMiddleware.remove(user, testUserData3.username);
+      const user = await UserAccessor.get(details.username);
+      await UserMiddleware.remove(user, details.username);
       done();
     });
 
-    it('creates a new user', async (done) => {
-      const result = await UserMiddleware.addNewUser(testUserData3);
+    it('adds a new user', async (done) => {
+      const result = await UserMiddleware.addNewUser(details);
       expect(result).toBeDefined();
       expect(result.success).toBeDefined();
       expect(result.success.token).toBeDefined();
       expect(typeof result.success.token).toBe('string');
       expect(result.success.token).toContain('Bearer');
-      Log(`User Middleware ${createNewUserTitle}`, result);
+      log(addNewUserTitle, result);
       done();
     });
   });
@@ -129,7 +298,7 @@ describe('User Middleware tests', () => {
     it('gets an authentication token', async (done) => {
       const details = {
         username: this.testUser.username,
-        password: this.password,
+        password: this.testUserData.password,
       };
 
       const result = await UserMiddleware.getAuthToken(details);
@@ -138,7 +307,7 @@ describe('User Middleware tests', () => {
       expect(result.success.token).toBeDefined();
       expect(typeof result.success.token).toBe('string');
       expect(result.success.token).toContain('Bearer');
-      Log(`User Middleware ${getAuthTokenTitle}`, result);
+      log(getAuthTokenTitle, result);
       done();
     });
   });
@@ -147,7 +316,7 @@ describe('User Middleware tests', () => {
   describe(updatePasswordTitle, () => {
     it('updates the user\'s password', async (done) => {
       const details = {
-        oldPassword: this.password,
+        oldPassword: this.testUserData.password,
         newPassword: 'test2',
       };
 
@@ -159,7 +328,7 @@ describe('User Middleware tests', () => {
       expect(result.success.token).toBeDefined();
       expect(typeof result.success.token).toBe('string');
       expect(result.success.token).toContain('Bearer');
-      Log(`User Middleware ${updatePasswordTitle}`, result);
+      log(updatePasswordTitle, result);
       done();
     });
   });
@@ -167,8 +336,8 @@ describe('User Middleware tests', () => {
   const updateEmailTitle = 'Update email';
   describe(updateEmailTitle, () => {
     it('updates the user\'s email', async (done) => {
-      const uuid = Utils.newUuid();
-      const details = { newEmail: `${uuid}@${uuid}.com` };
+      const uuid2 = Utils.newUuid();
+      const details = { newEmail: `${uuid2}@${uuid2}.com` };
       /* eslint-disable max-len */
       const result = await UserMiddleware.updateEmail(this.testUser, this.testUser.username, details);
       /* eslint-enable max-len */
@@ -177,7 +346,7 @@ describe('User Middleware tests', () => {
       expect(result.success.message).toBeDefined();
       expect(typeof result.success.message).toBe('string');
       expect(result.success.message).toContain('email');
-      Log(`User Middleware ${updateEmailTitle}`, result);
+      log(updateEmailTitle, result);
       done();
     });
   });
@@ -185,14 +354,14 @@ describe('User Middleware tests', () => {
   const interUserFunctionsTitle = 'Inter-user functions';
   describe(interUserFunctionsTitle, () => {
     beforeEach(async (done) => {
-      const uuid = Utils.newUuid();
-      const data = {
-        username: uuid,
-        password: uuid,
-        email: `${uuid}@${uuid}.com`,
+      const uuid2 = Utils.newUuid();
+      const details = {
+        username: uuid2,
+        password: uuid2,
+        email: `${uuid2}@${uuid2}.com`,
       };
 
-      this.testUser2 = await UserMiddleware.create(data);
+      this.testUser2 = await UserMiddleware.create(details);
       done();
     });
 
@@ -212,7 +381,7 @@ describe('User Middleware tests', () => {
         expect(typeof result.success.message).toBe('string');
         expect(result.success.message).toContain('follow request');
         expect(this.testUser.followRequests.includes(this.testUser2.username)).toBe(true);
-        Log(`User Middleware ${requestToFollowTitle}`, result);
+        log(requestToFollowTitle, result);
         done();
       });
     });
@@ -234,7 +403,7 @@ describe('User Middleware tests', () => {
         expect(typeof result.success.message).toBe('string');
         expect(result.success.message).toContain('removal');
         expect(this.testUser.followRequests.includes(this.testUser2.username)).toBe(false);
-        Log(`User Middleware ${removeFollowRequestTitle}`, result);
+        log(removeFollowRequestTitle, result);
         done();
       });
     });
@@ -258,7 +427,7 @@ describe('User Middleware tests', () => {
         expect(result.success.message).toContain('acceptance');
         expect(this.testUser2.followerRequests.includes(this.testUser.username)).toBe(false);
         expect(this.testUser2.followers.includes(this.testUser.username)).toBe(true);
-        Log(`User Middleware ${respondToFollowerRequestTitle}`, result);
+        log(respondToFollowerRequestTitle, result);
         done();
       });
 
@@ -274,7 +443,7 @@ describe('User Middleware tests', () => {
         expect(result.success.message).toContain('denial');
         expect(this.testUser2.followerRequests.includes(this.testUser.username)).toBe(false);
         expect(this.testUser2.followers.includes(this.testUser.username)).toBe(false);
-        Log(`User Middleware ${respondToFollowerRequestTitle}`, result);
+        log(respondToFollowerRequestTitle, result);
         done();
       });
     });
@@ -321,11 +490,11 @@ describe('User Middleware tests', () => {
       try {
         const user = await UserMiddleware.get(this.testUser, { username: this.newUser.username });
         expect(user).not.toBeDefined();
-        Log(`User Middleware ${removeUserTitle}`, `Was able to fetch ${user.username} after removing them`);
+        log(removeUserTitle, `Was able to fetch ${user.username} after removing them`);
       } catch (retrieveUserError) {
         expect(retrieveUserError.name).toBe('DroppError');
         expect(retrieveUserError.statusCode).toBe(DroppError.type.ResourceDNE.status);
-        Log(`User Middleware ${removeUserTitle}`, retrieveUserError);
+        log(removeUserTitle, retrieveUserError);
       }
 
       done();
