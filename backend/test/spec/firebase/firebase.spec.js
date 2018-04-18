@@ -2,16 +2,16 @@ const Log = require('../../logger');
 const Utils = require('../../../src/utilities/utils');
 const Firebase = require('../../../src/firebase/firebase');
 
-/* eslint-disable no-undef */
 const startFirebaseTitle = 'Start Firebase';
+/* eslint-disable no-undef */
 describe(startFirebaseTitle, () => {
   it('starts the Firebase module', (done) => {
     try {
-      Firebase.start();
+      Firebase.start(true);
       expect(Firebase.hasStarted()).toBe(true);
       Log(startFirebaseTitle, Firebase.hasStarted());
     } catch (error) {
-      Log(startFirebaseTitle, `Error while trying to start Firebase: ${error.details}`);
+      Log(startFirebaseTitle, `Error while trying to start Firebase: ${error}`);
     }
 
     done();

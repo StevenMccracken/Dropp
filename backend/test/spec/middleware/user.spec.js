@@ -14,8 +14,8 @@ function log(_title, _details) {
   Log(`User Middleware ${_title}`, _details);
 }
 
+Firebase.start(true);
 /* eslint-disable no-undef */
-Firebase.start();
 describe('User Middleware Tests', () => {
   const uuid = Utils.newUuid();
   this.testUserData = {

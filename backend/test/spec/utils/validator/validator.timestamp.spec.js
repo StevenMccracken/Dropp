@@ -1,8 +1,8 @@
 const Log = require('../../../logger');
 const Validator = require('../../../../src/utilities/validator');
 
-/* eslint-disable no-undef */
 const timestampInputValidator = 'Timestamp input validator';
+/* eslint-disable no-undef */
 describe(timestampInputValidator, () => {
   it('should return false for a null value', (done) => {
     const value = null;

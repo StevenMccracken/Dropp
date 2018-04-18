@@ -3,15 +3,14 @@ const User = require('../../../src/models/User');
 const Firebase = require('../../../src/firebase/firebase');
 const UserAccessor = require('../../../src/database/user');
 
-/* eslint-disable no-undef */
-Firebase.start();
-
+Firebase.start(true);
 const user1 = new User({
   username: 'test0123456789',
   email: 'test0123456789@test.com',
 });
 
 const getMissingUserTitle = 'Get non-existent user';
+/* eslint-disable no-undef */
 describe(getMissingUserTitle, () => {
   it('attempts to get a non-existent user from the database', async (done) => {
     const retrievedUser = await UserAccessor.get(user1.username);

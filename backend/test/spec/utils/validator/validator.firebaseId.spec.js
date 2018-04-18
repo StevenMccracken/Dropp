@@ -1,8 +1,8 @@
 const Log = require('../../../logger');
 const Validator = require('../../../../src/utilities/validator');
 
-/* eslint-disable no-undef */
 const firebaseIdInputValidator = 'Firebase ID input validator';
+/* eslint-disable no-undef */
 describe(firebaseIdInputValidator, () => {
   it('should return false for a null value', (done) => {
     const value = null;

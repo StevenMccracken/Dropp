@@ -1,8 +1,8 @@
 const Log = require('../../logger');
 const Utils = require('../../../src/utilities/utils');
 
-/* eslint-disable no-undef */
 const utilsHasValueTitle = 'Utils hasValue()';
+/* eslint-disable no-undef */
 describe(utilsHasValueTitle, () => {
   it('should return false for a null value', (done) => {
     const value = null;

@@ -4,10 +4,9 @@ const Utils = require('../../../src/utilities/utils');
 const Firebase = require('../../../src/firebase/firebase');
 const DroppAccessor = require('../../../src/database/dropp');
 
-/* eslint-disable no-undef */
-Firebase.start();
-
+Firebase.start(true);
 const getMissingDroppTitle = 'Get non-existent dropp';
+/* eslint-disable no-undef */
 describe(getMissingDroppTitle, () => {
   it('attempts to get a non-existent dropp from the database', async (done) => {
     const dropp = await DroppAccessor.get(Utils.newUuid());

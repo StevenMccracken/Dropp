@@ -4,6 +4,7 @@
 
 const Log = require('../logging/logger');
 const Firebase = require('firebase-admin');
+const MockFirebase = require('./firebase.mock');
 const Validator = require('../utilities/validator');
 const DatabaseError = require('../errors/DatabaseError');
 const firebaseApiKey = require('../../config/secrets/firebaseApiKey.json');
@@ -20,12 +21,18 @@ const configOptions = {
 /**
  * Configures and initializes the firebase module. Returns
  * immediately if Firebase has already been started
+ * @param {Boolean} [_shouldMock=false] whether or not to use the mock database
  */
-const start = function start() {
+const start = function start(_shouldMock = false) {
   if (didStart) return;
 
-  Firebase.initializeApp(configOptions);
-  db = Firebase.database();
+  if (_shouldMock) {
+    db = MockFirebase;
+  } else {
+    Firebase.initializeApp(configOptions);
+    db = Firebase.database();
+  }
+
   didStart = true;
 };
 

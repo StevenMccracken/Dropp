@@ -104,6 +104,7 @@ const usedArgsOptions = {
   port: false,
   test: false,
   prod: false,
+  mock: false,
   bugsnag: false,
 };
 
@@ -141,6 +142,18 @@ process.argv.forEach((arg) => {
     startupLog('Test settings configured', true);
   }
 
+  // Check if database is meant to be run in mock mode with the 'mock' argument
+  const mockMatches = arg.match(/--mock/gi) || [];
+  if (!usedArgsOptions.prod && !usedArgsOptions.mock && mockMatches.length > 0) {
+    startupLog('Mock flag recognized. Configuring mock settings...', true);
+
+    startupLog('Setting \'MOCK\' environment variable to \'1\'...', true);
+    process.env.MOCK = '1';
+    usedArgsOptions.mock = true;
+    startupLog('Set mock configuration to \'1\'');
+    startupLog('Mock settings configured', true);
+  }
+
   // Check if server is meant to be run in production mode with the 'prod' argument
   const productionMatches = arg.match(/--prod/gi) || [];
   if (!usedArgsOptions.prod && productionMatches.length > 0) {
@@ -175,7 +188,7 @@ startupLog('Router configured');
 
 // Start database connection
 startupLog('Starting database...', true);
-Firebase.start();
+Firebase.start(process.env.MOCK === '1');
 startupLog('Database started');
 
 // Listen for all incoming requests on the specified port

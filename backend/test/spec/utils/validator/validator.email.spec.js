@@ -1,8 +1,8 @@
 const Log = require('../../../logger');
 const Validator = require('../../../../src/utilities/validator');
 
-/* eslint-disable no-undef */
 const emailInputValidator = 'Email input validator';
+/* eslint-disable no-undef */
 describe(emailInputValidator, () => {
   it('should return false for a null value', (done) => {
     const value = null;

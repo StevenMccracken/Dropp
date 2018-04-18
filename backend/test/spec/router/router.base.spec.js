@@ -3,9 +3,8 @@ const Log = require('../../logger');
 const Server = require('../../../index');
 
 const baseUrl = `http://localhost:${Server.port}`;
-
-/* eslint-disable no-undef */
 const baseApiRouteTitle = 'Base API route';
+/* eslint-disable no-undef */
 describe(baseApiRouteTitle, () => {
   it('gets the welcome message and returns status code 200', (done) => {
     Request.get(baseUrl, (error, response, body) => {

@@ -126,7 +126,7 @@ const getAuthToken = async function getAuthToken(_details = {}) {
  */
 const addNewUser = async function addNewUser(_details = {}) {
   const source = 'addNewUser()';
-  log(source, '');
+  log(source, _details.username);
 
   const user = await create(_details);
   const token = Auth.generateToken(user);
