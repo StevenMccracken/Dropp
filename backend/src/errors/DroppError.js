@@ -99,7 +99,7 @@ class DroppError extends Error {
   }
 
   static throwLoginError(_source, _clientMessage, _serverLog) {
-    this.throw(this.type.Login, _clientMessage, _serverLog);
+    this.throw(this.type.Login, _source, _clientMessage, _serverLog);
   }
 
   static handleJwtError(_errorMessage) {

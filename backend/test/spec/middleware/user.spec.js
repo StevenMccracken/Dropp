@@ -266,6 +266,106 @@ describe('User Middleware Tests', () => {
     });
   });
 
+  const invalidGetUserTitle = 'Invalid get user';
+  describe(invalidGetUserTitle, () => {
+    beforeEach(() => {
+      this.invalidDetails = {
+        username: '$%l;kadfjs',
+      };
+    });
+
+    afterEach(() => {
+      delete this.invalidDetails;
+    });
+
+    it('throws an error for an invalid current user', async (done) => {
+      try {
+        const result = await UserMiddleware.get(null, this.invalidDetails);
+        expect(result).not.toBeDefined();
+        log(invalidGetUserTitle, 'Should have thrown error');
+        done();
+      } catch (error) {
+        expect(error).toBeDefined();
+        expect(error.name).toBe('DroppError');
+        expect(error.details).toBeDefined();
+        expect(error.details.error).toBeDefined();
+        expect(error.details.error.type).toBe(DroppError.type.Server.type);
+        expect(error.details.error.message).toBeDefined();
+        expect(error.details.error.message).toBe(DroppError.type.Server.message);
+        log(invalidGetUserTitle, error.details);
+        done();
+      }
+    });
+
+    it('throws an error for an invalid username', async (done) => {
+      try {
+        const result = await UserMiddleware.get(this.testUser, this.invalidDetails);
+        expect(result).not.toBeDefined();
+        log(invalidGetUserTitle, 'Should have thrown error');
+        done();
+      } catch (error) {
+        expect(error).toBeDefined();
+        expect(error.name).toBe('DroppError');
+        expect(error.details).toBeDefined();
+        expect(error.details.error).toBeDefined();
+        expect(error.details.error.type).toBe(DroppError.type.InvalidRequest.type);
+        expect(error.details.error.message).toBeDefined();
+        expect(typeof error.details.error.message).toBe('string');
+
+        const invalidParameters = error.details.error.message.split(',');
+        expect(invalidParameters.length).toBe(1);
+        expect(invalidParameters[0]).toBe('username');
+        log(invalidGetUserTitle, error.details);
+        done();
+      }
+    });
+
+    it('throws an error for a missing username', async (done) => {
+      delete this.invalidDetails.username;
+      try {
+        const result = await UserMiddleware.get(this.testUser, this.invalidDetails);
+        expect(result).not.toBeDefined();
+        log(invalidGetUserTitle, 'Should have thrown error');
+        done();
+      } catch (error) {
+        expect(error).toBeDefined();
+        expect(error.name).toBe('DroppError');
+        expect(error.details).toBeDefined();
+        expect(error.details.error).toBeDefined();
+        expect(error.details.error.type).toBe(DroppError.type.InvalidRequest.type);
+        expect(error.details.error.message).toBeDefined();
+        expect(typeof error.details.error.message).toBe('string');
+
+        const invalidParameters = error.details.error.message.split(',');
+        expect(invalidParameters.length).toBe(1);
+        expect(invalidParameters[0]).toBe('username');
+        log(invalidGetUserTitle, error.details);
+        done();
+      }
+    });
+
+    it('throws an error for a non-existent user', async (done) => {
+      this.invalidDetails.username = Utils.newUuid();
+      try {
+        const result = await UserMiddleware.get(this.testUser, this.invalidDetails);
+        expect(result).not.toBeDefined();
+        log(invalidGetUserTitle, 'Should have thrown error');
+        done();
+      } catch (error) {
+        expect(error).toBeDefined();
+        expect(error.name).toBe('DroppError');
+        expect(error.details).toBeDefined();
+        expect(error.details.error).toBeDefined();
+        expect(error.details.error.type).toBe(DroppError.type.ResourceDNE.type);
+        expect(error.details.error.message).toBeDefined();
+        expect(typeof error.details.error.message).toBe('string');
+        expect(error.details.error.message).toContain('user');
+        log(invalidGetUserTitle, error.details);
+        done();
+      }
+    });
+  });
+
   const addNewUserTitle = 'Add new user';
   describe(addNewUserTitle, () => {
     const uuid2 = Utils.newUuid();
@@ -309,6 +409,133 @@ describe('User Middleware Tests', () => {
       expect(result.success.token).toContain('Bearer');
       log(getAuthTokenTitle, result);
       done();
+    });
+  });
+
+  const invalidGetAuthTokenTitle = 'Invalid get authentication token';
+  describe(invalidGetAuthTokenTitle, () => {
+    beforeEach(() => {
+      this.invalidDetails = {
+        username: Utils.newUuid(),
+        password: Utils.newUuid(),
+      };
+    });
+
+    afterEach(() => {
+      delete this.invalidDetails;
+    });
+
+    it('throws an error for an invalid username and password', async (done) => {
+      this.invalidDetails.username = '$%l;kadfjs';
+      this.invalidDetails.password = 'he$';
+      try {
+        const result = await UserMiddleware.getAuthToken(this.invalidDetails);
+        expect(result).not.toBeDefined();
+        log(invalidGetAuthTokenTitle, 'Should have thrown error');
+        done();
+      } catch (error) {
+        expect(error).toBeDefined();
+        expect(error.name).toBe('DroppError');
+        expect(error.details).toBeDefined();
+        expect(error.details.error).toBeDefined();
+        expect(error.details.error.type).toBe(DroppError.type.InvalidRequest.type);
+        expect(error.details.error.message).toBeDefined();
+        expect(typeof error.details.error.message).toBe('string');
+
+        const invalidParameters = error.details.error.message.split(',');
+        expect(invalidParameters.length).toBe(2);
+        expect(invalidParameters.includes('username')).toBe(true);
+        expect(invalidParameters.includes('password')).toBe(true);
+        log(invalidGetAuthTokenTitle, error.details);
+        done();
+      }
+    });
+
+    it('throws an error for a missing username', async (done) => {
+      delete this.invalidDetails.username;
+      try {
+        const result = await UserMiddleware.getAuthToken(this.invalidDetails);
+        expect(result).not.toBeDefined();
+        log(invalidGetAuthTokenTitle, 'Should have thrown error');
+        done();
+      } catch (error) {
+        expect(error).toBeDefined();
+        expect(error.name).toBe('DroppError');
+        expect(error.details).toBeDefined();
+        expect(error.details.error).toBeDefined();
+        expect(error.details.error.type).toBe(DroppError.type.InvalidRequest.type);
+        expect(error.details.error.message).toBeDefined();
+        expect(typeof error.details.error.message).toBe('string');
+
+        const invalidParameters = error.details.error.message.split(',');
+        expect(invalidParameters.length).toBe(1);
+        expect(invalidParameters[0]).toBe('username');
+        log(invalidGetAuthTokenTitle, error.details);
+        done();
+      }
+    });
+
+    it('throws an error for a missing password', async (done) => {
+      delete this.invalidDetails.password;
+      try {
+        const result = await UserMiddleware.getAuthToken(this.invalidDetails);
+        expect(result).not.toBeDefined();
+        log(invalidGetAuthTokenTitle, 'Should have thrown error');
+        done();
+      } catch (error) {
+        expect(error).toBeDefined();
+        expect(error.name).toBe('DroppError');
+        expect(error.details).toBeDefined();
+        expect(error.details.error).toBeDefined();
+        expect(error.details.error.type).toBe(DroppError.type.InvalidRequest.type);
+        expect(error.details.error.message).toBeDefined();
+        expect(typeof error.details.error.message).toBe('string');
+
+        const invalidParameters = error.details.error.message.split(',');
+        expect(invalidParameters.length).toBe(1);
+        expect(invalidParameters[0]).toBe('password');
+        log(invalidGetAuthTokenTitle, error.details);
+        done();
+      }
+    });
+
+    it('throws an error for a non-existent user', async (done) => {
+      try {
+        const result = await UserMiddleware.getAuthToken(this.invalidDetails);
+        expect(result).not.toBeDefined();
+        log(invalidGetAuthTokenTitle, 'Should have thrown error');
+        done();
+      } catch (error) {
+        expect(error).toBeDefined();
+        expect(error.name).toBe('DroppError');
+        expect(error.details).toBeDefined();
+        expect(error.details.error).toBeDefined();
+        expect(error.details.error.type).toBe(DroppError.type.Login.type);
+        expect(error.details.error.message).toBeDefined();
+        expect(error.details.error.message).toBe(DroppError.type.Login.message);
+        log(invalidGetAuthTokenTitle, error.details);
+        done();
+      }
+    });
+
+    it('throws an error for an incorrect password', async (done) => {
+      this.invalidDetails.username = this.testUser.username;
+      try {
+        const result = await UserMiddleware.getAuthToken(this.invalidDetails);
+        expect(result).not.toBeDefined();
+        log(invalidGetAuthTokenTitle, 'Should have thrown error');
+        done();
+      } catch (error) {
+        expect(error).toBeDefined();
+        expect(error.name).toBe('DroppError');
+        expect(error.details).toBeDefined();
+        expect(error.details.error).toBeDefined();
+        expect(error.details.error.type).toBe(DroppError.type.Login.type);
+        expect(error.details.error.message).toBeDefined();
+        expect(error.details.error.message).toBe(DroppError.type.Login.message);
+        log(invalidGetAuthTokenTitle, error.details);
+        done();
+      }
     });
   });
 

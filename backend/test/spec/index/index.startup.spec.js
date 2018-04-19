@@ -1,8 +1,8 @@
 const Log = require('../../logger');
 const Server = require('../../../index');
 
-/* eslint-disable no-undef */
 const startServerTitle = 'Start server';
+/* eslint-disable no-undef */
 describe(startServerTitle, () => {
   it('starts the server on a port', (done) => {
     expect(Server.port).toBeDefined();

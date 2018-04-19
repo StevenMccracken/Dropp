@@ -55,7 +55,7 @@ const get = async function get(_currentUser, _details = {}) {
  */
 const create = async function create(_details = {}) {
   const source = 'create()';
-  log(source, '');
+  log(source, _details.username);
 
   const invalidMembers = [];
   if (!Validator.isValidEmail(_details.email)) invalidMembers.push('email');
