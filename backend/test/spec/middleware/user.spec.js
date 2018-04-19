@@ -788,6 +788,114 @@ describe('User Middleware Tests', () => {
     });
   });
 
+  const invalidUpdateEmailTitle = 'Invalid update email';
+  describe(invalidUpdateEmailTitle, () => {
+    beforeEach(() => {
+      this.invalidDetails = {
+        newEmail: Utils.newUuid(),
+      };
+    });
+
+    afterEach(() => {
+      delete this.invalidDetails;
+    });
+
+    it('throws an error for an invalid current user', async (done) => {
+      try {
+        /* eslint-disable max-len */
+        const result = await UserMiddleware.updateEmail(null, this.testUser.username, this.invalidDetails);
+        /* eslint-enable max-len */
+        expect(result).not.toBeDefined();
+        log(invalidUpdateEmailTitle, 'Should have thrown error');
+        done();
+      } catch (error) {
+        expect(error).toBeDefined();
+        expect(error.name).toBe('DroppError');
+        expect(error.details).toBeDefined();
+        expect(error.details.error).toBeDefined();
+        expect(error.details.error.type).toBe(DroppError.type.Server.type);
+        expect(error.details.error.message).toBeDefined();
+        expect(error.details.error.message).toBe(DroppError.type.Server.message);
+        log(invalidUpdateEmailTitle, error.details);
+        done();
+      }
+    });
+
+    it('throws an error for an invalid email', async (done) => {
+      try {
+        /* eslint-disable max-len */
+        const result = await UserMiddleware.updateEmail(this.testUser, this.testUser.username, this.invalidDetails);
+        /* eslint-enable max-len */
+        expect(result).not.toBeDefined();
+        log(invalidUpdateEmailTitle, 'Should have thrown error');
+        done();
+      } catch (error) {
+        expect(error).toBeDefined();
+        expect(error.name).toBe('DroppError');
+        expect(error.details).toBeDefined();
+        expect(error.details.error).toBeDefined();
+        expect(error.details.error.type).toBe(DroppError.type.InvalidRequest.type);
+        expect(error.details.error.message).toBeDefined();
+        expect(typeof error.details.error.message).toBe('string');
+
+        const invalidParameters = error.details.error.message.split(',');
+        expect(invalidParameters.length).toBe(1);
+        expect(invalidParameters[0]).toBe('newEmail');
+        log(invalidUpdateEmailTitle, error.details);
+        done();
+      }
+    });
+
+    it('throws an error for a missing email', async (done) => {
+      delete this.invalidDetails.newEmail;
+      try {
+        /* eslint-disable max-len */
+        const result = await UserMiddleware.updateEmail(this.testUser, this.testUser.username, this.invalidDetails);
+        /* eslint-enable max-len */
+        expect(result).not.toBeDefined();
+        log(invalidUpdateEmailTitle, 'Should have thrown error');
+        done();
+      } catch (error) {
+        expect(error).toBeDefined();
+        expect(error.name).toBe('DroppError');
+        expect(error.details).toBeDefined();
+        expect(error.details.error).toBeDefined();
+        expect(error.details.error.type).toBe(DroppError.type.InvalidRequest.type);
+        expect(error.details.error.message).toBeDefined();
+        expect(typeof error.details.error.message).toBe('string');
+
+        const invalidParameters = error.details.error.message.split(',');
+        expect(invalidParameters.length).toBe(1);
+        expect(invalidParameters[0]).toBe('newEmail');
+        log(invalidUpdateEmailTitle, error.details);
+        done();
+      }
+    });
+
+    it('throws an error for updating a different user', async (done) => {
+      this.invalidDetails.newEmail = 'test@test.com';
+      try {
+        /* eslint-disable max-len */
+        const result = await UserMiddleware.updateEmail(this.testUser, 'test', this.invalidDetails);
+        /* eslint-enable max-len */
+        expect(result).not.toBeDefined();
+        log(invalidUpdateEmailTitle, 'Should have thrown error');
+        done();
+      } catch (error) {
+        expect(error).toBeDefined();
+        expect(error.name).toBe('DroppError');
+        expect(error.details).toBeDefined();
+        expect(error.details.error).toBeDefined();
+        expect(error.details.error.type).toBe(DroppError.type.Resource.type);
+        expect(error.details.error.message).toBeDefined();
+        expect(typeof error.details.error.message).toBe('string');
+        expect(error.details.error.message.toLowerCase()).toContain('email');
+        log(invalidUpdateEmailTitle, error.details);
+        done();
+      }
+    });
+  });
+
   const interUserFunctionsTitle = 'Inter-user functions';
   describe(interUserFunctionsTitle, () => {
     beforeEach(async (done) => {
