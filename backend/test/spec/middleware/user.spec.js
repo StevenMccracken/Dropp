@@ -1,4 +1,5 @@
 const Log = require('../../logger');
+const User = require('../../../src/models/User');
 const Utils = require('../../../src/utilities/utils');
 const Firebase = require('../../../src/firebase/firebase');
 const UserAccessor = require('../../../src/database/user');
@@ -557,6 +558,215 @@ describe('User Middleware Tests', () => {
       expect(result.success.token).toContain('Bearer');
       log(updatePasswordTitle, result);
       done();
+    });
+  });
+
+  const invalidUpdatePasswordTitle = 'Invalid update password';
+  describe(invalidUpdatePasswordTitle, () => {
+    beforeEach(() => {
+      this.invalidDetails = {
+        oldPassword: this.testUserData.password,
+        newPassword: Utils.newUuid(),
+      };
+    });
+
+    afterEach(() => {
+      delete this.invalidDetails;
+    });
+
+    it('throws an error for an invalid current user', async (done) => {
+      try {
+        /* eslint-disable max-len */
+        const result = await UserMiddleware.updatePassword(null, this.testUser.username, this.invalidDetails);
+        /* eslint-enable max-len */
+        expect(result).not.toBeDefined();
+        log(invalidUpdatePasswordTitle, 'Should have thrown error');
+        done();
+      } catch (error) {
+        expect(error).toBeDefined();
+        expect(error.name).toBe('DroppError');
+        expect(error.details).toBeDefined();
+        expect(error.details.error).toBeDefined();
+        expect(error.details.error.type).toBe(DroppError.type.Server.type);
+        expect(error.details.error.message).toBeDefined();
+        expect(error.details.error.message).toBe(DroppError.type.Server.message);
+        log(invalidUpdatePasswordTitle, error.details);
+        done();
+      }
+    });
+
+    it('throws an error for an invalid old and new password', async (done) => {
+      this.invalidDetails.oldPassword = '$%';
+      this.invalidDetails.newPassword = 'he$';
+      try {
+        /* eslint-disable max-len */
+        const result = await UserMiddleware.updatePassword(this.testUser, this.testUser.username, this.invalidDetails);
+        /* eslint-enable max-len */
+        expect(result).not.toBeDefined();
+        log(invalidUpdatePasswordTitle, 'Should have thrown error');
+        done();
+      } catch (error) {
+        expect(error).toBeDefined();
+        expect(error.name).toBe('DroppError');
+        expect(error.details).toBeDefined();
+        expect(error.details.error).toBeDefined();
+        expect(error.details.error.type).toBe(DroppError.type.InvalidRequest.type);
+        expect(error.details.error.message).toBeDefined();
+        expect(typeof error.details.error.message).toBe('string');
+
+        const invalidParameters = error.details.error.message.split(',');
+        expect(invalidParameters.length).toBe(2);
+        expect(invalidParameters.includes('oldPassword')).toBe(true);
+        expect(invalidParameters.includes('newPassword')).toBe(true);
+        log(invalidUpdatePasswordTitle, error.details);
+        done();
+      }
+    });
+
+    it('throws an error for a missing old password', async (done) => {
+      delete this.invalidDetails.oldPassword;
+      try {
+        /* eslint-disable max-len */
+        const result = await UserMiddleware.updatePassword(this.testUser, this.testUser.username, this.invalidDetails);
+        /* eslint-enable max-len */
+        expect(result).not.toBeDefined();
+        log(invalidUpdatePasswordTitle, 'Should have thrown error');
+        done();
+      } catch (error) {
+        expect(error).toBeDefined();
+        expect(error.name).toBe('DroppError');
+        expect(error.details).toBeDefined();
+        expect(error.details.error).toBeDefined();
+        expect(error.details.error.type).toBe(DroppError.type.InvalidRequest.type);
+        expect(error.details.error.message).toBeDefined();
+        expect(typeof error.details.error.message).toBe('string');
+
+        const invalidParameters = error.details.error.message.split(',');
+        expect(invalidParameters.length).toBe(1);
+        expect(invalidParameters[0]).toBe('oldPassword');
+        log(invalidUpdatePasswordTitle, error.details);
+        done();
+      }
+    });
+
+    it('throws an error for a missing new password', async (done) => {
+      delete this.invalidDetails.newPassword;
+      try {
+        /* eslint-disable max-len */
+        const result = await UserMiddleware.updatePassword(this.testUser, this.testUser.username, this.invalidDetails);
+        /* eslint-enable max-len */
+        expect(result).not.toBeDefined();
+        log(invalidUpdatePasswordTitle, 'Should have thrown error');
+        done();
+      } catch (error) {
+        expect(error).toBeDefined();
+        expect(error.name).toBe('DroppError');
+        expect(error.details).toBeDefined();
+        expect(error.details.error).toBeDefined();
+        expect(error.details.error.type).toBe(DroppError.type.InvalidRequest.type);
+        expect(error.details.error.message).toBeDefined();
+        expect(typeof error.details.error.message).toBe('string');
+
+        const invalidParameters = error.details.error.message.split(',');
+        expect(invalidParameters.length).toBe(1);
+        expect(invalidParameters[0]).toBe('newPassword');
+        log(invalidUpdatePasswordTitle, error.details);
+        done();
+      }
+    });
+
+    it('throws an error for identical old and new passwords', async (done) => {
+      this.invalidDetails.newPassword = this.invalidDetails.oldPassword;
+      try {
+        /* eslint-disable max-len */
+        const result = await UserMiddleware.updatePassword(this.testUser, this.testUser.username, this.invalidDetails);
+        /* eslint-enable max-len */
+        expect(result).not.toBeDefined();
+        log(invalidUpdatePasswordTitle, 'Should have thrown error');
+        done();
+      } catch (error) {
+        expect(error).toBeDefined();
+        expect(error.name).toBe('DroppError');
+        expect(error.details).toBeDefined();
+        expect(error.details.error).toBeDefined();
+        expect(error.details.error.type).toBe(DroppError.type.Resource.type);
+        expect(error.details.error.message).toBeDefined();
+        expect(typeof error.details.error.message).toBe('string');
+        expect(error.details.error.message.toLowerCase()).toContain('different');
+        log(invalidUpdatePasswordTitle, error.details);
+        done();
+      }
+    });
+
+    it('throws an error for updating a different user', async (done) => {
+      try {
+        /* eslint-disable max-len */
+        const result = await UserMiddleware.updatePassword(this.testUser, 'test', this.invalidDetails);
+        /* eslint-enable max-len */
+        expect(result).not.toBeDefined();
+        log(invalidUpdatePasswordTitle, 'Should have thrown error');
+        done();
+      } catch (error) {
+        expect(error).toBeDefined();
+        expect(error.name).toBe('DroppError');
+        expect(error.details).toBeDefined();
+        expect(error.details.error).toBeDefined();
+        expect(error.details.error.type).toBe(DroppError.type.Resource.type);
+        expect(error.details.error.message).toBeDefined();
+        expect(typeof error.details.error.message).toBe('string');
+        expect(error.details.error.message.toLowerCase()).toContain('password');
+        log(invalidUpdatePasswordTitle, error.details);
+        done();
+      }
+    });
+
+    it('throws an error for updating a non-existent current user', async (done) => {
+      const user = new User({
+        username: 'test',
+        email: 'test@test.com',
+      });
+
+      try {
+        /* eslint-disable max-len */
+        const result = await UserMiddleware.updatePassword(user, user.username, this.invalidDetails);
+        /* eslint-enable max-len */
+        expect(result).not.toBeDefined();
+        log(invalidUpdatePasswordTitle, 'Should have thrown error');
+        done();
+      } catch (error) {
+        expect(error).toBeDefined();
+        expect(error.name).toBe('DroppError');
+        expect(error.details).toBeDefined();
+        expect(error.details.error).toBeDefined();
+        expect(error.details.error.type).toBe(DroppError.type.Server.type);
+        expect(error.details.error.message).toBeDefined();
+        expect(error.details.error.message).toBe(DroppError.type.Server.message);
+        log(invalidUpdatePasswordTitle, error.details);
+        done();
+      }
+    });
+
+    it('throws an error for an incorrect password', async (done) => {
+      this.invalidDetails.oldPassword = Utils.newUuid();
+      try {
+        /* eslint-disable max-len */
+        const result = await UserMiddleware.updatePassword(this.testUser, this.testUser.username, this.invalidDetails);
+        /* eslint-enable max-len */
+        expect(result).not.toBeDefined();
+        log(invalidUpdatePasswordTitle, 'Should have thrown error');
+        done();
+      } catch (error) {
+        expect(error).toBeDefined();
+        expect(error.name).toBe('DroppError');
+        expect(error.details).toBeDefined();
+        expect(error.details.error).toBeDefined();
+        expect(error.details.error.type).toBe(DroppError.type.Resource.type);
+        expect(error.details.error.message).toBeDefined();
+        expect(typeof error.details.error.message).toBe('string');
+        expect(error.details.error.message.toLowerCase()).toContain('match');
+        log(invalidUpdatePasswordTitle, error.details);
+        done();
+      }
     });
   });
 

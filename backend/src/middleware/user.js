@@ -161,6 +161,9 @@ const updatePassword = async function updatePassword(_currentUser, _username, _d
   if (!Validator.isValidPassword(_details.oldPassword)) invalidMembers.push('oldPassword');
   if (!Validator.isValidPassword(_details.newPassword)) invalidMembers.push('newPassword');
   if (invalidMembers.length > 0) DroppError.throwInvalidRequestError(source, invalidMembers);
+  if (_details.oldPassword === _details.newPassword) {
+    DroppError.throwResourceError(source, 'New password must be different from old password');
+  }
 
   if (_currentUser.username !== _username) {
     DroppError.throwResourceError(source, 'Unauthorized to update that user\'s password');
@@ -172,7 +175,9 @@ const updatePassword = async function updatePassword(_currentUser, _username, _d
   }
 
   const passwordsMatch = await Auth.validatePasswords(_details.oldPassword, retrievedPassword);
-  if (!passwordsMatch) DroppError.throwLoginError(source);
+  if (!passwordsMatch) {
+    DroppError.throwResourceError(source, 'Old password must match existing password');
+  }
 
   const hashedPassword = await Auth.hash(_details.newPassword);
   await UserAccessor.updatePassword(_currentUser, hashedPassword);
