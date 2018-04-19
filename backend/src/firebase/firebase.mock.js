@@ -56,11 +56,10 @@ const get = function get(_paths = []) {
   const promise = new Promise((resolve) => {
     let subStore = datastore;
     _paths.forEach((path) => {
-      if (subStore === null || subStore === undefined) return;
+      if (!Utils.hasValue(subStore)) return;
       if (typeof subStore !== 'object') subStore = null;
-      else if (subStore[path] !== null && subStore[path] !== undefined) {
-        subStore = subStore[path];
-      } else subStore = {};
+      else if (Utils.hasValue(subStore[path])) subStore = subStore[path];
+      else subStore = {};
     });
 
     let value;
@@ -78,7 +77,7 @@ const get = function get(_paths = []) {
 };
 
 /**
- * Adds new data at a specified path, with an auto-generated key
+ * Adds new data at a specified path, with a unique key
  * @param {[String]} [_paths=[]] the path within the database to add the data
  * @param {String|Number|Boolean|Object} [_data] the data to add at the given path
  * @return {Promise<String>} the full path, including
@@ -86,10 +85,10 @@ const get = function get(_paths = []) {
  */
 const push = function push(_paths = [], _data) {
   const promise = new Promise((resolve) => {
-    const uuid = Utils.newUuid();
-    const fullPaths = _paths.concat(uuid);
+    const key = Utils.newUuid();
+    const fullPaths = _paths.concat(key);
     set(fullPaths, _data);
-    const fullPath = `/${_paths.join('/')}/${uuid}`;
+    const fullPath = `/${_paths.join('/')}/${key}`;
     resolve(fullPath);
   });
 
