@@ -1757,5 +1757,127 @@ describe('User Middleware Tests', () => {
       done();
     });
   });
+
+  const invalidRemoveTitle = 'Invalid remove user';
+  describe(invalidRemoveTitle, () => {
+    beforeEach(() => {
+      this.invalidUsername = '%';
+    });
+
+    afterEach(() => {
+      delete this.invalidUsername;
+    });
+
+    it('throws an error for an invalid current user', async (done) => {
+      try {
+        const result = await UserMiddleware.remove(null, this.invalidUsername);
+        expect(result).not.toBeDefined();
+        log(invalidRemoveTitle, 'Should have thrown error');
+        done();
+      } catch (error) {
+        expect(error).toBeDefined();
+        expect(error.name).toBe('DroppError');
+        expect(error.details).toBeDefined();
+        expect(error.details.error).toBeDefined();
+        expect(error.details.error.type).toBe(DroppError.type.Server.type);
+        expect(error.details.error.message).toBeDefined();
+        expect(error.details.error.message).toBe(DroppError.type.Server.message);
+        log(invalidRemoveTitle, error.details);
+        done();
+      }
+    });
+
+    it('throws an error for an invalid username', async (done) => {
+      try {
+        const result = await UserMiddleware.remove(this.testUser, this.invalidUsername);
+        expect(result).not.toBeDefined();
+        log(invalidRemoveTitle, 'Should have thrown error');
+        done();
+      } catch (error) {
+        expect(error).toBeDefined();
+        expect(error.name).toBe('DroppError');
+        expect(error.details).toBeDefined();
+        expect(error.details.error).toBeDefined();
+        expect(error.details.error.type).toBe(DroppError.type.InvalidRequest.type);
+        expect(error.details.error.message).toBeDefined();
+        expect(typeof error.details.error.message).toBe('string');
+
+        const invalidParameters = error.details.error.message.split(',');
+        expect(invalidParameters.length).toBe(1);
+        expect(invalidParameters[0]).toBe('username');
+        log(invalidRemoveTitle, error.details);
+        done();
+      }
+    });
+
+    it('throws an error for a missing username', async (done) => {
+      delete this.invalidUsername;
+      try {
+        const result = await UserMiddleware.remove(this.testUser, this.invalidUsername);
+        expect(result).not.toBeDefined();
+        log(invalidRemoveTitle, 'Should have thrown error');
+        done();
+      } catch (error) {
+        expect(error).toBeDefined();
+        expect(error.name).toBe('DroppError');
+        expect(error.details).toBeDefined();
+        expect(error.details.error).toBeDefined();
+        expect(error.details.error.type).toBe(DroppError.type.InvalidRequest.type);
+        expect(error.details.error.message).toBeDefined();
+        expect(typeof error.details.error.message).toBe('string');
+
+        const invalidParameters = error.details.error.message.split(',');
+        expect(invalidParameters.length).toBe(1);
+        expect(invalidParameters[0]).toBe('username');
+        log(invalidRemoveTitle, error.details);
+        done();
+      }
+    });
+
+    it('throws an error for a different user', async (done) => {
+      try {
+        const result = await UserMiddleware.remove(this.testUser, 'test');
+        expect(result).not.toBeDefined();
+        log(invalidRemoveTitle, 'Should have thrown error');
+        done();
+      } catch (error) {
+        expect(error).toBeDefined();
+        expect(error.name).toBe('DroppError');
+        expect(error.details).toBeDefined();
+        expect(error.details.error).toBeDefined();
+        expect(error.details.error.type).toBe(DroppError.type.Resource.type);
+        expect(error.details.error.message).toBeDefined();
+        expect(typeof error.details.error.message).toBe('string');
+        expect(error.details.error.message.toLowerCase()).toContain('unauthorized');
+        log(invalidRemoveTitle, error.details);
+        done();
+      }
+    });
+
+    it('throws an error for a non-existent user', async (done) => {
+      const user = new User({
+        username: 'test',
+        email: 'test@test.com',
+      });
+
+      try {
+        const result = await UserMiddleware.remove(user, user.username);
+        expect(result).not.toBeDefined();
+        log(invalidRemoveTitle, 'Should have thrown error');
+        done();
+      } catch (error) {
+        expect(error).toBeDefined();
+        expect(error.name).toBe('DroppError');
+        expect(error.details).toBeDefined();
+        expect(error.details.error).toBeDefined();
+        expect(error.details.error.type).toBe(DroppError.type.ResourceDNE.type);
+        expect(error.details.error.message).toBeDefined();
+        expect(typeof error.details.error.message).toBe('string');
+        expect(error.details.error.message.toLowerCase()).toContain('user');
+        log(invalidRemoveTitle, error.details);
+        done();
+      }
+    });
+  });
 });
 /* eslint-enable no-undef */
