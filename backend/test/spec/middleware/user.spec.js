@@ -1257,6 +1257,218 @@ describe('User Middleware Tests', () => {
       });
     });
 
+    const invalidRespondToFollowerRequestTitle = 'Invalid respond to follow request';
+    describe(invalidRespondToFollowerRequestTitle, () => {
+      beforeEach(() => {
+        this.invalidUsername = 'test';
+        this.invalidDetails = {
+          accept: true,
+        };
+      });
+
+      afterEach(() => {
+        delete this.invalidDetails;
+        delete this.invalidUsername;
+      });
+
+      it('throws an error for an invalid current user', async (done) => {
+        try {
+          /* eslint-disable max-len */
+          const result = await UserMiddleware.respondToFollowerRequest(null, this.invalidUsername, this.invalidDetails);
+          /* eslint-enable max-len */
+          expect(result).not.toBeDefined();
+          log(invalidRespondToFollowerRequestTitle, 'Should have thrown error');
+          done();
+        } catch (error) {
+          expect(error).toBeDefined();
+          expect(error.name).toBe('DroppError');
+          expect(error.details).toBeDefined();
+          expect(error.details.error).toBeDefined();
+          expect(error.details.error.type).toBe(DroppError.type.Server.type);
+          expect(error.details.error.message).toBeDefined();
+          expect(error.details.error.message).toBe(DroppError.type.Server.message);
+          log(invalidRespondToFollowerRequestTitle, error.details);
+          done();
+        }
+      });
+
+      it('throws an error for an invalid username', async (done) => {
+        this.invalidUsername = '%';
+        try {
+          /* eslint-disable max-len */
+          const result = await UserMiddleware.respondToFollowerRequest(this.testUser, this.invalidUsername, this.invalidDetails);
+          /* eslint-enable max-len */
+          expect(result).not.toBeDefined();
+          log(invalidRespondToFollowerRequestTitle, 'Should have thrown error');
+          done();
+        } catch (error) {
+          expect(error).toBeDefined();
+          expect(error.name).toBe('DroppError');
+          expect(error.details).toBeDefined();
+          expect(error.details.error).toBeDefined();
+          expect(error.details.error.type).toBe(DroppError.type.InvalidRequest.type);
+          expect(error.details.error.message).toBeDefined();
+          expect(typeof error.details.error.message).toBe('string');
+
+          const invalidParameters = error.details.error.message.split(',');
+          expect(invalidParameters.length).toBe(1);
+          expect(invalidParameters[0]).toBe('username');
+          log(invalidRespondToFollowerRequestTitle, error.details);
+          done();
+        }
+      });
+
+      it('throws an error for a missing username', async (done) => {
+        delete this.invalidUsername;
+        try {
+          /* eslint-disable max-len */
+          const result = await UserMiddleware.respondToFollowerRequest(this.testUser, this.invalidUsername, this.invalidDetails);
+          /* eslint-enable max-len */
+          expect(result).not.toBeDefined();
+          log(invalidRespondToFollowerRequestTitle, 'Should have thrown error');
+          done();
+        } catch (error) {
+          expect(error).toBeDefined();
+          expect(error.name).toBe('DroppError');
+          expect(error.details).toBeDefined();
+          expect(error.details.error).toBeDefined();
+          expect(error.details.error.type).toBe(DroppError.type.InvalidRequest.type);
+          expect(error.details.error.message).toBeDefined();
+          expect(typeof error.details.error.message).toBe('string');
+
+          const invalidParameters = error.details.error.message.split(',');
+          expect(invalidParameters.length).toBe(1);
+          expect(invalidParameters[0]).toBe('username');
+          log(invalidRespondToFollowerRequestTitle, error.details);
+          done();
+        }
+      });
+
+      it('throws an error for an invalid accept parameter', async (done) => {
+        this.invalidDetails.accept = 'hi';
+        try {
+          /* eslint-disable max-len */
+          const result = await UserMiddleware.respondToFollowerRequest(this.testUser, this.invalidUsername, this.invalidDetails);
+          /* eslint-enable max-len */
+          expect(result).not.toBeDefined();
+          log(invalidRespondToFollowerRequestTitle, 'Should have thrown error');
+          done();
+        } catch (error) {
+          expect(error).toBeDefined();
+          expect(error.name).toBe('DroppError');
+          expect(error.details).toBeDefined();
+          expect(error.details.error).toBeDefined();
+          expect(error.details.error.type).toBe(DroppError.type.InvalidRequest.type);
+          expect(error.details.error.message).toBeDefined();
+          expect(typeof error.details.error.message).toBe('string');
+
+          const invalidParameters = error.details.error.message.split(',');
+          expect(invalidParameters.length).toBe(1);
+          expect(invalidParameters[0]).toBe('accept');
+          log(invalidRespondToFollowerRequestTitle, error.details);
+          done();
+        }
+      });
+
+      it('throws an error for a missing accept parameter', async (done) => {
+        delete this.invalidDetails.accept;
+        try {
+          /* eslint-disable max-len */
+          const result = await UserMiddleware.respondToFollowerRequest(this.testUser, this.invalidUsername, this.invalidDetails);
+          /* eslint-enable max-len */
+          expect(result).not.toBeDefined();
+          log(invalidRespondToFollowerRequestTitle, 'Should have thrown error');
+          done();
+        } catch (error) {
+          expect(error).toBeDefined();
+          expect(error.name).toBe('DroppError');
+          expect(error.details).toBeDefined();
+          expect(error.details.error).toBeDefined();
+          expect(error.details.error.type).toBe(DroppError.type.InvalidRequest.type);
+          expect(error.details.error.message).toBeDefined();
+          expect(typeof error.details.error.message).toBe('string');
+
+          const invalidParameters = error.details.error.message.split(',');
+          expect(invalidParameters.length).toBe(1);
+          expect(invalidParameters[0]).toBe('accept');
+          log(invalidRespondToFollowerRequestTitle, error.details);
+          done();
+        }
+      });
+
+      it('throws an error for an invalid username and accept parameter', async (done) => {
+        this.invalidUsername = '%';
+        this.invalidDetails.accept = '%';
+        try {
+          /* eslint-disable max-len */
+          const result = await UserMiddleware.respondToFollowerRequest(this.testUser, this.invalidUsername, this.invalidDetails);
+          /* eslint-enable max-len */
+          expect(result).not.toBeDefined();
+          log(invalidRespondToFollowerRequestTitle, 'Should have thrown error');
+          done();
+        } catch (error) {
+          expect(error).toBeDefined();
+          expect(error.name).toBe('DroppError');
+          expect(error.details).toBeDefined();
+          expect(error.details.error).toBeDefined();
+          expect(error.details.error.type).toBe(DroppError.type.InvalidRequest.type);
+          expect(error.details.error.message).toBeDefined();
+          expect(typeof error.details.error.message).toBe('string');
+
+          const invalidParameters = error.details.error.message.split(',');
+          expect(invalidParameters.length).toBe(2);
+          expect(invalidParameters.includes('username')).toBe(true);
+          expect(invalidParameters.includes('accept')).toBe(true);
+          log(invalidRespondToFollowerRequestTitle, error.details);
+          done();
+        }
+      });
+
+      it('throws an error for a non-existent user', async (done) => {
+        try {
+          /* eslint-disable max-len */
+          const result = await UserMiddleware.respondToFollowerRequest(this.testUser, 'test', this.invalidDetails);
+          /* eslint-enable max-len */
+          expect(result).not.toBeDefined();
+          log(invalidRespondToFollowerRequestTitle, 'Should have thrown error');
+          done();
+        } catch (error) {
+          expect(error).toBeDefined();
+          expect(error.name).toBe('DroppError');
+          expect(error.details).toBeDefined();
+          expect(error.details.error).toBeDefined();
+          expect(error.details.error.type).toBe(DroppError.type.ResourceDNE.type);
+          expect(error.details.error.message).toBeDefined();
+          expect(typeof error.details.error.message).toBe('string');
+          expect(error.details.error.message.toLowerCase()).toContain('user');
+          log(invalidRespondToFollowerRequestTitle, error.details);
+          done();
+        }
+      });
+
+      it('throws an error for a non-existent follower request', async (done) => {
+        try {
+          /* eslint-disable max-len */
+          const result = await UserMiddleware.respondToFollowerRequest(this.testUser, this.testUser2.username, this.invalidDetails);
+          /* eslint-enable max-len */
+          expect(result).not.toBeDefined();
+          log(invalidRespondToFollowerRequestTitle, 'Should have thrown error');
+          done();
+        } catch (error) {
+          expect(error).toBeDefined();
+          expect(error.name).toBe('DroppError');
+          expect(error.details).toBeDefined();
+          expect(error.details.error).toBeDefined();
+          expect(error.details.error.type).toBe(DroppError.type.Resource.type);
+          expect(error.details.error.message).toBeDefined();
+          expect(typeof error.details.error.message).toBe('string');
+          expect(error.details.error.message.toLowerCase()).toContain('has not requested');
+          log(invalidRespondToFollowerRequestTitle, error.details);
+          done();
+        }
+      });
+    });
+
     const updateFollowFollowerTitle = 'Update follow/follower';
     describe(updateFollowFollowerTitle, () => {
       beforeEach(async (done) => {
@@ -1288,6 +1500,242 @@ describe('User Middleware Tests', () => {
         expect(result.success.message.toLowerCase()).toContain('follower removal');
         expect(this.testUser2.followers.includes(this.testUser.username)).toBe(false);
         done();
+      });
+    });
+
+    const invalidUnfollowTitle = 'Invalid unfollow';
+    describe(invalidUnfollowTitle, () => {
+      beforeEach(() => {
+        this.invalidUsername = '%';
+      });
+
+      afterEach(() => {
+        delete this.invalidUsername;
+      });
+
+      it('throws an error for an invalid current user', async (done) => {
+        try {
+          const result = await UserMiddleware.unfollow(null, this.invalidUsername);
+          expect(result).not.toBeDefined();
+          log(invalidUnfollowTitle, 'Should have thrown error');
+          done();
+        } catch (error) {
+          expect(error).toBeDefined();
+          expect(error.name).toBe('DroppError');
+          expect(error.details).toBeDefined();
+          expect(error.details.error).toBeDefined();
+          expect(error.details.error.type).toBe(DroppError.type.Server.type);
+          expect(error.details.error.message).toBeDefined();
+          expect(error.details.error.message).toBe(DroppError.type.Server.message);
+          log(invalidUnfollowTitle, error.details);
+          done();
+        }
+      });
+
+      it('throws an error for an invalid username', async (done) => {
+        try {
+          const result = await UserMiddleware.unfollow(this.testUser, this.invalidUsername);
+          expect(result).not.toBeDefined();
+          log(invalidUnfollowTitle, 'Should have thrown error');
+          done();
+        } catch (error) {
+          expect(error).toBeDefined();
+          expect(error.name).toBe('DroppError');
+          expect(error.details).toBeDefined();
+          expect(error.details.error).toBeDefined();
+          expect(error.details.error.type).toBe(DroppError.type.InvalidRequest.type);
+          expect(error.details.error.message).toBeDefined();
+          expect(typeof error.details.error.message).toBe('string');
+
+          const invalidParameters = error.details.error.message.split(',');
+          expect(invalidParameters.length).toBe(1);
+          expect(invalidParameters[0]).toBe('username');
+          log(invalidUnfollowTitle, error.details);
+          done();
+        }
+      });
+
+      it('throws an error for a missing username', async (done) => {
+        delete this.invalidUsername;
+        try {
+          const result = await UserMiddleware.unfollow(this.testUser, this.invalidUsername);
+          expect(result).not.toBeDefined();
+          log(invalidUnfollowTitle, 'Should have thrown error');
+          done();
+        } catch (error) {
+          expect(error).toBeDefined();
+          expect(error.name).toBe('DroppError');
+          expect(error.details).toBeDefined();
+          expect(error.details.error).toBeDefined();
+          expect(error.details.error.type).toBe(DroppError.type.InvalidRequest.type);
+          expect(error.details.error.message).toBeDefined();
+          expect(typeof error.details.error.message).toBe('string');
+
+          const invalidParameters = error.details.error.message.split(',');
+          expect(invalidParameters.length).toBe(1);
+          expect(invalidParameters[0]).toBe('username');
+          log(invalidUnfollowTitle, error.details);
+          done();
+        }
+      });
+
+      it('throws an error for a non-existent user', async (done) => {
+        try {
+          const result = await UserMiddleware.unfollow(this.testUser, 'test');
+          expect(result).not.toBeDefined();
+          log(invalidUnfollowTitle, 'Should have thrown error');
+          done();
+        } catch (error) {
+          expect(error).toBeDefined();
+          expect(error.name).toBe('DroppError');
+          expect(error.details).toBeDefined();
+          expect(error.details.error).toBeDefined();
+          expect(error.details.error.type).toBe(DroppError.type.ResourceDNE.type);
+          expect(error.details.error.message).toBeDefined();
+          expect(typeof error.details.error.message).toBe('string');
+          expect(error.details.error.message.toLowerCase()).toContain('user');
+          log(invalidUnfollowTitle, error.details);
+          done();
+        }
+      });
+
+      it('throws an error for a non-existent follow', async (done) => {
+        try {
+          const result = await UserMiddleware.unfollow(this.testUser, this.testUser2.username);
+          expect(result).not.toBeDefined();
+          log(invalidUnfollowTitle, 'Should have thrown error');
+          done();
+        } catch (error) {
+          expect(error).toBeDefined();
+          expect(error.name).toBe('DroppError');
+          expect(error.details).toBeDefined();
+          expect(error.details.error).toBeDefined();
+          expect(error.details.error.type).toBe(DroppError.type.Resource.type);
+          expect(error.details.error.message).toBeDefined();
+          expect(typeof error.details.error.message).toBe('string');
+          expect(error.details.error.message.toLowerCase()).toContain('do not follow');
+          log(invalidUnfollowTitle, error.details);
+          done();
+        }
+      });
+    });
+
+    const invalidRemoveFollowerTitle = 'Invalid remove follower';
+    describe(invalidRemoveFollowerTitle, () => {
+      beforeEach(() => {
+        this.invalidUsername = '%';
+      });
+
+      afterEach(() => {
+        delete this.invalidUsername;
+      });
+
+      it('throws an error for an invalid current user', async (done) => {
+        try {
+          const result = await UserMiddleware.removeFollower(null, this.invalidUsername);
+          expect(result).not.toBeDefined();
+          log(invalidUnfollowTitle, 'Should have thrown error');
+          done();
+        } catch (error) {
+          expect(error).toBeDefined();
+          expect(error.name).toBe('DroppError');
+          expect(error.details).toBeDefined();
+          expect(error.details.error).toBeDefined();
+          expect(error.details.error.type).toBe(DroppError.type.Server.type);
+          expect(error.details.error.message).toBeDefined();
+          expect(error.details.error.message).toBe(DroppError.type.Server.message);
+          log(invalidUnfollowTitle, error.details);
+          done();
+        }
+      });
+
+      it('throws an error for an invalid username', async (done) => {
+        try {
+          const result = await UserMiddleware.removeFollower(this.testUser, this.invalidUsername);
+          expect(result).not.toBeDefined();
+          log(invalidUnfollowTitle, 'Should have thrown error');
+          done();
+        } catch (error) {
+          expect(error).toBeDefined();
+          expect(error.name).toBe('DroppError');
+          expect(error.details).toBeDefined();
+          expect(error.details.error).toBeDefined();
+          expect(error.details.error.type).toBe(DroppError.type.InvalidRequest.type);
+          expect(error.details.error.message).toBeDefined();
+          expect(typeof error.details.error.message).toBe('string');
+
+          const invalidParameters = error.details.error.message.split(',');
+          expect(invalidParameters.length).toBe(1);
+          expect(invalidParameters[0]).toBe('username');
+          log(invalidUnfollowTitle, error.details);
+          done();
+        }
+      });
+
+      it('throws an error for a missing username', async (done) => {
+        delete this.invalidUsername;
+        try {
+          const result = await UserMiddleware.removeFollower(this.testUser, this.invalidUsername);
+          expect(result).not.toBeDefined();
+          log(invalidUnfollowTitle, 'Should have thrown error');
+          done();
+        } catch (error) {
+          expect(error).toBeDefined();
+          expect(error.name).toBe('DroppError');
+          expect(error.details).toBeDefined();
+          expect(error.details.error).toBeDefined();
+          expect(error.details.error.type).toBe(DroppError.type.InvalidRequest.type);
+          expect(error.details.error.message).toBeDefined();
+          expect(typeof error.details.error.message).toBe('string');
+
+          const invalidParameters = error.details.error.message.split(',');
+          expect(invalidParameters.length).toBe(1);
+          expect(invalidParameters[0]).toBe('username');
+          log(invalidUnfollowTitle, error.details);
+          done();
+        }
+      });
+
+      it('throws an error for a non-existent user', async (done) => {
+        try {
+          const result = await UserMiddleware.removeFollower(this.testUser, 'test');
+          expect(result).not.toBeDefined();
+          log(invalidUnfollowTitle, 'Should have thrown error');
+          done();
+        } catch (error) {
+          expect(error).toBeDefined();
+          expect(error.name).toBe('DroppError');
+          expect(error.details).toBeDefined();
+          expect(error.details.error).toBeDefined();
+          expect(error.details.error.type).toBe(DroppError.type.ResourceDNE.type);
+          expect(error.details.error.message).toBeDefined();
+          expect(typeof error.details.error.message).toBe('string');
+          expect(error.details.error.message.toLowerCase()).toContain('user');
+          log(invalidUnfollowTitle, error.details);
+          done();
+        }
+      });
+
+      it('throws an error for a non-existent follower', async (done) => {
+        try {
+          /* eslint-disable max-len */
+          const result = await UserMiddleware.removeFollower(this.testUser, this.testUser2.username);
+          /* eslint-enable max-len */
+          expect(result).not.toBeDefined();
+          log(invalidUnfollowTitle, 'Should have thrown error');
+          done();
+        } catch (error) {
+          expect(error).toBeDefined();
+          expect(error.name).toBe('DroppError');
+          expect(error.details).toBeDefined();
+          expect(error.details.error).toBeDefined();
+          expect(error.details.error.type).toBe(DroppError.type.Resource.type);
+          expect(error.details.error.message).toBeDefined();
+          expect(typeof error.details.error.message).toBe('string');
+          expect(error.details.error.message.toLowerCase()).toContain('does not follow');
+          log(invalidUnfollowTitle, error.details);
+          done();
+        }
       });
     });
   });
