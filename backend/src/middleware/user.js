@@ -34,14 +34,16 @@ const get = async function get(_currentUser, _details = {}) {
   const source = 'get()';
   log(source, _details.username);
 
-  if (!(_currentUser instanceof User)) DroppError.throwServerError(source, null, 'Object is not a User');
+  if (!(_currentUser instanceof User)) {
+    DroppError.throwServerError(source, null, 'Object is not a User');
+  }
+
   if (!Validator.isValidUsername(_details.username)) {
     DroppError.throwInvalidRequestError(source, 'username');
   }
 
   const user = await UserAccessor.get(_details.username);
   if (!Utils.hasValue(user)) DroppError.throwResourceDneError(source, 'user');
-
   return _currentUser.username === user.username ? user.privateData : user.publicData;
 };
 
@@ -62,7 +64,6 @@ const create = async function create(_details = {}) {
   if (!Validator.isValidUsername(_details.username)) invalidMembers.push('username');
   if (!Validator.isValidPassword(_details.password)) invalidMembers.push('password');
   if (invalidMembers.length > 0) DroppError.throwInvalidRequestError(source, invalidMembers);
-
   const existingUser = await UserAccessor.get(_details.username);
   if (Utils.hasValue(existingUser) && existingUser instanceof User) {
     DroppError.throwResourceError(source, 'A user with that username already exists');
@@ -91,7 +92,6 @@ const getAuthToken = async function getAuthToken(_details = {}) {
   if (!Validator.isValidUsername(_details.username)) invalidMembers.push('username');
   if (!Validator.isValidPassword(_details.password)) invalidMembers.push('password');
   if (invalidMembers.length > 0) DroppError.throwInvalidRequestError(source, invalidMembers);
-
   const retrievedPassword = await UserAccessor.getPassword(_details.username);
   if (!Validator.isValidPassword(retrievedPassword)) {
     DroppError.throwLoginError(source, null, `Retrieved password: ${retrievedPassword}`);
@@ -99,7 +99,6 @@ const getAuthToken = async function getAuthToken(_details = {}) {
 
   const passwordsMatch = await Auth.validatePasswords(_details.password, retrievedPassword);
   if (!passwordsMatch) DroppError.throwLoginError(source);
-
   const user = await UserAccessor.get(_details.username);
   if (!Utils.hasValue(user)) {
     DroppError.throwServerError(source, null, `Password was valid, but user was ${user}`);
@@ -155,7 +154,9 @@ const updatePassword = async function updatePassword(_currentUser, _username, _d
   const source = 'updatePassword()';
   log(source, _username);
 
-  if (!(_currentUser instanceof User)) DroppError.throwServerError(source, null, 'Object is not a User');
+  if (!(_currentUser instanceof User)) {
+    DroppError.throwServerError(source, null, 'Object is not a User');
+  }
 
   const invalidMembers = [];
   if (!Validator.isValidPassword(_details.oldPassword)) invalidMembers.push('oldPassword');
@@ -205,8 +206,14 @@ const updateEmail = async function updateEmail(_currentUser, _username, _details
   const source = 'updateEmail()';
   log(source, _username);
 
-  if (!(_currentUser instanceof User)) DroppError.throwServerError(source, null, 'Object is not a User');
-  if (!Validator.isValidEmail(_details.newEmail)) DroppError.throwInvalidRequestError(source, 'newEmail');
+  if (!(_currentUser instanceof User)) {
+    DroppError.throwServerError(source, null, 'Object is not a User');
+  }
+
+  if (!Validator.isValidEmail(_details.newEmail)) {
+    DroppError.throwInvalidRequestError(source, 'newEmail');
+  }
+
   if (_currentUser.username !== _username) {
     DroppError.throwResourceError(source, 'Unauthorized to update that user\'s email');
   }
@@ -232,11 +239,11 @@ const remove = async function remove(_currentUser, _username) {
   const source = 'remove()';
   log(source, _username);
 
-  if (!(_currentUser instanceof User)) DroppError.throwServerError(source, null, 'Object is not a User');
-  if (!Validator.isValidUsername(_username)) {
-    DroppError.throwInvalidRequestError(source, 'username');
+  if (!(_currentUser instanceof User)) {
+    DroppError.throwServerError(source, null, 'Object is not a User');
   }
 
+  if (!Validator.isValidUsername(_username)) DroppError.throwInvalidRequestError(source, 'username');
   if (_currentUser.username !== _username) {
     DroppError.throwResourceError(source, 'Unauthorized to remove that user');
   }
@@ -260,17 +267,13 @@ const requestToFollow = async function requestToFollow(_currentUser, _username) 
   const source = 'requestToFollow()';
   log(source, _username);
 
-  if (!(_currentUser instanceof User)) DroppError.throwServerError(source, null, 'Object is not a User');
-  if (!Validator.isValidUsername(_username)) {
-    DroppError.throwInvalidRequestError(source, 'username');
+  if (!(_currentUser instanceof User)) {
+    DroppError.throwServerError(source, null, 'Object is not a User');
   }
 
+  if (!Validator.isValidUsername(_username)) DroppError.throwInvalidRequestError(source, 'username');
   const user = await UserAccessor.get(_username);
   if (!Utils.hasValue(user)) DroppError.throwResourceDneError(source, 'user');
-  if (user.hasFollower(_currentUser.username)) {
-    DroppError.throwResourceError(source, 'You already follow that user');
-  }
-
   if (user.hasFollowerRequest(_currentUser.username)) {
     DroppError.throwResourceError(source, 'You already have a pending follow request for that user');
   }
@@ -297,17 +300,13 @@ const removeFollowRequest = async function removeFollowRequest(_currentUser, _us
   const source = 'removeFollowRequest()';
   log(source, _username);
 
-  if (!(_currentUser instanceof User)) DroppError.throwServerError(source, null, 'Object is not a User');
-  if (!Validator.isValidUsername(_username)) {
-    DroppError.throwInvalidRequestError(source, 'username');
+  if (!(_currentUser instanceof User)) {
+    DroppError.throwServerError(source, null, 'Object is not a User');
   }
 
+  if (!Validator.isValidUsername(_username)) DroppError.throwInvalidRequestError(source, 'username');
   const user = await UserAccessor.get(_username);
   if (!Utils.hasValue(user)) DroppError.throwResourceDneError(source, 'user');
-  if (user.hasFollower(_currentUser.username)) {
-    DroppError.throwResourceError(source, 'You already follow that user');
-  }
-
   if (!user.hasFollowerRequest(_currentUser.username)) {
     DroppError.throwResourceError(source, 'You do not have a pending follow request for that user');
   }
@@ -337,19 +336,16 @@ const respondToFollowerRequest = async function respondToFollowerRequest(_curren
   const source = 'respondToFollowerRequest()';
   log(source, _username);
 
-  if (!(_currentUser instanceof User)) DroppError.throwServerError(source, null, 'Object is not a User');
+  if (!(_currentUser instanceof User)) {
+    DroppError.throwServerError(source, null, 'Object is not a User');
+  }
 
   const invalidMembers = [];
   if (!Validator.isValidUsername(_username)) invalidMembers.push('username');
   if (!Validator.isValidBoolean(_details.accept)) invalidMembers.push('accept');
   if (invalidMembers.length > 0) DroppError.throwInvalidRequestError(source, invalidMembers);
-
   const user = await UserAccessor.get(_username);
   if (!Utils.hasValue(user)) DroppError.throwResourceDneError(source, 'user');
-  if (user.doesFollow(_currentUser.username)) {
-    DroppError.throwResourceError(source, 'That user already follows you');
-  }
-
   if (!user.hasFollowRequest(_currentUser.username)) {
     DroppError.throwResourceError(source, 'That user has not requested to follow you');
   }
@@ -384,11 +380,11 @@ const unfollow = async function unfollow(_currentUser, _username) {
   const source = 'unfollow()';
   log(source, _username);
 
-  if (!(_currentUser instanceof User)) DroppError.throwServerError(source, null, 'Object is not a User');
-  if (!Validator.isValidUsername(_username)) {
-    DroppError.throwInvalidRequestError(source, 'username');
+  if (!(_currentUser instanceof User)) {
+    DroppError.throwServerError(source, null, 'Object is not a User');
   }
 
+  if (!Validator.isValidUsername(_username)) DroppError.throwInvalidRequestError(source, 'username');
   const user = await UserAccessor.get(_username);
   if (!Utils.hasValue(user)) DroppError.throwResourceDneError(source, 'user');
   if (!user.hasFollower(_currentUser.username)) {
@@ -406,15 +402,6 @@ const unfollow = async function unfollow(_currentUser, _username) {
 };
 
 /**
- * Removes a follow from the current user to a given username
- * @param {User} _currentUser the current user for the request
- * @param {String} _username the username of the user to unfollow
- * @return {Object} the success details
- * @throws {DroppError} if the given username is invalid,
- * or if the current user does not follow the given username
- */
-
-/**
  * Removes a follower for the current user from the given username
  * @param {User} _currentUser the current user for the request
  * @param {String} _username the username of the user to remove as a follower
@@ -426,11 +413,11 @@ const removeFollower = async function removeFollower(_currentUser, _username) {
   const source = 'removeFollower()';
   log(source, _username);
 
-  if (!(_currentUser instanceof User)) DroppError.throwServerError(source, null, 'Object is not a User');
-  if (!Validator.isValidUsername(_username)) {
-    DroppError.throwInvalidRequestError(source, 'username');
+  if (!(_currentUser instanceof User)) {
+    DroppError.throwServerError(source, null, 'Object is not a User');
   }
 
+  if (!Validator.isValidUsername(_username)) DroppError.throwInvalidRequestError(source, 'username');
   const user = await UserAccessor.get(_username);
   if (!Utils.hasValue(user)) DroppError.throwResourceDneError(source, 'user');
   if (!user.doesFollow(_currentUser.username)) {
