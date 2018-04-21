@@ -15,7 +15,7 @@ function log(_title, _details) {
   Log(`User Middleware ${_title}`, _details);
 }
 
-Firebase.start(true);
+Firebase.start(process.env.MOCK === '1');
 /* eslint-disable no-undef */
 describe('User Middleware Tests', () => {
   const uuid = Utils.newUuid();

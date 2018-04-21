@@ -2,7 +2,7 @@ const Log = require('../../logger');
 const Utils = require('../../../src/utilities/utils');
 const Firebase = require('../../../src/firebase/firebase');
 
-Firebase.start(true);
+Firebase.start(process.env.MOCK === '1');
 /* eslint-disable no-undef */
 describe('Firebase functions', () => {
   beforeEach(async (done) => {
@@ -10,7 +10,9 @@ describe('Firebase functions', () => {
       key: 'value',
     };
 
-    this.testDataUrl = await Firebase.add('/test', this.testData);
+    const url = await Firebase.add('/test', this.testData);
+    const key = url.split('/').pop();
+    this.testDataUrl = `/test/${key}`;
     done();
   });
 
@@ -120,13 +122,14 @@ describe(addDataTitle, () => {
 
   it('adds data to firebase', async (done) => {
     const data = { key: 'value' };
-    this.testDataUrl = await Firebase.add('/test', data);
-    expect(this.testDataUrl).toBeDefined();
-    expect(typeof this.testDataUrl).toBe('string');
-    const key = this.testDataUrl.split('/').pop();
+    const url = await Firebase.add('/test', data);
+    expect(url).toBeDefined();
+    expect(typeof url).toBe('string');
+    const key = url.split('/').pop();
     expect(key).toBeDefined();
     expect(typeof key).toBe('string');
     expect(key).not.toBe('');
+    this.testDataUrl = `/test/${key}`;
     Log(addDataTitle, key);
     done();
   });
@@ -136,7 +139,9 @@ const deleteDataTitle = 'Delete data';
 describe(deleteDataTitle, () => {
   beforeEach(async (done) => {
     const data = { key: 'value' };
-    this.testDataUrl = await Firebase.add('/test', data);
+    const url = await Firebase.add('/test', data);
+    const key = url.split('/').pop();
+    this.testDataUrl = `/test/${key}`;
     done();
   });
 

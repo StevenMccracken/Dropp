@@ -3,7 +3,7 @@ const User = require('../../../src/models/User');
 const Firebase = require('../../../src/firebase/firebase');
 const UserAccessor = require('../../../src/database/user');
 
-Firebase.start(true);
+Firebase.start(process.env.MOCK === '1');
 const user1 = new User({
   username: 'test0123456789',
   email: 'test0123456789@test.com',

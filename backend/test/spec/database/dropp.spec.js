@@ -4,7 +4,7 @@ const Utils = require('../../../src/utilities/utils');
 const Firebase = require('../../../src/firebase/firebase');
 const DroppAccessor = require('../../../src/database/dropp');
 
-Firebase.start(true);
+Firebase.start(process.env.MOCK === '1');
 const getMissingDroppTitle = 'Get non-existent dropp';
 /* eslint-disable no-undef */
 describe(getMissingDroppTitle, () => {
