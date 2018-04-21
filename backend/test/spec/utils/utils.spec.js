@@ -133,7 +133,7 @@ describe(utilsHasValueTitle, () => {
   });
 });
 
-const utilsStepperTitle = 'Utils stepper()';
+const utilsStepperTitle = 'Utils stepper generator';
 describe(utilsStepperTitle, () => {
   const stepper = Utils.stepper();
   it('should return 3 after being called 3 times', (done) => {
@@ -141,7 +141,7 @@ describe(utilsStepperTitle, () => {
     stepper.next();
     const step = stepper.next().value;
     expect(step).toBe(3);
-    Log(utilsStepperTitle, `After 3 calls to stepper(), the value returned is ${step}`);
+    Log(utilsStepperTitle, `After 3 calls to the generator, the value returned is ${step}`);
     done();
   });
 });

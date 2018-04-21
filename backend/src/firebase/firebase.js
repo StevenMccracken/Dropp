@@ -79,7 +79,7 @@ function throwHasNotStartedError(_source) {
 /**
  * Gets data from firebase
  * @param {String} _url the firebase path to get data from
- * @return {Object} the data at the given url
+ * @return {Object|String|Boolean|Number} the data at the given url
  * @throws {DatabaseError} if Firebase has not started or _url is invalid
  */
 const get = async function get(_url) {
