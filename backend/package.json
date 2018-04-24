@@ -5,13 +5,25 @@
   "main": "index.js",
   "scripts": {
     "start": "node index.js",
-    "test": "grunt test"
+    "test": "nyc grunt test --test --force",
+    "coverage": "nyc report && open coverage/index.html"
   },
   "eslintConfig": {
     "env": {
       "browser": false,
       "node": true
     }
+  },
+  "nyc": {
+    "reporter": [
+      "html",
+      "text-summary"
+    ],
+    "exclude": [
+      "test",
+      "config",
+      "Gruntfile.js"
+    ]
   },
   "keywords": [],
   "author": "Steven McCracken",
@@ -38,6 +50,7 @@
     "grunt-jasmine-node": "^0.3.1",
     "grunt-shell-spawn": "^0.3.10",
     "jasmine-node": "^1.14.5",
+    "nyc": "^11.7.1",
     "request": "^2.83.0"
   }
 }
