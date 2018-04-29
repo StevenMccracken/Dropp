@@ -13,6 +13,7 @@ module.exports = function grunt(_grunt) {
         match: '.',
         matchall: false,
         extensions: 'js',
+        captureExceptions: true,
         specNameMatcher: 'spec',
       },
       all: ['spec/'],

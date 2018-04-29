@@ -10,7 +10,7 @@ const getMissingDroppTitle = 'Get non-existent dropp';
 describe(getMissingDroppTitle, () => {
   it('attempts to get a non-existent dropp from the database', async (done) => {
     const dropp = await DroppAccessor.get(Utils.newUuid());
-    expect(dropp).toBe(null);
+    expect(dropp).toBeNull();
     Log(getMissingDroppTitle, `Non-existent dropp is ${dropp}`);
     done();
   }, 10000);

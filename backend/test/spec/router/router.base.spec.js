@@ -8,7 +8,7 @@ const baseApiRouteTitle = 'Base API route';
 describe(baseApiRouteTitle, () => {
   it('gets the welcome message and returns status code 200', (done) => {
     Request.get(baseUrl, (error, response, body) => {
-      expect(error).toBe(null);
+      expect(error).toBeNull();
       expect(response).toBeDefined();
       expect(response.statusCode).toBe(200);
       Log(baseApiRouteTitle, body);

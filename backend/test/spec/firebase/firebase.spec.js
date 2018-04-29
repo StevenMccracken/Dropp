@@ -36,7 +36,7 @@ describe('Firebase functions', () => {
 
     it('returns null for non-existent data', async (done) => {
       const result = await Firebase.get(`/${Utils.newUuid()}`);
-      expect(result).toBe(null);
+      expect(result).toBeNull();
       Log(getDataTitle, result);
       done();
     });
@@ -103,9 +103,9 @@ describe('Bulk operations', () => {
     it('removes multiple pieces of data from firebase', async (done) => {
       await Firebase.bulkRemove([this.url1, this.url2]);
       const result1 = await Firebase.get(`/${this.url1}`);
-      expect(result1).toBe(null);
+      expect(result1).toBeNull();
       const result2 = await Firebase.get(`/${this.url2}`);
-      expect(result2).toBe(null);
+      expect(result2).toBeNull();
       Log(bulkRemoveTitle);
       done();
     });
@@ -152,7 +152,7 @@ describe(deleteDataTitle, () => {
   it('deletes data from firebase', async (done) => {
     await Firebase.remove(this.testDataUrl);
     const result = await Firebase.get(this.testDataUrl);
-    expect(result).toBe(null);
+    expect(result).toBeNull();
     Log(deleteDataTitle, result);
     done();
   });
@@ -163,7 +163,7 @@ describe(invalidUrlTitle, () => {
   it('throws an error because the URL is invalid', async (done) => {
     try {
       const result = await Firebase.get('.$[]');
-      expect(result).toBe(null);
+      expect(result).toBeNull();
       Log(invalidUrlTitle, 'Should have thrown error');
     } catch (error) {
       expect(error).toBeDefined();

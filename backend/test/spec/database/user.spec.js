@@ -82,14 +82,14 @@ describe(getUserTitle, () => {
 
   it('returns null for a non-existent user', async (done) => {
     const result = await UserAccessor.get(Utils.newUuid());
-    expect(result).toBe(null);
+    expect(result).toBeNull();
     Log(getUserTitle, result);
     done();
   });
 
   it('returns a User for a valid, existing username', async (done) => {
     const result = await UserAccessor.get(this.user.username);
-    expect(result).not.toBe(null);
+    expect(result).not.toBeNull();
     expect(result instanceof User).toBe(true);
     expect(result.email).toBe(this.user.email);
     expect(result.username).toBe(this.user.username);
@@ -167,7 +167,7 @@ describe(getPasswordTitle, () => {
 
   it('returns null for a non-existent user', async (done) => {
     const result = await UserAccessor.getPassword(Utils.newUuid());
-    expect(result).toBe(null);
+    expect(result).toBeNull();
     Log(getPasswordTitle, result);
     done();
   });
@@ -352,7 +352,7 @@ describe(createUserTitle, () => {
   it('creates a user in the database for valid details', async (done) => {
     await UserAccessor.create(this.user, this.password);
     const user = await UserAccessor.get(this.user.username);
-    expect(user).not.toBe(null);
+    expect(user).not.toBeNull();
     expect(user instanceof User).toBe(true);
     expect(user.email).toBe(this.user.email);
     expect(user.username).toBe(this.user.username);
@@ -497,122 +497,283 @@ describe(updateUserAttributesTitle, () => {
   });
 });
 
-const user1 = new User({
-  username: 'test0123456789',
-  email: 'test0123456789@test.com',
-});
+const interUserFunctions = 'Inter-user functions';
+describe(interUserFunctions, () => {
+  beforeEach(async (done) => {
+    this.user1 = new User({
+      username: Utils.newUuid(),
+      email: `${Utils.newUuid()}@${Utils.newUuid()}.com`,
+    });
 
-const createUser1Title = 'Create user 1';
-describe(createUser1Title, () => {
-  it('creates the user in the database', async (done) => {
-    await UserAccessor.create(user1, 'password');
-    Log(createUser1Title);
+    this.user2 = new User({
+      username: Utils.newUuid(),
+      email: `${Utils.newUuid()}@${Utils.newUuid()}.com`,
+    });
+
+    await UserAccessor.create(this.user1, Utils.newUuid());
+    await UserAccessor.create(this.user2, Utils.newUuid());
     done();
-  }, 10000);
-});
+  });
 
-const user2 = new User({
-  username: 'test9876543210',
-  email: 'test9876543210@test.com',
-});
-
-const createUser2Title = 'Create user 2';
-describe(createUser2Title, () => {
-  it('creates the user in the database', async (done) => {
-    await UserAccessor.create(user2, 'password');
-    Log(createUser2Title);
+  afterEach(async (done) => {
+    await UserAccessor.remove(this.user1);
+    await UserAccessor.remove(this.user2);
+    delete this.user1;
+    delete this.user2;
     done();
-  }, 10000);
+  });
+
+  const addFollowRequestTitle = 'Add follow request';
+  describe(addFollowRequestTitle, () => {
+    it('throws an error for a first invalid user object', async (done) => {
+      try {
+        await UserAccessor.addFollowRequest(null, this.user2);
+        expect(false).toBe(true);
+        Log(addFollowRequestTitle, 'Should have thrown an error');
+      } catch (error) {
+        expect(error).toBeDefined();
+        expect(error.name).toBe('DroppError');
+        expect(error.details).toBeDefined();
+        expect(error.details.error).toBeDefined();
+        expect(error.details.error.type).toBe(DroppError.type.Server.type);
+        expect(error.details.error.message).toBeDefined();
+        expect(error.details.error.message).toBe(DroppError.type.Server.message);
+        log(addFollowRequestTitle, error.details);
+      }
+
+      done();
+    });
+
+    it('throws an error for a second invalid user object', async (done) => {
+      try {
+        await UserAccessor.addFollowRequest(this.user1, null);
+        expect(false).toBe(true);
+        Log(addFollowRequestTitle, 'Should have thrown an error');
+      } catch (error) {
+        expect(error).toBeDefined();
+        expect(error.name).toBe('DroppError');
+        expect(error.details).toBeDefined();
+        expect(error.details.error).toBeDefined();
+        expect(error.details.error.type).toBe(DroppError.type.Server.type);
+        expect(error.details.error.message).toBeDefined();
+        expect(error.details.error.message).toBe(DroppError.type.Server.message);
+        log(addFollowRequestTitle, error.details);
+      }
+
+      done();
+    });
+
+    it('adds a follow request to the user\'s follow requests', async (done) => {
+      await UserAccessor.addFollowRequest(this.user1, this.user2);
+      expect(this.user1.followRequests).toContain(this.user2.username);
+      expect(this.user2.followerRequests).toContain(this.user1.username);
+      Log(addFollowRequestTitle, this.user1.followRequests);
+      done();
+    });
+  });
+
+  const addFollowTitle = 'Add follow';
+  describe(addFollowTitle, () => {
+    it('throws an error for a first invalid user object', async (done) => {
+      try {
+        await UserAccessor.addFollow(null, this.user2);
+        expect(false).toBe(true);
+        Log(addFollowTitle, 'Should have thrown an error');
+      } catch (error) {
+        expect(error).toBeDefined();
+        expect(error.name).toBe('DroppError');
+        expect(error.details).toBeDefined();
+        expect(error.details.error).toBeDefined();
+        expect(error.details.error.type).toBe(DroppError.type.Server.type);
+        expect(error.details.error.message).toBeDefined();
+        expect(error.details.error.message).toBe(DroppError.type.Server.message);
+        log(addFollowTitle, error.details);
+      }
+
+      done();
+    });
+
+    it('throws an error for a second invalid user object', async (done) => {
+      try {
+        await UserAccessor.addFollow(this.user1, null);
+        expect(false).toBe(true);
+        Log(addFollowTitle, 'Should have thrown an error');
+      } catch (error) {
+        expect(error).toBeDefined();
+        expect(error.name).toBe('DroppError');
+        expect(error.details).toBeDefined();
+        expect(error.details.error).toBeDefined();
+        expect(error.details.error.type).toBe(DroppError.type.Server.type);
+        expect(error.details.error.message).toBeDefined();
+        expect(error.details.error.message).toBe(DroppError.type.Server.message);
+        log(addFollowTitle, error.details);
+      }
+
+      done();
+    });
+
+    it('adds a follow to the user\'s follows', async (done) => {
+      this.user1.followRequests.push(this.user2.username);
+      this.user2.followerRequests.push(this.user1.username);
+      await UserAccessor.addFollow(this.user1, this.user2);
+      expect(this.user1.followRequests).not.toContain(this.user2.username);
+      expect(this.user2.followerRequests).not.toContain(this.user1.username);
+      expect(this.user1.follows).toContain(this.user2.username);
+      expect(this.user2.followers).toContain(this.user1.username);
+      Log(addFollowTitle, this.user1.follows);
+      done();
+    });
+  });
+
+  const removeFollowRequestTitle = 'Remove follow request';
+  describe(removeFollowRequestTitle, () => {
+    it('throws an error for a first invalid user object', async (done) => {
+      try {
+        await UserAccessor.removeFollowRequest(null, this.user2);
+        expect(false).toBe(true);
+        Log(removeFollowRequestTitle, 'Should have thrown an error');
+      } catch (error) {
+        expect(error).toBeDefined();
+        expect(error.name).toBe('DroppError');
+        expect(error.details).toBeDefined();
+        expect(error.details.error).toBeDefined();
+        expect(error.details.error.type).toBe(DroppError.type.Server.type);
+        expect(error.details.error.message).toBeDefined();
+        expect(error.details.error.message).toBe(DroppError.type.Server.message);
+        log(removeFollowRequestTitle, error.details);
+      }
+
+      done();
+    });
+
+    it('throws an error for a second invalid user object', async (done) => {
+      try {
+        await UserAccessor.removeFollowRequest(this.user1, null);
+        expect(false).toBe(true);
+        Log(removeFollowRequestTitle, 'Should have thrown an error');
+      } catch (error) {
+        expect(error).toBeDefined();
+        expect(error.name).toBe('DroppError');
+        expect(error.details).toBeDefined();
+        expect(error.details.error).toBeDefined();
+        expect(error.details.error.type).toBe(DroppError.type.Server.type);
+        expect(error.details.error.message).toBeDefined();
+        expect(error.details.error.message).toBe(DroppError.type.Server.message);
+        log(removeFollowRequestTitle, error.details);
+      }
+
+      done();
+    });
+
+    it('removes a follow request from the user\'s follow requests', async (done) => {
+      this.user1.followRequests.push(this.user2.username);
+      this.user2.followerRequests.push(this.user1.username);
+      await UserAccessor.removeFollowRequest(this.user1, this.user2);
+      expect(this.user1.followRequests).not.toContain(this.user2.username);
+      expect(this.user2.followerRequests).not.toContain(this.user1.username);
+      Log(removeFollowRequestTitle, this.user1.followRequests);
+      done();
+    });
+  });
+
+  const removeFollowTitle = 'Remove follow';
+  describe(removeFollowTitle, () => {
+    it('throws an error for a first invalid user object', async (done) => {
+      try {
+        await UserAccessor.removeFollow(null, this.user2);
+        expect(false).toBe(true);
+        Log(removeFollowTitle, 'Should have thrown an error');
+      } catch (error) {
+        expect(error).toBeDefined();
+        expect(error.name).toBe('DroppError');
+        expect(error.details).toBeDefined();
+        expect(error.details.error).toBeDefined();
+        expect(error.details.error.type).toBe(DroppError.type.Server.type);
+        expect(error.details.error.message).toBeDefined();
+        expect(error.details.error.message).toBe(DroppError.type.Server.message);
+        log(removeFollowTitle, error.details);
+      }
+
+      done();
+    });
+
+    it('throws an error for a second invalid user object', async (done) => {
+      try {
+        await UserAccessor.removeFollow(this.user1, null);
+        expect(false).toBe(true);
+        Log(removeFollowTitle, 'Should have thrown an error');
+      } catch (error) {
+        expect(error).toBeDefined();
+        expect(error.name).toBe('DroppError');
+        expect(error.details).toBeDefined();
+        expect(error.details.error).toBeDefined();
+        expect(error.details.error.type).toBe(DroppError.type.Server.type);
+        expect(error.details.error.message).toBeDefined();
+        expect(error.details.error.message).toBe(DroppError.type.Server.message);
+        log(removeFollowTitle, error.details);
+      }
+
+      done();
+    });
+
+    it('removes a follow from the user\'s follows', async (done) => {
+      this.user1.follows.push(this.user2.username);
+      this.user2.followers.push(this.user1.username);
+      await UserAccessor.removeFollow(this.user1, this.user2);
+      expect(this.user1.follows).not.toContain(this.user2.username);
+      expect(this.user2.followers).not.toContain(this.user1.username);
+      Log(removeFollowTitle, this.user1.follows);
+      done();
+    });
+  });
 });
 
-let retrievedUser;
-const getUserTitle2 = 'Get user';
-describe(getUserTitle2, () => {
-  it('retrieves a user from the database', async (done) => {
-    retrievedUser = await UserAccessor.get(user1.username);
-    expect(retrievedUser).toBeDefined();
-    expect(retrievedUser.username).toBe(user1.username);
-    expect(retrievedUser.email).toBe(user1.email);
-    expect(Array.isArray(retrievedUser.follows)).toBe(true);
-    expect(Array.isArray(retrievedUser.followers)).toBe(true);
-    expect(Array.isArray(retrievedUser.followRequests)).toBe(true);
-    expect(Array.isArray(retrievedUser.followerRequests)).toBe(true);
-    Log(getUserTitle2, `Retrieving user ${user1.username} returned ${retrievedUser.username}`);
-    done();
-  }, 10000);
-});
+const removeUserTitle = 'Remove user';
+describe(removeUserTitle, () => {
+  beforeEach(async (done) => {
+    this.user = new User({
+      username: Utils.newUuid(),
+      email: `${Utils.newUuid()}@${Utils.newUuid()}.com`,
+    });
 
-const addFollowRequestTitle = 'Add follow request';
-describe(addFollowRequestTitle, () => {
-  it('adds a follow request to the user\'s follow requests', async (done) => {
-    await UserAccessor.addFollowRequest(user1, user2);
-    expect(user1.followRequests).toContain(user2.username);
-    expect(user2.followerRequests).toContain(user1.username);
-    Log(addFollowRequestTitle);
+    await UserAccessor.create(this.user, Utils.newUuid());
     done();
-  }, 10000);
-});
+  });
 
-const addFollowTitle = 'Add follow';
-describe(addFollowTitle, () => {
-  it('adds a follow to the user\'s follows', async (done) => {
-    await UserAccessor.addFollow(user1, user2);
-    expect(user1.follows).toContain(user2.username);
-    expect(user2.followers).toContain(user1.username);
-    expect(user1.followRequests).not.toContain(user2.username);
-    expect(user2.followerRequests).not.toContain(user1.username);
-    Log(addFollowTitle);
-    done();
-  }, 10000);
-});
+  afterEach(async (done) => {
+    if (this.user) {
+      await UserAccessor.remove(this.user);
+      delete this.user;
+    }
 
-const removeFollowTitle = 'Remove follow';
-describe(removeFollowTitle, () => {
-  it('removes a follow from the user\'s follows', async (done) => {
-    await UserAccessor.removeFollow(user1, user2);
-    expect(user1.follows).not.toContain(user2.username);
-    expect(user2.followers).not.toContain(user1.username);
-    Log(removeFollowTitle);
     done();
-  }, 10000);
-});
+  });
 
-describe(addFollowRequestTitle, () => {
-  it('adds a follow request to the user\'s follow requests', async (done) => {
-    await UserAccessor.addFollowRequest(user2, user1);
-    expect(user2.followRequests).toContain(user1.username);
-    expect(user1.followerRequests).toContain(user2.username);
-    Log(addFollowRequestTitle);
-    done();
-  }, 10000);
-});
+  it('throws an error for an invalid user object', async (done) => {
+    try {
+      await UserAccessor.remove(null);
+      expect(false).toBe(true);
+      Log(removeUserTitle, 'Should have thrown an error');
+    } catch (error) {
+      expect(error).toBeDefined();
+      expect(error.name).toBe('DroppError');
+      expect(error.details).toBeDefined();
+      expect(error.details.error).toBeDefined();
+      expect(error.details.error.type).toBe(DroppError.type.Server.type);
+      expect(error.details.error.message).toBeDefined();
+      expect(error.details.error.message).toBe(DroppError.type.Server.message);
+      log(removeUserTitle, error.details);
+    }
 
-const removeFollowRequestTitle = 'Remove follow request';
-describe(removeFollowRequestTitle, () => {
-  it('removes a follow request from the user\'s follow requests', async (done) => {
-    await UserAccessor.removeFollowRequest(user2, user1);
-    expect(user2.followRequests).not.toContain(user1.username);
-    expect(user1.followerRequests).not.toContain(user2.username);
-    Log(removeFollowRequestTitle);
     done();
-  }, 10000);
-});
+  });
 
-const deleteUser1Title = 'Delete user 1';
-describe(deleteUser1Title, () => {
-  it('deletes the user from the database', async (done) => {
-    await UserAccessor.remove(user1);
-    Log(deleteUser1Title);
+  it('removes a user from the database', async (done) => {
+    await UserAccessor.remove(this.user);
+    const result = await UserAccessor.get(this.user.username);
+    expect(result).toBeNull();
+    delete this.user;
     done();
-  }, 10000);
-});
-
-const deleteUser2Title = 'Delete user 2';
-describe(deleteUser2Title, () => {
-  it('deletes the user from the database', async (done) => {
-    await UserAccessor.remove(user2);
-    Log(deleteUser2Title);
-    done();
-  }, 10000);
+  });
 });
 /* eslint-enable no-undef */
