@@ -38,7 +38,7 @@ describe(getUserTitle, () => {
     try {
       const result = await UserAccessor.get(null);
       expect(result).not.toBeDefined();
-      Log(getUserTitle, 'Should have thrown error');
+      log(getUserTitle, 'Should have thrown error');
     } catch (error) {
       expect(error).toBeDefined();
       expect(error.name).toBe('DroppError');
@@ -61,7 +61,7 @@ describe(getUserTitle, () => {
     try {
       const result = await UserAccessor.get('%');
       expect(result).not.toBeDefined();
-      Log(getUserTitle, 'Should have thrown error');
+      log(getUserTitle, 'Should have thrown error');
     } catch (error) {
       expect(error).toBeDefined();
       expect(error.name).toBe('DroppError');
@@ -83,7 +83,7 @@ describe(getUserTitle, () => {
   it('returns null for a non-existent user', async (done) => {
     const result = await UserAccessor.get(Utils.newUuid());
     expect(result).toBeNull();
-    Log(getUserTitle, result);
+    log(getUserTitle, result);
     done();
   });
 
@@ -93,7 +93,7 @@ describe(getUserTitle, () => {
     expect(result instanceof User).toBe(true);
     expect(result.email).toBe(this.user.email);
     expect(result.username).toBe(this.user.username);
-    Log(getUserTitle, result);
+    log(getUserTitle, result);
     done();
   });
 });
@@ -123,7 +123,7 @@ describe(getPasswordTitle, () => {
     try {
       const result = await UserAccessor.getPassword(null);
       expect(result).not.toBeDefined();
-      Log(getPasswordTitle, 'Should have thrown error');
+      log(getPasswordTitle, 'Should have thrown error');
     } catch (error) {
       expect(error).toBeDefined();
       expect(error.name).toBe('DroppError');
@@ -146,7 +146,7 @@ describe(getPasswordTitle, () => {
     try {
       const result = await UserAccessor.getPassword('%');
       expect(result).not.toBeDefined();
-      Log(getPasswordTitle, 'Should have thrown error');
+      log(getPasswordTitle, 'Should have thrown error');
     } catch (error) {
       expect(error).toBeDefined();
       expect(error.name).toBe('DroppError');
@@ -168,7 +168,7 @@ describe(getPasswordTitle, () => {
   it('returns null for a non-existent user', async (done) => {
     const result = await UserAccessor.getPassword(Utils.newUuid());
     expect(result).toBeNull();
-    Log(getPasswordTitle, result);
+    log(getPasswordTitle, result);
     done();
   });
 
@@ -177,7 +177,7 @@ describe(getPasswordTitle, () => {
     expect(result).toBeDefined();
     expect(typeof result).toBe('string');
     expect(result).toBe(this.password);
-    Log(getPasswordTitle, result);
+    log(getPasswordTitle, result);
     done();
   });
 });
@@ -201,7 +201,7 @@ describe(createUserTitle, () => {
     try {
       await UserAccessor.create(null, this.password);
       expect(false).toBe(true);
-      Log(createUserTitle, 'Should have thrown error');
+      log(createUserTitle, 'Should have thrown error');
     } catch (error) {
       expect(error).toBeDefined();
       expect(error.name).toBe('DroppError');
@@ -362,7 +362,7 @@ describe(createUserTitle, () => {
     expect(typeof password).toBe('string');
     expect(password).toBe(this.password);
 
-    Log(createUserTitle, { user, password });
+    log(createUserTitle, { user, password });
     done();
   });
 });
@@ -393,7 +393,7 @@ describe(updateUserAttributesTitle, () => {
       try {
         await UserAccessor.updatePassword(null, Utils.newUuid());
         expect(false).toBe(true);
-        Log(updatePasswordTitle, 'Should have thrown error');
+        log(updatePasswordTitle, 'Should have thrown error');
       } catch (error) {
         expect(error).toBeDefined();
         expect(error.name).toBe('DroppError');
@@ -438,7 +438,7 @@ describe(updateUserAttributesTitle, () => {
       expect(result).toBeDefined();
       expect(typeof result).toBe('string');
       expect(result).toBe(password);
-      Log(updatePasswordTitle, result);
+      log(updatePasswordTitle, result);
       done();
     });
   });
@@ -449,7 +449,7 @@ describe(updateUserAttributesTitle, () => {
       try {
         await UserAccessor.updateEmail(null, 'test@test.com');
         expect(false).toBe(true);
-        Log(updateEmailTitle, 'Should have thrown error');
+        log(updateEmailTitle, 'Should have thrown error');
       } catch (error) {
         expect(error).toBeDefined();
         expect(error.name).toBe('DroppError');
@@ -491,7 +491,7 @@ describe(updateUserAttributesTitle, () => {
       const email = `${Utils.newUuid()}@${Utils.newUuid()}.com`;
       await UserAccessor.updateEmail(this.user, email);
       expect(this.user.email).toBe(email);
-      Log(updateEmailTitle, this.user.email);
+      log(updateEmailTitle, this.user.email);
       done();
     });
   });
@@ -529,7 +529,7 @@ describe(interUserFunctions, () => {
       try {
         await UserAccessor.addFollowRequest(null, this.user2);
         expect(false).toBe(true);
-        Log(addFollowRequestTitle, 'Should have thrown an error');
+        log(addFollowRequestTitle, 'Should have thrown an error');
       } catch (error) {
         expect(error).toBeDefined();
         expect(error.name).toBe('DroppError');
@@ -548,7 +548,7 @@ describe(interUserFunctions, () => {
       try {
         await UserAccessor.addFollowRequest(this.user1, null);
         expect(false).toBe(true);
-        Log(addFollowRequestTitle, 'Should have thrown an error');
+        log(addFollowRequestTitle, 'Should have thrown an error');
       } catch (error) {
         expect(error).toBeDefined();
         expect(error.name).toBe('DroppError');
@@ -567,7 +567,7 @@ describe(interUserFunctions, () => {
       await UserAccessor.addFollowRequest(this.user1, this.user2);
       expect(this.user1.followRequests).toContain(this.user2.username);
       expect(this.user2.followerRequests).toContain(this.user1.username);
-      Log(addFollowRequestTitle, this.user1.followRequests);
+      log(addFollowRequestTitle, this.user1.followRequests);
       done();
     });
   });
@@ -578,7 +578,7 @@ describe(interUserFunctions, () => {
       try {
         await UserAccessor.addFollow(null, this.user2);
         expect(false).toBe(true);
-        Log(addFollowTitle, 'Should have thrown an error');
+        log(addFollowTitle, 'Should have thrown an error');
       } catch (error) {
         expect(error).toBeDefined();
         expect(error.name).toBe('DroppError');
@@ -597,7 +597,7 @@ describe(interUserFunctions, () => {
       try {
         await UserAccessor.addFollow(this.user1, null);
         expect(false).toBe(true);
-        Log(addFollowTitle, 'Should have thrown an error');
+        log(addFollowTitle, 'Should have thrown an error');
       } catch (error) {
         expect(error).toBeDefined();
         expect(error.name).toBe('DroppError');
@@ -620,7 +620,7 @@ describe(interUserFunctions, () => {
       expect(this.user2.followerRequests).not.toContain(this.user1.username);
       expect(this.user1.follows).toContain(this.user2.username);
       expect(this.user2.followers).toContain(this.user1.username);
-      Log(addFollowTitle, this.user1.follows);
+      log(addFollowTitle, this.user1.follows);
       done();
     });
   });
@@ -631,7 +631,7 @@ describe(interUserFunctions, () => {
       try {
         await UserAccessor.removeFollowRequest(null, this.user2);
         expect(false).toBe(true);
-        Log(removeFollowRequestTitle, 'Should have thrown an error');
+        log(removeFollowRequestTitle, 'Should have thrown an error');
       } catch (error) {
         expect(error).toBeDefined();
         expect(error.name).toBe('DroppError');
@@ -650,7 +650,7 @@ describe(interUserFunctions, () => {
       try {
         await UserAccessor.removeFollowRequest(this.user1, null);
         expect(false).toBe(true);
-        Log(removeFollowRequestTitle, 'Should have thrown an error');
+        log(removeFollowRequestTitle, 'Should have thrown an error');
       } catch (error) {
         expect(error).toBeDefined();
         expect(error.name).toBe('DroppError');
@@ -671,7 +671,7 @@ describe(interUserFunctions, () => {
       await UserAccessor.removeFollowRequest(this.user1, this.user2);
       expect(this.user1.followRequests).not.toContain(this.user2.username);
       expect(this.user2.followerRequests).not.toContain(this.user1.username);
-      Log(removeFollowRequestTitle, this.user1.followRequests);
+      log(removeFollowRequestTitle, this.user1.followRequests);
       done();
     });
   });
@@ -682,7 +682,7 @@ describe(interUserFunctions, () => {
       try {
         await UserAccessor.removeFollow(null, this.user2);
         expect(false).toBe(true);
-        Log(removeFollowTitle, 'Should have thrown an error');
+        log(removeFollowTitle, 'Should have thrown an error');
       } catch (error) {
         expect(error).toBeDefined();
         expect(error.name).toBe('DroppError');
@@ -701,7 +701,7 @@ describe(interUserFunctions, () => {
       try {
         await UserAccessor.removeFollow(this.user1, null);
         expect(false).toBe(true);
-        Log(removeFollowTitle, 'Should have thrown an error');
+        log(removeFollowTitle, 'Should have thrown an error');
       } catch (error) {
         expect(error).toBeDefined();
         expect(error.name).toBe('DroppError');
@@ -722,7 +722,7 @@ describe(interUserFunctions, () => {
       await UserAccessor.removeFollow(this.user1, this.user2);
       expect(this.user1.follows).not.toContain(this.user2.username);
       expect(this.user2.followers).not.toContain(this.user1.username);
-      Log(removeFollowTitle, this.user1.follows);
+      log(removeFollowTitle, this.user1.follows);
       done();
     });
   });
@@ -753,7 +753,7 @@ describe(removeUserTitle, () => {
     try {
       await UserAccessor.remove(null);
       expect(false).toBe(true);
-      Log(removeUserTitle, 'Should have thrown an error');
+      log(removeUserTitle, 'Should have thrown an error');
     } catch (error) {
       expect(error).toBeDefined();
       expect(error.name).toBe('DroppError');

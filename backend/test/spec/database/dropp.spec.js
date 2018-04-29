@@ -4,16 +4,101 @@ const Utils = require('../../../src/utilities/utils');
 const Firebase = require('../../../src/firebase/firebase');
 const DroppAccessor = require('../../../src/database/dropp');
 
+/**
+ * Logs a message for a User Middleware test
+ * @param {String} _title the describe label
+ * @param {String|Object} _details the log details
+ */
+function log(_title, _details) {
+  Log(`Dropp Accessor ${_title}`, _details);
+}
+
 Firebase.start(process.env.MOCK === '1');
-const getMissingDroppTitle = 'Get non-existent dropp';
+const getDroppTitle = 'Get dropp';
 /* eslint-disable no-undef */
-describe(getMissingDroppTitle, () => {
-  it('attempts to get a non-existent dropp from the database', async (done) => {
+describe(getDroppTitle, () => {
+  beforeEach(async (done) => {
+    this.testDropp = new Dropp({
+      location: '0,0',
+      media: 'false',
+      text: 'test',
+      timestamp: 1,
+      username: 'test',
+    });
+
+    await DroppAccessor.add(this.testDropp);
+    done();
+  });
+
+  afterEach(async (done) => {
+    await DroppAccessor.remove(this.testDropp);
+    delete this.testDropp;
+    done();
+  });
+
+  it('returns null for the forbidden dropp', async (done) => {
+    const dropp = await DroppAccessor.get(DroppAccessor.forbiddenDroppId);
+    expect(dropp).toBeNull();
+    log(getDroppTitle, dropp);
+    done();
+  });
+
+  it('returns null for a non-existent dropp', async (done) => {
     const dropp = await DroppAccessor.get(Utils.newUuid());
     expect(dropp).toBeNull();
-    Log(getMissingDroppTitle, `Non-existent dropp is ${dropp}`);
+    log(getDroppTitle, dropp);
     done();
-  }, 10000);
+  });
+
+  it('returns a dropp for a valid ID', async (done) => {
+    const dropp = await DroppAccessor.get(this.testDropp.id);
+    expect(dropp).toBeDefined();
+    expect(dropp).not.toBeNull();
+    expect(dropp.id).toBe(this.testDropp.id);
+    expect(dropp.text).toBe(this.testDropp.text);
+    expect(dropp.media).toBe(this.testDropp.media);
+    expect(dropp.location).toBe(this.testDropp.location);
+    expect(dropp.username).toBe(this.testDropp.username);
+    expect(dropp.timestamp).toBe(this.testDropp.timestamp);
+    log(getDroppTitle, dropp);
+    done();
+  });
+});
+
+const getAllDroppsTitle = 'Get all dropps';
+describe(getAllDroppsTitle, () => {
+  beforeEach(async (done) => {
+    this.testDropp = new Dropp({
+      location: '0,0',
+      media: 'false',
+      text: 'test',
+      timestamp: 1,
+      username: 'test',
+    });
+
+    await DroppAccessor.add(this.testDropp);
+    done();
+  });
+
+  afterEach(async (done) => {
+    await DroppAccessor.remove(this.testDropp);
+    delete this.testDropp;
+    done();
+  });
+
+  it('returns all the dropps', async (done) => {
+    const dropps = await DroppAccessor.getAll();
+
+    // Check that array doesn't have invalid values
+    expect(Array.isArray(dropps)).toBe(true);
+    expect(dropps.includes(null)).toBe(false);
+    expect(dropps.filter(dropp => dropp.id === DroppAccessor.forbiddenDroppId).length).toBe(0);
+
+    // Check that array has expected value
+    expect(dropps.filter(dropp => dropp.id === this.testDropp.id).length).toBe(1);
+    log(getAllDroppsTitle, dropps.length);
+    done();
+  });
 });
 
 const dropp1 = new Dropp({
@@ -70,24 +155,24 @@ describe(addDroppTitle3, () => {
   }, 10000);
 });
 
-const getDroppTitle = 'Get dropp 1';
-describe(getDroppTitle, () => {
+const getDroppTitle2 = 'Get dropp 1';
+describe(getDroppTitle2, () => {
   it('gets the added dropp from the database', async (done) => {
     const retrievedDropp = await DroppAccessor.get(dropp1.id);
     expect(retrievedDropp).toBeDefined();
     expect(retrievedDropp.id).toBe(dropp1.id);
-    Log(getDroppTitle, retrievedDropp.id);
+    Log(getDroppTitle2, retrievedDropp.id);
     done();
   }, 10000);
 });
 
-const getAllDroppsTitle = 'Get all dropps';
-describe(getAllDroppsTitle, () => {
+const getAllDroppsTitle2 = 'Get all dropps';
+describe(getAllDroppsTitle2, () => {
   it('gets all the dropps from the database', async (done) => {
     const dropps = await DroppAccessor.getAll();
     expect(Array.isArray(dropps)).toBe(true);
     expect(dropps.length).not.toBeLessThan(3);
-    Log(getAllDroppsTitle, dropps.length);
+    Log(getAllDroppsTitle2, dropps.length);
     done();
   }, 10000);
 });

@@ -49,12 +49,13 @@ const get = async function get(_id) {
  */
 const getAll = async function getAll() {
   const source = 'getAll()';
-  log(source, '');
+  log(source);
 
   const json = await Firebase.get(baseUrl);
   const dropps = [];
   Object.entries(json).forEach(([key, value]) => {
     if (key === forbiddenDroppId) return;
+    if (!Utils.hasValue(value)) return;
     /* eslint-disable no-param-reassign */
     value.id = key;
     /* eslint-disable no-param-reassign */
@@ -72,7 +73,7 @@ const getAll = async function getAll() {
  */
 const add = async function add(_dropp) {
   const source = 'add()';
-  log(source, '');
+  log(source);
 
   if (!(_dropp instanceof Dropp)) DroppError.throwServerError(source, null, 'Object is not a Dropp');
 
@@ -149,4 +150,5 @@ module.exports = {
   remove,
   bulkRemove,
   updateText,
+  forbiddenDroppId,
 };
