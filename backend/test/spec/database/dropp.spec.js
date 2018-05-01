@@ -2,6 +2,7 @@ const Log = require('../../logger');
 const Dropp = require('../../../src/models/Dropp');
 const Utils = require('../../../src/utilities/utils');
 const Firebase = require('../../../src/firebase/firebase');
+const DroppError = require('../../../src/errors/DroppError');
 const DroppAccessor = require('../../../src/database/dropp');
 
 /**
@@ -33,6 +34,25 @@ describe(getDroppTitle, () => {
   afterEach(async (done) => {
     await DroppAccessor.remove(this.testDropp);
     delete this.testDropp;
+    done();
+  });
+
+  it('throws an error for an invalid dropp ID', async (done) => {
+    try {
+      await DroppAccessor.get(null);
+      expect(false).toBe(true);
+      log(getDroppTitle, 'Should have thrown error');
+    } catch (error) {
+      expect(error).toBeDefined();
+      expect(error.name).toBe('DroppError');
+      expect(error.details).toBeDefined();
+      expect(error.details.error).toBeDefined();
+      expect(error.details.error.type).toBe(DroppError.type.Server.type);
+      expect(error.details.error.message).toBeDefined();
+      expect(error.details.error.message).toBe(DroppError.type.Server.message);
+      log(getDroppTitle, error.details);
+    }
+
     done();
   });
 
@@ -101,106 +121,405 @@ describe(getAllDroppsTitle, () => {
   });
 });
 
-const dropp1 = new Dropp({
-  location: '0,0',
-  media: 'false',
-  text: 'test',
-  timestamp: 1,
-  username: 'test',
-});
+const createDroppTitle = 'Create dropp';
+describe(createDroppTitle, () => {
+  beforeEach(() => {
+    this.testDropp = new Dropp({
+      location: '0,0',
+      media: 'false',
+      text: 'test',
+      timestamp: 1,
+      username: 'test',
+    });
+  });
 
-const dropp2 = new Dropp({
-  location: '0,0',
-  media: 'false',
-  text: 'test',
-  timestamp: 1,
-  username: 'test',
-});
+  afterEach(() => {
+    delete this.testDropp;
+  });
 
-const dropp3 = new Dropp({
-  location: '0,0',
-  media: 'false',
-  text: 'test',
-  timestamp: 1,
-  username: 'test',
-});
+  it('throws an error for an invalid dropp object', async (done) => {
+    try {
+      await DroppAccessor.add(null);
+      expect(false).toBe(true);
+      log(createDroppTitle, 'Should have thrown error');
+    } catch (error) {
+      expect(error).toBeDefined();
+      expect(error.name).toBe('DroppError');
+      expect(error.details).toBeDefined();
+      expect(error.details.error).toBeDefined();
+      expect(error.details.error.type).toBe(DroppError.type.Server.type);
+      expect(error.details.error.message).toBeDefined();
+      expect(error.details.error.message).toBe(DroppError.type.Server.message);
+      log(createDroppTitle, error.details);
+    }
 
-const addDroppTitle1 = 'Add dropp 1';
-describe(addDroppTitle1, () => {
-  it('adds a dropp to the database', async (done) => {
-    await DroppAccessor.add(dropp1);
-    expect(dropp1.id).toBeDefined();
-    Log(addDroppTitle1, dropp1.id);
     done();
-  }, 10000);
+  });
+
+  it('throws an error for invalid text', async (done) => {
+    this.testDropp.text = false;
+    try {
+      await DroppAccessor.add(this.testDropp);
+      expect(false).toBe(true);
+      log(createDroppTitle, 'Should have thrown error');
+    } catch (error) {
+      expect(error).toBeDefined();
+      expect(error.name).toBe('DroppError');
+      expect(error.details).toBeDefined();
+      expect(error.details.error).toBeDefined();
+      expect(error.details.error.type).toBe(DroppError.type.InvalidRequest.type);
+      expect(error.details.error.message).toBeDefined();
+      expect(typeof error.details.error.message).toBe('string');
+
+      const invalidParameters = error.details.error.message.split(',');
+      expect(invalidParameters.length).toBe(1);
+      expect(invalidParameters[0]).toBe('text');
+      log(createDroppTitle, error.details);
+    }
+
+    done();
+  });
+
+  it('throws an error for invalid media', async (done) => {
+    this.testDropp.media = 1;
+    try {
+      await DroppAccessor.add(this.testDropp);
+      expect(false).toBe(true);
+      log(createDroppTitle, 'Should have thrown error');
+    } catch (error) {
+      expect(error).toBeDefined();
+      expect(error.name).toBe('DroppError');
+      expect(error.details).toBeDefined();
+      expect(error.details.error).toBeDefined();
+      expect(error.details.error.type).toBe(DroppError.type.InvalidRequest.type);
+      expect(error.details.error.message).toBeDefined();
+      expect(typeof error.details.error.message).toBe('string');
+
+      const invalidParameters = error.details.error.message.split(',');
+      expect(invalidParameters.length).toBe(1);
+      expect(invalidParameters[0]).toBe('media');
+      log(createDroppTitle, error.details);
+    }
+
+    done();
+  });
+
+  it('throws an error for an invalid location', async (done) => {
+    this.testDropp.location = 1;
+    try {
+      await DroppAccessor.add(this.testDropp);
+      expect(false).toBe(true);
+      log(createDroppTitle, 'Should have thrown error');
+    } catch (error) {
+      expect(error).toBeDefined();
+      expect(error.name).toBe('DroppError');
+      expect(error.details).toBeDefined();
+      expect(error.details.error).toBeDefined();
+      expect(error.details.error.type).toBe(DroppError.type.InvalidRequest.type);
+      expect(error.details.error.message).toBeDefined();
+      expect(typeof error.details.error.message).toBe('string');
+
+      const invalidParameters = error.details.error.message.split(',');
+      expect(invalidParameters.length).toBe(1);
+      expect(invalidParameters[0]).toBe('location');
+      log(createDroppTitle, error.details);
+    }
+
+    done();
+  });
+
+  it('throws an error for an invalid username', async (done) => {
+    this.testDropp.username = 1;
+    try {
+      await DroppAccessor.add(this.testDropp);
+      expect(false).toBe(true);
+      log(createDroppTitle, 'Should have thrown error');
+    } catch (error) {
+      expect(error).toBeDefined();
+      expect(error.name).toBe('DroppError');
+      expect(error.details).toBeDefined();
+      expect(error.details.error).toBeDefined();
+      expect(error.details.error.type).toBe(DroppError.type.InvalidRequest.type);
+      expect(error.details.error.message).toBeDefined();
+      expect(typeof error.details.error.message).toBe('string');
+
+      const invalidParameters = error.details.error.message.split(',');
+      expect(invalidParameters.length).toBe(1);
+      expect(invalidParameters[0]).toBe('username');
+      log(createDroppTitle, error.details);
+    }
+
+    done();
+  });
+
+  it('throws an error for an invalid timestamp', async (done) => {
+    this.testDropp.timestamp = false;
+    try {
+      await DroppAccessor.add(this.testDropp);
+      expect(false).toBe(true);
+      log(createDroppTitle, 'Should have thrown error');
+    } catch (error) {
+      expect(error).toBeDefined();
+      expect(error.name).toBe('DroppError');
+      expect(error.details).toBeDefined();
+      expect(error.details.error).toBeDefined();
+      expect(error.details.error.type).toBe(DroppError.type.InvalidRequest.type);
+      expect(error.details.error.message).toBeDefined();
+      expect(typeof error.details.error.message).toBe('string');
+
+      const invalidParameters = error.details.error.message.split(',');
+      expect(invalidParameters.length).toBe(1);
+      expect(invalidParameters[0]).toBe('timestamp');
+      log(createDroppTitle, error.details);
+    }
+
+    done();
+  });
+
+  it('adds a dropp to the database for a valid dropp', async (done) => {
+    const result = await DroppAccessor.add(this.testDropp);
+    expect(result.id).toBeDefined();
+    expect(typeof result.id).toBe('string');
+    expect(result).toBe(this.testDropp);
+    done();
+  });
 });
 
-const addDroppTitle2 = 'Add dropp 2';
-describe(addDroppTitle2, () => {
-  it('adds a dropp to the database', async (done) => {
-    await DroppAccessor.add(dropp2);
-    expect(dropp2.id).toBeDefined();
-    Log(addDroppTitle2, dropp2.id);
+const updateDroppTitle = 'Update dropp';
+describe(updateDroppTitle, () => {
+  beforeEach(async (done) => {
+    this.testDropp = new Dropp({
+      location: '0,0',
+      media: 'false',
+      text: 'test',
+      timestamp: 1,
+      username: 'test',
+    });
+
+    await DroppAccessor.add(this.testDropp);
     done();
-  }, 10000);
+  });
+
+  afterEach(async (done) => {
+    await DroppAccessor.remove(this.testDropp);
+    delete this.testDropp;
+    done();
+  });
+
+  it('throws an error for an invalid dropp object', async (done) => {
+    try {
+      await DroppAccessor.updateText(null, 'test');
+      expect(false).toBe(true);
+      log(updateDroppTitle, 'Should have thrown error');
+    } catch (error) {
+      expect(error).toBeDefined();
+      expect(error.name).toBe('DroppError');
+      expect(error.details).toBeDefined();
+      expect(error.details.error).toBeDefined();
+      expect(error.details.error.type).toBe(DroppError.type.Server.type);
+      expect(error.details.error.message).toBeDefined();
+      expect(error.details.error.message).toBe(DroppError.type.Server.message);
+      log(updateDroppTitle, error.details);
+    }
+
+    done();
+  });
+
+  it('throws an error for invalid text', async (done) => {
+    try {
+      await DroppAccessor.updateText(this.testDropp, null);
+      expect(false).toBe(true);
+      log(updateDroppTitle, 'Should have thrown error');
+    } catch (error) {
+      expect(error).toBeDefined();
+      expect(error.name).toBe('DroppError');
+      expect(error.details).toBeDefined();
+      expect(error.details.error).toBeDefined();
+      expect(error.details.error.type).toBe(DroppError.type.InvalidRequest.type);
+      expect(error.details.error.message).toBeDefined();
+      expect(typeof error.details.error.message).toBe('string');
+
+      const invalidParameters = error.details.error.message.split(',');
+      expect(invalidParameters.length).toBe(1);
+      expect(invalidParameters[0]).toBe('text');
+      log(updateDroppTitle, error.details);
+    }
+
+    done();
+  });
+
+  it('updates the text for valid text', async (done) => {
+    const oldText = this.testDropp.text;
+    const newText = Utils.newUuid();
+    await DroppAccessor.updateText(this.testDropp, newText);
+    expect(this.testDropp.text).not.toBe(oldText);
+    expect(this.testDropp.text).toBe(newText);
+    log(updateDroppTitle, this.testDropp.text);
+    done();
+  });
 });
 
-const addDroppTitle3 = 'Add dropp 3';
-describe(addDroppTitle3, () => {
-  it('adds a dropp to the database', async (done) => {
-    await DroppAccessor.add(dropp3);
-    expect(dropp3.id).toBeDefined();
-    Log(addDroppTitle3, dropp3.id);
+const removeDroppTitle = 'Remove dropp';
+describe(removeDroppTitle, () => {
+  beforeEach(async (done) => {
+    this.testDropp = new Dropp({
+      location: '0,0',
+      media: 'false',
+      text: 'test',
+      timestamp: 1,
+      username: 'test',
+    });
+
+    await DroppAccessor.add(this.testDropp);
     done();
-  }, 10000);
+  });
+
+  afterEach(async (done) => {
+    if (this.testDropp) {
+      await DroppAccessor.remove(this.testDropp);
+      delete this.testDropp;
+    }
+
+    done();
+  });
+
+  it('throws an error for an invalid dropp object', async (done) => {
+    try {
+      await DroppAccessor.remove(null);
+      expect(false).toBe(true);
+      log(removeDroppTitle, 'Should have thrown error');
+    } catch (error) {
+      expect(error).toBeDefined();
+      expect(error.name).toBe('DroppError');
+      expect(error.details).toBeDefined();
+      expect(error.details.error).toBeDefined();
+      expect(error.details.error.type).toBe(DroppError.type.Server.type);
+      expect(error.details.error.message).toBeDefined();
+      expect(error.details.error.message).toBe(DroppError.type.Server.message);
+      log(removeDroppTitle, error.details);
+    }
+
+    done();
+  });
+
+  it('removes a dropp from the database', async (done) => {
+    await DroppAccessor.remove(this.testDropp);
+    const result = await DroppAccessor.get(this.testDropp.id);
+    expect(result).toBeNull();
+    log(removeDroppTitle, result);
+
+    // Clean up
+    delete this.testDropp;
+    done();
+  });
 });
 
-const getDroppTitle2 = 'Get dropp 1';
-describe(getDroppTitle2, () => {
-  it('gets the added dropp from the database', async (done) => {
-    const retrievedDropp = await DroppAccessor.get(dropp1.id);
-    expect(retrievedDropp).toBeDefined();
-    expect(retrievedDropp.id).toBe(dropp1.id);
-    Log(getDroppTitle2, retrievedDropp.id);
-    done();
-  }, 10000);
-});
+const bulkRemoveTitle = 'Bulk remove dropps';
+describe(bulkRemoveTitle, () => {
+  beforeEach(async (done) => {
+    this.testDropp1 = new Dropp({
+      location: '0,0',
+      media: 'false',
+      text: 'test',
+      timestamp: 1,
+      username: 'test',
+    });
 
-const getAllDroppsTitle2 = 'Get all dropps';
-describe(getAllDroppsTitle2, () => {
-  it('gets all the dropps from the database', async (done) => {
-    const dropps = await DroppAccessor.getAll();
-    expect(Array.isArray(dropps)).toBe(true);
-    expect(dropps.length).not.toBeLessThan(3);
-    Log(getAllDroppsTitle2, dropps.length);
-    done();
-  }, 10000);
-});
+    this.testDropp2 = new Dropp({
+      location: '0,0',
+      media: 'false',
+      text: 'test',
+      timestamp: 1,
+      username: 'test',
+    });
 
-const updateDroppTextTitle = 'Update dropp text';
-describe(updateDroppTextTitle, () => {
-  it('updates a dropp in the database with new text', async (done) => {
-    await DroppAccessor.updateText(dropp1, 'test 2');
-    Log(updateDroppTextTitle, dropp1.id);
+    await DroppAccessor.add(this.testDropp1);
+    await DroppAccessor.add(this.testDropp2);
     done();
-  }, 10000);
-});
+  });
 
-const deleteDroppTitle = 'Delete dropp';
-describe(deleteDroppTitle, () => {
-  it('deletes a dropp from the database', async (done) => {
-    await DroppAccessor.remove(dropp1);
-    Log(deleteDroppTitle);
-    done();
-  }, 10000);
-});
+  afterEach(async (done) => {
+    if (this.testDropp1) {
+      await DroppAccessor.remove(this.testDropp1);
+      delete this.testDropp1;
+    }
 
-const deleteDroppBulkTitle = 'Delete dropps in bulk';
-describe(deleteDroppBulkTitle, () => {
-  it('deletes dropps from the database in bulk', async (done) => {
-    await DroppAccessor.bulkRemove([dropp2, dropp3]);
-    Log(deleteDroppBulkTitle);
+    if (this.testDropp2) {
+      await DroppAccessor.remove(this.testDropp2);
+      delete this.testDropp2;
+    }
+
     done();
-  }, 10000);
+  });
+
+  it('throws an error for an invalid dropp list object', async (done) => {
+    try {
+      await DroppAccessor.bulkRemove(null);
+      expect(false).toBe(true);
+      log(bulkRemoveTitle, 'Should have thrown error');
+    } catch (error) {
+      expect(error).toBeDefined();
+      expect(error.name).toBe('DroppError');
+      expect(error.details).toBeDefined();
+      expect(error.details.error).toBeDefined();
+      expect(error.details.error.type).toBe(DroppError.type.Server.type);
+      expect(error.details.error.message).toBeDefined();
+      expect(error.details.error.message).toBe(DroppError.type.Server.message);
+      log(bulkRemoveTitle, error.details);
+    }
+
+    done();
+  });
+
+  it('throws an error for an invalid dropp inside a valid list object', async (done) => {
+    const dropps = [this.testDropp1, null];
+    try {
+      await DroppAccessor.bulkRemove(dropps);
+      expect(false).toBe(true);
+      log(bulkRemoveTitle, 'Should have thrown error');
+    } catch (error) {
+      expect(error).toBeDefined();
+      expect(error.name).toBe('DroppError');
+      expect(error.details).toBeDefined();
+      expect(error.details.error).toBeDefined();
+      expect(error.details.error.type).toBe(DroppError.type.Server.type);
+      expect(error.details.error.message).toBeDefined();
+      expect(error.details.error.message).toBe(DroppError.type.Server.message);
+      log(bulkRemoveTitle, error.details);
+    }
+
+    done();
+  });
+
+  it('removes multiple dropps from the database at once', async (done) => {
+    const dropps = [this.testDropp1, this.testDropp2];
+    await DroppAccessor.bulkRemove(dropps);
+    const dropp1 = await DroppAccessor.get(this.testDropp1.id);
+    const dropp2 = await DroppAccessor.get(this.testDropp2.id);
+    expect(dropp1).toBeNull();
+    expect(dropp2).toBeNull();
+    log(bulkRemoveTitle, [dropp1, dropp2]);
+
+    // Clean up
+    delete this.testDropp1;
+    delete this.testDropp2;
+    done();
+  });
+
+  it('does not throw an error for a dropp without an ID', async (done) => {
+    const originalId = this.testDropp1.id;
+    this.testDropp1.id = null;
+    const dropps = [this.testDropp1];
+    await DroppAccessor.bulkRemove(dropps);
+    const result = await DroppAccessor.get(originalId);
+    expect(result).toBeDefined();
+    expect(result).not.toBeNull();
+    expect(result.id).toBe(originalId);
+    log(bulkRemoveTitle, result);
+
+    // Clean up
+    this.testDropp1.id = originalId;
+    done();
+  });
 });
 /* eslint-enable no-undef */

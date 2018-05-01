@@ -33,6 +33,7 @@ const get = async function get(_id) {
   const source = 'get()';
   log(source, _id);
 
+  if (typeof _id !== 'string') DroppError.throwServerError(source, null, 'Dropp ID is not a string');
   if (_id === forbiddenDroppId) return null;
   const details = await Firebase.get(`${baseUrl}/${_id}`);
 
@@ -73,7 +74,7 @@ const getAll = async function getAll() {
  */
 const add = async function add(_dropp) {
   const source = 'add()';
-  log(source);
+  log(source, _dropp);
 
   if (!(_dropp instanceof Dropp)) DroppError.throwServerError(source, null, 'Object is not a Dropp');
 
@@ -102,7 +103,7 @@ const add = async function add(_dropp) {
  */
 const updateText = async function updateText(_dropp, _text) {
   const source = 'updateText()';
-  log(source, _dropp.id);
+  log(source, _dropp);
 
   if (!(_dropp instanceof Dropp)) DroppError.throwServerError(source, null, 'Object is not a Dropp');
   if (!Validator.isValidTextPost(_text)) DroppError.throwInvalidRequestError(source, 'text');
@@ -119,7 +120,7 @@ const updateText = async function updateText(_dropp, _text) {
  */
 const remove = async function remove(_dropp) {
   const source = 'remove()';
-  log(source, _dropp.id);
+  log(source, _dropp);
 
   if (!(_dropp instanceof Dropp)) DroppError.throwServerError(source, null, 'Object is not a Dropp');
   await Firebase.remove(`${baseUrl}/${_dropp.id}`);
@@ -127,20 +128,26 @@ const remove = async function remove(_dropp) {
 
 /**
  * Deletes dropps from the database in bulk
- * @param {Array} [_dropps=[]] the dropps to delete
+ * @param {Array} [_dropps] the dropps to delete
  * @throws {DroppError|Error}
  */
-const bulkRemove = async function bulkRemove(_dropps = []) {
+const bulkRemove = async function bulkRemove(_dropps) {
   const source = 'bulkRemove()';
   log(source, _dropps);
+
+  if (!Array.isArray(_dropps)) {
+    DroppError.throwServerError(source, null, `Expected an array of dropps but got ${_dropps}`);
+  }
 
   const removals = [];
   _dropps.forEach((dropp) => {
     if (!(dropp instanceof Dropp)) DroppError.throwServerError(source, null, 'Object is not a Dropp');
-    else removals.push(`${baseUrl}/${dropp.id}`);
+    else if (Utils.hasValue(dropp.id)) removals.push(`${baseUrl}/${dropp.id}`);
   });
 
-  await Firebase.bulkRemove(removals);
+  if (removals.length > 0) {
+    await Firebase.bulkRemove(removals);
+  }
 };
 
 module.exports = {
