@@ -32,11 +32,12 @@ class DatabaseError extends Error {
   }
 
   static format(_type, _source, _details) {
+    const type = Utils.hasValue(_type) ? _type.type : this.type.Unknown.type;
     const id = Utils.newUuid();
     const details = {
       id,
       source: _source,
-      type: _type.type,
+      type,
       details: _details,
       timestamp: new Date().toISOString(),
     };
@@ -76,6 +77,10 @@ DatabaseError.type = {
   State: {
     type: 'invalid_state',
     message: 'The database was in an invalid state',
+  },
+  Unknown: {
+    type: 'unknown',
+    message: 'An unknown error occurred',
   },
 };
 
