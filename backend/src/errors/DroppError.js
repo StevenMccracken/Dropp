@@ -32,7 +32,13 @@ class DroppError extends Error {
   }
 
   get statusCode() {
-    return this._privateDetails.error.type.status;
+    let statusCode = null;
+    if (
+      Utils.hasValue(this._privateDetails) &&
+      Utils.hasValue(this._privateDetails.error) &&
+      Utils.hasValue(this._privateDetails.error.type)
+    ) statusCode = this._privateDetails.error.type.status;
+    return statusCode;
   }
 
   set details(_details) {
@@ -43,21 +49,23 @@ class DroppError extends Error {
     this._privateDetails = _privateDetails;
   }
 
-  set statusCode(_statusCode) {
-    this._statusCode = _statusCode;
-  }
-
   static format(_type, _source, _clientMessage, _serverLog) {
     const id = Utils.newUuid();
     let formattedMessage;
     if (Utils.hasValue(_clientMessage)) {
       formattedMessage = Array.isArray(_clientMessage) ? _clientMessage.join(',') : _clientMessage;
-    } else formattedMessage = _type.message;
+    } else if (Utils.hasValue(_type) && Utils.hasValue(_type.message)) {
+      formattedMessage = _type.message;
+    } else formattedMessage = DroppError.type.Server.message;
+
+    let clientType;
+    if (Utils.hasValue(_type) && Utils.hasValue(_type.type)) clientType = _type.type;
+    else clientType = DroppError.type.Server.type;
 
     const clientDetails = {
       error: {
         id,
-        type: _type.type,
+        type: clientType,
         message: formattedMessage,
       },
     };
@@ -89,8 +97,8 @@ class DroppError extends Error {
     this.throw(this.type.Resource, _source, _clientMessage, _serverLog);
   }
 
-  static throwResourceDneError(_source, _clientMessage, _serverLog) {
-    const formattedMessage = `That ${_clientMessage} does not exist`;
+  static throwResourceDneError(_source, _resource, _serverLog) {
+    const formattedMessage = `That ${_resource} does not exist`;
     this.throw(this.type.ResourceDNE, _source, formattedMessage, _serverLog);
   }
 
@@ -102,6 +110,11 @@ class DroppError extends Error {
     this.throw(this.type.Login, _source, _clientMessage, _serverLog);
   }
 
+  /**
+   * Builds a client error repsonse based on a given JWT error
+   * @param {String} _errorMessage the full JWT error message
+   * @return {String} a formal error message for the client
+   */
   static handleJwtError(_errorMessage) {
     /**
      * If token is malformed, sometimes errorMessage will contain 'Unexpected
@@ -115,29 +128,29 @@ class DroppError extends Error {
     let reason;
     switch (errorMessage) {
       case 'jwt expired':
-        reason = 'Expired web token';
+        reason = DroppError.TokenReason.expired;
         break;
       case 'invalid token':
-        reason = 'Invalid web token';
+        reason = DroppError.TokenReason.invalid;
         break;
       case 'invalid signature':
-        reason = 'Invalid web token';
+        reason = DroppError.TokenReason.invalid;
         break;
       case 'jwt malformed':
-        reason = 'Invalid web token';
+        reason = DroppError.TokenReason.invalid;
         break;
       case 'Unexpected token':
-        reason = 'Invalid web token';
+        reason = DroppError.TokenReason.invalid;
         break;
       case 'No auth token':
-        reason = 'Missing web token';
+        reason = DroppError.TokenReason.missing;
         break;
       case 'jwt must be provided':
-        reason = 'Missing web token';
+        reason = DroppError.TokenReason.missing;
         break;
       default:
-        reason = 'Unknown web token error';
-    } // End switch (errorMessage)
+        reason = DroppError.TokenReason.unknown;
+    }
 
     return reason;
   }
@@ -148,26 +161,33 @@ class DroppError extends Error {
    * @param {Object} _request the HTTP request
    * @param {Object} _response the HTTP response
    * @param {Object} _error JSON containing specific authentication errors
-   * @return {DroppError} a formalized error object
+   * @return {DroppError} error of type Auth
    */
   static handleAuthError(_source, _request, _response, _error) {
     let serverLog;
     let clientErrorMessage = null;
-
-    if (Utils.hasValue(_error.passportError)) serverLog = _error.passportError;
-    else if (Utils.hasValue(_error.tokenError)) {
+    const error = Utils.hasValue(_error) ? _error : {};
+    if (Utils.hasValue(error.passportError)) serverLog = error.passportError;
+    else if (Utils.hasValue(error.tokenError)) {
       // The token in the request body is invalid
-      serverLog = _error.tokenError.message;
-      clientErrorMessage = this.handleJwtError(_error.tokenError.message);
-    } else if (_error.userInfoMissing) {
+      serverLog = error.tokenError.message;
+      clientErrorMessage = this.handleJwtError(error.tokenError.message);
+    } else if (error.userInfoMissing) {
       serverLog = 'User for this token cannot be found';
-      clientErrorMessage = 'Expired web token';
+      clientErrorMessage = DroppError.TokenReason.expired;
     } else serverLog = 'Unknown error';
 
-    const error = this.format(this.type.Auth, _source, clientErrorMessage, serverLog);
-    return error;
+    const authError = this.format(this.type.Auth, _source, clientErrorMessage, serverLog);
+    return authError;
   }
 }
+
+DroppError.TokenReason = {
+  expired: 'Expired web token',
+  invalid: 'Invalid web token',
+  missing: 'Missing web token',
+  unknown: 'Unknown web token error',
+};
 
 DroppError.type = {
   Server: {

@@ -33,10 +33,11 @@ class ModelError extends Error {
 
   static format(_type, _source, _details) {
     const id = Utils.newUuid();
+    const type = Utils.hasValue(_type) ? _type.type : this.type.Unknown.type;
     const details = {
       id,
       source: _source,
-      type: _type.type,
+      type,
       details: _details,
       timestamp: new Date().toISOString(),
     };
@@ -54,8 +55,11 @@ class ModelError extends Error {
     this.throw(this.type.Constructor, _source, _details);
   }
 
-  static throwInvalidMemebersError(_source, _invalidMembers = []) {
-    const details = { invalidMembers: _invalidMembers };
+  static throwInvalidMembersError(_source, _invalidMembers) {
+    const details = {
+      invalidMembers: _invalidMembers,
+    };
+
     this.throw(this.type.Constructor, _source, details);
   }
 }
@@ -64,6 +68,10 @@ ModelError.type = {
   Constructor: {
     type: 'constructor',
     message: 'Invalid data given to the constructor',
+  },
+  Unknown: {
+    type: 'unknown',
+    message: 'An unknown error occurred',
   },
 };
 

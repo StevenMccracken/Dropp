@@ -135,13 +135,65 @@ describe(utilsHasValueTitle, () => {
 
 const utilsStepperTitle = 'Utils stepper generator';
 describe(utilsStepperTitle, () => {
-  const stepper = Utils.stepper();
   it('should return 3 after being called 3 times', (done) => {
+    const stepper = Utils.stepper();
     stepper.next();
     stepper.next();
     const step = stepper.next().value;
     expect(step).toBe(3);
     Log(utilsStepperTitle, `After 3 calls to the generator, the value returned is ${step}`);
+    done();
+  });
+});
+
+const utilsGetIpAddressTitle = 'Utils getIpAddress()';
+describe(utilsGetIpAddressTitle, () => {
+  it('returns emtpy string for default value', (done) => {
+    const ip = Utils.getIpAddress();
+    expect(ip).toBe('');
+    Log(utilsGetIpAddressTitle, ip);
+    done();
+  });
+
+  it('returns correct value for x-forwarded-for in headers', (done) => {
+    const details = {
+      headers: {
+        'x-forwarded-for': 'test',
+      },
+    };
+
+    const ip = Utils.getIpAddress(details);
+    expect(ip).toBe('test');
+    Log(utilsGetIpAddressTitle, ip);
+    done();
+  });
+
+  it('returns correct value for remoteAddress in connection', (done) => {
+    const details = {
+      connection: {
+        remoteAddress: 'test',
+      },
+    };
+
+    const ip = Utils.getIpAddress(details);
+    expect(ip).toBe('test');
+    Log(utilsGetIpAddressTitle, ip);
+    done();
+  });
+
+  it('returns correct value for when both headers and connection are valid', (done) => {
+    const details = {
+      headers: {
+        'x-forwarded-for': 'test',
+      },
+      connection: {
+        remoteAddress: 'test2',
+      },
+    };
+
+    const ip = Utils.getIpAddress(details);
+    expect(ip).toBe('test');
+    Log(utilsGetIpAddressTitle, ip);
     done();
   });
 });

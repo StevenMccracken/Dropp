@@ -6,7 +6,7 @@ const UserAccessor = require('../../../src/database/user');
 const DroppError = require('../../../src/errors/DroppError');
 
 /**
- * Logs a message for a User Middleware test
+ * Logs a message for the current test files
  * @param {String} _title the describe label
  * @param {String|Object} _details the log details
  */

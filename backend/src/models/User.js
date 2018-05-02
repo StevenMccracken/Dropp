@@ -18,7 +18,7 @@ class User extends Object {
     if (!Validator.isValidEmail(_details.email)) invalidMembers.push('email');
     if (!Validator.isValidUsername(_details.username)) invalidMembers.push('username');
     if (invalidMembers.length > 0) {
-      ModelError.throwInvalidMemebersError('Dropp', invalidMembers);
+      ModelError.throwInvalidMembersError('Dropp', invalidMembers);
     }
 
     this.email = _details.email;
