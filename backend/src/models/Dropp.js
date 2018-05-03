@@ -7,9 +7,8 @@ const Validator = require('../utilities/validator');
  * @extends Object
  */
 class Dropp extends Object {
-  constructor(_details = {}) {
+  constructor(_details) {
     super();
-
     if (!Utils.hasValue(_details)) {
       ModelError.throwConstructorError('Dropp', 'details arg has no value');
     }
