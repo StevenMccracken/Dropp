@@ -148,8 +148,8 @@ describe(utilsStepperTitle, () => {
 
 const utilsGetIpAddressTitle = 'Utils getIpAddress()';
 describe(utilsGetIpAddressTitle, () => {
-  it('returns emtpy string for default value', (done) => {
-    const ip = Utils.getIpAddress();
+  it('returns emtpy string for a null value', (done) => {
+    const ip = Utils.getIpAddress(null);
     expect(ip).toBe('');
     Log(utilsGetIpAddressTitle, ip);
     done();
