@@ -3,7 +3,7 @@ const Utils = require('../../../src/utilities/utils');
 const DroppError = require('../../../src/errors/DroppError');
 
 /**
- * Logs a message for the current test files
+ * Logs a message for the current test file
  * @param {String} _title the describe label
  * @param {String|Object} _details the log details
  */

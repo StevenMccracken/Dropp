@@ -7,9 +7,8 @@ const Validator = require('../utilities/validator');
  * @extends Object
  */
 class User extends Object {
-  constructor(_details = {}) {
+  constructor(_details) {
     super();
-
     if (!Utils.hasValue(_details)) {
       ModelError.throwConstructorError('User', 'details arg has no value');
     }
@@ -188,24 +187,27 @@ class User extends Object {
     delete data.followerRequests;
     delete data.followRequestCount;
     delete data.followerRequestCount;
-
     return data;
   }
 
   doesFollow(_username) {
-    return this._follows.includes(_username);
+    const requests = Utils.hasValue(this._follows) ? this._follows : [];
+    return requests.includes(_username);
   }
 
   hasFollower(_username) {
-    return this._followers.includes(_username);
+    const requests = Utils.hasValue(this._followers) ? this._followers : [];
+    return requests.includes(_username);
   }
 
   hasFollowRequest(_username) {
-    return this._followRequests.includes(_username);
+    const requests = Utils.hasValue(this._followRequests) ? this._followRequests : [];
+    return requests.includes(_username);
   }
 
   hasFollowerRequest(_username) {
-    return this._followerRequests.includes(_username);
+    const requests = Utils.hasValue(this._followerRequests) ? this._followerRequests : [];
+    return requests.includes(_username);
   }
 }
 
