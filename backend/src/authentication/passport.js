@@ -9,7 +9,7 @@ const UserAccessor = require('../database/user');
 const JwtStrategy = PassportJwt.Strategy;
 const JwtExtract = PassportJwt.ExtractJwt;
 
-const passport = function passport(_passport = {}) {
+const passport = function passport(_passport) {
   // JSON containing criteria used to compare incoming JWTs to existing JwtStrategy
   const options = {
     secretOrKey: JwtConfig.secret,
