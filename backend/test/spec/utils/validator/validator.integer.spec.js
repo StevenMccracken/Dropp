@@ -1,14 +1,23 @@
 const Log = require('../../../logger');
 const Validator = require('../../../../src/utilities/validator');
 
-const integerInputValidator = 'Integer input validator';
+/**
+ * Logs a message for the current test file
+ * @param {String} _title the describe label
+ * @param {String|Object} _details the log details
+ */
+function log(_title, _details) {
+  Log(`Validator ${_title}`, _details);
+}
+
+const isValidIntegerTitle = 'isValidInteger()';
 /* eslint-disable no-undef */
-describe(integerInputValidator, () => {
+describe(isValidIntegerTitle, () => {
   it('should return false for a null value', (done) => {
     const value = null;
     const result = Validator.isValidInteger(value);
     expect(result).toBe(false);
-    Log(integerInputValidator, `${value} returns ${result}`);
+    log(isValidIntegerTitle, `${value} returns ${result}`);
     done();
   });
 
@@ -16,7 +25,7 @@ describe(integerInputValidator, () => {
     const value = undefined;
     const result = Validator.isValidInteger(value);
     expect(result).toBe(false);
-    Log(integerInputValidator, `${value} returns ${result}`);
+    log(isValidIntegerTitle, `${value} returns ${result}`);
     done();
   });
 
@@ -24,7 +33,7 @@ describe(integerInputValidator, () => {
     const value = [];
     const result = Validator.isValidInteger(value);
     expect(result).toBe(false);
-    Log(integerInputValidator, `${value} returns ${result}`);
+    log(isValidIntegerTitle, `${value} returns ${result}`);
     done();
   });
 
@@ -32,7 +41,7 @@ describe(integerInputValidator, () => {
     const value = {};
     const result = Validator.isValidInteger(value);
     expect(result).toBe(false);
-    Log(integerInputValidator, `${value} returns ${result}`);
+    log(isValidIntegerTitle, `${value} returns ${result}`);
     done();
   });
 
@@ -40,7 +49,7 @@ describe(integerInputValidator, () => {
     const value = function value() {};
     const result = Validator.isValidInteger(value);
     expect(result).toBe(false);
-    Log(integerInputValidator, `${value} returns ${result}`);
+    log(isValidIntegerTitle, `${value} returns ${result}`);
     done();
   });
 
@@ -48,7 +57,7 @@ describe(integerInputValidator, () => {
     const value = false;
     const result = Validator.isValidInteger(value);
     expect(result).toBe(false);
-    Log(integerInputValidator, `${value} returns ${result}`);
+    log(isValidIntegerTitle, `${value} returns ${result}`);
     done();
   });
 
@@ -56,7 +65,7 @@ describe(integerInputValidator, () => {
     const value = true;
     const result = Validator.isValidInteger(value);
     expect(result).toBe(false);
-    Log(integerInputValidator, `${value} returns ${result}`);
+    log(isValidIntegerTitle, `${value} returns ${result}`);
     done();
   });
 
@@ -64,7 +73,7 @@ describe(integerInputValidator, () => {
     const value = '';
     const result = Validator.isValidInteger(value);
     expect(result).toBe(false);
-    Log(integerInputValidator, `${value} returns ${result}`);
+    log(isValidIntegerTitle, `${value} returns ${result}`);
     done();
   });
 
@@ -72,7 +81,7 @@ describe(integerInputValidator, () => {
     const value = 'hey';
     const result = Validator.isValidInteger(value);
     expect(result).toBe(false);
-    Log(integerInputValidator, `${value} returns ${result}`);
+    log(isValidIntegerTitle, `${value} returns ${result}`);
     done();
   });
 
@@ -80,7 +89,7 @@ describe(integerInputValidator, () => {
     const value = '1';
     const result = Validator.isValidInteger(value);
     expect(result).toBe(false);
-    Log(integerInputValidator, `${value} returns ${result}`);
+    log(isValidIntegerTitle, `${value} returns ${result}`);
     done();
   });
 
@@ -88,7 +97,7 @@ describe(integerInputValidator, () => {
     const value = '1.0';
     const result = Validator.isValidInteger(value);
     expect(result).toBe(false);
-    Log(integerInputValidator, `${value} returns ${result}`);
+    log(isValidIntegerTitle, `${value} returns ${result}`);
     done();
   });
 
@@ -96,7 +105,7 @@ describe(integerInputValidator, () => {
     const value = 1.1;
     const result = Validator.isValidInteger(value);
     expect(result).toBe(false);
-    Log(integerInputValidator, `${value} returns ${result}`);
+    log(isValidIntegerTitle, `${value} returns ${result}`);
     done();
   });
 
@@ -104,7 +113,7 @@ describe(integerInputValidator, () => {
     const value = -1;
     const result = Validator.isValidInteger(value);
     expect(result).toBe(true);
-    Log(integerInputValidator, `${value} returns ${result}`);
+    log(isValidIntegerTitle, `${value} returns ${result}`);
     done();
   });
 
@@ -112,7 +121,7 @@ describe(integerInputValidator, () => {
     const value = 0;
     const result = Validator.isValidInteger(value);
     expect(result).toBe(true);
-    Log(integerInputValidator, `${value} returns ${result}`);
+    log(isValidIntegerTitle, `${value} returns ${result}`);
     done();
   });
 
@@ -120,7 +129,7 @@ describe(integerInputValidator, () => {
     const value = 1;
     const result = Validator.isValidInteger(value);
     expect(result).toBe(true);
-    Log(integerInputValidator, `${value} returns ${result}`);
+    log(isValidIntegerTitle, `${value} returns ${result}`);
     done();
   });
 });

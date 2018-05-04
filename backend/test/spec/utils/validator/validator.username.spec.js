@@ -1,14 +1,23 @@
 const Log = require('../../../logger');
 const Validator = require('../../../../src/utilities/validator');
 
-const usernameInputValidator = 'Username input validator';
+/**
+ * Logs a message for the current test file
+ * @param {String} _title the describe label
+ * @param {String|Object} _details the log details
+ */
+function log(_title, _details) {
+  Log(`Validator ${_title}`, _details);
+}
+
+const isValidUsernameTitle = 'isValidUsername()';
 /* eslint-disable no-undef */
-describe(usernameInputValidator, () => {
+describe(isValidUsernameTitle, () => {
   it('should return false for a null value', (done) => {
     const value = null;
     const result = Validator.isValidUsername(value);
     expect(result).toBe(false);
-    Log(usernameInputValidator, `${value} returns ${result}`);
+    log(isValidUsernameTitle, `${value} returns ${result}`);
     done();
   });
 
@@ -16,7 +25,7 @@ describe(usernameInputValidator, () => {
     const value = undefined;
     const result = Validator.isValidUsername(value);
     expect(result).toBe(false);
-    Log(usernameInputValidator, `${value} returns ${result}`);
+    log(isValidUsernameTitle, `${value} returns ${result}`);
     done();
   });
 
@@ -24,7 +33,7 @@ describe(usernameInputValidator, () => {
     const value = [];
     const result = Validator.isValidUsername(value);
     expect(result).toBe(false);
-    Log(usernameInputValidator, `${value} returns ${result}`);
+    log(isValidUsernameTitle, `${value} returns ${result}`);
     done();
   });
 
@@ -32,7 +41,7 @@ describe(usernameInputValidator, () => {
     const value = {};
     const result = Validator.isValidUsername(value);
     expect(result).toBe(false);
-    Log(usernameInputValidator, `${value} returns ${result}`);
+    log(isValidUsernameTitle, `${value} returns ${result}`);
     done();
   });
 
@@ -40,7 +49,7 @@ describe(usernameInputValidator, () => {
     const value = function value() {};
     const result = Validator.isValidUsername(value);
     expect(result).toBe(false);
-    Log(usernameInputValidator, `${value} returns ${result}`);
+    log(isValidUsernameTitle, `${value} returns ${result}`);
     done();
   });
 
@@ -48,7 +57,7 @@ describe(usernameInputValidator, () => {
     const value = false;
     const result = Validator.isValidUsername(value);
     expect(result).toBe(false);
-    Log(usernameInputValidator, `${value} returns ${result}`);
+    log(isValidUsernameTitle, `${value} returns ${result}`);
     done();
   });
 
@@ -56,7 +65,7 @@ describe(usernameInputValidator, () => {
     const value = true;
     const result = Validator.isValidUsername(value);
     expect(result).toBe(false);
-    Log(usernameInputValidator, `${value} returns ${result}`);
+    log(isValidUsernameTitle, `${value} returns ${result}`);
     done();
   });
 
@@ -64,7 +73,7 @@ describe(usernameInputValidator, () => {
     const value = '';
     const result = Validator.isValidUsername(value);
     expect(result).toBe(false);
-    Log(usernameInputValidator, `${value} returns ${result}`);
+    log(isValidUsernameTitle, `${value} returns ${result}`);
     done();
   });
 
@@ -72,7 +81,7 @@ describe(usernameInputValidator, () => {
     const value = '    ';
     const result = Validator.isValidUsername(value);
     expect(result).toBe(false);
-    Log(usernameInputValidator, `${value} returns ${result}`);
+    log(isValidUsernameTitle, `${value} returns ${result}`);
     done();
   });
 
@@ -80,7 +89,7 @@ describe(usernameInputValidator, () => {
     const value = '\t';
     const result = Validator.isValidUsername(value);
     expect(result).toBe(false);
-    Log(usernameInputValidator, `${value} returns ${result}`);
+    log(isValidUsernameTitle, `${value} returns ${result}`);
     done();
   });
 
@@ -88,7 +97,7 @@ describe(usernameInputValidator, () => {
     const value = '\n';
     const result = Validator.isValidUsername(value);
     expect(result).toBe(false);
-    Log(usernameInputValidator, `${value} returns ${result}`);
+    log(isValidUsernameTitle, `${value} returns ${result}`);
     done();
   });
 
@@ -96,7 +105,7 @@ describe(usernameInputValidator, () => {
     const value = '\r';
     const result = Validator.isValidUsername(value);
     expect(result).toBe(false);
-    Log(usernameInputValidator, `${value} returns ${result}`);
+    log(isValidUsernameTitle, `${value} returns ${result}`);
     done();
   });
 
@@ -104,7 +113,7 @@ describe(usernameInputValidator, () => {
     const value = 'console.log(\'hey\')';
     const result = Validator.isValidUsername(value);
     expect(result).toBe(false);
-    Log(usernameInputValidator, `${value} returns ${result}`);
+    log(isValidUsernameTitle, `${value} returns ${result}`);
     done();
   });
 
@@ -112,7 +121,7 @@ describe(usernameInputValidator, () => {
     const value = 1.1;
     const result = Validator.isValidUsername(value);
     expect(result).toBe(false);
-    Log(usernameInputValidator, `${value} returns ${result}`);
+    log(isValidUsernameTitle, `${value} returns ${result}`);
     done();
   });
 
@@ -120,7 +129,7 @@ describe(usernameInputValidator, () => {
     const value = 0;
     const result = Validator.isValidUsername(value);
     expect(result).toBe(false);
-    Log(usernameInputValidator, `${value} returns ${result}`);
+    log(isValidUsernameTitle, `${value} returns ${result}`);
     done();
   });
 
@@ -128,7 +137,7 @@ describe(usernameInputValidator, () => {
     const value = '1';
     const result = Validator.isValidUsername(value);
     expect(result).toBe(false);
-    Log(usernameInputValidator, `${value} returns ${result}`);
+    log(isValidUsernameTitle, `${value} returns ${result}`);
     done();
   });
 
@@ -136,7 +145,7 @@ describe(usernameInputValidator, () => {
     const value = '  hey-';
     const result = Validator.isValidUsername(value);
     expect(result).toBe(false);
-    Log(usernameInputValidator, `${value} returns ${result}`);
+    log(isValidUsernameTitle, `${value} returns ${result}`);
     done();
   });
 
@@ -144,7 +153,7 @@ describe(usernameInputValidator, () => {
     const value = 'he$';
     const result = Validator.isValidUsername(value);
     expect(result).toBe(false);
-    Log(usernameInputValidator, `${value} returns ${result}`);
+    log(isValidUsernameTitle, `${value} returns ${result}`);
     done();
   });
 
@@ -152,7 +161,7 @@ describe(usernameInputValidator, () => {
     const value = 'h.';
     const result = Validator.isValidUsername(value);
     expect(result).toBe(false);
-    Log(usernameInputValidator, `${value} returns ${result}`);
+    log(isValidUsernameTitle, `${value} returns ${result}`);
     done();
   });
 
@@ -160,7 +169,7 @@ describe(usernameInputValidator, () => {
     const value = '__.';
     const result = Validator.isValidUsername(value);
     expect(result).toBe(false);
-    Log(usernameInputValidator, `${value} returns ${result}`);
+    log(isValidUsernameTitle, `${value} returns ${result}`);
     done();
   });
 
@@ -168,7 +177,7 @@ describe(usernameInputValidator, () => {
     const value = '__-';
     const result = Validator.isValidUsername(value);
     expect(result).toBe(false);
-    Log(usernameInputValidator, `${value} returns ${result}`);
+    log(isValidUsernameTitle, `${value} returns ${result}`);
     done();
   });
 
@@ -176,7 +185,7 @@ describe(usernameInputValidator, () => {
     const value = 'he';
     const result = Validator.isValidUsername(value);
     expect(result).toBe(true);
-    Log(usernameInputValidator, `${value} returns ${result}`);
+    log(isValidUsernameTitle, `${value} returns ${result}`);
     done();
   });
 
@@ -184,7 +193,7 @@ describe(usernameInputValidator, () => {
     const value = 'he_';
     const result = Validator.isValidUsername(value);
     expect(result).toBe(true);
-    Log(usernameInputValidator, `${value} returns ${result}`);
+    log(isValidUsernameTitle, `${value} returns ${result}`);
     done();
   });
 
@@ -192,7 +201,7 @@ describe(usernameInputValidator, () => {
     const value = 'he._';
     const result = Validator.isValidUsername(value);
     expect(result).toBe(true);
-    Log(usernameInputValidator, `${value} returns ${result}`);
+    log(isValidUsernameTitle, `${value} returns ${result}`);
     done();
   });
 
@@ -200,7 +209,7 @@ describe(usernameInputValidator, () => {
     const value = 'he-w';
     const result = Validator.isValidUsername(value);
     expect(result).toBe(true);
-    Log(usernameInputValidator, `${value} returns ${result}`);
+    log(isValidUsernameTitle, `${value} returns ${result}`);
     done();
   });
 });

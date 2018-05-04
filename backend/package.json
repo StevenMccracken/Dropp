@@ -22,7 +22,8 @@
     "exclude": [
       "test",
       "config",
-      "Gruntfile.js"
+      "Gruntfile.js",
+      "src/authentication/passport.js"
     ]
   },
   "keywords": [],
