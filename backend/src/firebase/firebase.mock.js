@@ -30,12 +30,12 @@ const set = function set(_paths = [], _value = null) {
 /**
  * Creates a sequential list of paths to traverse
  * the database from a given database URL
- * @param {String} [_url=''] the URL for a
- * specific piece of data in the database
+ * @param {String} [_url] the URL for a specific piece of data in the database
  * @return {[String]} the URL broken up into it's individual paths
  */
-const urlParts = function urlParts(_url = '') {
-  const parts = _url.split('/');
+const urlParts = function urlParts(_url) {
+  const url = typeof _url === 'string' ? _url : '';
+  const parts = url.split('/');
 
   // Drop the first element empty space, if it exists
   if (parts.length > 0 && parts[0] === '') {
