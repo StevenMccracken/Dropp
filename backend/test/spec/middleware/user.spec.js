@@ -70,6 +70,28 @@ describe('User Middleware Tests', () => {
         delete this.invalidUserDetails;
       });
 
+      it('throws an error for null user details', async (done) => {
+        try {
+          const result = await UserMiddleware.create(null);
+          expect(result).not.toBeDefined();
+          log(invalidCreateUserTitle, 'Should have thrown error');
+          done();
+        } catch (error) {
+          expect(error).toBeDefined();
+          expect(error.name).toBe('DroppError');
+          expect(error.details).toBeDefined();
+          expect(error.details.error).toBeDefined();
+          expect(error.details.error.type).toBe(DroppError.type.InvalidRequest.type);
+          expect(error.details.error.message).toBeDefined();
+          expect(typeof error.details.error.message).toBe('string');
+
+          const invalidParameters = error.details.error.message.split(',');
+          expect(invalidParameters.length).toBe(3);
+          log(invalidCreateUserTitle, error.details);
+          done();
+        }
+      });
+
       it('throws an error for missing username', async (done) => {
         try {
           delete this.invalidUserDetails.username;
@@ -298,6 +320,28 @@ describe('User Middleware Tests', () => {
       }
     });
 
+    it('throws an error for null details', async (done) => {
+      try {
+        const result = await UserMiddleware.get(this.testUser, null);
+        expect(result).not.toBeDefined();
+        log(invalidGetUserTitle, 'Should have thrown error');
+        done();
+      } catch (error) {
+        expect(error).toBeDefined();
+        expect(error.name).toBe('DroppError');
+        expect(error.details).toBeDefined();
+        expect(error.details.error).toBeDefined();
+        expect(error.details.error.type).toBe(DroppError.type.InvalidRequest.type);
+        expect(error.details.error.message).toBeDefined();
+        expect(typeof error.details.error.message).toBe('string');
+
+        const invalidParameters = error.details.error.message.split(',');
+        expect(invalidParameters.length).toBe(1);
+        log(invalidGetUserTitle, error.details);
+        done();
+      }
+    });
+
     it('throws an error for an invalid username', async (done) => {
       try {
         const result = await UserMiddleware.get(this.testUser, this.invalidDetails);
@@ -424,6 +468,28 @@ describe('User Middleware Tests', () => {
 
     afterEach(() => {
       delete this.invalidDetails;
+    });
+
+    it('throws an error for null details', async (done) => {
+      try {
+        const result = await UserMiddleware.getAuthToken(null);
+        expect(result).not.toBeDefined();
+        log(invalidGetAuthTokenTitle, 'Should have thrown error');
+        done();
+      } catch (error) {
+        expect(error).toBeDefined();
+        expect(error.name).toBe('DroppError');
+        expect(error.details).toBeDefined();
+        expect(error.details.error).toBeDefined();
+        expect(error.details.error.type).toBe(DroppError.type.InvalidRequest.type);
+        expect(error.details.error.message).toBeDefined();
+        expect(typeof error.details.error.message).toBe('string');
+
+        const invalidParameters = error.details.error.message.split(',');
+        expect(invalidParameters.length).toBe(2);
+        log(invalidGetAuthTokenTitle, error.details);
+        done();
+      }
     });
 
     it('throws an error for an invalid username and password', async (done) => {
@@ -590,6 +656,30 @@ describe('User Middleware Tests', () => {
         expect(error.details.error.type).toBe(DroppError.type.Server.type);
         expect(error.details.error.message).toBeDefined();
         expect(error.details.error.message).toBe(DroppError.type.Server.message);
+        log(invalidUpdatePasswordTitle, error.details);
+        done();
+      }
+    });
+
+    it('throws an error for null details', async (done) => {
+      try {
+        /* eslint-disable max-len */
+        const result = await UserMiddleware.updatePassword(this.testUser, this.testUser.username, null);
+        /* eslint-enable max-len */
+        expect(result).not.toBeDefined();
+        log(invalidUpdatePasswordTitle, 'Should have thrown error');
+        done();
+      } catch (error) {
+        expect(error).toBeDefined();
+        expect(error.name).toBe('DroppError');
+        expect(error.details).toBeDefined();
+        expect(error.details.error).toBeDefined();
+        expect(error.details.error.type).toBe(DroppError.type.InvalidRequest.type);
+        expect(error.details.error.message).toBeDefined();
+        expect(typeof error.details.error.message).toBe('string');
+
+        const invalidParameters = error.details.error.message.split(',');
+        expect(invalidParameters.length).toBe(2);
         log(invalidUpdatePasswordTitle, error.details);
         done();
       }
@@ -816,6 +906,30 @@ describe('User Middleware Tests', () => {
         expect(error.details.error.type).toBe(DroppError.type.Server.type);
         expect(error.details.error.message).toBeDefined();
         expect(error.details.error.message).toBe(DroppError.type.Server.message);
+        log(invalidUpdateEmailTitle, error.details);
+        done();
+      }
+    });
+
+    it('throws an error for null details', async (done) => {
+      try {
+        /* eslint-disable max-len */
+        const result = await UserMiddleware.updateEmail(this.testUser, this.testUser.username, null);
+        /* eslint-enable max-len */
+        expect(result).not.toBeDefined();
+        log(invalidUpdateEmailTitle, 'Should have thrown error');
+        done();
+      } catch (error) {
+        expect(error).toBeDefined();
+        expect(error.name).toBe('DroppError');
+        expect(error.details).toBeDefined();
+        expect(error.details.error).toBeDefined();
+        expect(error.details.error.type).toBe(DroppError.type.InvalidRequest.type);
+        expect(error.details.error.message).toBeDefined();
+        expect(typeof error.details.error.message).toBe('string');
+
+        const invalidParameters = error.details.error.message.split(',');
+        expect(invalidParameters.length).toBe(1);
         log(invalidUpdateEmailTitle, error.details);
         done();
       }
@@ -1287,6 +1401,30 @@ describe('User Middleware Tests', () => {
           expect(error.details.error.type).toBe(DroppError.type.Server.type);
           expect(error.details.error.message).toBeDefined();
           expect(error.details.error.message).toBe(DroppError.type.Server.message);
+          log(invalidRespondToFollowerRequestTitle, error.details);
+          done();
+        }
+      });
+
+      it('throws an error for null details', async (done) => {
+        try {
+          /* eslint-disable max-len */
+          const result = await UserMiddleware.respondToFollowerRequest(this.testUser, this.invalidUsername, null);
+          /* eslint-enable max-len */
+          expect(result).not.toBeDefined();
+          log(invalidRespondToFollowerRequestTitle, 'Should have thrown error');
+          done();
+        } catch (error) {
+          expect(error).toBeDefined();
+          expect(error.name).toBe('DroppError');
+          expect(error.details).toBeDefined();
+          expect(error.details.error).toBeDefined();
+          expect(error.details.error.type).toBe(DroppError.type.InvalidRequest.type);
+          expect(error.details.error.message).toBeDefined();
+          expect(typeof error.details.error.message).toBe('string');
+
+          const invalidParameters = error.details.error.message.split(',');
+          expect(invalidParameters.length).toBe(1);
           log(invalidRespondToFollowerRequestTitle, error.details);
           done();
         }

@@ -24,53 +24,55 @@ function log(_source, _message) {
 /**
  * Retrieves a user by their username
  * @param {User} _currentUser the current user for the request
- * @param {Object} [_details={}] the information to get the user
+ * @param {Object} [_details] the information to get the user
  * @return {Object} the retrieved user, or
  * null if no user with that username exists
  * @throws {DroppError} if the _username parameter is not
  * a valid username or if no user by that username exists
  */
-const get = async function get(_currentUser, _details = {}) {
+const get = async function get(_currentUser, _details) {
   const source = 'get()';
-  log(source, _details.username);
+  log(source, _details);
 
   if (!(_currentUser instanceof User)) {
     DroppError.throwServerError(source, null, 'Object is not a User');
   }
 
-  if (!Validator.isValidUsername(_details.username)) {
+  const details = Utils.hasValue(_details) ? _details : {};
+  if (!Validator.isValidUsername(details.username)) {
     DroppError.throwInvalidRequestError(source, 'username');
   }
 
-  const user = await UserAccessor.get(_details.username);
+  const user = await UserAccessor.get(details.username);
   if (!Utils.hasValue(user)) DroppError.throwResourceDneError(source, 'user');
   return _currentUser.username === user.username ? user.privateData : user.publicData;
 };
 
 /**
  * Creates a new user with the given details
- * @param {Object} [_details={}] the information for
+ * @param {Object} [_details] the information for
  * the user, including username, email, and password
  * @return {User} the created user
  * @throws {DroppError} if any of the details are
  * invalid, or if a user already exists with that username
  */
-const create = async function create(_details = {}) {
+const create = async function create(_details) {
   const source = 'create()';
-  log(source, _details.username);
+  log(source, _details);
 
   const invalidMembers = [];
-  if (!Validator.isValidEmail(_details.email)) invalidMembers.push('email');
-  if (!Validator.isValidUsername(_details.username)) invalidMembers.push('username');
-  if (!Validator.isValidPassword(_details.password)) invalidMembers.push('password');
+  const details = Utils.hasValue(_details) ? _details : {};
+  if (!Validator.isValidEmail(details.email)) invalidMembers.push('email');
+  if (!Validator.isValidUsername(details.username)) invalidMembers.push('username');
+  if (!Validator.isValidPassword(details.password)) invalidMembers.push('password');
   if (invalidMembers.length > 0) DroppError.throwInvalidRequestError(source, invalidMembers);
-  const existingUser = await UserAccessor.get(_details.username);
+  const existingUser = await UserAccessor.get(details.username);
   if (Utils.hasValue(existingUser) && existingUser instanceof User) {
     DroppError.throwResourceError(source, 'A user with that username already exists');
   }
 
-  const user = new User(_details);
-  const password = await Auth.hash(_details.password);
+  const user = new User(details);
+  const password = await Auth.hash(details.password);
   await UserAccessor.create(user, password);
   return user;
 };
@@ -78,28 +80,29 @@ const create = async function create(_details = {}) {
 /**
  * Validates a given password for a given user,
  * and returns a JWT if the validation succeeds
- * @param {Object} [_details={}] the information
+ * @param {Object} [_details] the information
  * for the user, including username and password
  * @return {Object} a JSON containing the authentication token
  * @throws {DroppError} if the username or password
  * in _details is invalid, or if the validation fails
  */
-const getAuthToken = async function getAuthToken(_details = {}) {
+const getAuthToken = async function getAuthToken(_details) {
   const source = 'getAuthToken()';
-  log(source, _details.username);
+  log(source, _details);
 
   const invalidMembers = [];
-  if (!Validator.isValidUsername(_details.username)) invalidMembers.push('username');
-  if (!Validator.isValidPassword(_details.password)) invalidMembers.push('password');
+  const details = Utils.hasValue(_details) ? _details : {};
+  if (!Validator.isValidUsername(details.username)) invalidMembers.push('username');
+  if (!Validator.isValidPassword(details.password)) invalidMembers.push('password');
   if (invalidMembers.length > 0) DroppError.throwInvalidRequestError(source, invalidMembers);
-  const retrievedPassword = await UserAccessor.getPassword(_details.username);
+  const retrievedPassword = await UserAccessor.getPassword(details.username);
   if (!Validator.isValidPassword(retrievedPassword)) {
     DroppError.throwLoginError(source, null, `Retrieved password: ${retrievedPassword}`);
   }
 
-  const passwordsMatch = await Auth.validatePasswords(_details.password, retrievedPassword);
+  const passwordsMatch = await Auth.validatePasswords(details.password, retrievedPassword);
   if (!passwordsMatch) DroppError.throwLoginError(source);
-  const user = await UserAccessor.get(_details.username);
+  const user = await UserAccessor.get(details.username);
   if (!Utils.hasValue(user)) {
     DroppError.throwServerError(source, null, `Password was valid, but user was ${user}`);
   }
@@ -117,15 +120,15 @@ const getAuthToken = async function getAuthToken(_details = {}) {
 
 /**
  * Creates a new user with the given details
- * @param {Object} [_details={}] the information for
+ * @param {Object} [_details] the information for
  * the user, including username, email, and passwords
  * @return {Object} the success details, including an authentication token
  * @throws {Error} if any of the details are invalid,
  * or if a user already exists with that username
  */
-const addNewUser = async function addNewUser(_details = {}) {
+const addNewUser = async function addNewUser(_details) {
   const source = 'addNewUser()';
-  log(source, _details.username);
+  log(source, _details);
 
   const user = await create(_details);
   const token = Auth.generateToken(user);
@@ -143,14 +146,14 @@ const addNewUser = async function addNewUser(_details = {}) {
  * Updates a user's password
  * @param {User} _currentUser the current user for the request
  * @param {String} _username the username of the user to update
- * @param {Object} [_details={}] the details
+ * @param {Object} [_details] the details
  * containing the old and new password to update to
  * @return {Object} the success details, including a new authentication token
  * @throws {DroppError} if the provided passwords are not valid,
  * if the current user does not match the requested user, or
  * if the given password does not match the existing password
  */
-const updatePassword = async function updatePassword(_currentUser, _username, _details = {}) {
+const updatePassword = async function updatePassword(_currentUser, _username, _details) {
   const source = 'updatePassword()';
   log(source, _username);
 
@@ -159,10 +162,11 @@ const updatePassword = async function updatePassword(_currentUser, _username, _d
   }
 
   const invalidMembers = [];
-  if (!Validator.isValidPassword(_details.oldPassword)) invalidMembers.push('oldPassword');
-  if (!Validator.isValidPassword(_details.newPassword)) invalidMembers.push('newPassword');
+  const details = Utils.hasValue(_details) ? _details : {};
+  if (!Validator.isValidPassword(details.oldPassword)) invalidMembers.push('oldPassword');
+  if (!Validator.isValidPassword(details.newPassword)) invalidMembers.push('newPassword');
   if (invalidMembers.length > 0) DroppError.throwInvalidRequestError(source, invalidMembers);
-  if (_details.oldPassword === _details.newPassword) {
+  if (details.oldPassword === details.newPassword) {
     DroppError.throwResourceError(source, 'New password must be different from old password');
   }
 
@@ -175,12 +179,12 @@ const updatePassword = async function updatePassword(_currentUser, _username, _d
     DroppError.throwServerError(source, null, `Retrieved password: ${retrievedPassword}`);
   }
 
-  const passwordsMatch = await Auth.validatePasswords(_details.oldPassword, retrievedPassword);
+  const passwordsMatch = await Auth.validatePasswords(details.oldPassword, retrievedPassword);
   if (!passwordsMatch) {
     DroppError.throwResourceError(source, 'Old password must match existing password');
   }
 
-  const hashedPassword = await Auth.hash(_details.newPassword);
+  const hashedPassword = await Auth.hash(details.newPassword);
   await UserAccessor.updatePassword(_currentUser, hashedPassword);
   const token = Auth.generateToken(_currentUser);
   const data = {
@@ -197,12 +201,12 @@ const updatePassword = async function updatePassword(_currentUser, _username, _d
  * Updates a user's email
  * @param {User} _currentUser the current user for the request
  * @param {String} _username the username of the user to update
- * @param {Object} [_details={}] the details containing the new email
+ * @param {Object} [_details] the details containing the new email
  * @return {Object} the success details
  * @throws {DroppError} if the provided email is invalid
  * or if the current user does not match the requested user
  */
-const updateEmail = async function updateEmail(_currentUser, _username, _details = {}) {
+const updateEmail = async function updateEmail(_currentUser, _username, _details) {
   const source = 'updateEmail()';
   log(source, _username);
 
@@ -210,7 +214,8 @@ const updateEmail = async function updateEmail(_currentUser, _username, _details
     DroppError.throwServerError(source, null, 'Object is not a User');
   }
 
-  if (!Validator.isValidEmail(_details.newEmail)) {
+  const details = Utils.hasValue(_details) ? _details : {};
+  if (!Validator.isValidEmail(details.newEmail)) {
     DroppError.throwInvalidRequestError(source, 'newEmail');
   }
 
@@ -218,7 +223,7 @@ const updateEmail = async function updateEmail(_currentUser, _username, _details
     DroppError.throwResourceError(source, 'Unauthorized to update that user\'s email');
   }
 
-  await UserAccessor.updateEmail(_currentUser, _details.newEmail);
+  await UserAccessor.updateEmail(_currentUser, details.newEmail);
   const data = {
     success: {
       message: 'Successful email update',
@@ -326,12 +331,13 @@ const removeFollowRequest = async function removeFollowRequest(_currentUser, _us
  * @param {User} _currentUser the current user for the request
  * @param {String} _username the username
  * of the user to repond to the request for
+ * @param {Object} _details the details containing accept boolean parameter
  * @return {Object} the success details
  * @throws {DroppError} if the given username or accept parameter is invalid, if
  * the user already follows the current user, or if there is no follower request
  */
 /* eslint-disable max-len */
-const respondToFollowerRequest = async function respondToFollowerRequest(_currentUser, _username, _details = {}) {
+const respondToFollowerRequest = async function respondToFollowerRequest(_currentUser, _username, _details) {
 /* eslint-disable max-len */
   const source = 'respondToFollowerRequest()';
   log(source, _username);
@@ -341,8 +347,9 @@ const respondToFollowerRequest = async function respondToFollowerRequest(_curren
   }
 
   const invalidMembers = [];
+  const details = Utils.hasValue(_details) ? _details : {};
   if (!Validator.isValidUsername(_username)) invalidMembers.push('username');
-  if (!Validator.isValidBoolean(_details.accept)) invalidMembers.push('accept');
+  if (!Validator.isValidBoolean(details.accept)) invalidMembers.push('accept');
   if (invalidMembers.length > 0) DroppError.throwInvalidRequestError(source, invalidMembers);
   const user = await UserAccessor.get(_username);
   if (!Utils.hasValue(user)) DroppError.throwResourceDneError(source, 'user');
@@ -351,7 +358,7 @@ const respondToFollowerRequest = async function respondToFollowerRequest(_curren
   }
 
   let response;
-  if (_details.accept) {
+  if (details.accept) {
     await UserAccessor.addFollow(user, _currentUser);
     response = 'acceptance';
   } else {

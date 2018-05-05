@@ -56,8 +56,8 @@ const verifyToken = function verifyToken(_request, _response) {
       if (user instanceof User) resolve(user);
       else {
         const error = {
+          tokenError,
           passportError,
-          tokenError: Utils.hasValue(tokenError) ? tokenError : null,
           userInfoMissing: !Utils.hasValue(user),
         };
 
