@@ -65,7 +65,6 @@ describe(urlPartsTitle, () => {
 });
 
 const getTitle = 'Get';
-/* eslint-disable no-undef */
 describe(getTitle, () => {
   beforeEach(async (done) => {
     this.data = 'test';
@@ -106,6 +105,51 @@ describe(getTitle, () => {
     const result = await MockFirebase.get(this.paths);
     expect(result.val()).toBe(this.data);
     log(getTitle, result.val());
+    done();
+  });
+});
+
+const pushTitle = 'Push';
+describe(pushTitle, () => {
+  beforeEach(async (done) => {
+    this.data = 'test';
+    this.paths = ['test', 'test', 'test'];
+    done();
+  });
+
+  afterEach(async (done) => {
+    if (this.url) {
+      await MockFirebase.remove(this.paths);
+      delete this.url;
+    }
+
+    delete this.data;
+    delete this.paths;
+    done();
+  });
+
+  it('returns undefined for a non-array path argument', async (done) => {
+    const result = await MockFirebase.push(null, this.data);
+    expect(result).not.toBeDefined();
+    log(pushTitle, result);
+    done();
+  });
+
+  it('pushes data for an empty path array', async (done) => {
+    this.url = await MockFirebase.push([], this.data);
+    expect(this.url).not.toContain('/');
+    const data = await MockFirebase.get([this.url]);
+    expect(data.val()).toBe(this.data);
+    log(pushTitle, this.url);
+    done();
+  });
+
+  it('pushes data for a non-empty path array', async (done) => {
+    this.url = await MockFirebase.push(this.paths, this.data);
+    expect(this.url).toContain('test/test/test/');
+    const data = await MockFirebase.get(this.url.split('/'));
+    expect(data.val()).toBe(this.data);
+    log(pushTitle, this.url);
     done();
   });
 });

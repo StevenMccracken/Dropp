@@ -85,17 +85,23 @@ const get = function get(_paths) {
 
 /**
  * Adds new data at a specified path, with a unique key
- * @param {[String]} [_paths=[]] the path within the database to add the data
+ * @param {[String]} [_paths] the path within the database to add the data
  * @param {String|Number|Boolean|Object} [_data] the data to add at the given path
  * @return {Promise<String>} the full path, including
  * the data's key at the given path, as a URL
  */
-const push = function push(_paths = [], _data) {
+const push = function push(_paths, _data) {
+  if (!Array.isArray(_paths)) {
+    return new Promise(resolve => resolve());
+  }
+
   const promise = new Promise((resolve) => {
     const key = Utils.newUuid();
     const fullPaths = _paths.concat(key);
     set(fullPaths, _data);
-    const fullPath = `/${_paths.join('/')}/${key}`;
+    let fullPath;
+    if (_paths.length > 0) fullPath = `${_paths.join('/')}/${key}`;
+    else fullPath = `${key}`;
     resolve(fullPath);
   });
 
