@@ -55,7 +55,8 @@ describe(getErrorTitle, () => {
 
   it('returns details for an valid error ID', async (done) => {
     const result = await ErrorAccessor.get(this.testErrorId);
-    expect(result).toBe(this.testError);
+    expect(Object.keys(result).length).toBe(Object.keys(this.testError).length);
+    expect(result.test).toBe(this.testError.test);
     log(getErrorTitle, result);
     done();
   });
@@ -91,7 +92,8 @@ describe(addErrorTitle, () => {
     expect(typeof this.testErrorId).toBe('string');
     expect(this.testErrorId.length).not.toBe(0);
     const result = await ErrorAccessor.get(this.testErrorId);
-    expect(result).toBe(this.testError);
+    expect(Object.keys(result).length).toBe(Object.keys(this.testError).length);
+    expect(result.test).toBe(this.testError.test);
     log(addErrorTitle, this.testErrorId);
     done();
   });
@@ -121,7 +123,8 @@ describe(removeErrorTitle, () => {
   it('does nothing for an invalid error ID argument', async (done) => {
     await ErrorAccessor.remove(null);
     const result = await ErrorAccessor.get(this.testErrorId);
-    expect(result).toBe(this.testError);
+    expect(Object.keys(result).length).toBe(Object.keys(this.testError).length);
+    expect(result.test).toBe(this.testError.test);
     log(removeErrorTitle, result);
     done();
   });
@@ -129,7 +132,8 @@ describe(removeErrorTitle, () => {
   it('does nothing for an invalid error ID', async (done) => {
     await ErrorAccessor.remove('$');
     const result = await ErrorAccessor.get(this.testErrorId);
-    expect(result).toBe(this.testError);
+    expect(Object.keys(result).length).toBe(Object.keys(this.testError).length);
+    expect(result.test).toBe(this.testError.test);
     log(removeErrorTitle, result);
     done();
   });
