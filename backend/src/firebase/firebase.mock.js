@@ -13,18 +13,20 @@ const datastore = {
 
 /**
  * Sets a given value to a given path within the database
- * @param {[String]} [_paths=[]] the path within the database
- * @param {String|Number|Boolean|Object} [_value=null] the value to set at the given path
+ * @param {[String]} [_paths] the path within the database
+ * @param {String|Number|Boolean|Object} [_value] the value to set at the given path
  */
-const set = function set(_paths = [], _value = null) {
+const set = function set(_paths, _value) {
   let storeReference = datastore;
-  for (let i = 0; i < _paths.length - 1; i++) {
-    const path = _paths[i];
+  const paths = Array.isArray(_paths) ? _paths : [];
+  for (let i = 0; i < paths.length - 1; i++) {
+    const path = paths[i];
     if (!storeReference[path]) storeReference[path] = {};
     storeReference = storeReference[path];
   }
 
-  storeReference[_paths[_paths.length - 1]] = _value;
+  if (Utils.hasValue(_value)) storeReference[paths[paths.length - 1]] = _value;
+  else delete storeReference[paths[paths.length - 1]];
 };
 
 /**
@@ -47,13 +49,19 @@ const urlParts = function urlParts(_url) {
 
 /**
  * Retrives the data at a given path
- * @param {[String]} [_paths=[]] the path
- * within the database to the expected data
+ * @param {[String]} [_paths] the path within the database to the expected data
  * @return {Promise<Object>} an object holding the
  * data. Get the data by calling val() on the object
  */
-const get = function get(_paths = []) {
+const get = function get(_paths) {
   const promise = new Promise((resolve) => {
+    const wrapper = {};
+    if (!Array.isArray(_paths)) {
+      wrapper.val = () => null;
+      resolve(wrapper);
+      return;
+    }
+
     let subStore = datastore;
     _paths.forEach((path) => {
       if (!Utils.hasValue(subStore)) return;
@@ -63,13 +71,12 @@ const get = function get(_paths = []) {
     });
 
     let value;
-    if (typeof subStore === 'object' && Object.keys(subStore).length === 0) value = null;
+    if (Utils.hasValue(subStore) &&
+        typeof subStore === 'object' &&
+        Object.keys(subStore).length === 0) value = null;
     else value = subStore;
 
-    const wrapper = {
-      val: () => value,
-    };
-
+    wrapper.val = () => value;
     resolve(wrapper);
   });
 

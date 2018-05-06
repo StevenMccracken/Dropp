@@ -63,4 +63,50 @@ describe(urlPartsTitle, () => {
     done();
   });
 });
+
+const getTitle = 'Get';
+/* eslint-disable no-undef */
+describe(getTitle, () => {
+  beforeEach(async (done) => {
+    this.data = 'test';
+    this.paths = ['test', 'test', 'test'];
+    await MockFirebase.setData(this.paths, this.data);
+    done();
+  });
+
+  it('returns null for a null path', async (done) => {
+    const result = await MockFirebase.get(null);
+    expect(result.val()).toBeNull();
+    log(getTitle, result.val());
+    done();
+  });
+
+  it('returns null for a non-existent path', async (done) => {
+    const paths = this.paths.concat([this.data, Utils.newUuid()]);
+    const result = await MockFirebase.get(paths);
+    expect(result.val()).toBeNull();
+    log(getTitle, result.val());
+    done();
+  });
+
+  it('returns null for a semi-existent path', async (done) => {
+    const paths = [
+      this.paths[0],
+      this.paths[1],
+      Utils.newUuid(),
+    ];
+
+    const result = await MockFirebase.get(paths);
+    expect(result.val()).toBeNull();
+    log(getTitle, result.val());
+    done();
+  });
+
+  it('returns a value for an existing path', async (done) => {
+    const result = await MockFirebase.get(this.paths);
+    expect(result.val()).toBe(this.data);
+    log(getTitle, result.val());
+    done();
+  });
+});
 /* eslint-enable no-undef */
