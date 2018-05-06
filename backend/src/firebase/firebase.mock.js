@@ -110,15 +110,15 @@ const push = function push(_paths, _data) {
 
 /**
  * Sets data at a specified path
- * @param {[String]} [_paths=[]] the path within the database to set the data.
+ * @param {[String]} [_paths] the path within the database to set the data.
  * The path does not have to fully exist yet for this operation to succeed
  * @param {String|Number|Boolean|Object} [_data] the data
  * to set at the given path. Pass null to delete the data
  * @return {Promise}
  */
-const setData = function setData(_paths = [], _data) {
+const setData = function setData(_paths, _data) {
   const promise = new Promise((resolve) => {
-    set(_paths, _data);
+    if (Array.isArray(_paths)) set(_paths, _data);
     resolve();
   });
 

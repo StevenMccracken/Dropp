@@ -153,4 +153,43 @@ describe(pushTitle, () => {
     done();
   });
 });
+
+const setTitle = 'Set';
+describe(setTitle, () => {
+  beforeEach(() => {
+    this.data = 'test';
+    this.paths = [
+      Utils.newUuid(),
+      Utils.newUuid(),
+      Utils.newUuid(),
+    ];
+
+    this.deleteTestData = true;
+  });
+
+  afterEach(async (done) => {
+    if (this.deleteTestData) await MockFirebase.remove(this.paths);
+    delete this.data;
+    delete this.paths;
+    delete this.deleteTestData;
+    done();
+  });
+
+  it('does not set data for non-array paths argument', async (done) => {
+    await MockFirebase.setData(null, this.data);
+    const result = await MockFirebase.get(this.paths);
+    expect(result.val()).toBeNull();
+    this.deleteTestData = false;
+    log(setTitle, result.val());
+    done();
+  });
+
+  it('sets data for an array of paths', async (done) => {
+    await MockFirebase.setData(this.paths, this.data);
+    const result = await MockFirebase.get(this.paths);
+    expect(result.val()).toBe(this.data);
+    log(setTitle, result.val());
+    done();
+  });
+});
 /* eslint-enable no-undef */
