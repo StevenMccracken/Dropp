@@ -341,4 +341,45 @@ describe(updateTitle, () => {
     });
   });
 });
+
+const removeTitle = 'Remove';
+describe(removeTitle, () => {
+  beforeEach(async (done) => {
+    this.data = 'test';
+    this.paths = [
+      Utils.newUuid(),
+      Utils.newUuid(),
+      Utils.newUuid(),
+    ];
+
+    this.deleteTestData = true;
+    await MockFirebase.setData(this.paths, this.data);
+    done();
+  });
+
+  afterEach(async (done) => {
+    if (this.deleteTestData) await MockFirebase.remove(this.paths);
+    delete this.data;
+    delete this.paths;
+    delete this.deleteTestData;
+    done();
+  });
+
+  it('does not delete data for non-array paths argument', async (done) => {
+    await MockFirebase.remove(null);
+    const result = await MockFirebase.get(this.paths);
+    expect(result.val()).toBe(this.data);
+    log(removeTitle, result.val());
+    done();
+  });
+
+  it('does delete data for a valid paths argument', async (done) => {
+    await MockFirebase.remove(this.paths);
+    const result = await MockFirebase.get(this.paths);
+    expect(result.val()).toBeNull();
+    this.deleteTestData = false;
+    log(removeTitle, result.val());
+    done();
+  });
+});
 /* eslint-enable no-undef */

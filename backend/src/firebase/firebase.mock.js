@@ -151,12 +151,12 @@ const update = function update(_updates) {
 
 /**
  * Removes data at a specified path
- * @param {[String]} [_paths=[]] the path within the database to set the data.
+ * @param {[String]} [_paths] the path within the database to set the data.
  * @return {Promise}
  */
 const remove = function remove(_paths) {
   const promise = new Promise((resolve) => {
-    set(_paths, null);
+    if (Array.isArray(_paths)) set(_paths, null);
     resolve();
   });
 
