@@ -191,5 +191,154 @@ describe(setTitle, () => {
     log(setTitle, result.val());
     done();
   });
+
+  const editDeleteSetTitle = 'Single Edit & Delete';
+  describe(editDeleteSetTitle, () => {
+    beforeEach(async (done) => {
+      await MockFirebase.setData(this.paths, this.data);
+      done();
+    });
+
+    it('edits existing data', async (done) => {
+      // Verify data before update
+      const result = await MockFirebase.get(this.paths);
+      expect(result.val()).toBe(this.data);
+
+      const newData = Utils.newUuid();
+      await MockFirebase.setData(this.paths, newData);
+
+      // Verify data after update
+      const newResult = await MockFirebase.get(this.paths);
+      expect(newResult.val()).toBe(newData);
+      log(editDeleteSetTitle, result.val());
+      done();
+    });
+
+    it('removes existing data', async (done) => {
+      // Verify data before update
+      const result = await MockFirebase.get(this.paths);
+      expect(result.val()).toBe(this.data);
+
+      await MockFirebase.setData(this.paths, null);
+
+      // Verify data after update
+      const newResult = await MockFirebase.get(this.paths);
+      expect(newResult.val()).toBeNull();
+      log(editDeleteSetTitle, result.val());
+      done();
+    });
+  });
+});
+
+const updateTitle = 'Update';
+describe(updateTitle, () => {
+  beforeEach(() => {
+    this.data = 'test';
+    this.path1 = [
+      Utils.newUuid(),
+      Utils.newUuid(),
+      Utils.newUuid(),
+    ];
+
+    this.path2 = [
+      Utils.newUuid(),
+      Utils.newUuid(),
+      Utils.newUuid(),
+    ];
+
+    this.updates = {};
+    this.updates[this.path1.join('/')] = this.data;
+    this.updates[this.path2.join('/')] = this.data;
+    this.deleteTestData = true;
+  });
+
+  afterEach(async (done) => {
+    if (this.deleteTestData) {
+      this.updates[this.path1.join('/')] = null;
+      this.updates[this.path2.join('/')] = null;
+      await MockFirebase.update(this.updates);
+    }
+
+    delete this.data;
+    delete this.paths;
+    delete this.updates;
+    delete this.deleteTestData;
+    done();
+  });
+
+  it('does not perform data for non-object argument', async (done) => {
+    await MockFirebase.update(null);
+    const result1 = await MockFirebase.get(this.path1);
+    const result2 = await MockFirebase.get(this.path2);
+    expect(result1.val()).toBeNull();
+    expect(result2.val()).toBeNull();
+    this.deleteTestData = false;
+    log(updateTitle);
+    done();
+  });
+
+  it('performs multiple additions for a valid object argument', async (done) => {
+    await MockFirebase.update(this.updates);
+    const result1 = await MockFirebase.get(this.path1);
+    const result2 = await MockFirebase.get(this.path2);
+    expect(result1.val()).toBe(this.data);
+    expect(result2.val()).toBe(this.data);
+    log(updateTitle);
+    done();
+  });
+
+  const editDeleteUpdateTitle = 'Multi Edit & Delete';
+  describe(editDeleteUpdateTitle, () => {
+    beforeEach(async (done) => {
+      await MockFirebase.update(this.updates);
+      done();
+    });
+
+    it('performs multiple edits on existing data', async (done) => {
+      // Verify data before update
+      const result1 = await MockFirebase.get(this.path1);
+      const result2 = await MockFirebase.get(this.path2);
+      expect(result1.val()).toBe(this.data);
+      expect(result2.val()).toBe(this.data);
+
+      const edits = {};
+      const editedData = Utils.newUuid();
+      edits[this.path1.join('/')] = editedData;
+      edits[this.path2.join('/')] = editedData;
+      await MockFirebase.update(edits);
+
+      // Verify data after update
+      const result3 = await MockFirebase.get(this.path1);
+      const result4 = await MockFirebase.get(this.path2);
+      expect(result3.val()).toBe(editedData);
+      expect(result4.val()).toBe(editedData);
+
+      log(updateTitle, editDeleteUpdateTitle);
+      done();
+    });
+
+    it('performs multiple deletions on existing data', async (done) => {
+      // Verify data before update
+      const result1 = await MockFirebase.get(this.path1);
+      const result2 = await MockFirebase.get(this.path2);
+      expect(result1.val()).toBe(this.data);
+      expect(result2.val()).toBe(this.data);
+
+      const deletions = {};
+      deletions[this.path1.join('/')] = null;
+      deletions[this.path2.join('/')] = null;
+      await MockFirebase.update(deletions);
+
+      // Verify data after update
+      const result3 = await MockFirebase.get(this.path1);
+      const result4 = await MockFirebase.get(this.path2);
+      expect(result3.val()).toBeNull();
+      expect(result4.val()).toBeNull();
+
+      this.deleteTestData = false;
+      log(updateTitle, editDeleteUpdateTitle);
+      done();
+    });
+  });
 });
 /* eslint-enable no-undef */

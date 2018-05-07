@@ -127,12 +127,17 @@ const setData = function setData(_paths, _data) {
 
 /**
  * Performs multiple set operations
- * @param {Object} [_updates={}] key/value map of database URL paths to actual
+ * @param {Object} [_updates] key/value map of database URL paths to actual
  * data. The set operations are performed in the order the keys exist in the map
  * @return {Promise}
  */
-const update = function update(_updates = {}) {
+const update = function update(_updates) {
   const promise = new Promise((resolve) => {
+    if (!Utils.hasValue(_updates)) {
+      resolve();
+      return;
+    }
+
     Object.keys(_updates).forEach((key) => {
       const keyPaths = urlParts(key);
       set(keyPaths, _updates[key]);
