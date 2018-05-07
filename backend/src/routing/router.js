@@ -20,21 +20,28 @@ function log(_message, _request) {
 
 /**
  * Sends an error message in JSON format
- * @param {Error} [_error=new Error()] the error that was caught
+ * @param {Error} [_error] the error that occurred
  * @param {Object} _request the HTTP request
  * @param {Object} _response the HTTP response
  */
-function handleError(_error = new Error(), _request, _response) {
-  let logDetails;
+function handleError(_error, _request, _response) {
   let errorDetails;
   if (_error instanceof DroppError) {
-    errorDetails = _error.details;
-    logDetails = _error.privateDetails.error;
-    _response.status(_error.statusCode);
+    errorDetails = Utils.hasValue(_error.details) ? _error.details : DroppError.type.Server.message;
+    if (Utils.hasValue(_error.statusCode)) _response.status(_error.statusCode);
+    else _response.status(DroppError.type.Server.status);
 
-    logDetails.requestId = _request.headers.requestId;
-    logDetails.ip = _request.headers['x-forwarded-for'] || _request.connection.remoteAddress;
+    let logDetails;
+    if (Utils.hasValue(_error.privateDetails) && Utils.hasValue(_error.privateDetails.error)) {
+      logDetails = _error.privateDetails.error;
+    } else logDetails = {};
+
+    logDetails.ip = Utils.getIpAddress(_request);
+    logDetails.requestId = Utils.getRequestId(_request);
     ErrorLogAccessor.add(logDetails);
+  } else {
+    errorDetails = DroppError.type.Server.message;
+    _response.status(DroppError.type.Server.status);
   }
 
   _response.json(errorDetails);

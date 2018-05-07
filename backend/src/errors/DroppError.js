@@ -14,13 +14,13 @@ function log(_details) {
  * @extends Error
  */
 class DroppError extends Error {
-  constructor(_details = {}, _privateDetails = {}, ..._params) {
+  constructor(_details, _privateDetails, ..._params) {
     super(..._params);
     this.name = this.constructor.name;
     if (Error.captureStackTrace) Error.captureStackTrace(this, this.constructor);
 
-    this.details = _details;
-    this.privateDetails = _privateDetails;
+    this.details = Utils.hasValue(_details) ? _details : {};
+    this.privateDetails = Utils.hasValue(_privateDetails) ? _privateDetails : {};
   }
 
   get details() {

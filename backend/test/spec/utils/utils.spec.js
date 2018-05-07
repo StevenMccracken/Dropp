@@ -10,7 +10,7 @@ function log(_title, _details) {
   Log(`Utils ${_title}`, _details);
 }
 
-const hasValueTitle = 'hasValue() function';
+const hasValueTitle = 'hasValue function';
 /* eslint-disable no-undef */
 describe(hasValueTitle, () => {
   it('should return false for a null value', (done) => {
@@ -155,7 +155,7 @@ describe(stepperTitle, () => {
   });
 });
 
-const getIpAddressTitle = 'getIpAddress() function';
+const getIpAddressTitle = 'getIpAddress function';
 describe(getIpAddressTitle, () => {
   it('returns emtpy string for a null value', (done) => {
     const ip = Utils.getIpAddress(null);
@@ -203,6 +203,29 @@ describe(getIpAddressTitle, () => {
     const ip = Utils.getIpAddress(details);
     expect(ip).toBe('test');
     log(getIpAddressTitle, ip);
+    done();
+  });
+});
+
+const getRequestIdTitle = 'getRequestId function';
+describe(getRequestIdTitle, () => {
+  it('returns emtpy string for a null value', (done) => {
+    const id = Utils.getRequestId(null);
+    expect(id).toBe('');
+    log(getRequestIdTitle, id);
+    done();
+  });
+
+  it('returns correct value for requestId in headers', (done) => {
+    const details = {
+      headers: {
+        requestId: 'test',
+      },
+    };
+
+    const id = Utils.getRequestId(details);
+    expect(id).toBe('test');
+    log(getRequestIdTitle, id);
     done();
   });
 });

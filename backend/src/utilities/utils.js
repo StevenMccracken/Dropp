@@ -35,7 +35,7 @@ const hasValue = function hasValue(_value) {
 };
 
 /**
- * getIp - Helper function to get the IP address from an Express request object
+ * Helper function to get the IP address from an Express request object
  * @param {Object} [_request] an HTTP request object
  * @return {String} the IP address from the
  * request if one exists, or an empty string
@@ -48,12 +48,25 @@ const getIpAddress = function getIpAddress(_request) {
   return ipAddress || '';
 };
 
+/**
+ * Helper function to get the request ID from an Express request object
+ * @param {Object} _request an HTTP request object
+ * @return {String} the custom header field
+ * _requestId_, or empty string if none exists
+ */
+const getRequestId = function getRequestId(_request) {
+  const request = hasValue(_request) ? _request : {};
+  const headers = request.headers || {};
+  return headers.requestId || '';
+};
+
 module.exports = {
   Moment,
   stepper,
   newUuid,
   hasValue,
   getIpAddress,
+  getRequestId,
   unixEndTimeSeconds,
   unixEndTimeMilliseconds,
 };
