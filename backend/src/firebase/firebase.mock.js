@@ -165,12 +165,11 @@ const remove = function remove(_paths) {
 
 /**
  * Provides a reference to the data at the specified database URL
- * @param {String} [_url=''] the URL for a
- * specific piece of data in the database
+ * @param {String} [_url] the URL for a specific piece of data in the database
  * @return {Object} Reference with functions to perform operations on
  * the data: once(), push(data), set(data), update(updates), and remove()
  */
-const ref = function ref(_url = '') {
+const ref = function ref(_url) {
   const paths = urlParts(_url);
   return {
     once: () => get(paths),

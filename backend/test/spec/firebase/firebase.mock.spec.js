@@ -382,4 +382,21 @@ describe(removeTitle, () => {
     done();
   });
 });
+
+const refTitle = 'Datastore reference';
+describe(refTitle, () => {
+  it('returns an object with only 5 functions', (done) => {
+    const result = MockFirebase.ref();
+    expect(result).toBeDefined();
+    expect(result).not.toBeNull();
+    expect(Object.keys(result).length).toBe(5);
+    expect(typeof result.once).toBe('function');
+    expect(typeof result.push).toBe('function');
+    expect(typeof result.set).toBe('function');
+    expect(typeof result.update).toBe('function');
+    expect(typeof result.remove).toBe('function');
+    log(refTitle, result);
+    done();
+  });
+});
 /* eslint-enable no-undef */
