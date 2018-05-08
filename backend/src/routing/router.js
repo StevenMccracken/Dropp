@@ -75,7 +75,6 @@ const routing = function routing(_router) {
     request.headers.requestId = requestId;
     response.set('requestId', requestId);
     response.set('Access-Control-Expose-Headers', 'requestId');
-
     log(`${request.method} ${request.url}`, request);
     next();
   });
