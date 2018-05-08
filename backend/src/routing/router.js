@@ -42,6 +42,13 @@ function handleError(_error, _request, _response) {
   } else {
     errorDetails = DroppError.type.Server.message;
     _response.status(DroppError.type.Server.status);
+    const details = {
+      message: 'An unknown was caught in router',
+      error: _error,
+      request: _request,
+    };
+
+    ErrorLogAccessor.add(details);
   }
 
   _response.json(errorDetails);

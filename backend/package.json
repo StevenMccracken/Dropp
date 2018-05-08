@@ -51,6 +51,7 @@
     "grunt-shell-spawn": "^0.3.10",
     "jasmine-node": "^2.0.0",
     "nyc": "^11.7.1",
-    "request": "^2.83.0"
+    "request": "^2.83.0",
+    "request-promise-native": "^1.0.5"
   }
 }
