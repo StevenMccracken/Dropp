@@ -342,28 +342,29 @@ describe(createUserTitle, () => {
     done();
   });
 
-  describe('Successful user creation', () => {
+  const successfulUserCreationTitle = 'Successful user creation';
+  describe(successfulUserCreationTitle, () => {
     afterEach(async (done) => {
       await UserAccessor.remove(this.user);
       done();
     });
-  });
 
-  it('creates a user in the database for valid details', async (done) => {
-    await UserAccessor.create(this.user, this.password);
-    const user = await UserAccessor.get(this.user.username);
-    expect(user).not.toBeNull();
-    expect(user instanceof User).toBe(true);
-    expect(user.email).toBe(this.user.email);
-    expect(user.username).toBe(this.user.username);
+    it('creates a user in the database for valid details', async (done) => {
+      await UserAccessor.create(this.user, this.password);
+      const user = await UserAccessor.get(this.user.username);
+      expect(user).not.toBeNull();
+      expect(user instanceof User).toBe(true);
+      expect(user.email).toBe(this.user.email);
+      expect(user.username).toBe(this.user.username);
 
-    const password = await UserAccessor.getPassword(this.user.username);
-    expect(password).toBeDefined();
-    expect(typeof password).toBe('string');
-    expect(password).toBe(this.password);
+      const password = await UserAccessor.getPassword(this.user.username);
+      expect(password).toBeDefined();
+      expect(typeof password).toBe('string');
+      expect(password).toBe(this.password);
 
-    log(createUserTitle, { user, password });
-    done();
+      log(successfulUserCreationTitle, { user, password });
+      done();
+    });
   });
 });
 

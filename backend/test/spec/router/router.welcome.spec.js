@@ -2,10 +2,19 @@ const Request = require('request-promise-native');
 const Log = require('../../logger');
 const Server = require('../../../index');
 
+/**
+ * Logs a message for the current test file
+ * @param {String} _title the describe label
+ * @param {String|Object} _details the log details
+ */
+function log(_title, _details) {
+  Log(`Router Module ${_title}`, _details);
+}
+
 const url = `http://localhost:${Server.port}/welcome`;
-const baseRouteTitle = 'Base route';
+const welcomeRouteTitle = 'Welcome route';
 /* eslint-disable no-undef */
-describe(baseRouteTitle, () => {
+describe(welcomeRouteTitle, () => {
   beforeEach(() => {
     this.options = {
       method: 'GET',
@@ -18,7 +27,7 @@ describe(baseRouteTitle, () => {
     delete this.options;
   });
 
-  it('gets the welcome message and returns status code 200', async (done) => {
+  it('gets the welcome message', async (done) => {
     const response = await Request(this.options);
     expect(response).toBeDefined();
     expect(response.statusCode).toBe(200);
@@ -26,7 +35,7 @@ describe(baseRouteTitle, () => {
     // Verify routes
     const details = JSON.parse(response.body);
     expect(details.message).toBe('This is the REST API for Dropp');
-    Log(baseRouteTitle, response.body);
+    log(welcomeRouteTitle, response.body);
     done();
   });
 });

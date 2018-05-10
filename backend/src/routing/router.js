@@ -112,7 +112,7 @@ const routing = function routing(_router) {
   const authRoute = '/auth';
   router.route(authRoute).post(async (request, response) => {
     try {
-      const data = await UserMiddleware.getAuthToken(request.body.username, request.body.password);
+      const data = await UserMiddleware.getAuthToken(request.body);
       response.json(data);
     } catch (error) {
       handleError(error, request, response);
