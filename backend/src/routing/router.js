@@ -9,6 +9,16 @@ const DroppError = require('../errors/DroppError');
 const UserMiddleware = require('../middleware/user');
 const ErrorLogAccessor = require('../database/error');
 
+const routes = {
+  '/': 'GET',
+  welcome: 'GET',
+  auth: 'POST',
+  users: {
+    '/': 'POST',
+    '/<username>': 'GET',
+  },
+};
+
 /**
  * Logs a message about routing
  * @param  {String} _message the message to log
@@ -19,12 +29,15 @@ function log(_message, _request) {
 }
 
 /**
- * Sends an error message in JSON format
+ * Sends an error response in JSON format
  * @param {Error} [_error] the error that occurred
  * @param {Object} _request the HTTP request
  * @param {Object} _response the HTTP response
+ * @param {Function} _next unused callback
  */
-function handleError(_error, _request, _response) {
+/* eslint-disable no-unused-vars */
+const handleError = function handleError(_error, _request, _response, _next) {
+/* eslint-enable no-unused-vars */
   let errorDetails;
   if (_error instanceof DroppError) {
     errorDetails = Utils.hasValue(_error.details) ? _error.details : DroppError.type.Server.message;
@@ -52,16 +65,29 @@ function handleError(_error, _request, _response) {
   }
 
   _response.json(errorDetails);
-}
+};
 
-const routes = {
-  '/': 'GET',
-  welcome: 'GET',
-  auth: 'POST',
-  users: {
-    '/': 'POST',
-    '/<username>': 'GET',
-  },
+/**
+ * Authenticates a given request along it's intended route. If
+ * authentication succeeds, the User information will be attached
+ * to the request via `request.user`. authentication fails, the
+ * _next callback is not used. Instead the response is sent with a
+ * failing status code and details about the authentication error
+ * @param {Object} _request the HTTP request object
+ * @param {Object} _response the HTTP response object
+ * @param {Function} _next the callback used if authentication succeeds
+ */
+const validateAuthToken = async function validateAuthToken(_request, _response, _next) {
+  try {
+    /* eslint-disable no-param-reassign */
+    _request.user = await Auth.verifyToken(_request, _response);
+    /* eslint-enable no-param-reassign */
+    _next();
+  } catch (authError) {
+    const source = `Router ${_request.url}`;
+    const error = DroppError.handleAuthError(source, _request, _response, authError);
+    handleError(error, _request, _response);
+  }
 };
 
 let router;
@@ -110,12 +136,12 @@ const routing = function routing(_router) {
    *  password
    */
   const authRoute = '/auth';
-  router.route(authRoute).post(async (request, response) => {
+  router.route(authRoute).post(async (request, response, next) => {
     try {
       const data = await UserMiddleware.getAuthToken(request.body);
       response.json(data);
     } catch (error) {
-      handleError(error, request, response);
+      next(error);
     }
   });
 
@@ -128,12 +154,12 @@ const routing = function routing(_router) {
    *  username
    *  password
    */
-  router.route('/users').post(async (request, response) => {
+  router.route('/users').post(async (request, response, next) => {
     try {
       const data = await UserMiddleware.addNewUser(request.body);
       response.json(data);
     } catch (error) {
-      handleError(error, request, response);
+      next(error);
     }
   });
 
@@ -144,26 +170,23 @@ const routing = function routing(_router) {
    * URL parameters:
    *  username
    */
-  router.route('/users/:username').get(async (request, response) => {
-    let user;
-    try {
-      user = await Auth.verifyToken(request, response);
-    } catch (authError) {
-      const source = 'Router /users';
-      const error = DroppError.handleAuthError(source, request, response, authError);
-      handleError(error, request, response);
-      return;
-    }
-
-    try {
-      const data = await UserMiddleware.get(user, request.params);
-      response.json(data);
-    } catch (error) {
-      handleError(error, request, response);
-    }
-  });
+  router.route('/users/:username')
+    .all(validateAuthToken)
+    .get(async (request, response, next) => {
+      try {
+        const data = await UserMiddleware.get(request.user, request.params);
+        response.json(data);
+      } catch (error) {
+        next(error);
+      }
+    });
 
   return router;
 };
 
-module.exports = routing;
+module.exports = {
+  routes,
+  validateAuthToken,
+  configure: routing,
+  errorHandler: handleError,
+};

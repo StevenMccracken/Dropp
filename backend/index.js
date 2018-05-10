@@ -6,8 +6,8 @@ const Cors = require('cors');
 const Express = require('express');
 const BodyParser = require('body-parser');
 const Utils = require('./src/utilities/utils');
-const Routes = require('./src/routing/router');
 const Firebase = require('./src/firebase/firebase');
+const RoutingModule = require('./src/routing/router');
 
 let server;
 const PORTS = {
@@ -180,10 +180,11 @@ startupLog('Arguments checked', true);
 // Set the port of the server in the environment
 process.env.DROPP_PORT = `${port}`;
 
-// Register the routes from the router module with the express application
+// Register the routes from the routing module with the express application
 startupLog('Adding Router configuration...', true);
-const router = Routes(Express.Router());
+const router = RoutingModule.configure(Express.Router());
 express.use('/', router);
+express.use(RoutingModule.errorHandler);
 startupLog('Router configured');
 
 // Start database connection
