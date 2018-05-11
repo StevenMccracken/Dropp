@@ -38,9 +38,17 @@ function log(_message, _request) {
 /* eslint-disable no-unused-vars */
 const handleError = function handleError(_error, _request, _response, _next) {
 /* eslint-enable no-unused-vars */
+  const source = 'handleError()';
+  log(source, _request);
+
   let errorDetails;
   if (_error instanceof DroppError) {
-    errorDetails = Utils.hasValue(_error.details) ? _error.details : DroppError.type.Server.message;
+    if (Utils.hasValue(_error.details)) errorDetails = _error.details;
+    else {
+      const error = DroppError.format(DroppError.type.Server, source);
+      errorDetails = error.details;
+    }
+
     if (Utils.hasValue(_error.statusCode)) _response.status(_error.statusCode);
     else _response.status(DroppError.type.Server.status);
 
@@ -53,8 +61,9 @@ const handleError = function handleError(_error, _request, _response, _next) {
     logDetails.requestId = Utils.getRequestId(_request);
     ErrorLogAccessor.add(logDetails);
   } else {
-    errorDetails = DroppError.type.Server.message;
     _response.status(DroppError.type.Server.status);
+    const error = DroppError.format(DroppError.type.Server, source);
+    errorDetails = error.details;
     const details = {
       message: 'An unknown was caught in router',
       error: _error,
