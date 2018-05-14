@@ -95,7 +95,7 @@ const validateAuthToken = async function validateAuthToken(_request, _response, 
   } catch (authError) {
     const source = `Router ${_request.url}`;
     const error = DroppError.handleAuthError(source, _request, _response, authError);
-    handleError(error, _request, _response);
+    handleError(error, _request, _response, _next);
   }
 };
 
