@@ -76,7 +76,7 @@ const create = async function create(_user, _password) {
   if (!Validator.isValidPassword(_password)) invalidMembers.push('password');
   if (invalidMembers.length > 0) DroppError.throwInvalidRequestError(source, invalidMembers);
   const data = {};
-  data[`${usersBaseUrl}/${_user.username}`] = _user.data;
+  data[`${usersBaseUrl}/${_user.username}`] = _user.databaseData;
   data[`${passwordsBaseUrl}/${_user.username}`] = _password;
   await Firebase.bulkUpdate(data);
 };

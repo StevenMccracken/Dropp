@@ -79,7 +79,7 @@ class Dropp extends Object {
     this._username = _username;
   }
 
-  get data() {
+  get databaseData() {
     return {
       text: this._text,
       media: this._media,

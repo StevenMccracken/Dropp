@@ -136,7 +136,7 @@ describe(constructorTitle, () => {
     expect(dropp.timestamp).toBe(this.details.timestamp);
     expect(dropp.username).toBe(this.details.username);
 
-    const responseData = dropp.data;
+    const responseData = dropp.databaseData;
     expect(responseData.id).not.toBeDefined();
     expect(responseData.location).toBe(this.details.location);
     expect(responseData.media).toBe(this.details.media);

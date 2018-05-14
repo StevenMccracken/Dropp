@@ -99,7 +99,7 @@ class User extends Object {
     this._followerRequests = _requests;
   }
 
-  get data() {
+  get databaseData() {
     const data = {
       email: this._email,
       follows: {},

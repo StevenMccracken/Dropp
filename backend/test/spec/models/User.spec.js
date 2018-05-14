@@ -83,7 +83,7 @@ describe(constructorTitle, () => {
     expect(user.followerRequests.length).toBe(0);
 
     /* eslint-disable prefer-destructuring */
-    const data = user.data;
+    const data = user.databaseData;
     expect(Object.keys(data).length).toBe(5);
     expect(data.email).toBe(this.details.email);
     expect(Object.keys(data.follows).length).toBe(0);
@@ -131,7 +131,7 @@ describe(constructorTitle, () => {
     expect(user.doesFollow('test')).toBe(true);
 
     /* eslint-disable prefer-destructuring */
-    const data = user.data;
+    const data = user.databaseData;
     expect(Object.keys(data.follows).length).toBe(1);
     expect(data.follows.test).toBe('test');
 
@@ -157,7 +157,7 @@ describe(constructorTitle, () => {
     expect(user.hasFollower('test')).toBe(true);
 
     /* eslint-disable prefer-destructuring */
-    const data = user.data;
+    const data = user.databaseData;
     expect(Object.keys(data.followers).length).toBe(1);
     expect(data.followers.test).toBe('test');
 
@@ -183,7 +183,7 @@ describe(constructorTitle, () => {
     expect(user.hasFollowRequest('test')).toBe(true);
 
     /* eslint-disable prefer-destructuring */
-    const data = user.data;
+    const data = user.databaseData;
     expect(Object.keys(data.follow_requests).length).toBe(1);
     expect(data.follow_requests.test).toBe('test');
 
@@ -205,7 +205,7 @@ describe(constructorTitle, () => {
     expect(user.hasFollowerRequest('test')).toBe(true);
 
     /* eslint-disable prefer-destructuring */
-    const data = user.data;
+    const data = user.databaseData;
     expect(Object.keys(data.follower_requests).length).toBe(1);
     expect(data.follower_requests.test).toBe('test');
 

@@ -86,7 +86,7 @@ const add = async function add(_dropp) {
   if (!Validator.isValidTimestamp(_dropp.timestamp)) invalidMembers.push('timestamp');
   if (invalidMembers.length > 0) DroppError.throwInvalidRequestError(source, invalidMembers);
 
-  const droppUrl = await Firebase.add(baseUrl, _dropp.data);
+  const droppUrl = await Firebase.add(baseUrl, _dropp.databaseData);
   const id = droppUrl.split('/').pop();
 
   /* eslint-disable no-param-reassign */
