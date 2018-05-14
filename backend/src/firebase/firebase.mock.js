@@ -32,7 +32,7 @@ const set = function set(_paths, _value) {
 /**
  * Creates a sequential list of paths to traverse
  * the database from a given database URL
- * @param {String} [_url] the URL for a specific piece of data in the database
+ * @param {String} _url the URL for a specific piece of data in the database
  * @return {[String]} the URL broken up into it's individual paths
  */
 const urlParts = function urlParts(_url) {
@@ -127,7 +127,7 @@ const setData = function setData(_paths, _data) {
 
 /**
  * Performs multiple set operations
- * @param {Object} [_updates] key/value map of database URL paths to actual
+ * @param {Object} _updates key/value map of database URL paths to actual
  * data. The set operations are performed in the order the keys exist in the map
  * @return {Promise}
  */
@@ -165,7 +165,7 @@ const remove = function remove(_paths) {
 
 /**
  * Provides a reference to the data at the specified database URL
- * @param {String} [_url] the URL for a specific piece of data in the database
+ * @param {String} _url the URL for a specific piece of data in the database
  * @return {Object} Reference with functions to perform operations on
  * the data: once(), push(data), set(data), update(updates), and remove()
  */

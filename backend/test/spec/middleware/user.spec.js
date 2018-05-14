@@ -27,12 +27,14 @@ describe('User Middleware Tests', () => {
 
   beforeEach(async (done) => {
     this.testUser = await UserMiddleware.create(this.testUserData);
+    this.testUserDetails = { username: this.testUser.username };
     done();
   });
 
   afterEach(async (done) => {
     await UserMiddleware.remove(this.testUser, this.testUser.username);
     delete this.testUser;
+    delete this.testUserDetails;
     done();
   });
 
@@ -615,7 +617,7 @@ describe('User Middleware Tests', () => {
       };
 
       /* eslint-disable max-len */
-      const result = await UserMiddleware.updatePassword(this.testUser, this.testUser.username, details);
+      const result = await UserMiddleware.updatePassword(this.testUser, this.testUserDetails, details);
       /* eslint-enable max-len */
       expect(result).toBeDefined();
       expect(result.success).toBeDefined();
@@ -643,7 +645,7 @@ describe('User Middleware Tests', () => {
     it('throws an error for an invalid current user', async (done) => {
       try {
         /* eslint-disable max-len */
-        const result = await UserMiddleware.updatePassword(null, this.testUser.username, this.invalidDetails);
+        const result = await UserMiddleware.updatePassword(null, this.testUserDetails, this.invalidDetails);
         /* eslint-enable max-len */
         expect(result).not.toBeDefined();
         log(invalidUpdatePasswordTitle, 'Should have thrown error');
@@ -664,7 +666,7 @@ describe('User Middleware Tests', () => {
     it('throws an error for null details', async (done) => {
       try {
         /* eslint-disable max-len */
-        const result = await UserMiddleware.updatePassword(this.testUser, this.testUser.username, null);
+        const result = await UserMiddleware.updatePassword(this.testUser, this.testUserDetails, null);
         /* eslint-enable max-len */
         expect(result).not.toBeDefined();
         log(invalidUpdatePasswordTitle, 'Should have thrown error');
@@ -685,12 +687,35 @@ describe('User Middleware Tests', () => {
       }
     });
 
+    it('throws an error for null username details', async (done) => {
+      const details = {
+        oldPassword: this.testUserData.password,
+        newPassword: 'test2',
+      };
+
+      try {
+        const result = await UserMiddleware.updatePassword(this.testUser, null, details);
+        expect(result).not.toBeDefined();
+        log(invalidUpdatePasswordTitle, 'Should have thrown error');
+        done();
+      } catch (error) {
+        expect(error).toBeDefined();
+        expect(error.name).toBe('DroppError');
+        expect(error.details).toBeDefined();
+        expect(error.details.error).toBeDefined();
+        expect(error.details.error.type).toBe(DroppError.type.Resource.type);
+        expect(error.details.error.message).toBe('Unauthorized to update that user\'s password');
+        log(invalidUpdatePasswordTitle, error.details);
+        done();
+      }
+    });
+
     it('throws an error for an invalid old and new password', async (done) => {
       this.invalidDetails.oldPassword = '$%';
       this.invalidDetails.newPassword = 'he$';
       try {
         /* eslint-disable max-len */
-        const result = await UserMiddleware.updatePassword(this.testUser, this.testUser.username, this.invalidDetails);
+        const result = await UserMiddleware.updatePassword(this.testUser, this.testUserDetails, this.invalidDetails);
         /* eslint-enable max-len */
         expect(result).not.toBeDefined();
         log(invalidUpdatePasswordTitle, 'Should have thrown error');
@@ -717,7 +742,7 @@ describe('User Middleware Tests', () => {
       delete this.invalidDetails.oldPassword;
       try {
         /* eslint-disable max-len */
-        const result = await UserMiddleware.updatePassword(this.testUser, this.testUser.username, this.invalidDetails);
+        const result = await UserMiddleware.updatePassword(this.testUser, this.testUserDetails, this.invalidDetails);
         /* eslint-enable max-len */
         expect(result).not.toBeDefined();
         log(invalidUpdatePasswordTitle, 'Should have thrown error');
@@ -743,7 +768,7 @@ describe('User Middleware Tests', () => {
       delete this.invalidDetails.newPassword;
       try {
         /* eslint-disable max-len */
-        const result = await UserMiddleware.updatePassword(this.testUser, this.testUser.username, this.invalidDetails);
+        const result = await UserMiddleware.updatePassword(this.testUser, this.testUserDetails, this.invalidDetails);
         /* eslint-enable max-len */
         expect(result).not.toBeDefined();
         log(invalidUpdatePasswordTitle, 'Should have thrown error');
@@ -769,7 +794,7 @@ describe('User Middleware Tests', () => {
       this.invalidDetails.newPassword = this.invalidDetails.oldPassword;
       try {
         /* eslint-disable max-len */
-        const result = await UserMiddleware.updatePassword(this.testUser, this.testUser.username, this.invalidDetails);
+        const result = await UserMiddleware.updatePassword(this.testUser, this.testUserDetails, this.invalidDetails);
         /* eslint-enable max-len */
         expect(result).not.toBeDefined();
         log(invalidUpdatePasswordTitle, 'Should have thrown error');
@@ -789,9 +814,10 @@ describe('User Middleware Tests', () => {
     });
 
     it('throws an error for updating a different user', async (done) => {
+      const details = { username: 'test' };
       try {
         /* eslint-disable max-len */
-        const result = await UserMiddleware.updatePassword(this.testUser, 'test', this.invalidDetails);
+        const result = await UserMiddleware.updatePassword(this.testUser, details, this.invalidDetails);
         /* eslint-enable max-len */
         expect(result).not.toBeDefined();
         log(invalidUpdatePasswordTitle, 'Should have thrown error');
@@ -816,10 +842,9 @@ describe('User Middleware Tests', () => {
         email: 'test@test.com',
       });
 
+      const details = { username: user.username };
       try {
-        /* eslint-disable max-len */
-        const result = await UserMiddleware.updatePassword(user, user.username, this.invalidDetails);
-        /* eslint-enable max-len */
+        const result = await UserMiddleware.updatePassword(user, details, this.invalidDetails);
         expect(result).not.toBeDefined();
         log(invalidUpdatePasswordTitle, 'Should have thrown error');
         done();
@@ -840,7 +865,7 @@ describe('User Middleware Tests', () => {
       this.invalidDetails.oldPassword = Utils.newUuid();
       try {
         /* eslint-disable max-len */
-        const result = await UserMiddleware.updatePassword(this.testUser, this.testUser.username, this.invalidDetails);
+        const result = await UserMiddleware.updatePassword(this.testUser, this.testUserDetails, this.invalidDetails);
         /* eslint-enable max-len */
         expect(result).not.toBeDefined();
         log(invalidUpdatePasswordTitle, 'Should have thrown error');
@@ -865,9 +890,7 @@ describe('User Middleware Tests', () => {
     it('updates the user\'s email', async (done) => {
       const uuid2 = Utils.newUuid();
       const details = { newEmail: `${uuid2}@${uuid2}.com` };
-      /* eslint-disable max-len */
-      const result = await UserMiddleware.updateEmail(this.testUser, this.testUser.username, details);
-      /* eslint-enable max-len */
+      const result = await UserMiddleware.updateEmail(this.testUser, this.testUserDetails, details);
       expect(result).toBeDefined();
       expect(result.success).toBeDefined();
       expect(result.success.message).toBeDefined();
@@ -893,7 +916,7 @@ describe('User Middleware Tests', () => {
     it('throws an error for an invalid current user', async (done) => {
       try {
         /* eslint-disable max-len */
-        const result = await UserMiddleware.updateEmail(null, this.testUser.username, this.invalidDetails);
+        const result = await UserMiddleware.updateEmail(null, this.testUserDetails, this.invalidDetails);
         /* eslint-enable max-len */
         expect(result).not.toBeDefined();
         log(invalidUpdateEmailTitle, 'Should have thrown error');
@@ -913,9 +936,7 @@ describe('User Middleware Tests', () => {
 
     it('throws an error for null details', async (done) => {
       try {
-        /* eslint-disable max-len */
-        const result = await UserMiddleware.updateEmail(this.testUser, this.testUser.username, null);
-        /* eslint-enable max-len */
+        const result = await UserMiddleware.updateEmail(this.testUser, this.testUserDetails, null);
         expect(result).not.toBeDefined();
         log(invalidUpdateEmailTitle, 'Should have thrown error');
         done();
@@ -935,10 +956,29 @@ describe('User Middleware Tests', () => {
       }
     });
 
+    it('throws an error for null username details', async (done) => {
+      const details = { newEmail: `${Utils.newUuid()}@${Utils.newUuid()}.com` };
+      try {
+        const result = await UserMiddleware.updateEmail(this.testUser, null, details);
+        expect(result).not.toBeDefined();
+        log(invalidUpdateEmailTitle, 'Should have thrown error');
+        done();
+      } catch (error) {
+        expect(error).toBeDefined();
+        expect(error.name).toBe('DroppError');
+        expect(error.details).toBeDefined();
+        expect(error.details.error).toBeDefined();
+        expect(error.details.error.type).toBe(DroppError.type.Resource.type);
+        expect(error.details.error.message).toBe('Unauthorized to update that user\'s email');
+        log(invalidUpdateEmailTitle, error.details);
+        done();
+      }
+    });
+
     it('throws an error for an invalid email', async (done) => {
       try {
         /* eslint-disable max-len */
-        const result = await UserMiddleware.updateEmail(this.testUser, this.testUser.username, this.invalidDetails);
+        const result = await UserMiddleware.updateEmail(this.testUser, this.testUserDetails, this.invalidDetails);
         /* eslint-enable max-len */
         expect(result).not.toBeDefined();
         log(invalidUpdateEmailTitle, 'Should have thrown error');
@@ -964,7 +1004,7 @@ describe('User Middleware Tests', () => {
       delete this.invalidDetails.newEmail;
       try {
         /* eslint-disable max-len */
-        const result = await UserMiddleware.updateEmail(this.testUser, this.testUser.username, this.invalidDetails);
+        const result = await UserMiddleware.updateEmail(this.testUser, this.testUserDetails, this.invalidDetails);
         /* eslint-enable max-len */
         expect(result).not.toBeDefined();
         log(invalidUpdateEmailTitle, 'Should have thrown error');
@@ -989,7 +1029,10 @@ describe('User Middleware Tests', () => {
     it('throws an error for updating a different user', async (done) => {
       this.invalidDetails.newEmail = 'test@test.com';
       try {
-        const result = await UserMiddleware.updateEmail(this.testUser, 'test', this.invalidDetails);
+        const details = { username: 'test' };
+        /* eslint-disable max-len */
+        const result = await UserMiddleware.updateEmail(this.testUser, details, this.invalidDetails);
+        /* eslint-enable max-len */
         expect(result).not.toBeDefined();
         log(invalidUpdateEmailTitle, 'Should have thrown error');
         done();

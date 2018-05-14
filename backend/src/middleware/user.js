@@ -24,7 +24,7 @@ function log(_source, _message) {
 /**
  * Retrieves a user by their username
  * @param {User} _currentUser the current user for the request
- * @param {Object} [_details] the information to get the user
+ * @param {Object} _details the information to get the user
  * @return {Object} the retrieved user, or
  * null if no user with that username exists
  * @throws {DroppError} if the _username parameter is not
@@ -50,8 +50,8 @@ const get = async function get(_currentUser, _details) {
 
 /**
  * Creates a new user with the given details
- * @param {Object} [_details] the information for
- * the user, including username, email, and password
+ * @param {Object} _details the information for the
+ * user, including username, email, and password
  * @return {User} the created user
  * @throws {DroppError} if any of the details are
  * invalid, or if a user already exists with that username
@@ -80,8 +80,8 @@ const create = async function create(_details) {
 /**
  * Validates a given password for a given user,
  * and returns a JWT if the validation succeeds
- * @param {Object} [_details] the information
- * for the user, including username and password
+ * @param {Object} _details the information for
+ * the user, including username and password
  * @return {Object} a JSON containing the authentication token
  * @throws {DroppError} if the username or password
  * in _details is invalid, or if the validation fails
@@ -120,8 +120,8 @@ const getAuthToken = async function getAuthToken(_details) {
 
 /**
  * Creates a new user with the given details
- * @param {Object} [_details] the information for
- * the user, including username, email, and passwords
+ * @param {Object} _details the information for the
+ * user, including username, email, and passwords
  * @return {Object} the success details, including an authentication token
  * @throws {Error} if any of the details are invalid,
  * or if a user already exists with that username
@@ -145,17 +145,18 @@ const addNewUser = async function addNewUser(_details) {
 /**
  * Updates a user's password
  * @param {User} _currentUser the current user for the request
- * @param {String} _username the username of the user to update
- * @param {Object} [_details] the details
- * containing the old and new password to update to
+ * @param {Object} _usernameDetails the details
+ * containing the username of the user to update
+ * @param {Object} _details the details containing
+ * the old and new password to update to
  * @return {Object} the success details, including a new authentication token
  * @throws {DroppError} if the provided passwords are not valid,
  * if the current user does not match the requested user, or
  * if the given password does not match the existing password
  */
-const updatePassword = async function updatePassword(_currentUser, _username, _details) {
+const updatePassword = async function updatePassword(_currentUser, _usernameDetails, _details) {
   const source = 'updatePassword()';
-  log(source, _username);
+  log(source, _usernameDetails);
 
   if (!(_currentUser instanceof User)) {
     DroppError.throwServerError(source, null, 'Object is not a User');
@@ -170,11 +171,12 @@ const updatePassword = async function updatePassword(_currentUser, _username, _d
     DroppError.throwResourceError(source, 'New password must be different from old password');
   }
 
-  if (_currentUser.username !== _username) {
+  const usernameDetails = Utils.hasValue(_usernameDetails) ? _usernameDetails : {};
+  if (_currentUser.username !== usernameDetails.username) {
     DroppError.throwResourceError(source, 'Unauthorized to update that user\'s password');
   }
 
-  const retrievedPassword = await UserAccessor.getPassword(_username);
+  const retrievedPassword = await UserAccessor.getPassword(usernameDetails.username);
   if (!Validator.isValidPassword(retrievedPassword)) {
     DroppError.throwServerError(source, null, `Retrieved password: ${retrievedPassword}`);
   }
@@ -200,15 +202,16 @@ const updatePassword = async function updatePassword(_currentUser, _username, _d
 /**
  * Updates a user's email
  * @param {User} _currentUser the current user for the request
- * @param {String} _username the username of the user to update
- * @param {Object} [_details] the details containing the new email
+ * @param {Object} _usernameDetails the details
+ * containing the username of the user to update
+ * @param {Object} _details the details containing the new email
  * @return {Object} the success details
  * @throws {DroppError} if the provided email is invalid
  * or if the current user does not match the requested user
  */
-const updateEmail = async function updateEmail(_currentUser, _username, _details) {
+const updateEmail = async function updateEmail(_currentUser, _usernameDetails, _details) {
   const source = 'updateEmail()';
-  log(source, _username);
+  log(source, _usernameDetails);
 
   if (!(_currentUser instanceof User)) {
     DroppError.throwServerError(source, null, 'Object is not a User');
@@ -219,7 +222,8 @@ const updateEmail = async function updateEmail(_currentUser, _username, _details
     DroppError.throwInvalidRequestError(source, 'newEmail');
   }
 
-  if (_currentUser.username !== _username) {
+  const usernameDetails = Utils.hasValue(_usernameDetails) ? _usernameDetails : {};
+  if (_currentUser.username !== usernameDetails.username) {
     DroppError.throwResourceError(source, 'Unauthorized to update that user\'s email');
   }
 

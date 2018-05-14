@@ -36,7 +36,7 @@ const hasValue = function hasValue(_value) {
 
 /**
  * Helper function to get the IP address from an Express request object
- * @param {Object} [_request] an HTTP request object
+ * @param {Object} _request an HTTP request object
  * @return {String} the IP address from the
  * request if one exists, or an empty string
  */
