@@ -5,6 +5,7 @@ const User = require('../../../src/models/User');
 const Utils = require('../../../src/utilities/utils');
 const UserAccessor = require('../../../src/database/user');
 const DroppError = require('../../../src/errors/DroppError');
+const AuthModule = require('../../../src/authentication/auth');
 const UserMiddleware = require('../../../src/middleware/user');
 
 /**
@@ -342,12 +343,15 @@ describe(getUserRouteTitle, () => {
 const updateUserRouteTitle = 'Update user route';
 describe(updateUserRouteTitle, () => {
   beforeEach(async (done) => {
+    this.oldPassword = Utils.newUuid();
     this.options = {
       method: 'PUT',
       uri: url,
       resolveWithFullResponse: true,
       headers: {},
       form: {
+        newPassword: Utils.newUuid(),
+        oldPassword: this.oldPassword,
         newEmail: `${Utils.newUuid()}@${Utils.newUuid()}.com`,
       },
     };
@@ -358,7 +362,7 @@ describe(updateUserRouteTitle, () => {
 
     const details = {
       username: Utils.newUuid(),
-      password: Utils.newUuid(),
+      password: this.oldPassword,
       email: `${Utils.newUuid()}@${Utils.newUuid()}.com`,
     };
 
@@ -375,6 +379,7 @@ describe(updateUserRouteTitle, () => {
     delete this.token;
     delete this.options;
     delete this.updateUrl;
+    delete this.oldPassword;
     done();
   });
 
@@ -458,7 +463,180 @@ describe(updateUserRouteTitle, () => {
 
   const updatePasswordTitle = 'Upate password';
   describe(updatePasswordTitle, () => {
+    it('returns an authentication error for a missing auth token', async (done) => {
+      this.updateUrl(this.user.username, 'password');
+      delete this.options.headers.authorization;
+      try {
+        const response = await Request(this.options);
+        expect(response).not.toBeDefined();
+        log(updatePasswordTitle, 'Should have thrown error');
+      } catch (response) {
+        expect(response).toBeDefined();
+        expect(response.statusCode).toBe(401);
 
+        const details = JSON.parse(response.error);
+        expect(details.error.type).toBe('authentication_error');
+        expect(details.error.message).toBe(DroppError.TokenReason.missing);
+        log(updatePasswordTitle, response.error);
+      }
+
+      done();
+    });
+
+    it('returns an error for an invalid old password', async (done) => {
+      delete this.options.form.oldPassword;
+      this.updateUrl(this.user.username, 'password');
+      try {
+        const response = await Request(this.options);
+        expect(response).not.toBeDefined();
+        log(updatePasswordTitle, 'Should have thrown error');
+      } catch (response) {
+        expect(response).toBeDefined();
+        expect(response.statusCode).toBe(400);
+
+        const details = JSON.parse(response.error);
+        expect(details.error.type).toBe('invalid_request_error');
+        expect(details.error.message).toBe('oldPassword');
+        log(updatePasswordTitle, response.error);
+      }
+
+      done();
+    });
+
+    it('returns an error for an invalid new password', async (done) => {
+      delete this.options.form.newPassword;
+      this.updateUrl(this.user.username, 'password');
+      try {
+        const response = await Request(this.options);
+        expect(response).not.toBeDefined();
+        log(updatePasswordTitle, 'Should have thrown error');
+      } catch (response) {
+        expect(response).toBeDefined();
+        expect(response.statusCode).toBe(400);
+
+        const details = JSON.parse(response.error);
+        expect(details.error.type).toBe('invalid_request_error');
+        expect(details.error.message).toBe('newPassword');
+        log(updatePasswordTitle, response.error);
+      }
+
+      done();
+    });
+
+    it('returns an error for an invalid old & new password', async (done) => {
+      delete this.options.form.oldPassword;
+      delete this.options.form.newPassword;
+      this.updateUrl(this.user.username, 'password');
+      try {
+        const response = await Request(this.options);
+        expect(response).not.toBeDefined();
+        log(updatePasswordTitle, 'Should have thrown error');
+      } catch (response) {
+        expect(response).toBeDefined();
+        expect(response.statusCode).toBe(400);
+
+        const details = JSON.parse(response.error);
+        expect(details.error.type).toBe('invalid_request_error');
+        expect(details.error.message).toContain('oldPassword');
+        expect(details.error.message).toContain('newPassword');
+        log(updatePasswordTitle, response.error);
+      }
+
+      done();
+    });
+
+    it('returns an error when the old & new passwords are the same', async (done) => {
+      this.options.form.newPassword = this.options.form.oldPassword;
+      this.updateUrl(this.user.username, 'password');
+      try {
+        const response = await Request(this.options);
+        expect(response).not.toBeDefined();
+        log(updatePasswordTitle, 'Should have thrown error');
+      } catch (response) {
+        expect(response).toBeDefined();
+        expect(response.statusCode).toBe(403);
+
+        const details = JSON.parse(response.error);
+        expect(details.error.type).toBe('resource_error');
+        expect(details.error.message).toBe('New password must be different from old password');
+        log(updatePasswordTitle, response.error);
+      }
+
+      done();
+    });
+
+    it('returns an error for updating a different user', async (done) => {
+      this.updateUrl(Utils.newUuid(), 'password');
+      try {
+        const response = await Request(this.options);
+        expect(response).not.toBeDefined();
+        log(updatePasswordTitle, 'Should have thrown error');
+      } catch (response) {
+        expect(response).toBeDefined();
+        expect(response.statusCode).toBe(403);
+
+        const details = JSON.parse(response.error);
+        expect(details.error.type).toBe('resource_error');
+        expect(details.error.message).toBe('Unauthorized to update that user\'s password');
+        log(updatePasswordTitle, response.error);
+      }
+
+      done();
+    });
+
+    /* eslint-disable max-len */
+    it('returns an error when the old password doesn\'t match the existing password', async (done) => {
+    /* eslint-enable max-len */
+      this.options.form.oldPassword = Utils.newUuid();
+      this.updateUrl(this.user.username, 'password');
+      try {
+        const response = await Request(this.options);
+        expect(response).not.toBeDefined();
+        log(updatePasswordTitle, 'Should have thrown error');
+      } catch (response) {
+        expect(response).toBeDefined();
+        expect(response.statusCode).toBe(403);
+
+        const details = JSON.parse(response.error);
+        expect(details.error.type).toBe('resource_error');
+        expect(details.error.message).toBe('Old password must match existing password');
+        log(updatePasswordTitle, response.error);
+      }
+
+      done();
+    });
+
+    describe('Successful update', () => {
+      beforeEach(async (done) => {
+        this.oldHashedPassword = await UserAccessor.getPassword(this.user.username);
+        done();
+      });
+
+      afterEach(() => {
+        delete this.oldHashedPassword;
+      });
+    });
+
+    it('updates the user\'s password', async (done) => {
+      this.updateUrl(this.user.username, 'password');
+      const response = await Request(this.options);
+      expect(response).toBeDefined();
+      expect(response.statusCode).toBe(200);
+
+      const details = JSON.parse(response.body);
+      expect(details.success.message).toBe('Successful password update');
+      expect(details.success.token.toLowerCase()).toContain('bearer');
+
+      // Verify user information from the backend
+      const newPassword = await UserAccessor.getPassword(this.user.username);
+      expect(newPassword).not.toBe(this.oldHashedPassword);
+      /* eslint-disable max-len */
+      const matchResult = await AuthModule.validatePasswords(this.options.form.newPassword, newPassword);
+      /* eslint-enable max-len */
+      expect(matchResult).toBe(true);
+      log(updatePasswordTitle, response.body);
+      done();
+    });
   });
 });
 /* eslint-enable no-undef */
