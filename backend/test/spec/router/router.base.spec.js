@@ -34,11 +34,15 @@ describe(baseRouteTitle, () => {
 
     // Verify routes
     const routes = JSON.parse(response.body);
+    expect(Object.keys(routes).length).toBe(4);
     expect(routes['/']).toBe('GET');
     expect(routes.welcome).toBe('GET');
     expect(routes.auth).toBe('POST');
+    expect(Object.keys(routes.users).length).toBe(4);
     expect(routes.users['/']).toBe('POST');
     expect(routes.users['/<username>']).toBe('GET');
+    expect(routes.users['/<username>/email']).toBe('PUT');
+    expect(routes.users['/<username>/password']).toBe('PUT');
     log(baseRouteTitle, response.body);
     done();
   });
