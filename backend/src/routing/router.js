@@ -16,6 +16,8 @@ const routes = {
   users: {
     '/': 'POST',
     '/<username>': 'GET',
+    '/<username>/email': 'PUT',
+    '/<username>/password': 'PUT',
   },
 };
 
@@ -30,7 +32,7 @@ function log(_message, _request) {
 
 /**
  * Sends an error response in JSON format
- * @param {Error} [_error] the error that occurred
+ * @param {Error} _error the error that occurred
  * @param {Object} _request the HTTP request
  * @param {Object} _response the HTTP response
  * @param {Function} _next unused callback
@@ -166,6 +168,7 @@ const routing = function routing(_router) {
   router.route('/users').post(async (request, response, next) => {
     try {
       const data = await UserMiddleware.addNewUser(request.body);
+      response.status(201);
       response.json(data);
     } catch (error) {
       next(error);
@@ -184,6 +187,30 @@ const routing = function routing(_router) {
     .get(async (request, response, next) => {
       try {
         const data = await UserMiddleware.get(request.user, request.params);
+        response.json(data);
+      } catch (error) {
+        next(error);
+      }
+    });
+
+  router.route('/users/:username/email')
+    .all(validateAuthToken)
+    .put(async (request, response, next) => {
+      try {
+        const data = await UserMiddleware.updateEmail(request.user, request.params, request.body);
+        response.json(data);
+      } catch (error) {
+        next(error);
+      }
+    });
+
+  router.route('/users/:username/password')
+    .all(validateAuthToken)
+    .put(async (request, response, next) => {
+      try {
+        /* eslint-disable max-len */
+        const data = await UserMiddleware.updatePassword(request.user, request.params, request.body);
+        /* eslint-enable max-len */
         response.json(data);
       } catch (error) {
         next(error);

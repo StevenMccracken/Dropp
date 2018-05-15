@@ -4,6 +4,7 @@ const Server = require('../../../index');
 const User = require('../../../src/models/User');
 const Utils = require('../../../src/utilities/utils');
 const UserAccessor = require('../../../src/database/user');
+const DroppError = require('../../../src/errors/DroppError');
 const UserMiddleware = require('../../../src/middleware/user');
 
 /**
@@ -169,7 +170,7 @@ describe(postUserRouteTitle, () => {
   it('creates a new user and receives an authentication token', async (done) => {
     const response = await Request(this.options);
     expect(response).toBeDefined();
-    expect(response.statusCode).toBe(200);
+    expect(response.statusCode).toBe(201);
 
     const details = JSON.parse(response.body);
     expect(details.success.token.toLowerCase()).toContain('bearer');
@@ -213,6 +214,26 @@ describe(getUserRouteTitle, () => {
     delete this.token;
     delete this.options;
     delete this.updateUrl;
+    done();
+  });
+
+  it('returns an authentication error for a missing auth token', async (done) => {
+    this.updateUrl(this.user.username);
+    delete this.options.headers.authorization;
+    try {
+      const response = await Request(this.options);
+      expect(response).not.toBeDefined();
+      log(postUserRouteTitle, 'Should have thrown error');
+    } catch (response) {
+      expect(response).toBeDefined();
+      expect(response.statusCode).toBe(401);
+
+      const details = JSON.parse(response.error);
+      expect(details.error.type).toBe('authentication_error');
+      expect(details.error.message).toBe(DroppError.TokenReason.missing);
+      log(postUserRouteTitle, response.error);
+    }
+
     done();
   });
 
@@ -315,6 +336,129 @@ describe(getUserRouteTitle, () => {
       log(postUserRouteTitle, response.body);
       done();
     });
+  });
+});
+
+const updateUserRouteTitle = 'Update user route';
+describe(updateUserRouteTitle, () => {
+  beforeEach(async (done) => {
+    this.options = {
+      method: 'PUT',
+      uri: url,
+      resolveWithFullResponse: true,
+      headers: {},
+      form: {
+        newEmail: `${Utils.newUuid()}@${Utils.newUuid()}.com`,
+      },
+    };
+
+    this.updateUrl = function updateUrl(_user, _attribute) {
+      this.options.uri = `${url}/${_user}/${_attribute}`;
+    };
+
+    const details = {
+      username: Utils.newUuid(),
+      password: Utils.newUuid(),
+      email: `${Utils.newUuid()}@${Utils.newUuid()}.com`,
+    };
+
+    this.user = await UserMiddleware.create(details);
+    const authDetails = await UserMiddleware.getAuthToken(details);
+    this.options.headers.authorization = authDetails.success.token;
+    done();
+  });
+
+  afterEach(async (done) => {
+    await UserMiddleware.remove(this.user, this.user.username);
+    delete this.auth;
+    delete this.user;
+    delete this.token;
+    delete this.options;
+    delete this.updateUrl;
+    done();
+  });
+
+  const updateEmailTitle = 'Update email';
+  describe(updateEmailTitle, () => {
+    it('returns an authentication error for a missing auth token', async (done) => {
+      this.updateUrl(this.user.username, 'email');
+      delete this.options.headers.authorization;
+      try {
+        const response = await Request(this.options);
+        expect(response).not.toBeDefined();
+        log(updateEmailTitle, 'Should have thrown error');
+      } catch (response) {
+        expect(response).toBeDefined();
+        expect(response.statusCode).toBe(401);
+
+        const details = JSON.parse(response.error);
+        expect(details.error.type).toBe('authentication_error');
+        expect(details.error.message).toBe(DroppError.TokenReason.missing);
+        log(updateEmailTitle, response.error);
+      }
+
+      done();
+    });
+
+    it('returns an error for an invalid email', async (done) => {
+      delete this.options.form.newEmail;
+      this.updateUrl(this.user.username, 'email');
+      try {
+        const response = await Request(this.options);
+        expect(response).not.toBeDefined();
+        log(updateEmailTitle, 'Should have thrown error');
+      } catch (response) {
+        expect(response).toBeDefined();
+        expect(response.statusCode).toBe(400);
+
+        const details = JSON.parse(response.error);
+        expect(details.error.type).toBe('invalid_request_error');
+        expect(details.error.message).toBe('newEmail');
+        log(updateEmailTitle, response.error);
+      }
+
+      done();
+    });
+
+    it('returns an error for updating a different user', async (done) => {
+      this.updateUrl(Utils.newUuid(), 'email');
+      try {
+        const response = await Request(this.options);
+        expect(response).not.toBeDefined();
+        log(updateEmailTitle, 'Should have thrown error');
+      } catch (response) {
+        expect(response).toBeDefined();
+        expect(response.statusCode).toBe(403);
+
+        const details = JSON.parse(response.error);
+        expect(details.error.type).toBe('resource_error');
+        expect(details.error.message).toBe('Unauthorized to update that user\'s email');
+        log(updateEmailTitle, response.error);
+      }
+
+      done();
+    });
+
+    it('updates the user\'s email address', async (done) => {
+      this.updateUrl(this.user.username, 'email');
+      const response = await Request(this.options);
+      expect(response).toBeDefined();
+      expect(response.statusCode).toBe(200);
+
+      const details = JSON.parse(response.body);
+      expect(details.success.message).toBe('Successful email update');
+
+      // Verify user information from the backend
+      const userData = await UserMiddleware.get(this.user, { username: this.user.username });
+      expect(userData.email).toBe(this.options.form.newEmail);
+      log(updateEmailTitle, response.body);
+      done();
+    });
+  });
+
+  const updatePasswordTitle = 'Upate password';
+  describe(updatePasswordTitle, () => {
+
   });
 });
 /* eslint-enable no-undef */
