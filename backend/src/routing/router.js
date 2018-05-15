@@ -15,7 +15,10 @@ const routes = {
   auth: 'POST',
   users: {
     '/': 'POST',
-    '/<username>': 'GET',
+    '/<username>': [
+      'GET',
+      'DELETE',
+    ],
     '/<username>/email': 'PUT',
     '/<username>/password': 'PUT',
   },
@@ -193,6 +196,15 @@ const routing = function routing(_router) {
       }
     });
 
+  /**
+   * Method: PUT
+   * Authentication: Yes
+   * Details: Updates a user's email address
+   * URL parameters:
+   *  username
+   * Body parameters:
+   *  newEmail
+   */
   router.route('/users/:username/email')
     .all(validateAuthToken)
     .put(async (request, response, next) => {
@@ -204,6 +216,16 @@ const routing = function routing(_router) {
       }
     });
 
+  /**
+   * Method: PUT
+   * Authentication: Yes
+   * Details: Updates a user's password
+   * URL parameters:
+   *  username
+   * Body parameters:
+   *  oldPassword
+   *  newPassword
+   */
   router.route('/users/:username/password')
     .all(validateAuthToken)
     .put(async (request, response, next) => {

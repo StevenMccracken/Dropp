@@ -40,7 +40,9 @@ describe(baseRouteTitle, () => {
     expect(routes.auth).toBe('POST');
     expect(Object.keys(routes.users).length).toBe(4);
     expect(routes.users['/']).toBe('POST');
-    expect(routes.users['/<username>']).toBe('GET');
+    expect(routes.users['/<username>'].length).toBe(2);
+    expect(routes.users['/<username>'][0]).toBe('GET');
+    expect(routes.users['/<username>'][1]).toBe('DELETE');
     expect(routes.users['/<username>/email']).toBe('PUT');
     expect(routes.users['/<username>/password']).toBe('PUT');
     log(baseRouteTitle, response.body);
