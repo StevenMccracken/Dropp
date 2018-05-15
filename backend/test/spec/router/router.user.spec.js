@@ -209,7 +209,7 @@ describe(getUserRouteTitle, () => {
   });
 
   afterEach(async (done) => {
-    await UserMiddleware.remove(this.user, this.user.username);
+    await UserMiddleware.remove(this.user, { username: this.user.username });
     delete this.auth;
     delete this.user;
     delete this.token;
@@ -311,7 +311,7 @@ describe(getUserRouteTitle, () => {
     });
 
     afterEach(async (done) => {
-      await UserMiddleware.remove(this.user2, this.user2.username);
+      await UserMiddleware.remove(this.user2, { username: this.user2.username });
       delete this.user2;
       done();
     });
@@ -373,7 +373,7 @@ describe(updateUserRouteTitle, () => {
   });
 
   afterEach(async (done) => {
-    await UserMiddleware.remove(this.user, this.user.username);
+    await UserMiddleware.remove(this.user, { username: this.user.username });
     delete this.auth;
     delete this.user;
     delete this.token;

@@ -32,7 +32,7 @@ describe('User Middleware Tests', () => {
   });
 
   afterEach(async (done) => {
-    await UserMiddleware.remove(this.testUser, this.testUser.username);
+    await UserMiddleware.remove(this.testUser, { username: this.testUser.username });
     delete this.testUser;
     delete this.testUserDetails;
     done();
@@ -424,7 +424,7 @@ describe('User Middleware Tests', () => {
 
     afterEach(async (done) => {
       const user = await UserAccessor.get(details.username);
-      await UserMiddleware.remove(user, details.username);
+      await UserMiddleware.remove(user, { username: details.username });
       done();
     });
 
@@ -1092,7 +1092,7 @@ describe('User Middleware Tests', () => {
     });
 
     afterEach(async (done) => {
-      await UserMiddleware.remove(this.testUser2, this.testUser2.username);
+      await UserMiddleware.remove(this.testUser2, { username: this.testUser2.username });
       delete this.testUser2;
       done();
     });
@@ -1245,7 +1245,7 @@ describe('User Middleware Tests', () => {
 
         // Clean up test case
         try {
-          await UserMiddleware.remove(testUser3, testUser3.username);
+          await UserMiddleware.remove(testUser3, { username: testUser3.username });
         } catch (error) {
           expect(error).not.toBeDefined();
           log(invalidRequestToFollowTitle, 'Should not have thrown error');
@@ -1979,7 +1979,7 @@ describe('User Middleware Tests', () => {
   const removeUserTitle = 'Remove user';
   describe(removeUserTitle, () => {
     it('removes a user', async (done) => {
-      await UserMiddleware.remove(this.newUser, this.newUser.username);
+      await UserMiddleware.remove(this.newUser, { username: this.newUser.username });
       try {
         const user = await UserMiddleware.get(this.testUser, { username: this.newUser.username });
         expect(user).not.toBeDefined();
@@ -2006,7 +2006,7 @@ describe('User Middleware Tests', () => {
 
     it('throws an error for an invalid current user', async (done) => {
       try {
-        const result = await UserMiddleware.remove(null, this.invalidUsername);
+        const result = await UserMiddleware.remove(null, { username: this.invalidUsername });
         expect(result).not.toBeDefined();
         log(invalidRemoveTitle, 'Should have thrown error');
         done();
@@ -2023,9 +2023,33 @@ describe('User Middleware Tests', () => {
       }
     });
 
-    it('throws an error for an invalid username', async (done) => {
+    it('throws an error for invalid username details', async (done) => {
       try {
-        const result = await UserMiddleware.remove(this.testUser, this.invalidUsername);
+        const result = await UserMiddleware.remove(this.testUser, null);
+        expect(result).not.toBeDefined();
+        log(invalidRemoveTitle, 'Should have thrown error');
+        done();
+      } catch (error) {
+        expect(error).toBeDefined();
+        expect(error.name).toBe('DroppError');
+        expect(error.details).toBeDefined();
+        expect(error.details.error).toBeDefined();
+        expect(error.details.error.type).toBe(DroppError.type.InvalidRequest.type);
+        expect(error.details.error.message).toBeDefined();
+        expect(typeof error.details.error.message).toBe('string');
+
+        const invalidParameters = error.details.error.message.split(',');
+        expect(invalidParameters.length).toBe(1);
+        expect(invalidParameters[0]).toBe('username');
+        log(invalidRemoveTitle, error.details);
+        done();
+      }
+    });
+
+    it('throws an error for an invalid username', async (done) => {
+      const details = { username: this.invalidUsername };
+      try {
+        const result = await UserMiddleware.remove(this.testUser, details);
         expect(result).not.toBeDefined();
         log(invalidRemoveTitle, 'Should have thrown error');
         done();
@@ -2048,8 +2072,9 @@ describe('User Middleware Tests', () => {
 
     it('throws an error for a missing username', async (done) => {
       delete this.invalidUsername;
+      const details = { username: this.invalidUsername };
       try {
-        const result = await UserMiddleware.remove(this.testUser, this.invalidUsername);
+        const result = await UserMiddleware.remove(this.testUser, details);
         expect(result).not.toBeDefined();
         log(invalidRemoveTitle, 'Should have thrown error');
         done();
@@ -2072,7 +2097,7 @@ describe('User Middleware Tests', () => {
 
     it('throws an error for a different user', async (done) => {
       try {
-        const result = await UserMiddleware.remove(this.testUser, 'test');
+        const result = await UserMiddleware.remove(this.testUser, { username: 'test' });
         expect(result).not.toBeDefined();
         log(invalidRemoveTitle, 'Should have thrown error');
         done();
@@ -2097,7 +2122,7 @@ describe('User Middleware Tests', () => {
       });
 
       try {
-        const result = await UserMiddleware.remove(user, user.username);
+        const result = await UserMiddleware.remove(user, { username: user.username });
         expect(result).not.toBeDefined();
         log(invalidRemoveTitle, 'Should have thrown error');
         done();

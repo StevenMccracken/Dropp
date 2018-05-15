@@ -240,24 +240,29 @@ const updateEmail = async function updateEmail(_currentUser, _usernameDetails, _
 /**
  * Removes a user by their username
  * @param {User} _currentUser the current user for the request
- * @param {String} _username the username of the user to remove
+ * @param {Object} _usernameDetails the details
+ * containing the username of the user to remove
  * @throws {DroppError} if the given username is invalid, or if
  * the current user's username does not match the given username
  */
-const remove = async function remove(_currentUser, _username) {
+const remove = async function remove(_currentUser, _usernameDetails) {
   const source = 'remove()';
-  log(source, _username);
+  log(source, _usernameDetails);
 
   if (!(_currentUser instanceof User)) {
     DroppError.throwServerError(source, null, 'Object is not a User');
   }
 
-  if (!Validator.isValidUsername(_username)) DroppError.throwInvalidRequestError(source, 'username');
-  if (_currentUser.username !== _username) {
+  const usernameDetails = Utils.hasValue(_usernameDetails) ? _usernameDetails : {};
+  if (!Validator.isValidUsername(usernameDetails.username)) {
+    DroppError.throwInvalidRequestError(source, 'username');
+  }
+
+  if (_currentUser.username !== usernameDetails.username) {
     DroppError.throwResourceError(source, 'Unauthorized to remove that user');
   }
 
-  const user = await UserAccessor.get(_username);
+  const user = await UserAccessor.get(usernameDetails.username);
   if (!Utils.hasValue(user)) DroppError.throwResourceDneError(source, 'user');
   await UserAccessor.remove(user);
 };

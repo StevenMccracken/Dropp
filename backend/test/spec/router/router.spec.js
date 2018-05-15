@@ -124,7 +124,7 @@ describe(validateAuthTokenTitle, () => {
     delete this.userDetails;
     delete this.didCallNext;
     delete this.responseResult;
-    await UserMiddleware.remove(this.user, this.user.username);
+    await UserMiddleware.remove(this.user, { username: this.user.username });
     delete this.user;
     done();
   });

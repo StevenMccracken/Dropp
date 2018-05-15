@@ -41,7 +41,7 @@ describe(authRouteTitle, () => {
     delete this.username;
     delete this.password;
     delete this.options;
-    await UserMiddleware.remove(this.user, this.user.username);
+    await UserMiddleware.remove(this.user, { username: this.user.username });
     done();
   });
 
