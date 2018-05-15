@@ -126,7 +126,6 @@ const routing = function routing(_router) {
    */
   const baseRoute = '/';
   router.route(baseRoute).get((request, response) => {
-    log(baseRoute, request);
     response.json(routes);
   });
 
@@ -137,7 +136,6 @@ const routing = function routing(_router) {
    */
   const welcomeRoute = '/welcome';
   router.route(welcomeRoute).get((request, response) => {
-    log(welcomeRoute, request);
     response.json({ message: 'This is the REST API for Dropp' });
   });
 
@@ -152,8 +150,8 @@ const routing = function routing(_router) {
   const authRoute = '/auth';
   router.route(authRoute).post(async (request, response, next) => {
     try {
-      const data = await UserMiddleware.getAuthToken(request.body);
-      response.json(data);
+      const result = await UserMiddleware.getAuthToken(request.body);
+      response.json(result);
     } catch (error) {
       next(error);
     }
@@ -170,9 +168,9 @@ const routing = function routing(_router) {
    */
   router.route('/users').post(async (request, response, next) => {
     try {
-      const data = await UserMiddleware.addNewUser(request.body);
+      const result = await UserMiddleware.addNewUser(request.body);
       response.status(201);
-      response.json(data);
+      response.json(result);
     } catch (error) {
       next(error);
     }
@@ -189,8 +187,8 @@ const routing = function routing(_router) {
     .all(validateAuthToken)
     .get(async (request, response, next) => {
       try {
-        const data = await UserMiddleware.get(request.user, request.params);
-        response.json(data);
+        const result = await UserMiddleware.get(request.user, request.params);
+        response.json(result);
       } catch (error) {
         next(error);
       }
@@ -209,8 +207,8 @@ const routing = function routing(_router) {
     .all(validateAuthToken)
     .put(async (request, response, next) => {
       try {
-        const data = await UserMiddleware.updateEmail(request.user, request.params, request.body);
-        response.json(data);
+        const result = await UserMiddleware.updateEmail(request.user, request.params, request.body);
+        response.json(result);
       } catch (error) {
         next(error);
       }
@@ -230,10 +228,30 @@ const routing = function routing(_router) {
     .all(validateAuthToken)
     .put(async (request, response, next) => {
       try {
-        /* eslint-disable max-len */
-        const data = await UserMiddleware.updatePassword(request.user, request.params, request.body);
-        /* eslint-enable max-len */
-        response.json(data);
+        const result = await UserMiddleware.updatePassword(
+          request.user,
+          request.params,
+          request.body
+        );
+        response.json(result);
+      } catch (error) {
+        next(error);
+      }
+    });
+
+  /**
+   * Method: DELETE
+   * Authentication: Yes
+   * Details: Deletes a user and all of their data
+   * URL parameters:
+   *  username
+   */
+  router.route('/users/:username')
+    .all(validateAuthToken)
+    .delete(async (request, response, next) => {
+      try {
+        const result = await UserMiddleware.remove(request.user, request.params);
+        response.json(result);
       } catch (error) {
         next(error);
       }

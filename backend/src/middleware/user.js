@@ -340,9 +340,11 @@ const removeFollowRequest = async function removeFollowRequest(_currentUser, _us
  * @throws {DroppError} if the given username or accept parameter is invalid, if
  * the user already follows the current user, or if there is no follower request
  */
-/* eslint-disable max-len */
-const respondToFollowerRequest = async function respondToFollowerRequest(_currentUser, _username, _details) {
-/* eslint-disable max-len */
+const respondToFollowerRequest = async function respondToFollowerRequest(
+  _currentUser,
+  _username,
+  _details
+) {
   const source = 'respondToFollowerRequest()';
   log(source, _username);
 

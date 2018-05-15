@@ -616,9 +616,11 @@ describe('User Middleware Tests', () => {
         newPassword: 'test2',
       };
 
-      /* eslint-disable max-len */
-      const result = await UserMiddleware.updatePassword(this.testUser, this.testUserDetails, details);
-      /* eslint-enable max-len */
+      const result = await UserMiddleware.updatePassword(
+        this.testUser,
+        this.testUserDetails,
+        details
+      );
       expect(result).toBeDefined();
       expect(result.success).toBeDefined();
       expect(result.success.token).toBeDefined();
@@ -644,9 +646,11 @@ describe('User Middleware Tests', () => {
 
     it('throws an error for an invalid current user', async (done) => {
       try {
-        /* eslint-disable max-len */
-        const result = await UserMiddleware.updatePassword(null, this.testUserDetails, this.invalidDetails);
-        /* eslint-enable max-len */
+        const result = await UserMiddleware.updatePassword(
+          null,
+          this.testUserDetails,
+          this.invalidDetails
+        );
         expect(result).not.toBeDefined();
         log(invalidUpdatePasswordTitle, 'Should have thrown error');
         done();
@@ -665,9 +669,11 @@ describe('User Middleware Tests', () => {
 
     it('throws an error for null details', async (done) => {
       try {
-        /* eslint-disable max-len */
-        const result = await UserMiddleware.updatePassword(this.testUser, this.testUserDetails, null);
-        /* eslint-enable max-len */
+        const result = await UserMiddleware.updatePassword(
+          this.testUser,
+          this.testUserDetails,
+          null
+        );
         expect(result).not.toBeDefined();
         log(invalidUpdatePasswordTitle, 'Should have thrown error');
         done();
@@ -714,9 +720,11 @@ describe('User Middleware Tests', () => {
       this.invalidDetails.oldPassword = '$%';
       this.invalidDetails.newPassword = 'he$';
       try {
-        /* eslint-disable max-len */
-        const result = await UserMiddleware.updatePassword(this.testUser, this.testUserDetails, this.invalidDetails);
-        /* eslint-enable max-len */
+        const result = await UserMiddleware.updatePassword(
+          this.testUser,
+          this.testUserDetails,
+          this.invalidDetails
+        );
         expect(result).not.toBeDefined();
         log(invalidUpdatePasswordTitle, 'Should have thrown error');
         done();
@@ -741,9 +749,11 @@ describe('User Middleware Tests', () => {
     it('throws an error for a missing old password', async (done) => {
       delete this.invalidDetails.oldPassword;
       try {
-        /* eslint-disable max-len */
-        const result = await UserMiddleware.updatePassword(this.testUser, this.testUserDetails, this.invalidDetails);
-        /* eslint-enable max-len */
+        const result = await UserMiddleware.updatePassword(
+          this.testUser,
+          this.testUserDetails,
+          this.invalidDetails
+        );
         expect(result).not.toBeDefined();
         log(invalidUpdatePasswordTitle, 'Should have thrown error');
         done();
@@ -767,9 +777,11 @@ describe('User Middleware Tests', () => {
     it('throws an error for a missing new password', async (done) => {
       delete this.invalidDetails.newPassword;
       try {
-        /* eslint-disable max-len */
-        const result = await UserMiddleware.updatePassword(this.testUser, this.testUserDetails, this.invalidDetails);
-        /* eslint-enable max-len */
+        const result = await UserMiddleware.updatePassword(
+          this.testUser,
+          this.testUserDetails,
+          this.invalidDetails
+        );
         expect(result).not.toBeDefined();
         log(invalidUpdatePasswordTitle, 'Should have thrown error');
         done();
@@ -793,9 +805,11 @@ describe('User Middleware Tests', () => {
     it('throws an error for identical old and new passwords', async (done) => {
       this.invalidDetails.newPassword = this.invalidDetails.oldPassword;
       try {
-        /* eslint-disable max-len */
-        const result = await UserMiddleware.updatePassword(this.testUser, this.testUserDetails, this.invalidDetails);
-        /* eslint-enable max-len */
+        const result = await UserMiddleware.updatePassword(
+          this.testUser,
+          this.testUserDetails,
+          this.invalidDetails
+        );
         expect(result).not.toBeDefined();
         log(invalidUpdatePasswordTitle, 'Should have thrown error');
         done();
@@ -816,9 +830,11 @@ describe('User Middleware Tests', () => {
     it('throws an error for updating a different user', async (done) => {
       const details = { username: 'test' };
       try {
-        /* eslint-disable max-len */
-        const result = await UserMiddleware.updatePassword(this.testUser, details, this.invalidDetails);
-        /* eslint-enable max-len */
+        const result = await UserMiddleware.updatePassword(
+          this.testUser,
+          details,
+          this.invalidDetails
+        );
         expect(result).not.toBeDefined();
         log(invalidUpdatePasswordTitle, 'Should have thrown error');
         done();
@@ -864,9 +880,11 @@ describe('User Middleware Tests', () => {
     it('throws an error for an incorrect password', async (done) => {
       this.invalidDetails.oldPassword = Utils.newUuid();
       try {
-        /* eslint-disable max-len */
-        const result = await UserMiddleware.updatePassword(this.testUser, this.testUserDetails, this.invalidDetails);
-        /* eslint-enable max-len */
+        const result = await UserMiddleware.updatePassword(
+          this.testUser,
+          this.testUserDetails,
+          this.invalidDetails
+        );
         expect(result).not.toBeDefined();
         log(invalidUpdatePasswordTitle, 'Should have thrown error');
         done();
@@ -915,9 +933,11 @@ describe('User Middleware Tests', () => {
 
     it('throws an error for an invalid current user', async (done) => {
       try {
-        /* eslint-disable max-len */
-        const result = await UserMiddleware.updateEmail(null, this.testUserDetails, this.invalidDetails);
-        /* eslint-enable max-len */
+        const result = await UserMiddleware.updateEmail(
+          null,
+          this.testUserDetails,
+          this.invalidDetails
+        );
         expect(result).not.toBeDefined();
         log(invalidUpdateEmailTitle, 'Should have thrown error');
         done();
@@ -977,9 +997,11 @@ describe('User Middleware Tests', () => {
 
     it('throws an error for an invalid email', async (done) => {
       try {
-        /* eslint-disable max-len */
-        const result = await UserMiddleware.updateEmail(this.testUser, this.testUserDetails, this.invalidDetails);
-        /* eslint-enable max-len */
+        const result = await UserMiddleware.updateEmail(
+          this.testUser,
+          this.testUserDetails,
+          this.invalidDetails
+        );
         expect(result).not.toBeDefined();
         log(invalidUpdateEmailTitle, 'Should have thrown error');
         done();
@@ -1003,9 +1025,11 @@ describe('User Middleware Tests', () => {
     it('throws an error for a missing email', async (done) => {
       delete this.invalidDetails.newEmail;
       try {
-        /* eslint-disable max-len */
-        const result = await UserMiddleware.updateEmail(this.testUser, this.testUserDetails, this.invalidDetails);
-        /* eslint-enable max-len */
+        const result = await UserMiddleware.updateEmail(
+          this.testUser,
+          this.testUserDetails,
+          this.invalidDetails
+        );
         expect(result).not.toBeDefined();
         log(invalidUpdateEmailTitle, 'Should have thrown error');
         done();
@@ -1030,9 +1054,11 @@ describe('User Middleware Tests', () => {
       this.invalidDetails.newEmail = 'test@test.com';
       try {
         const details = { username: 'test' };
-        /* eslint-disable max-len */
-        const result = await UserMiddleware.updateEmail(this.testUser, details, this.invalidDetails);
-        /* eslint-enable max-len */
+        const result = await UserMiddleware.updateEmail(
+          this.testUser,
+          details,
+          this.invalidDetails
+        );
         expect(result).not.toBeDefined();
         log(invalidUpdateEmailTitle, 'Should have thrown error');
         done();
@@ -1237,9 +1263,10 @@ describe('User Middleware Tests', () => {
       });
 
       it('removes a follow request to the user', async (done) => {
-        /* eslint-disable max-len */
-        const result = await UserMiddleware.removeFollowRequest(this.testUser, this.testUser2.username);
-        /* eslint-enable max-len */
+        const result = await UserMiddleware.removeFollowRequest(
+          this.testUser,
+          this.testUser2.username
+        );
         expect(result).toBeDefined();
         expect(result.success).toBeDefined();
         expect(result.success.message).toBeDefined();
@@ -1282,9 +1309,10 @@ describe('User Middleware Tests', () => {
 
       it('throws an error for an invalid username', async (done) => {
         try {
-          /* eslint-disable max-len */
-          const result = await UserMiddleware.removeFollowRequest(this.testUser, this.invalidUsername);
-          /* eslint-enable max-len */
+          const result = await UserMiddleware.removeFollowRequest(
+            this.testUser,
+            this.invalidUsername
+          );
           expect(result).not.toBeDefined();
           log(invalidRemoveFollowRequestTitle, 'Should have thrown error');
           done();
@@ -1308,9 +1336,10 @@ describe('User Middleware Tests', () => {
       it('throws an error for a missing username', async (done) => {
         delete this.invalidUsername;
         try {
-          /* eslint-disable max-len */
-          const result = await UserMiddleware.removeFollowRequest(this.testUser, this.invalidUsername);
-          /* eslint-enable max-len */
+          const result = await UserMiddleware.removeFollowRequest(
+            this.testUser,
+            this.invalidUsername
+          );
           expect(result).not.toBeDefined();
           log(invalidRemoveFollowRequestTitle, 'Should have thrown error');
           done();
@@ -1353,9 +1382,10 @@ describe('User Middleware Tests', () => {
 
       it('throws an error for a non-existent follow request', async (done) => {
         try {
-          /* eslint-disable max-len */
-          const result = await UserMiddleware.removeFollowRequest(this.testUser, this.testUser2.username);
-          /* eslint-enable max-len */
+          const result = await UserMiddleware.removeFollowRequest(
+            this.testUser,
+            this.testUser2.username
+          );
           expect(result).not.toBeDefined();
           log(invalidRemoveFollowRequestTitle, 'Should have thrown error');
           done();
@@ -1383,9 +1413,11 @@ describe('User Middleware Tests', () => {
 
       it('accepts a follower request', async (done) => {
         const details = { accept: true };
-        /* eslint-disable max-len */
-        const result = await UserMiddleware.respondToFollowerRequest(this.testUser2, this.testUser.username, details);
-        /* eslint-enable max-len */
+        const result = await UserMiddleware.respondToFollowerRequest(
+          this.testUser2,
+          this.testUser.username,
+          details
+        );
         expect(result).toBeDefined();
         expect(result.success).toBeDefined();
         expect(result.success.message).toBeDefined();
@@ -1399,9 +1431,11 @@ describe('User Middleware Tests', () => {
 
       it('declines a follower request', async (done) => {
         const details = { accept: false };
-        /* eslint-disable max-len */
-        const result = await UserMiddleware.respondToFollowerRequest(this.testUser2, this.testUser.username, details);
-        /* eslint-enable max-len */
+        const result = await UserMiddleware.respondToFollowerRequest(
+          this.testUser2,
+          this.testUser.username,
+          details
+        );
         expect(result).toBeDefined();
         expect(result.success).toBeDefined();
         expect(result.success.message).toBeDefined();
@@ -1430,9 +1464,11 @@ describe('User Middleware Tests', () => {
 
       it('throws an error for an invalid current user', async (done) => {
         try {
-          /* eslint-disable max-len */
-          const result = await UserMiddleware.respondToFollowerRequest(null, this.invalidUsername, this.invalidDetails);
-          /* eslint-enable max-len */
+          const result = await UserMiddleware.respondToFollowerRequest(
+            null,
+            this.invalidUsername,
+            this.invalidDetails
+          );
           expect(result).not.toBeDefined();
           log(invalidRespondToFollowerRequestTitle, 'Should have thrown error');
           done();
@@ -1451,9 +1487,11 @@ describe('User Middleware Tests', () => {
 
       it('throws an error for null details', async (done) => {
         try {
-          /* eslint-disable max-len */
-          const result = await UserMiddleware.respondToFollowerRequest(this.testUser, this.invalidUsername, null);
-          /* eslint-enable max-len */
+          const result = await UserMiddleware.respondToFollowerRequest(
+            this.testUser,
+            this.invalidUsername,
+            null
+          );
           expect(result).not.toBeDefined();
           log(invalidRespondToFollowerRequestTitle, 'Should have thrown error');
           done();
@@ -1476,9 +1514,11 @@ describe('User Middleware Tests', () => {
       it('throws an error for an invalid username', async (done) => {
         this.invalidUsername = '%';
         try {
-          /* eslint-disable max-len */
-          const result = await UserMiddleware.respondToFollowerRequest(this.testUser, this.invalidUsername, this.invalidDetails);
-          /* eslint-enable max-len */
+          const result = await UserMiddleware.respondToFollowerRequest(
+            this.testUser,
+            this.invalidUsername,
+            this.invalidDetails
+          );
           expect(result).not.toBeDefined();
           log(invalidRespondToFollowerRequestTitle, 'Should have thrown error');
           done();
@@ -1502,9 +1542,11 @@ describe('User Middleware Tests', () => {
       it('throws an error for a missing username', async (done) => {
         delete this.invalidUsername;
         try {
-          /* eslint-disable max-len */
-          const result = await UserMiddleware.respondToFollowerRequest(this.testUser, this.invalidUsername, this.invalidDetails);
-          /* eslint-enable max-len */
+          const result = await UserMiddleware.respondToFollowerRequest(
+            this.testUser,
+            this.invalidUsername,
+            this.invalidDetails
+          );
           expect(result).not.toBeDefined();
           log(invalidRespondToFollowerRequestTitle, 'Should have thrown error');
           done();
@@ -1528,9 +1570,11 @@ describe('User Middleware Tests', () => {
       it('throws an error for an invalid accept parameter', async (done) => {
         this.invalidDetails.accept = 'hi';
         try {
-          /* eslint-disable max-len */
-          const result = await UserMiddleware.respondToFollowerRequest(this.testUser, this.invalidUsername, this.invalidDetails);
-          /* eslint-enable max-len */
+          const result = await UserMiddleware.respondToFollowerRequest(
+            this.testUser,
+            this.invalidUsername,
+            this.invalidDetails
+          );
           expect(result).not.toBeDefined();
           log(invalidRespondToFollowerRequestTitle, 'Should have thrown error');
           done();
@@ -1554,9 +1598,11 @@ describe('User Middleware Tests', () => {
       it('throws an error for a missing accept parameter', async (done) => {
         delete this.invalidDetails.accept;
         try {
-          /* eslint-disable max-len */
-          const result = await UserMiddleware.respondToFollowerRequest(this.testUser, this.invalidUsername, this.invalidDetails);
-          /* eslint-enable max-len */
+          const result = await UserMiddleware.respondToFollowerRequest(
+            this.testUser,
+            this.invalidUsername,
+            this.invalidDetails
+          );
           expect(result).not.toBeDefined();
           log(invalidRespondToFollowerRequestTitle, 'Should have thrown error');
           done();
@@ -1581,9 +1627,11 @@ describe('User Middleware Tests', () => {
         this.invalidUsername = '%';
         this.invalidDetails.accept = '%';
         try {
-          /* eslint-disable max-len */
-          const result = await UserMiddleware.respondToFollowerRequest(this.testUser, this.invalidUsername, this.invalidDetails);
-          /* eslint-enable max-len */
+          const result = await UserMiddleware.respondToFollowerRequest(
+            this.testUser,
+            this.invalidUsername,
+            this.invalidDetails
+          );
           expect(result).not.toBeDefined();
           log(invalidRespondToFollowerRequestTitle, 'Should have thrown error');
           done();
@@ -1607,9 +1655,11 @@ describe('User Middleware Tests', () => {
 
       it('throws an error for a non-existent user', async (done) => {
         try {
-          /* eslint-disable max-len */
-          const result = await UserMiddleware.respondToFollowerRequest(this.testUser, 'test', this.invalidDetails);
-          /* eslint-enable max-len */
+          const result = await UserMiddleware.respondToFollowerRequest(
+            this.testUser,
+            'test',
+            this.invalidDetails
+          );
           expect(result).not.toBeDefined();
           log(invalidRespondToFollowerRequestTitle, 'Should have thrown error');
           done();
@@ -1629,9 +1679,11 @@ describe('User Middleware Tests', () => {
 
       it('throws an error for a non-existent follower request', async (done) => {
         try {
-          /* eslint-disable max-len */
-          const result = await UserMiddleware.respondToFollowerRequest(this.testUser, this.testUser2.username, this.invalidDetails);
-          /* eslint-enable max-len */
+          const result = await UserMiddleware.respondToFollowerRequest(
+            this.testUser,
+            this.testUser2.username,
+            this.invalidDetails
+          );
           expect(result).not.toBeDefined();
           log(invalidRespondToFollowerRequestTitle, 'Should have thrown error');
           done();
@@ -1655,9 +1707,11 @@ describe('User Middleware Tests', () => {
       beforeEach(async (done) => {
         const details = { accept: true };
         await UserMiddleware.requestToFollow(this.testUser, this.testUser2.username);
-        /* eslint-disable max-len */
-        await UserMiddleware.respondToFollowerRequest(this.testUser2, this.testUser.username, details);
-        /* eslint-enable max-len */
+        await UserMiddleware.respondToFollowerRequest(
+          this.testUser2,
+          this.testUser.username,
+          details
+        );
         done();
       });
 
@@ -1899,9 +1953,10 @@ describe('User Middleware Tests', () => {
 
       it('throws an error for a non-existent follower', async (done) => {
         try {
-          /* eslint-disable max-len */
-          const result = await UserMiddleware.removeFollower(this.testUser, this.testUser2.username);
-          /* eslint-enable max-len */
+          const result = await UserMiddleware.removeFollower(
+            this.testUser,
+            this.testUser2.username
+          );
           expect(result).not.toBeDefined();
           log(invalidUnfollowTitle, 'Should have thrown error');
           done();

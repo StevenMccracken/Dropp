@@ -584,27 +584,28 @@ describe(updateUserRouteTitle, () => {
       done();
     });
 
-    /* eslint-disable max-len */
-    it('returns an error when the old password doesn\'t match the existing password', async (done) => {
-    /* eslint-enable max-len */
-      this.options.form.oldPassword = Utils.newUuid();
-      this.updateUrl(this.user.username, 'password');
-      try {
-        const response = await Request(this.options);
-        expect(response).not.toBeDefined();
-        log(updatePasswordTitle, 'Should have thrown error');
-      } catch (response) {
-        expect(response).toBeDefined();
-        expect(response.statusCode).toBe(403);
+    it(
+      'returns an error when the old password doesn\'t match the existing password',
+      async (done) => {
+        this.options.form.oldPassword = Utils.newUuid();
+        this.updateUrl(this.user.username, 'password');
+        try {
+          const response = await Request(this.options);
+          expect(response).not.toBeDefined();
+          log(updatePasswordTitle, 'Should have thrown error');
+        } catch (response) {
+          expect(response).toBeDefined();
+          expect(response.statusCode).toBe(403);
 
-        const details = JSON.parse(response.error);
-        expect(details.error.type).toBe('resource_error');
-        expect(details.error.message).toBe('Old password must match existing password');
-        log(updatePasswordTitle, response.error);
+          const details = JSON.parse(response.error);
+          expect(details.error.type).toBe('resource_error');
+          expect(details.error.message).toBe('Old password must match existing password');
+          log(updatePasswordTitle, response.error);
+        }
+
+        done();
       }
-
-      done();
-    });
+    );
 
     describe('Successful update', () => {
       beforeEach(async (done) => {
@@ -630,9 +631,10 @@ describe(updateUserRouteTitle, () => {
       // Verify user information from the backend
       const newPassword = await UserAccessor.getPassword(this.user.username);
       expect(newPassword).not.toBe(this.oldHashedPassword);
-      /* eslint-disable max-len */
-      const matchResult = await AuthModule.validatePasswords(this.options.form.newPassword, newPassword);
-      /* eslint-enable max-len */
+      const matchResult = await AuthModule.validatePasswords(
+        this.options.form.newPassword,
+        newPassword
+      );
       expect(matchResult).toBe(true);
       log(updatePasswordTitle, response.body);
       done();
