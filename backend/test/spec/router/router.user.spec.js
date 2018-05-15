@@ -145,6 +145,7 @@ describe(postUserRouteTitle, () => {
 
     afterEach(async (done) => {
       await UserAccessor.remove(this.user);
+      delete this.user;
       done();
     });
 
@@ -210,9 +211,7 @@ describe(getUserRouteTitle, () => {
 
   afterEach(async (done) => {
     await UserMiddleware.remove(this.user, { username: this.user.username });
-    delete this.auth;
     delete this.user;
-    delete this.token;
     delete this.options;
     delete this.updateUrl;
     done();
@@ -374,9 +373,7 @@ describe(updateUserRouteTitle, () => {
 
   afterEach(async (done) => {
     await UserMiddleware.remove(this.user, { username: this.user.username });
-    delete this.auth;
     delete this.user;
-    delete this.token;
     delete this.options;
     delete this.updateUrl;
     delete this.oldPassword;
@@ -639,6 +636,41 @@ describe(updateUserRouteTitle, () => {
       log(updatePasswordTitle, response.body);
       done();
     });
+  });
+});
+
+const removeUserTitle = 'Remove user route';
+describe(removeUserTitle, () => {
+  beforeEach(async (done) => {
+    this.options = {
+      method: 'DELETE',
+      uri: url,
+      resolveWithFullResponse: true,
+      headers: {},
+    };
+
+    this.updateUrl = function updateUrl(_user) {
+      this.options.uri = `${url}/${_user}`;
+    };
+
+    const details = {
+      username: Utils.newUuid(),
+      password: this.oldPassword,
+      email: `${Utils.newUuid()}@${Utils.newUuid()}.com`,
+    };
+
+    this.user = await UserMiddleware.create(details);
+    const authDetails = await UserMiddleware.getAuthToken(details);
+    this.options.headers.authorization = authDetails.success.token;
+    done();
+  });
+
+  afterEach(async (done) => {
+    await UserMiddleware.remove(this.user, { username: this.user.username });
+    delete this.user;
+    delete this.options;
+    delete this.updateUrl;
+    done();
   });
 });
 /* eslint-enable no-undef */
