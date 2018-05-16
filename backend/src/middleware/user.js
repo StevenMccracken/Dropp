@@ -286,21 +286,26 @@ const remove = async function remove(_currentUser, _usernameDetails) {
 /**
  * Adds a follow request from the current user to the given username
  * @param {User} _currentUser the current user for the request
- * @param {String} _username the username of the user to follow
+ * @param {Object} _usernameDetails the details
+ * containing the username of the user to follow
  * @return {Object} the success details
  * @throws {DroppError} if the given username is invalid, or if
  * the current user already has a follow request/follows the user
  */
-const requestToFollow = async function requestToFollow(_currentUser, _username) {
+const requestToFollow = async function requestToFollow(_currentUser, _usernameDetails) {
   const source = 'requestToFollow()';
-  log(source, _username);
+  log(source, _usernameDetails);
 
   if (!(_currentUser instanceof User)) {
     DroppError.throwServerError(source, null, 'Object is not a User');
   }
 
-  if (!Validator.isValidUsername(_username)) DroppError.throwInvalidRequestError(source, 'username');
-  const user = await UserAccessor.get(_username);
+  const usernameDetails = Utils.hasValue(_usernameDetails) ? _usernameDetails : {};
+  if (!Validator.isValidUsername(usernameDetails.username)) {
+    DroppError.throwInvalidRequestError(source, 'username');
+  }
+
+  const user = await UserAccessor.get(usernameDetails.username);
   if (!Utils.hasValue(user)) DroppError.throwResourceDneError(source, 'user');
   if (user.hasFollowerRequest(_currentUser.username)) {
     DroppError.throwResourceError(source, 'You already have a pending follow request for that user');
