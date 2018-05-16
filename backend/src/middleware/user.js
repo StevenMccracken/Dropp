@@ -242,6 +242,7 @@ const updateEmail = async function updateEmail(_currentUser, _usernameDetails, _
  * @param {User} _currentUser the current user for the request
  * @param {Object} _usernameDetails the details
  * containing the username of the user to remove
+ * @return {Object} the success details
  * @throws {DroppError} if the given username is invalid, or if
  * the current user's username does not match the given username
  */
@@ -362,8 +363,8 @@ const removeFollowRequest = async function removeFollowRequest(_currentUser, _us
 /**
  * Responds to a follower request for the current user from the given username
  * @param {User} _currentUser the current user for the request
- * @param {String} _username the username
- * of the user to repond to the request for
+ * @param {Object} _usernameDetails the details containing
+ * the username of the user to respond to the request for
  * @param {Object} _details the details containing accept boolean parameter
  * @return {Object} the success details
  * @throws {DroppError} if the given username or accept parameter is invalid, if
@@ -371,11 +372,11 @@ const removeFollowRequest = async function removeFollowRequest(_currentUser, _us
  */
 const respondToFollowerRequest = async function respondToFollowerRequest(
   _currentUser,
-  _username,
+  _usernameDetails,
   _details
 ) {
   const source = 'respondToFollowerRequest()';
-  log(source, _username);
+  log(source, _usernameDetails);
 
   if (!(_currentUser instanceof User)) {
     DroppError.throwServerError(source, null, 'Object is not a User');
@@ -383,10 +384,11 @@ const respondToFollowerRequest = async function respondToFollowerRequest(
 
   const invalidMembers = [];
   const details = Utils.hasValue(_details) ? _details : {};
-  if (!Validator.isValidUsername(_username)) invalidMembers.push('username');
+  const usernameDetails = Utils.hasValue(_usernameDetails) ? _usernameDetails : {};
+  if (!Validator.isValidUsername(usernameDetails.username)) invalidMembers.push('username');
   if (!Validator.isValidBoolean(details.accept)) invalidMembers.push('accept');
   if (invalidMembers.length > 0) DroppError.throwInvalidRequestError(source, invalidMembers);
-  const user = await UserAccessor.get(_username);
+  const user = await UserAccessor.get(usernameDetails.username);
   if (!Utils.hasValue(user)) DroppError.throwResourceDneError(source, 'user');
   if (!user.hasFollowRequest(_currentUser.username)) {
     DroppError.throwResourceError(source, 'That user has not requested to follow you');
