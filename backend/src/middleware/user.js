@@ -324,21 +324,26 @@ const requestToFollow = async function requestToFollow(_currentUser, _usernameDe
 /**
  * Removes a follow request from the current user to the given username
  * @param {User} _currentUser the current user for the request
- * @param {String} _username the username of the user to remove the follow
+ * @param {Object} _usernameDetails the details containing
+ * the username of the user to remove the follow
  * @return {Object} the success details
- * @throws {DroppError} if the given username is invalid, if the
- * current user does not have a follow request, or already follows the user
+ * @throws {DroppError} if the given username is invalid, if the current
+ * user does not have a follow request, or already follows the user
  */
-const removeFollowRequest = async function removeFollowRequest(_currentUser, _username) {
+const removeFollowRequest = async function removeFollowRequest(_currentUser, _usernameDetails) {
   const source = 'removeFollowRequest()';
-  log(source, _username);
+  log(source, _usernameDetails);
 
   if (!(_currentUser instanceof User)) {
     DroppError.throwServerError(source, null, 'Object is not a User');
   }
 
-  if (!Validator.isValidUsername(_username)) DroppError.throwInvalidRequestError(source, 'username');
-  const user = await UserAccessor.get(_username);
+  const usernameDetails = Utils.hasValue(_usernameDetails) ? _usernameDetails : {};
+  if (!Validator.isValidUsername(usernameDetails.username)) {
+    DroppError.throwInvalidRequestError(source, 'username');
+  }
+
+  const user = await UserAccessor.get(usernameDetails.username);
   if (!Utils.hasValue(user)) DroppError.throwResourceDneError(source, 'user');
   if (!user.hasFollowerRequest(_currentUser.username)) {
     DroppError.throwResourceError(source, 'You do not have a pending follow request for that user');
