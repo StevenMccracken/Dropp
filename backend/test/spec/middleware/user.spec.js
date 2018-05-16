@@ -1245,7 +1245,8 @@ describe('User Middleware Tests', () => {
 
         // Clean up test case
         try {
-          await UserMiddleware.remove(testUser3, { username: testUser3.username });
+          const result = await UserMiddleware.remove(testUser3, { username: testUser3.username });
+          expect(result.success).toBeDefined();
         } catch (error) {
           expect(error).not.toBeDefined();
           log(invalidRequestToFollowTitle, 'Should not have thrown error');
@@ -1979,7 +1980,8 @@ describe('User Middleware Tests', () => {
   const removeUserTitle = 'Remove user';
   describe(removeUserTitle, () => {
     it('removes a user', async (done) => {
-      await UserMiddleware.remove(this.newUser, { username: this.newUser.username });
+      const result = await UserMiddleware.remove(this.newUser, { username: this.newUser.username });
+      expect(result.success.message).toBe('Successfully removed all user data');
       try {
         const user = await UserMiddleware.get(this.testUser, { username: this.newUser.username });
         expect(user).not.toBeDefined();
@@ -2131,10 +2133,8 @@ describe('User Middleware Tests', () => {
         expect(error.name).toBe('DroppError');
         expect(error.details).toBeDefined();
         expect(error.details.error).toBeDefined();
-        expect(error.details.error.type).toBe(DroppError.type.ResourceDNE.type);
-        expect(error.details.error.message).toBeDefined();
-        expect(typeof error.details.error.message).toBe('string');
-        expect(error.details.error.message.toLowerCase()).toContain('user');
+        expect(error.details.error.type).toBe(DroppError.type.Server.type);
+        expect(error.details.error.message).toBe(DroppError.type.Server.message);
         log(invalidRemoveTitle, error.details);
         done();
       }

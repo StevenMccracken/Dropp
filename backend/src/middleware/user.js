@@ -263,8 +263,22 @@ const remove = async function remove(_currentUser, _usernameDetails) {
   }
 
   const user = await UserAccessor.get(usernameDetails.username);
-  if (!Utils.hasValue(user)) DroppError.throwResourceDneError(source, 'user');
+  if (!Utils.hasValue(user)) {
+    DroppError.throwServerError(
+      source,
+      null,
+      `Current user was valid, but retrieved user was ${user}`
+    );
+  }
+
   await UserAccessor.remove(user);
+  const data = {
+    success: {
+      message: 'Successfully removed all user data',
+    },
+  };
+
+  return data;
 };
 
 // Inter-user functions

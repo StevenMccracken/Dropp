@@ -642,6 +642,7 @@ describe(updateUserRouteTitle, () => {
 const removeUserTitle = 'Remove user route';
 describe(removeUserTitle, () => {
   beforeEach(async (done) => {
+    this.shouldDeleteUser = true;
     this.options = {
       method: 'DELETE',
       uri: url,
@@ -655,7 +656,7 @@ describe(removeUserTitle, () => {
 
     const details = {
       username: Utils.newUuid(),
-      password: this.oldPassword,
+      password: Utils.newUuid(),
       email: `${Utils.newUuid()}@${Utils.newUuid()}.com`,
     };
 
@@ -666,10 +667,89 @@ describe(removeUserTitle, () => {
   });
 
   afterEach(async (done) => {
-    await UserMiddleware.remove(this.user, { username: this.user.username });
+    if (this.shouldDeleteUser === true) {
+      await UserMiddleware.remove(this.user, { username: this.user.username });
+    }
+
     delete this.user;
     delete this.options;
     delete this.updateUrl;
+    delete this.shouldDeleteUser;
+    done();
+  });
+
+  it('returns an authentication error for a missing auth token', async (done) => {
+    this.updateUrl(this.user.username);
+    delete this.options.headers.authorization;
+    try {
+      const response = await Request(this.options);
+      expect(response).not.toBeDefined();
+      log(removeUserTitle, 'Should have thrown error');
+    } catch (response) {
+      expect(response).toBeDefined();
+      expect(response.statusCode).toBe(401);
+
+      const details = JSON.parse(response.error);
+      expect(details.error.type).toBe('authentication_error');
+      expect(details.error.message).toBe(DroppError.TokenReason.missing);
+      log(removeUserTitle, response.error);
+    }
+
+    done();
+  });
+
+  it('returns an error for an invalid username', async (done) => {
+    this.updateUrl('__.');
+    try {
+      const response = await Request(this.options);
+      expect(response).not.toBeDefined();
+      log(removeUserTitle, 'Should have thrown error');
+    } catch (response) {
+      expect(response).toBeDefined();
+      expect(response.statusCode).toBe(400);
+
+      const details = JSON.parse(response.error);
+      expect(details.error.type).toBe('invalid_request_error');
+      expect(details.error.message).toBe('username');
+      log(removeUserTitle, response.error);
+    }
+
+    done();
+  });
+
+  it('returns an error for removing a different user', async (done) => {
+    this.updateUrl(Utils.newUuid());
+    try {
+      const response = await Request(this.options);
+      expect(response).not.toBeDefined();
+      log(removeUserTitle, 'Should have thrown error');
+    } catch (response) {
+      expect(response).toBeDefined();
+      expect(response.statusCode).toBe(403);
+
+      const details = JSON.parse(response.error);
+      expect(details.error.type).toBe('resource_error');
+      expect(details.error.message).toBe('Unauthorized to remove that user');
+      log(removeUserTitle, response.error);
+    }
+
+    done();
+  });
+
+  it('removes a user', async (done) => {
+    this.updateUrl(this.user.username);
+    const response = await Request(this.options);
+    expect(response).toBeDefined();
+    expect(response.statusCode).toBe(200);
+
+    const details = JSON.parse(response.body);
+    expect(details.success.message).toBe('Successfully removed all user data');
+
+    // Verify user information from the backend
+    const result = await UserAccessor.get(this.user.username);
+    expect(result).toBeNull();
+    this.shouldDeleteUser = Utils.hasValue(result);
+    log(removeUserTitle, response.body);
     done();
   });
 });
