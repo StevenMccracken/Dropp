@@ -11,16 +11,18 @@ const ErrorLogAccessor = require('../database/error');
 
 const routes = {
   '/': 'GET',
-  welcome: 'GET',
-  auth: 'POST',
-  users: {
+  '/welcome': 'GET',
+  '/auth': 'POST',
+  '/users': {
     '/': 'POST',
-    '/<username>': [
-      'GET',
-      'DELETE',
-    ],
-    '/<username>/email': 'PUT',
-    '/<username>/password': 'PUT',
+    '/<username>': {
+      '/': [
+        'GET',
+        'DELETE',
+      ],
+      '/email': 'PUT',
+      '/password': 'PUT',
+    },
   },
 };
 

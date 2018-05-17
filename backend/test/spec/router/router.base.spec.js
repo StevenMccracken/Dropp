@@ -36,15 +36,21 @@ describe(baseRouteTitle, () => {
     const routes = JSON.parse(response.body);
     expect(Object.keys(routes).length).toBe(4);
     expect(routes['/']).toBe('GET');
-    expect(routes.welcome).toBe('GET');
-    expect(routes.auth).toBe('POST');
-    expect(Object.keys(routes.users).length).toBe(4);
-    expect(routes.users['/']).toBe('POST');
-    expect(routes.users['/<username>'].length).toBe(2);
-    expect(routes.users['/<username>'][0]).toBe('GET');
-    expect(routes.users['/<username>'][1]).toBe('DELETE');
-    expect(routes.users['/<username>/email']).toBe('PUT');
-    expect(routes.users['/<username>/password']).toBe('PUT');
+    expect(routes['/welcome']).toBe('GET');
+    expect(routes['/auth']).toBe('POST');
+
+    const users = routes['/users'];
+    expect(Object.keys(users).length).toBe(2);
+    expect(users['/']).toBe('POST');
+
+    const username = users['/<username>'];
+    expect(Object.keys(username).length).toBe(3);
+    expect(username['/email']).toBe('PUT');
+    expect(username['/password']).toBe('PUT');
+
+    const baseUsername = username['/'];
+    expect(baseUsername[0]).toBe('GET');
+    expect(baseUsername[1]).toBe('DELETE');
     log(baseRouteTitle, response.body);
     done();
   });
