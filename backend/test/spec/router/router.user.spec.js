@@ -63,7 +63,7 @@ describe(postUserRouteTitle, () => {
       expect(response.statusCode).toBe(400);
 
       const details = JSON.parse(response.error);
-      expect(details.error.type).toBe('invalid_request_error');
+      expect(details.error.type).toBe(DroppError.type.InvalidRequest.type);
       expect(details.error.message).toBe('username');
       log(postUserRouteTitle, response.error);
     }
@@ -82,7 +82,7 @@ describe(postUserRouteTitle, () => {
       expect(response.statusCode).toBe(400);
 
       const details = JSON.parse(response.error);
-      expect(details.error.type).toBe('invalid_request_error');
+      expect(details.error.type).toBe(DroppError.type.InvalidRequest.type);
       expect(details.error.message).toBe('password');
       log(postUserRouteTitle, response.error);
     }
@@ -101,7 +101,7 @@ describe(postUserRouteTitle, () => {
       expect(response.statusCode).toBe(400);
 
       const details = JSON.parse(response.error);
-      expect(details.error.type).toBe('invalid_request_error');
+      expect(details.error.type).toBe(DroppError.type.InvalidRequest.type);
       expect(details.error.message).toBe('email');
       log(postUserRouteTitle, response.error);
     }
@@ -122,7 +122,7 @@ describe(postUserRouteTitle, () => {
       expect(response.statusCode).toBe(400);
 
       const details = JSON.parse(response.error);
-      expect(details.error.type).toBe('invalid_request_error');
+      expect(details.error.type).toBe(DroppError.type.InvalidRequest.type);
       expect(details.error.message).toContain('email');
       expect(details.error.message).toContain('username');
       expect(details.error.message).toContain('password');
@@ -160,7 +160,7 @@ describe(postUserRouteTitle, () => {
         expect(response.statusCode).toBe(403);
 
         const details = JSON.parse(response.error);
-        expect(details.error.type).toBe('resource_error');
+        expect(details.error.type).toBe(DroppError.type.Resource.type);
         expect(details.error.message).toBe('A user with that username already exists');
         log(postUserRouteTitle, response.error);
       }
@@ -229,7 +229,7 @@ describe(getUserRouteTitle, () => {
       expect(response.statusCode).toBe(401);
 
       const details = JSON.parse(response.error);
-      expect(details.error.type).toBe('authentication_error');
+      expect(details.error.type).toBe(DroppError.type.Auth.type);
       expect(details.error.message).toBe(DroppError.TokenReason.missing);
       log(postUserRouteTitle, response.error);
     }
@@ -248,7 +248,7 @@ describe(getUserRouteTitle, () => {
       expect(response.statusCode).toBe(400);
 
       const details = JSON.parse(response.error);
-      expect(details.error.type).toBe('invalid_request_error');
+      expect(details.error.type).toBe(DroppError.type.InvalidRequest.type);
       expect(details.error.message).toContain('username');
       log(postUserRouteTitle, response.error);
     }
@@ -267,7 +267,7 @@ describe(getUserRouteTitle, () => {
       expect(response.statusCode).toBe(404);
 
       const details = JSON.parse(response.error);
-      expect(details.error.type).toBe('resource_dne_error');
+      expect(details.error.type).toBe(DroppError.type.ResourceDNE.type);
       expect(details.error.message).toBe('That user does not exist');
       log(postUserRouteTitle, response.error);
     }
@@ -394,7 +394,7 @@ describe(updateUserRouteTitle, () => {
         expect(response.statusCode).toBe(401);
 
         const details = JSON.parse(response.error);
-        expect(details.error.type).toBe('authentication_error');
+        expect(details.error.type).toBe(DroppError.type.Auth.type);
         expect(details.error.message).toBe(DroppError.TokenReason.missing);
         log(updateEmailTitle, response.error);
       }
@@ -414,7 +414,7 @@ describe(updateUserRouteTitle, () => {
         expect(response.statusCode).toBe(400);
 
         const details = JSON.parse(response.error);
-        expect(details.error.type).toBe('invalid_request_error');
+        expect(details.error.type).toBe(DroppError.type.InvalidRequest.type);
         expect(details.error.message).toBe('newEmail');
         log(updateEmailTitle, response.error);
       }
@@ -433,7 +433,7 @@ describe(updateUserRouteTitle, () => {
         expect(response.statusCode).toBe(403);
 
         const details = JSON.parse(response.error);
-        expect(details.error.type).toBe('resource_error');
+        expect(details.error.type).toBe(DroppError.type.Resource.type);
         expect(details.error.message).toBe('Unauthorized to update that user\'s email');
         log(updateEmailTitle, response.error);
       }
@@ -472,7 +472,7 @@ describe(updateUserRouteTitle, () => {
         expect(response.statusCode).toBe(401);
 
         const details = JSON.parse(response.error);
-        expect(details.error.type).toBe('authentication_error');
+        expect(details.error.type).toBe(DroppError.type.Auth.type);
         expect(details.error.message).toBe(DroppError.TokenReason.missing);
         log(updatePasswordTitle, response.error);
       }
@@ -492,7 +492,7 @@ describe(updateUserRouteTitle, () => {
         expect(response.statusCode).toBe(400);
 
         const details = JSON.parse(response.error);
-        expect(details.error.type).toBe('invalid_request_error');
+        expect(details.error.type).toBe(DroppError.type.InvalidRequest.type);
         expect(details.error.message).toBe('oldPassword');
         log(updatePasswordTitle, response.error);
       }
@@ -512,7 +512,7 @@ describe(updateUserRouteTitle, () => {
         expect(response.statusCode).toBe(400);
 
         const details = JSON.parse(response.error);
-        expect(details.error.type).toBe('invalid_request_error');
+        expect(details.error.type).toBe(DroppError.type.InvalidRequest.type);
         expect(details.error.message).toBe('newPassword');
         log(updatePasswordTitle, response.error);
       }
@@ -533,7 +533,7 @@ describe(updateUserRouteTitle, () => {
         expect(response.statusCode).toBe(400);
 
         const details = JSON.parse(response.error);
-        expect(details.error.type).toBe('invalid_request_error');
+        expect(details.error.type).toBe(DroppError.type.InvalidRequest.type);
         expect(details.error.message).toContain('oldPassword');
         expect(details.error.message).toContain('newPassword');
         log(updatePasswordTitle, response.error);
@@ -554,7 +554,7 @@ describe(updateUserRouteTitle, () => {
         expect(response.statusCode).toBe(403);
 
         const details = JSON.parse(response.error);
-        expect(details.error.type).toBe('resource_error');
+        expect(details.error.type).toBe(DroppError.type.Resource.type);
         expect(details.error.message).toBe('New password must be different from old password');
         log(updatePasswordTitle, response.error);
       }
@@ -573,7 +573,7 @@ describe(updateUserRouteTitle, () => {
         expect(response.statusCode).toBe(403);
 
         const details = JSON.parse(response.error);
-        expect(details.error.type).toBe('resource_error');
+        expect(details.error.type).toBe(DroppError.type.Resource.type);
         expect(details.error.message).toBe('Unauthorized to update that user\'s password');
         log(updatePasswordTitle, response.error);
       }
@@ -595,7 +595,7 @@ describe(updateUserRouteTitle, () => {
           expect(response.statusCode).toBe(403);
 
           const details = JSON.parse(response.error);
-          expect(details.error.type).toBe('resource_error');
+          expect(details.error.type).toBe(DroppError.type.Resource.type);
           expect(details.error.message).toBe('Old password must match existing password');
           log(updatePasswordTitle, response.error);
         }
@@ -690,7 +690,7 @@ describe(removeUserTitle, () => {
       expect(response.statusCode).toBe(401);
 
       const details = JSON.parse(response.error);
-      expect(details.error.type).toBe('authentication_error');
+      expect(details.error.type).toBe(DroppError.type.Auth.type);
       expect(details.error.message).toBe(DroppError.TokenReason.missing);
       log(removeUserTitle, response.error);
     }
@@ -709,7 +709,7 @@ describe(removeUserTitle, () => {
       expect(response.statusCode).toBe(400);
 
       const details = JSON.parse(response.error);
-      expect(details.error.type).toBe('invalid_request_error');
+      expect(details.error.type).toBe(DroppError.type.InvalidRequest.type);
       expect(details.error.message).toBe('username');
       log(removeUserTitle, response.error);
     }
@@ -728,7 +728,7 @@ describe(removeUserTitle, () => {
       expect(response.statusCode).toBe(403);
 
       const details = JSON.parse(response.error);
-      expect(details.error.type).toBe('resource_error');
+      expect(details.error.type).toBe(DroppError.type.Resource.type);
       expect(details.error.message).toBe('Unauthorized to remove that user');
       log(removeUserTitle, response.error);
     }
@@ -751,6 +751,195 @@ describe(removeUserTitle, () => {
     this.shouldDeleteUser = Utils.hasValue(result);
     log(removeUserTitle, response.body);
     done();
+  });
+});
+
+const interUserRoutes = 'Inter-user routes';
+describe(interUserRoutes, () => {
+  beforeEach(async (done) => {
+    this.details1 = {
+      username: Utils.newUuid(),
+      password: Utils.newUuid(),
+      email: `${Utils.newUuid()}@${Utils.newUuid()}.com`,
+    };
+
+    this.details2 = {
+      username: Utils.newUuid(),
+      password: Utils.newUuid(),
+      email: `${Utils.newUuid()}@${Utils.newUuid()}.com`,
+    };
+
+    this.user1 = await UserMiddleware.create(this.details1);
+    this.user2 = await UserMiddleware.create(this.details2);
+    done();
+  });
+
+  afterEach(async (done) => {
+    await UserMiddleware.remove(this.user1, { username: this.user1.username });
+    await UserMiddleware.remove(this.user2, { username: this.user2.username });
+    delete this.user1;
+    delete this.user2;
+    delete this.details1;
+    delete this.details2;
+    done();
+  });
+
+  const requestToFollowTitle = 'Request to follow';
+  describe(requestToFollowTitle, () => {
+    beforeEach(async (done) => {
+      this.options = {
+        method: 'POST',
+        uri: url,
+        resolveWithFullResponse: true,
+        headers: {},
+      };
+
+      this.updateUrl = function updateUrl(_user) {
+        this.options.uri = `${url}/${_user}/followers/requests`;
+      };
+
+      const authDetails = await UserMiddleware.getAuthToken(this.details1);
+      this.options.headers.authorization = authDetails.success.token;
+      done();
+    });
+
+    afterEach(() => {
+      delete this.options;
+      delete this.updateUrl;
+    });
+
+    it('returns an authentication error for a missing auth token', async (done) => {
+      this.updateUrl(this.user2.username);
+      delete this.options.headers.authorization;
+      try {
+        const response = await Request(this.options);
+        expect(response).not.toBeDefined();
+        log(requestToFollowTitle, 'Should have thrown error');
+      } catch (response) {
+        expect(response).toBeDefined();
+        expect(response.statusCode).toBe(401);
+
+        const details = JSON.parse(response.error);
+        expect(details.error.type).toBe(DroppError.type.Auth.type);
+        expect(details.error.message).toBe(DroppError.TokenReason.missing);
+        log(requestToFollowTitle, response.error);
+      }
+
+      done();
+    });
+
+    it('returns an error for an invalid username', async (done) => {
+      this.updateUrl('__.');
+      try {
+        const response = await Request(this.options);
+        expect(response).not.toBeDefined();
+        log(requestToFollowTitle, 'Should have thrown error');
+      } catch (response) {
+        expect(response).toBeDefined();
+        expect(response.statusCode).toBe(400);
+
+        const details = JSON.parse(response.error);
+        expect(details.error.type).toBe(DroppError.type.InvalidRequest.type);
+        expect(details.error.message).toBe('username');
+        log(requestToFollowTitle, response.error);
+      }
+
+      done();
+    });
+
+    it('returns an error for requesting to follow the same user', async (done) => {
+      this.updateUrl(this.user1.username);
+      try {
+        const response = await Request(this.options);
+        expect(response).not.toBeDefined();
+        log(requestToFollowTitle, 'Should have thrown error');
+      } catch (response) {
+        expect(response).toBeDefined();
+        expect(response.statusCode).toBe(403);
+
+        const details = JSON.parse(response.error);
+        expect(details.error.type).toBe(DroppError.type.Resource.type);
+        expect(details.error.message).toBe('You cannot request to follow yourself');
+        log(requestToFollowTitle, response.error);
+      }
+
+      done();
+    });
+
+    it('returns an error for a non-existent user', async (done) => {
+      this.updateUrl(Utils.newUuid());
+      try {
+        const response = await Request(this.options);
+        expect(response).not.toBeDefined();
+        log(requestToFollowTitle, 'Should have thrown error');
+      } catch (response) {
+        expect(response).toBeDefined();
+        expect(response.statusCode).toBe(404);
+
+        const details = JSON.parse(response.error);
+        expect(details.error.type).toBe(DroppError.type.ResourceDNE.type);
+        expect(details.error.message).toBe('That user does not exist');
+        log(requestToFollowTitle, response.error);
+      }
+
+      done();
+    });
+
+    const existingFollowRequestTitle = 'Existing follow request';
+    describe(existingFollowRequestTitle, () => {
+      beforeEach(async (done) => {
+        await UserAccessor.addFollowRequest(this.user1, this.user2);
+        done();
+      });
+
+      afterEach(async (done) => {
+        await UserAccessor.removeFollowRequest(this.user1, this.user2);
+        done();
+      });
+
+      it('returns an error for an existing follow request', async (done) => {
+        this.updateUrl(this.user2.username);
+        try {
+          const response = await Request(this.options);
+          expect(response).not.toBeDefined();
+          log(existingFollowRequestTitle, 'Should have thrown error');
+        } catch (response) {
+          expect(response).toBeDefined();
+          expect(response.statusCode).toBe(403);
+
+          const details = JSON.parse(response.error);
+          expect(details.error.type).toBe(DroppError.type.Resource.type);
+          expect(details.error.message).toBe('You already have a pending follow request for that user');
+          log(existingFollowRequestTitle, response.error);
+        }
+
+        done();
+      });
+    });
+
+    const successFollowRequestTitle = 'Success follow request';
+    describe(successFollowRequestTitle, () => {
+      afterEach(async (done) => {
+        await UserAccessor.removeFollowRequest(this.user1, this.user2);
+        done();
+      });
+
+      it('sends a request to follow a user', async (done) => {
+        this.updateUrl(this.user2.username);
+        const response = await Request(this.options);
+        expect(response).toBeDefined();
+        expect(response.statusCode).toBe(200);
+
+        const details = JSON.parse(response.body);
+        expect(details.success.message).toBe('Successful follow request');
+
+        // Verify user information from the backend
+        const user = await UserAccessor.get(this.user2.username);
+        expect(user.hasFollowerRequest(this.user1.username)).toBe(true);
+        log(successFollowRequestTitle, response.body);
+        done();
+      });
+    });
   });
 });
 /* eslint-enable no-undef */

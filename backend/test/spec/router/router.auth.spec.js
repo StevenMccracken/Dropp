@@ -2,6 +2,7 @@ const Request = require('request-promise-native');
 const Log = require('../../logger');
 const Server = require('../../../index');
 const Utils = require('../../../src/utilities/utils');
+const DroppError = require('../../../src/errors/DroppError');
 const UserMiddleware = require('../../../src/middleware/user');
 
 /**
@@ -56,7 +57,7 @@ describe(authRouteTitle, () => {
       expect(response.statusCode).toBe(400);
 
       const details = JSON.parse(response.error);
-      expect(details.error.type).toBe('invalid_request_error');
+      expect(details.error.type).toBe(DroppError.type.InvalidRequest.type);
       expect(details.error.message).toBe('username');
       log(authRouteTitle, response.error);
     }
@@ -75,7 +76,7 @@ describe(authRouteTitle, () => {
       expect(response.statusCode).toBe(400);
 
       const details = JSON.parse(response.error);
-      expect(details.error.type).toBe('invalid_request_error');
+      expect(details.error.type).toBe(DroppError.type.InvalidRequest.type);
       expect(details.error.message).toBe('password');
       log(authRouteTitle, response.error);
     }
@@ -95,7 +96,7 @@ describe(authRouteTitle, () => {
       expect(response.statusCode).toBe(400);
 
       const details = JSON.parse(response.error);
-      expect(details.error.type).toBe('invalid_request_error');
+      expect(details.error.type).toBe(DroppError.type.InvalidRequest.type);
       expect(details.error.message).toContain('username');
       expect(details.error.message).toContain('password');
       log(authRouteTitle, response.error);
@@ -115,7 +116,7 @@ describe(authRouteTitle, () => {
       expect(response.statusCode).toBe(401);
 
       const details = JSON.parse(response.error);
-      expect(details.error.type).toBe('login_error');
+      expect(details.error.type).toBe(DroppError.type.Login.type);
       expect(details.error.message).toBe('The username or password is incorrect');
       log(authRouteTitle, response.error);
     }
@@ -134,7 +135,7 @@ describe(authRouteTitle, () => {
       expect(response.statusCode).toBe(401);
 
       const details = JSON.parse(response.error);
-      expect(details.error.type).toBe('login_error');
+      expect(details.error.type).toBe(DroppError.type.Login.type);
       expect(details.error.message).toBe('The username or password is incorrect');
       log(authRouteTitle, response.error);
     }
