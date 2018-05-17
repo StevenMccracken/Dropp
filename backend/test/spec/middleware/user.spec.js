@@ -1215,6 +1215,25 @@ describe('User Middleware Tests', () => {
         }
       });
 
+      it('throws an error for requesting to follow the same user', async (done) => {
+        const details = { username: this.testUser.username };
+        try {
+          const result = await UserMiddleware.requestToFollow(this.testUser, details);
+          expect(result).not.toBeDefined();
+          log(invalidRequestToFollowTitle, 'Should have thrown error');
+        } catch (error) {
+          expect(error).toBeDefined();
+          expect(error.name).toBe('DroppError');
+          expect(error.details).toBeDefined();
+          expect(error.details.error).toBeDefined();
+          expect(error.details.error.type).toBe(DroppError.type.Resource.type);
+          expect(error.details.error.message).toBe('You cannot request to follow yourself');
+          log(invalidRequestToFollowTitle, error.details);
+        }
+
+        done();
+      });
+
       it('throws an error for a non-existent user', async (done) => {
         const details = { username: 'test' };
         try {

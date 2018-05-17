@@ -306,6 +306,10 @@ const requestToFollow = async function requestToFollow(_currentUser, _usernameDe
     DroppError.throwInvalidRequestError(source, 'username');
   }
 
+  if (_currentUser.username === usernameDetails.username) {
+    DroppError.throwResourceError(source, 'You cannot request to follow yourself');
+  }
+
   const user = await UserAccessor.get(usernameDetails.username);
   if (!Utils.hasValue(user)) DroppError.throwResourceDneError(source, 'user');
   if (user.hasFollowerRequest(_currentUser.username)) {

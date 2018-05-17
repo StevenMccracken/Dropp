@@ -44,13 +44,19 @@ describe(baseRouteTitle, () => {
     expect(users['/']).toBe('POST');
 
     const username = users['/<username>'];
-    expect(Object.keys(username).length).toBe(3);
-    expect(username['/email']).toBe('PUT');
-    expect(username['/password']).toBe('PUT');
+    expect(Object.keys(username).length).toBe(4);
 
     const baseUsername = username['/'];
     expect(baseUsername[0]).toBe('GET');
     expect(baseUsername[1]).toBe('DELETE');
+
+    expect(username['/email']).toBe('PUT');
+    expect(username['/password']).toBe('PUT');
+
+    const followers = username['/followers'];
+    expect(Object.keys(followers).length).toBe(1);
+    expect(followers['/requests']).toBe('POST');
+
     log(baseRouteTitle, response.body);
     done();
   });
