@@ -1100,8 +1100,9 @@ describe('User Middleware Tests', () => {
     const requestToFollowTitle = 'Request to follow user';
     describe(requestToFollowTitle, () => {
       it('adds a follow request for the user', async (done) => {
-        const details = { username: this.testUser2.username };
-        const result = await UserMiddleware.requestToFollow(this.testUser, details);
+        const details = { username: this.testUser.username };
+        const requestedUser = { requestedUser: this.testUser2.username };
+        const result = await UserMiddleware.requestToFollow(this.testUser, details, requestedUser);
         expect(result).toBeDefined();
         expect(result.success).toBeDefined();
         expect(result.success.message).toBeDefined();
@@ -1124,9 +1125,10 @@ describe('User Middleware Tests', () => {
       });
 
       it('throws an error for an invalid current user', async (done) => {
-        const details = { username: this.invalidUsername };
+        const details = { username: this.testUser.username };
+        const requestedUser = { requestedUser: this.testUser2.username };
         try {
-          const result = await UserMiddleware.requestToFollow(null, details);
+          const result = await UserMiddleware.requestToFollow(null, details, requestedUser);
           expect(result).not.toBeDefined();
           log(invalidRequestToFollowTitle, 'Should have thrown error');
           done();
@@ -1144,8 +1146,9 @@ describe('User Middleware Tests', () => {
       });
 
       it('throws an error for an invalid username details argument', async (done) => {
+        const requestedUser = { requestedUser: this.testUser2.username };
         try {
-          const result = await UserMiddleware.requestToFollow(this.testUser, null);
+          const result = await UserMiddleware.requestToFollow(this.testUser, null, requestedUser);
           expect(result).not.toBeDefined();
           log(invalidRequestToFollowTitle, 'Should have thrown error');
         } catch (error) {
@@ -1166,10 +1169,39 @@ describe('User Middleware Tests', () => {
         done();
       });
 
-      it('throws an error for an invalid username', async (done) => {
-        const details = { username: this.invalidUsername };
+      it('throws an error for an invalid requested user details argument', async (done) => {
+        const details = { username: this.testUser.username };
         try {
-          const result = await UserMiddleware.requestToFollow(this.testUser, details);
+          const result = await UserMiddleware.requestToFollow(this.testUser, details, null);
+          expect(result).not.toBeDefined();
+          log(invalidRequestToFollowTitle, 'Should have thrown error');
+        } catch (error) {
+          expect(error).toBeDefined();
+          expect(error.name).toBe('DroppError');
+          expect(error.details).toBeDefined();
+          expect(error.details.error).toBeDefined();
+          expect(error.details.error.type).toBe(DroppError.type.InvalidRequest.type);
+          expect(error.details.error.message).toBeDefined();
+          expect(typeof error.details.error.message).toBe('string');
+
+          const invalidParameters = error.details.error.message.split(',');
+          expect(invalidParameters.length).toBe(1);
+          expect(invalidParameters[0]).toBe('requestedUser');
+          log(invalidRequestToFollowTitle, error.details);
+        }
+
+        done();
+      });
+
+      it('throws an error for an invalid username', async (done) => {
+        const details = { username: this.testUser.username };
+        const requestedUser = { requestedUser: this.invalidUsername };
+        try {
+          const result = await UserMiddleware.requestToFollow(
+            this.testUser,
+            details,
+            requestedUser
+          );
           expect(result).not.toBeDefined();
           log(invalidRequestToFollowTitle, 'Should have thrown error');
           done();
@@ -1184,7 +1216,7 @@ describe('User Middleware Tests', () => {
 
           const invalidParameters = error.details.error.message.split(',');
           expect(invalidParameters.length).toBe(1);
-          expect(invalidParameters[0]).toBe('username');
+          expect(invalidParameters[0]).toBe('requestedUser');
           log(invalidRequestToFollowTitle, error.details);
           done();
         }
@@ -1192,9 +1224,14 @@ describe('User Middleware Tests', () => {
 
       it('throws an error for a missing username', async (done) => {
         delete this.invalidUsername;
-        const details = { username: this.invalidUsername };
+        const details = { username: this.testUser.username };
+        const requestedUser = { requestedUser: this.invalidUsername };
         try {
-          const result = await UserMiddleware.requestToFollow(this.testUser, details);
+          const result = await UserMiddleware.requestToFollow(
+            this.testUser,
+            details,
+            requestedUser
+          );
           expect(result).not.toBeDefined();
           log(invalidRequestToFollowTitle, 'Should have thrown error');
           done();
@@ -1209,16 +1246,45 @@ describe('User Middleware Tests', () => {
 
           const invalidParameters = error.details.error.message.split(',');
           expect(invalidParameters.length).toBe(1);
-          expect(invalidParameters[0]).toBe('username');
+          expect(invalidParameters[0]).toBe('requestedUser');
           log(invalidRequestToFollowTitle, error.details);
           done();
         }
       });
 
+      it('throws an error for accessing a different user\'s follow requests', async (done) => {
+        const details = { username: this.testUser2.username };
+        const requestedUser = { requestedUser: this.testUser2.username };
+        try {
+          const result = await UserMiddleware.requestToFollow(
+            this.testUser,
+            details,
+            requestedUser
+          );
+          expect(result).not.toBeDefined();
+          log(invalidRequestToFollowTitle, 'Should have thrown error');
+        } catch (error) {
+          expect(error).toBeDefined();
+          expect(error.name).toBe('DroppError');
+          expect(error.details).toBeDefined();
+          expect(error.details.error).toBeDefined();
+          expect(error.details.error.type).toBe(DroppError.type.Resource.type);
+          expect(error.details.error.message).toBe('Unauthorized to access that user\'s follow requests');
+          log(invalidRequestToFollowTitle, error.details);
+        }
+
+        done();
+      });
+
       it('throws an error for requesting to follow the same user', async (done) => {
         const details = { username: this.testUser.username };
+        const requestedUser = { requestedUser: this.testUser.username };
         try {
-          const result = await UserMiddleware.requestToFollow(this.testUser, details);
+          const result = await UserMiddleware.requestToFollow(
+            this.testUser,
+            details,
+            requestedUser
+          );
           expect(result).not.toBeDefined();
           log(invalidRequestToFollowTitle, 'Should have thrown error');
         } catch (error) {
@@ -1235,9 +1301,14 @@ describe('User Middleware Tests', () => {
       });
 
       it('throws an error for a non-existent user', async (done) => {
-        const details = { username: 'test' };
+        const details = { username: this.testUser.username };
+        const requestedUser = { requestedUser: 'test' };
         try {
-          const result = await UserMiddleware.requestToFollow(this.testUser, details);
+          const result = await UserMiddleware.requestToFollow(
+            this.testUser,
+            details,
+            requestedUser
+          );
           expect(result).not.toBeDefined();
           log(invalidRequestToFollowTitle, 'Should have thrown error');
           done();
@@ -1266,8 +1337,9 @@ describe('User Middleware Tests', () => {
           };
 
           testUser3 = await UserMiddleware.create(details);
-          const usernameDetails = { username: testUser3.username };
-          await UserMiddleware.requestToFollow(this.testUser, usernameDetails);
+          const usernameDetails = { username: this.testUser.username };
+          const requestedUser = { requestedUser: testUser3.username };
+          await UserMiddleware.requestToFollow(this.testUser, usernameDetails, requestedUser);
         } catch (error) {
           expect(error).not.toBeDefined();
           log(invalidRequestToFollowTitle, 'Should not have thrown error');
@@ -1275,8 +1347,13 @@ describe('User Middleware Tests', () => {
         }
 
         try {
-          const usernameDetails = { username: testUser3.username };
-          const result = await UserMiddleware.requestToFollow(this.testUser, usernameDetails);
+          const usernameDetails = { username: this.testUser.username };
+          const requestedUser = { requestedUser: testUser3.username };
+          const result = await UserMiddleware.requestToFollow(
+            this.testUser,
+            usernameDetails,
+            requestedUser
+          );
           expect(result).not.toBeDefined();
           log(invalidRequestToFollowTitle, 'Should have thrown error');
           done();
@@ -1308,8 +1385,9 @@ describe('User Middleware Tests', () => {
     const removeFollowRequestTitle = 'Remove follow request';
     describe(removeFollowRequestTitle, () => {
       beforeEach(async (done) => {
-        const details = { username: this.testUser2.username };
-        await UserMiddleware.requestToFollow(this.testUser, details);
+        const details = { username: this.testUser.username };
+        const requestedUser = { requestedUser: this.testUser2.username };
+        await UserMiddleware.requestToFollow(this.testUser, details, requestedUser);
         done();
       });
 
@@ -1475,8 +1553,9 @@ describe('User Middleware Tests', () => {
     const respondToFollowerRequestTitle = 'Respond to follow request';
     describe(respondToFollowerRequestTitle, () => {
       beforeEach(async (done) => {
-        const details = { username: this.testUser2.username };
-        await UserMiddleware.requestToFollow(this.testUser, details);
+        const details = { username: this.testUser.username };
+        const requestedUser = { requestedUser: this.testUser2.username };
+        await UserMiddleware.requestToFollow(this.testUser, details, requestedUser);
         done();
       });
 
@@ -1814,8 +1893,8 @@ describe('User Middleware Tests', () => {
       beforeEach(async (done) => {
         const details = { accept: true };
         const username1Details = { username: this.testUser.username };
-        const username2Details = { username: this.testUser2.username };
-        await UserMiddleware.requestToFollow(this.testUser, username2Details);
+        const username2Details = { requestedUser: this.testUser2.username };
+        await UserMiddleware.requestToFollow(this.testUser, username1Details, username2Details);
         await UserMiddleware.respondToFollowerRequest(
           this.testUser2,
           username1Details,

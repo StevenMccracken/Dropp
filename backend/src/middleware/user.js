@@ -13,10 +13,11 @@ const Validator = require('../utilities/validator');
 /**
  * Logs a message about user interaction
  * @param {String} _source the source of the log
- * @param {String} _message extra message to log
+ * @param {String|Object} _message extra message to log
  */
 function log(_source, _message) {
-  Log.log('User controller', `${_source} ${_message}`);
+  const message = Utils.hasValue(_message) ? JSON.stringify(_message) : _message;
+  Log.log('User controller', `${_source} ${message}`);
 }
 
 // Single user functions
@@ -288,29 +289,43 @@ const remove = async function remove(_currentUser, _usernameDetails) {
  * Adds a follow request from the current user to the given username
  * @param {User} _currentUser the current user for the request
  * @param {Object} _usernameDetails the details
+ * containing the username of the user's follows requests
+ * @param {Object} _requestedUserDetails the details
  * containing the username of the user to follow
  * @return {Object} the success details
  * @throws {DroppError} if the given username is invalid, or if
  * the current user already has a follow request/follows the user
  */
-const requestToFollow = async function requestToFollow(_currentUser, _usernameDetails) {
+const requestToFollow = async function requestToFollow(
+  _currentUser,
+  _usernameDetails,
+  _requestedUserDetails
+) {
   const source = 'requestToFollow()';
-  log(source, _usernameDetails);
+  log(source, _requestedUserDetails);
 
   if (!(_currentUser instanceof User)) {
     DroppError.throwServerError(source, null, 'Object is not a User');
   }
 
   const usernameDetails = Utils.hasValue(_usernameDetails) ? _usernameDetails : {};
-  if (!Validator.isValidUsername(usernameDetails.username)) {
-    DroppError.throwInvalidRequestError(source, 'username');
+  const requestedUserDetails = Utils.hasValue(_requestedUserDetails) ? _requestedUserDetails : {};
+  const invalidMembers = [];
+  if (!Validator.isValidUsername(usernameDetails.username)) invalidMembers.push('username');
+  if (!Validator.isValidUsername(requestedUserDetails.requestedUser)) {
+    invalidMembers.push('requestedUser');
   }
 
-  if (_currentUser.username === usernameDetails.username) {
+  if (invalidMembers.length > 0) DroppError.throwInvalidRequestError(source, invalidMembers);
+  if (_currentUser.username !== usernameDetails.username) {
+    DroppError.throwResourceError(source, 'Unauthorized to access that user\'s follow requests');
+  }
+
+  if (_currentUser.username === requestedUserDetails.requestedUser) {
     DroppError.throwResourceError(source, 'You cannot request to follow yourself');
   }
 
-  const user = await UserAccessor.get(usernameDetails.username);
+  const user = await UserAccessor.get(requestedUserDetails.requestedUser);
   if (!Utils.hasValue(user)) DroppError.throwResourceDneError(source, 'user');
   if (user.hasFollowerRequest(_currentUser.username)) {
     DroppError.throwResourceError(source, 'You already have a pending follow request for that user');

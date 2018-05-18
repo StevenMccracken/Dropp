@@ -22,8 +22,11 @@ const routes = {
       ],
       '/email': 'PUT',
       '/password': 'PUT',
-      '/followers': {
-        '/requests': 'POST',
+      '/follows': {
+        '/requests': {
+          '/': 'POST',
+          '/<username>': 'DELETE',
+        },
       },
     },
   },
@@ -251,11 +254,15 @@ const routing = function routing(_router) {
    * URL parameters:
    *  username
    */
-  router.route('/users/:username/followers/requests')
+  router.route('/users/:username/follows/requests')
     .all(validateAuthToken)
     .post(async (request, response, next) => {
       try {
-        const result = await UserMiddleware.requestToFollow(request.user, request.params);
+        const result = await UserMiddleware.requestToFollow(
+          request.user,
+          request.params,
+          request.body
+        );
         response.json(result);
       } catch (error) {
         next(error);

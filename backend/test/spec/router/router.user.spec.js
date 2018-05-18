@@ -792,10 +792,11 @@ describe(interUserRoutes, () => {
         uri: url,
         resolveWithFullResponse: true,
         headers: {},
+        form: {},
       };
 
       this.updateUrl = function updateUrl(_user) {
-        this.options.uri = `${url}/${_user}/followers/requests`;
+        this.options.uri = `${url}/${_user}/follows/requests`;
       };
 
       const authDetails = await UserMiddleware.getAuthToken(this.details1);
@@ -809,7 +810,8 @@ describe(interUserRoutes, () => {
     });
 
     it('returns an authentication error for a missing auth token', async (done) => {
-      this.updateUrl(this.user2.username);
+      this.updateUrl(this.user1.username);
+      this.options.form.requestedUser = this.user2.username;
       delete this.options.headers.authorization;
       try {
         const response = await Request(this.options);
@@ -830,6 +832,7 @@ describe(interUserRoutes, () => {
 
     it('returns an error for an invalid username', async (done) => {
       this.updateUrl('__.');
+      this.options.form.requestedUser = this.user2.username;
       try {
         const response = await Request(this.options);
         expect(response).not.toBeDefined();
@@ -847,8 +850,52 @@ describe(interUserRoutes, () => {
       done();
     });
 
+    it('returns an error for an invalid requested username', async (done) => {
+      this.updateUrl(this.user1.username);
+      this.options.form.requestedUser = '__.';
+      try {
+        const response = await Request(this.options);
+        expect(response).not.toBeDefined();
+        log(requestToFollowTitle, 'Should have thrown error');
+      } catch (response) {
+        expect(response).toBeDefined();
+        expect(response.statusCode).toBe(400);
+
+        const details = JSON.parse(response.error);
+        expect(details.error.type).toBe(DroppError.type.InvalidRequest.type);
+        expect(details.error.message).toBe('requestedUser');
+        log(requestToFollowTitle, response.error);
+      }
+
+      done();
+    });
+
+    it(
+      'returns an error for attempting to access a different user\'s follow requests',
+      async (done) => {
+        this.updateUrl(this.user2.username);
+        this.options.form.requestedUser = this.user2.username;
+        try {
+          const response = await Request(this.options);
+          expect(response).not.toBeDefined();
+          log(requestToFollowTitle, 'Should have thrown error');
+        } catch (response) {
+          expect(response).toBeDefined();
+          expect(response.statusCode).toBe(403);
+
+          const details = JSON.parse(response.error);
+          expect(details.error.type).toBe(DroppError.type.Resource.type);
+          expect(details.error.message).toBe('Unauthorized to access that user\'s follow requests');
+          log(requestToFollowTitle, response.error);
+        }
+
+        done();
+      }
+    );
+
     it('returns an error for requesting to follow the same user', async (done) => {
       this.updateUrl(this.user1.username);
+      this.options.form.requestedUser = this.user1.username;
       try {
         const response = await Request(this.options);
         expect(response).not.toBeDefined();
@@ -867,7 +914,8 @@ describe(interUserRoutes, () => {
     });
 
     it('returns an error for a non-existent user', async (done) => {
-      this.updateUrl(Utils.newUuid());
+      this.updateUrl(this.user1.username);
+      this.options.form.requestedUser = Utils.newUuid();
       try {
         const response = await Request(this.options);
         expect(response).not.toBeDefined();
@@ -898,7 +946,8 @@ describe(interUserRoutes, () => {
       });
 
       it('returns an error for an existing follow request', async (done) => {
-        this.updateUrl(this.user2.username);
+        this.updateUrl(this.user1.username);
+        this.options.form.requestedUser = this.user2.username;
         try {
           const response = await Request(this.options);
           expect(response).not.toBeDefined();
@@ -925,7 +974,8 @@ describe(interUserRoutes, () => {
       });
 
       it('sends a request to follow a user', async (done) => {
-        this.updateUrl(this.user2.username);
+        this.updateUrl(this.user1.username);
+        this.options.form.requestedUser = this.user2.username;
         const response = await Request(this.options);
         expect(response).toBeDefined();
         expect(response.statusCode).toBe(200);
