@@ -345,7 +345,8 @@ const requestToFollow = async function requestToFollow(
  * Removes a follow request from the current user to the given username
  * @param {User} _currentUser the current user for the request
  * @param {Object} _usernameDetails the details containing
- * the username of the user to remove the follow
+ * the username of the user's follow requests to access, and
+ * the username of the user to remove the follow request for
  * @return {Object} the success details
  * @throws {DroppError} if the given username is invalid, if the current
  * user does not have a follow request, or already follows the user
@@ -359,11 +360,22 @@ const removeFollowRequest = async function removeFollowRequest(_currentUser, _us
   }
 
   const usernameDetails = Utils.hasValue(_usernameDetails) ? _usernameDetails : {};
-  if (!Validator.isValidUsername(usernameDetails.username)) {
-    DroppError.throwInvalidRequestError(source, 'username');
+  const invalidMembers = [];
+  if (!Validator.isValidUsername(usernameDetails.username)) invalidMembers.push('username');
+  if (!Validator.isValidUsername(usernameDetails.requestedUser)) {
+    invalidMembers.push('requestedUser');
   }
 
-  const user = await UserAccessor.get(usernameDetails.username);
+  if (invalidMembers.length > 0) DroppError.throwInvalidRequestError(source, invalidMembers);
+  if (_currentUser.username !== usernameDetails.username) {
+    DroppError.throwResourceError(source, 'Unauthorized to access that user\'s follow requests');
+  }
+
+  if (_currentUser.username === usernameDetails.requestedUser) {
+    DroppError.throwResourceError(source, 'You cannot remove a follow request from yourself');
+  }
+
+  const user = await UserAccessor.get(usernameDetails.requestedUser);
   if (!Utils.hasValue(user)) DroppError.throwResourceDneError(source, 'user');
   if (!user.hasFollowerRequest(_currentUser.username)) {
     DroppError.throwResourceError(source, 'You do not have a pending follow request for that user');

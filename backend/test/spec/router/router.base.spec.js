@@ -59,7 +59,7 @@ describe(baseRouteTitle, () => {
     const followRequests = follows['/requests'];
     expect(Object.keys(followRequests).length).toBe(2);
     expect(followRequests['/']).toBe('POST');
-    expect(followRequests['/<username>']).toBe('DELETE');
+    expect(followRequests['/<requestedUser>']).toBe('DELETE');
 
     log(baseRouteTitle, response.body);
     done();

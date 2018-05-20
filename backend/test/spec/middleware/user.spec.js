@@ -1392,7 +1392,11 @@ describe('User Middleware Tests', () => {
       });
 
       it('removes a follow request to the user', async (done) => {
-        const details = { username: this.testUser2.username };
+        const details = {
+          username: this.testUser.username,
+          requestedUser: this.testUser2.username,
+        };
+
         const result = await UserMiddleware.removeFollowRequest(this.testUser, details);
         expect(result).toBeDefined();
         expect(result.success).toBeDefined();
@@ -1416,7 +1420,11 @@ describe('User Middleware Tests', () => {
       });
 
       it('throws an error for an invalid current user', async (done) => {
-        const details = { username: this.invalidUsername };
+        const details = {
+          username: this.testUser.username,
+          requestedUser: this.testUser2.username,
+        };
+
         try {
           const result = await UserMiddleware.removeFollowRequest(null, details);
           expect(result).not.toBeDefined();
@@ -1450,8 +1458,9 @@ describe('User Middleware Tests', () => {
           expect(typeof error.details.error.message).toBe('string');
 
           const invalidParameters = error.details.error.message.split(',');
-          expect(invalidParameters.length).toBe(1);
+          expect(invalidParameters.length).toBe(2);
           expect(invalidParameters[0]).toBe('username');
+          expect(invalidParameters[1]).toBe('requestedUser');
           log(invalidRemoveFollowRequestTitle, error.details);
         }
 
@@ -1459,7 +1468,11 @@ describe('User Middleware Tests', () => {
       });
 
       it('throws an error for an invalid username', async (done) => {
-        const details = { username: this.invalidUsername };
+        const details = {
+          username: this.invalidUsername,
+          requestedUser: this.testUser2.username,
+        };
+
         try {
           const result = await UserMiddleware.removeFollowRequest(this.testUser, details);
           expect(result).not.toBeDefined();
@@ -1482,9 +1495,12 @@ describe('User Middleware Tests', () => {
         }
       });
 
-      it('throws an error for a missing username', async (done) => {
-        delete this.invalidUsername;
-        const details = { username: this.invalidUsername };
+      it('throws an error for an invalid requested username', async (done) => {
+        const details = {
+          username: this.testUser.username,
+          requestedUser: this.invalidUsername,
+        };
+
         try {
           const result = await UserMiddleware.removeFollowRequest(this.testUser, details);
           expect(result).not.toBeDefined();
@@ -1501,14 +1517,96 @@ describe('User Middleware Tests', () => {
 
           const invalidParameters = error.details.error.message.split(',');
           expect(invalidParameters.length).toBe(1);
-          expect(invalidParameters[0]).toBe('username');
+          expect(invalidParameters[0]).toBe('requestedUser');
           log(invalidRemoveFollowRequestTitle, error.details);
           done();
         }
       });
 
-      it('throws an error for a non-existent user', async (done) => {
-        const details = { username: 'test' };
+      it('throws an error for a missing requested username', async (done) => {
+        const details = {
+          requestedUser: undefined,
+          username: this.testUser.username,
+        };
+
+        try {
+          const result = await UserMiddleware.removeFollowRequest(this.testUser, details);
+          expect(result).not.toBeDefined();
+          log(invalidRemoveFollowRequestTitle, 'Should have thrown error');
+          done();
+        } catch (error) {
+          expect(error).toBeDefined();
+          expect(error.name).toBe('DroppError');
+          expect(error.details).toBeDefined();
+          expect(error.details.error).toBeDefined();
+          expect(error.details.error.type).toBe(DroppError.type.InvalidRequest.type);
+          expect(error.details.error.message).toBeDefined();
+          expect(typeof error.details.error.message).toBe('string');
+
+          const invalidParameters = error.details.error.message.split(',');
+          expect(invalidParameters.length).toBe(1);
+          expect(invalidParameters[0]).toBe('requestedUser');
+          log(invalidRemoveFollowRequestTitle, error.details);
+          done();
+        }
+      });
+
+      it('throws an error for accessing a different user\'s follow requests', async (done) => {
+        const details = {
+          username: this.testUser2.username,
+          requestedUser: this.testUser2.username,
+        };
+
+        try {
+          const result = await UserMiddleware.removeFollowRequest(this.testUser, details);
+          expect(result).not.toBeDefined();
+          log(invalidRemoveFollowRequestTitle, 'Should have thrown error');
+        } catch (error) {
+          expect(error).toBeDefined();
+          expect(error.name).toBe('DroppError');
+          expect(error.details).toBeDefined();
+          expect(error.details.error).toBeDefined();
+          expect(error.details.error.type).toBe(DroppError.type.Resource.type);
+          expect(error.details.error.message).toBeDefined();
+          expect(typeof error.details.error.message).toBe('string');
+          expect(error.details.error.message).toBe('Unauthorized to access that user\'s follow requests');
+          log(invalidRemoveFollowRequestTitle, error.details);
+        }
+
+        done();
+      });
+
+      it('throws an error for removing a follow request from the same user', async (done) => {
+        const details = {
+          username: this.testUser.username,
+          requestedUser: this.testUser.username,
+        };
+
+        try {
+          const result = await UserMiddleware.removeFollowRequest(this.testUser, details);
+          expect(result).not.toBeDefined();
+          log(invalidRemoveFollowRequestTitle, 'Should have thrown error');
+        } catch (error) {
+          expect(error).toBeDefined();
+          expect(error.name).toBe('DroppError');
+          expect(error.details).toBeDefined();
+          expect(error.details.error).toBeDefined();
+          expect(error.details.error.type).toBe(DroppError.type.Resource.type);
+          expect(error.details.error.message).toBeDefined();
+          expect(typeof error.details.error.message).toBe('string');
+          expect(error.details.error.message).toBe('You cannot remove a follow request from yourself');
+          log(invalidRemoveFollowRequestTitle, error.details);
+        }
+
+        done();
+      });
+
+      it('throws an error for a non-existent requested user', async (done) => {
+        const details = {
+          requestedUser: Utils.newUuid(),
+          username: this.testUser.username,
+        };
+
         try {
           const result = await UserMiddleware.removeFollowRequest(this.testUser, details);
           expect(result).not.toBeDefined();
@@ -1529,7 +1627,11 @@ describe('User Middleware Tests', () => {
       });
 
       it('throws an error for a non-existent follow request', async (done) => {
-        const details = { username: this.testUser2.username };
+        const details = {
+          username: this.testUser.username,
+          requestedUser: this.testUser2.username,
+        };
+
         try {
           const result = await UserMiddleware.removeFollowRequest(this.testUser, details);
           expect(result).not.toBeDefined();

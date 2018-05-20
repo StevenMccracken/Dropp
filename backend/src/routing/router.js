@@ -25,7 +25,7 @@ const routes = {
       '/follows': {
         '/requests': {
           '/': 'POST',
-          '/<username>': 'DELETE',
+          '/<requestedUser>': 'DELETE',
         },
       },
     },
