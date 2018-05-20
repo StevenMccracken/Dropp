@@ -272,6 +272,25 @@ const routing = function routing(_router) {
   /**
    * Method: DELETE
    * Authentication: Yes
+   * Details: Removes a pending follow request to a user
+   * URL parameters:
+   *  username
+   *  requestedUser
+   */
+  router.route('/users/:username/follows/requests/:requestedUser')
+    .all(validateAuthToken)
+    .delete(async (request, response, next) => {
+      try {
+        const result = await UserMiddleware.removeFollowRequest(request.user, request.params);
+        response.json(result);
+      } catch (error) {
+        next(error);
+      }
+    });
+
+  /**
+   * Method: DELETE
+   * Authentication: Yes
    * Details: Deletes a user and all of their data
    * URL parameters:
    *  username
