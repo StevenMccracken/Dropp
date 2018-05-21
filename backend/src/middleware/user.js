@@ -416,10 +416,34 @@ const respondToFollowerRequest = async function respondToFollowerRequest(
   const invalidMembers = [];
   const details = Utils.hasValue(_details) ? _details : {};
   const usernameDetails = Utils.hasValue(_usernameDetails) ? _usernameDetails : {};
-  if (!Validator.isValidUsername(usernameDetails.username)) invalidMembers.push('username');
+  if (!Validator.isValidUsername(usernameDetails.username)) {
+    invalidMembers.push('username');
+  }
+
+  if (!Validator.isValidUsername(usernameDetails.requestedUser)) {
+    invalidMembers.push('requestedUser');
+  }
+
   if (!Validator.isValidBoolean(details.accept)) invalidMembers.push('accept');
-  if (invalidMembers.length > 0) DroppError.throwInvalidRequestError(source, invalidMembers);
-  const user = await UserAccessor.get(usernameDetails.username);
+  if (invalidMembers.length > 0) {
+    DroppError.throwInvalidRequestError(source, invalidMembers);
+  }
+
+  if (_currentUser.username !== usernameDetails.username) {
+    DroppError.throwResourceError(
+      source,
+      'Unauthorized to access that user\'s follower requests'
+    );
+  }
+
+  if (_currentUser.username === usernameDetails.requestedUser) {
+    DroppError.throwResourceError(
+      source,
+      'You cannot respond to a follower request from yourself'
+    );
+  }
+
+  const user = await UserAccessor.get(usernameDetails.requestedUser);
   if (!Utils.hasValue(user)) DroppError.throwResourceDneError(source, 'user');
   if (!user.hasFollowRequest(_currentUser.username)) {
     DroppError.throwResourceError(source, 'That user has not requested to follow you');

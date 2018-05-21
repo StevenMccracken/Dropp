@@ -1663,7 +1663,11 @@ describe('User Middleware Tests', () => {
 
       it('accepts a follower request', async (done) => {
         const details = { accept: true };
-        const usernameDetails = { username: this.testUser.username };
+        const usernameDetails = {
+          username: this.testUser2.username,
+          requestedUser: this.testUser.username,
+        };
+
         const result = await UserMiddleware.respondToFollowerRequest(
           this.testUser2,
           usernameDetails,
@@ -1671,9 +1675,7 @@ describe('User Middleware Tests', () => {
         );
         expect(result).toBeDefined();
         expect(result.success).toBeDefined();
-        expect(result.success.message).toBeDefined();
-        expect(typeof result.success.message).toBe('string');
-        expect(result.success.message.toLowerCase()).toContain('acceptance');
+        expect(result.success.message).toBe('Successful follow request acceptance');
         expect(this.testUser2.followerRequests.includes(this.testUser.username)).toBe(false);
         expect(this.testUser2.followers.includes(this.testUser.username)).toBe(true);
         log(respondToFollowerRequestTitle, result);
@@ -1682,7 +1684,11 @@ describe('User Middleware Tests', () => {
 
       it('declines a follower request', async (done) => {
         const details = { accept: false };
-        const usernameDetails = { username: this.testUser.username };
+        const usernameDetails = {
+          username: this.testUser2.username,
+          requestedUser: this.testUser.username,
+        };
+
         const result = await UserMiddleware.respondToFollowerRequest(
           this.testUser2,
           usernameDetails,
@@ -1690,9 +1696,7 @@ describe('User Middleware Tests', () => {
         );
         expect(result).toBeDefined();
         expect(result.success).toBeDefined();
-        expect(result.success.message).toBeDefined();
-        expect(typeof result.success.message).toBe('string');
-        expect(result.success.message.toLowerCase()).toContain('denial');
+        expect(result.success.message).toBe('Successful follow request denial');
         expect(this.testUser2.followerRequests.includes(this.testUser.username)).toBe(false);
         expect(this.testUser2.followers.includes(this.testUser.username)).toBe(false);
         log(respondToFollowerRequestTitle, result);
@@ -1715,7 +1719,11 @@ describe('User Middleware Tests', () => {
       });
 
       it('throws an error for an invalid current user', async (done) => {
-        const usernameDetails = { username: this.invalidUsername };
+        const usernameDetails = {
+          username: this.testUser.username,
+          requestedUser: this.testUser2.username,
+        };
+
         try {
           const result = await UserMiddleware.respondToFollowerRequest(
             null,
@@ -1731,7 +1739,6 @@ describe('User Middleware Tests', () => {
           expect(error.details).toBeDefined();
           expect(error.details.error).toBeDefined();
           expect(error.details.error.type).toBe(DroppError.type.Server.type);
-          expect(error.details.error.message).toBeDefined();
           expect(error.details.error.message).toBe(DroppError.type.Server.message);
           log(invalidRespondToFollowerRequestTitle, error.details);
           done();
@@ -1754,19 +1761,18 @@ describe('User Middleware Tests', () => {
           expect(error.details).toBeDefined();
           expect(error.details.error).toBeDefined();
           expect(error.details.error.type).toBe(DroppError.type.InvalidRequest.type);
-          expect(error.details.error.message).toBeDefined();
-          expect(typeof error.details.error.message).toBe('string');
-
-          const invalidParameters = error.details.error.message.split(',');
-          expect(invalidParameters.length).toBe(1);
-          expect(invalidParameters[0]).toBe('username');
+          expect(error.details.error.message).toBe('username,requestedUser');
           log(invalidRespondToFollowerRequestTitle, error.details);
           done();
         }
       });
 
       it('throws an error for null details', async (done) => {
-        const usernameDetails = { username: this.invalidUsername };
+        const usernameDetails = {
+          username: this.testUser.username,
+          requestedUser: this.testUser2.username,
+        };
+
         try {
           const result = await UserMiddleware.respondToFollowerRequest(
             this.testUser,
@@ -1782,19 +1788,18 @@ describe('User Middleware Tests', () => {
           expect(error.details).toBeDefined();
           expect(error.details.error).toBeDefined();
           expect(error.details.error.type).toBe(DroppError.type.InvalidRequest.type);
-          expect(error.details.error.message).toBeDefined();
-          expect(typeof error.details.error.message).toBe('string');
-
-          const invalidParameters = error.details.error.message.split(',');
-          expect(invalidParameters.length).toBe(1);
+          expect(error.details.error.message).toBe('accept');
           log(invalidRespondToFollowerRequestTitle, error.details);
           done();
         }
       });
 
       it('throws an error for an invalid username', async (done) => {
-        this.invalidUsername = '%';
-        const usernameDetails = { username: this.invalidUsername };
+        const usernameDetails = {
+          username: this.testUser.username,
+          requestedUser: '%',
+        };
+
         try {
           const result = await UserMiddleware.respondToFollowerRequest(
             this.testUser,
@@ -1810,41 +1815,7 @@ describe('User Middleware Tests', () => {
           expect(error.details).toBeDefined();
           expect(error.details.error).toBeDefined();
           expect(error.details.error.type).toBe(DroppError.type.InvalidRequest.type);
-          expect(error.details.error.message).toBeDefined();
-          expect(typeof error.details.error.message).toBe('string');
-
-          const invalidParameters = error.details.error.message.split(',');
-          expect(invalidParameters.length).toBe(1);
-          expect(invalidParameters[0]).toBe('username');
-          log(invalidRespondToFollowerRequestTitle, error.details);
-          done();
-        }
-      });
-
-      it('throws an error for a missing username', async (done) => {
-        delete this.invalidUsername;
-        const usernameDetails = { username: this.invalidUsername };
-        try {
-          const result = await UserMiddleware.respondToFollowerRequest(
-            this.testUser,
-            usernameDetails,
-            this.invalidDetails
-          );
-          expect(result).not.toBeDefined();
-          log(invalidRespondToFollowerRequestTitle, 'Should have thrown error');
-          done();
-        } catch (error) {
-          expect(error).toBeDefined();
-          expect(error.name).toBe('DroppError');
-          expect(error.details).toBeDefined();
-          expect(error.details.error).toBeDefined();
-          expect(error.details.error.type).toBe(DroppError.type.InvalidRequest.type);
-          expect(error.details.error.message).toBeDefined();
-          expect(typeof error.details.error.message).toBe('string');
-
-          const invalidParameters = error.details.error.message.split(',');
-          expect(invalidParameters.length).toBe(1);
-          expect(invalidParameters[0]).toBe('username');
+          expect(error.details.error.message).toBe('requestedUser');
           log(invalidRespondToFollowerRequestTitle, error.details);
           done();
         }
@@ -1852,7 +1823,11 @@ describe('User Middleware Tests', () => {
 
       it('throws an error for an invalid accept parameter', async (done) => {
         this.invalidDetails.accept = 'hi';
-        const usernameDetails = { username: this.invalidUsername };
+        const usernameDetails = {
+          username: this.testUser.username,
+          requestedUser: this.testUser2.username,
+        };
+
         try {
           const result = await UserMiddleware.respondToFollowerRequest(
             this.testUser,
@@ -1868,50 +1843,19 @@ describe('User Middleware Tests', () => {
           expect(error.details).toBeDefined();
           expect(error.details.error).toBeDefined();
           expect(error.details.error.type).toBe(DroppError.type.InvalidRequest.type);
-          expect(error.details.error.message).toBeDefined();
-          expect(typeof error.details.error.message).toBe('string');
-
-          const invalidParameters = error.details.error.message.split(',');
-          expect(invalidParameters.length).toBe(1);
-          expect(invalidParameters[0]).toBe('accept');
-          log(invalidRespondToFollowerRequestTitle, error.details);
-          done();
-        }
-      });
-
-      it('throws an error for a missing accept parameter', async (done) => {
-        delete this.invalidDetails.accept;
-        const usernameDetails = { username: this.invalidUsername };
-        try {
-          const result = await UserMiddleware.respondToFollowerRequest(
-            this.testUser,
-            usernameDetails,
-            this.invalidDetails
-          );
-          expect(result).not.toBeDefined();
-          log(invalidRespondToFollowerRequestTitle, 'Should have thrown error');
-          done();
-        } catch (error) {
-          expect(error).toBeDefined();
-          expect(error.name).toBe('DroppError');
-          expect(error.details).toBeDefined();
-          expect(error.details.error).toBeDefined();
-          expect(error.details.error.type).toBe(DroppError.type.InvalidRequest.type);
-          expect(error.details.error.message).toBeDefined();
-          expect(typeof error.details.error.message).toBe('string');
-
-          const invalidParameters = error.details.error.message.split(',');
-          expect(invalidParameters.length).toBe(1);
-          expect(invalidParameters[0]).toBe('accept');
+          expect(error.details.error.message).toBe('accept');
           log(invalidRespondToFollowerRequestTitle, error.details);
           done();
         }
       });
 
       it('throws an error for an invalid username and accept parameter', async (done) => {
-        this.invalidUsername = '%';
         this.invalidDetails.accept = '%';
-        const usernameDetails = { username: this.invalidUsername };
+        const usernameDetails = {
+          requestedUser: '%',
+          username: this.testUser.username,
+        };
+
         try {
           const result = await UserMiddleware.respondToFollowerRequest(
             this.testUser,
@@ -1927,20 +1871,75 @@ describe('User Middleware Tests', () => {
           expect(error.details).toBeDefined();
           expect(error.details.error).toBeDefined();
           expect(error.details.error.type).toBe(DroppError.type.InvalidRequest.type);
-          expect(error.details.error.message).toBeDefined();
-          expect(typeof error.details.error.message).toBe('string');
-
-          const invalidParameters = error.details.error.message.split(',');
-          expect(invalidParameters.length).toBe(2);
-          expect(invalidParameters.includes('username')).toBe(true);
-          expect(invalidParameters.includes('accept')).toBe(true);
+          expect(error.details.error.message).toBe('requestedUser,accept');
           log(invalidRespondToFollowerRequestTitle, error.details);
           done();
         }
       });
 
+      it('throws an error for accessing a different user\'s follow requests', async (done) => {
+        const usernameDetails = {
+          username: this.testUser2.username,
+          requestedUser: this.testUser2.username,
+        };
+
+        try {
+          const result = await UserMiddleware.respondToFollowerRequest(
+            this.testUser,
+            usernameDetails,
+            this.invalidDetails
+          );
+          expect(result).not.toBeDefined();
+          log(invalidRespondToFollowerRequestTitle, 'Should have thrown error');
+        } catch (error) {
+          expect(error).toBeDefined();
+          expect(error.name).toBe('DroppError');
+          expect(error.details).toBeDefined();
+          expect(error.details.error).toBeDefined();
+          expect(error.details.error.type).toBe(DroppError.type.Resource.type);
+          expect(error.details.error.message).toBe('Unauthorized to access that user\'s follower requests');
+          log(invalidRespondToFollowerRequestTitle, error.details);
+        }
+
+        done();
+      });
+
+      it(
+        'throws an error for attempting to remove a follower request from the same user',
+        async (done) => {
+          const usernameDetails = {
+            username: this.testUser.username,
+            requestedUser: this.testUser.username,
+          };
+
+          try {
+            const result = await UserMiddleware.respondToFollowerRequest(
+              this.testUser,
+              usernameDetails,
+              this.invalidDetails
+            );
+            expect(result).not.toBeDefined();
+            log(invalidRespondToFollowerRequestTitle, 'Should have thrown error');
+          } catch (error) {
+            expect(error).toBeDefined();
+            expect(error.name).toBe('DroppError');
+            expect(error.details).toBeDefined();
+            expect(error.details.error).toBeDefined();
+            expect(error.details.error.type).toBe(DroppError.type.Resource.type);
+            expect(error.details.error.message).toBe('You cannot respond to a follower request from yourself');
+            log(invalidRespondToFollowerRequestTitle, error.details);
+          }
+
+          done();
+        }
+      );
+
       it('throws an error for a non-existent user', async (done) => {
-        const usernameDetails = { username: 'test' };
+        const usernameDetails = {
+          requestedUser: Utils.newUuid(),
+          username: this.testUser.username,
+        };
+
         try {
           const result = await UserMiddleware.respondToFollowerRequest(
             this.testUser,
@@ -1956,16 +1955,18 @@ describe('User Middleware Tests', () => {
           expect(error.details).toBeDefined();
           expect(error.details.error).toBeDefined();
           expect(error.details.error.type).toBe(DroppError.type.ResourceDNE.type);
-          expect(error.details.error.message).toBeDefined();
-          expect(typeof error.details.error.message).toBe('string');
-          expect(error.details.error.message.toLowerCase()).toContain('user');
+          expect(error.details.error.message).toBe('That user does not exist');
           log(invalidRespondToFollowerRequestTitle, error.details);
           done();
         }
       });
 
       it('throws an error for a non-existent follower request', async (done) => {
-        const usernameDetails = { username: this.testUser2.username };
+        const usernameDetails = {
+          username: this.testUser.username,
+          requestedUser: this.testUser2.username,
+        };
+
         try {
           const result = await UserMiddleware.respondToFollowerRequest(
             this.testUser,
@@ -1981,9 +1982,7 @@ describe('User Middleware Tests', () => {
           expect(error.details).toBeDefined();
           expect(error.details.error).toBeDefined();
           expect(error.details.error.type).toBe(DroppError.type.Resource.type);
-          expect(error.details.error.message).toBeDefined();
-          expect(typeof error.details.error.message).toBe('string');
-          expect(error.details.error.message.toLowerCase()).toContain('has not requested');
+          expect(error.details.error.message).toBe('That user has not requested to follow you');
           log(invalidRespondToFollowerRequestTitle, error.details);
           done();
         }
@@ -1994,14 +1993,18 @@ describe('User Middleware Tests', () => {
     describe(updateFollowFollowerTitle, () => {
       beforeEach(async (done) => {
         const details = { accept: true };
-        const username1Details = { username: this.testUser.username };
-        const username2Details = { requestedUser: this.testUser2.username };
-        await UserMiddleware.requestToFollow(this.testUser, username1Details, username2Details);
-        await UserMiddleware.respondToFollowerRequest(
-          this.testUser2,
-          username1Details,
-          details
-        );
+        const user1Details = {
+          username: this.testUser.username,
+          requestedUser: this.testUser2.username,
+        };
+
+        const user2Details = {
+          username: this.testUser2.username,
+          requestedUser: this.testUser.username,
+        };
+
+        await UserMiddleware.requestToFollow(this.testUser, user1Details, user1Details);
+        await UserMiddleware.respondToFollowerRequest(this.testUser2, user2Details, details);
         done();
       });
 
