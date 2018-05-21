@@ -1662,7 +1662,7 @@ describe('User Middleware Tests', () => {
       });
 
       it('accepts a follower request', async (done) => {
-        const details = { accept: true };
+        const details = { accept: 'true' };
         const usernameDetails = {
           username: this.testUser2.username,
           requestedUser: this.testUser.username,
@@ -1683,7 +1683,7 @@ describe('User Middleware Tests', () => {
       });
 
       it('declines a follower request', async (done) => {
-        const details = { accept: false };
+        const details = { accept: 'false' };
         const usernameDetails = {
           username: this.testUser2.username,
           requestedUser: this.testUser.username,
@@ -1709,7 +1709,7 @@ describe('User Middleware Tests', () => {
       beforeEach(() => {
         this.invalidUsername = 'test';
         this.invalidDetails = {
-          accept: true,
+          accept: 'true',
         };
       });
 
@@ -1796,8 +1796,8 @@ describe('User Middleware Tests', () => {
 
       it('throws an error for an invalid username', async (done) => {
         const usernameDetails = {
-          username: this.testUser.username,
           requestedUser: '%',
+          username: this.testUser.username,
         };
 
         try {
@@ -1992,7 +1992,7 @@ describe('User Middleware Tests', () => {
     const updateFollowFollowerTitle = 'Update follow/follower';
     describe(updateFollowFollowerTitle, () => {
       beforeEach(async (done) => {
-        const details = { accept: true };
+        const details = { accept: 'true' };
         const user1Details = {
           username: this.testUser.username,
           requestedUser: this.testUser2.username,

@@ -191,22 +191,22 @@ class User extends Object {
   }
 
   doesFollow(_username) {
-    const requests = Utils.hasValue(this._follows) ? this._follows : [];
+    const requests = Array.isArray(this._follows) ? this._follows : [];
     return requests.includes(_username);
   }
 
   hasFollower(_username) {
-    const requests = Utils.hasValue(this._followers) ? this._followers : [];
+    const requests = Array.isArray(this._followers) ? this._followers : [];
     return requests.includes(_username);
   }
 
   hasFollowRequest(_username) {
-    const requests = Utils.hasValue(this._followRequests) ? this._followRequests : [];
+    const requests = Array.isArray(this._followRequests) ? this._followRequests : [];
     return requests.includes(_username);
   }
 
   hasFollowerRequest(_username) {
-    const requests = Utils.hasValue(this._followerRequests) ? this._followerRequests : [];
+    const requests = Array.isArray(this._followerRequests) ? this._followerRequests : [];
     return requests.includes(_username);
   }
 }

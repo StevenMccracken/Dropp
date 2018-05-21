@@ -424,7 +424,7 @@ const respondToFollowerRequest = async function respondToFollowerRequest(
     invalidMembers.push('requestedUser');
   }
 
-  if (!Validator.isValidBoolean(details.accept)) invalidMembers.push('accept');
+  if (!Validator.isValidBooleanString(details.accept)) invalidMembers.push('accept');
   if (invalidMembers.length > 0) {
     DroppError.throwInvalidRequestError(source, invalidMembers);
   }
@@ -450,7 +450,7 @@ const respondToFollowerRequest = async function respondToFollowerRequest(
   }
 
   let response;
-  if (details.accept) {
+  if (details.accept === 'true') {
     await UserAccessor.addFollow(user, _currentUser);
     response = 'acceptance';
   } else {

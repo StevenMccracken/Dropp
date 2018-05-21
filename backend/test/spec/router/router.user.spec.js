@@ -1205,5 +1205,275 @@ describe(interUserRoutes, () => {
       });
     });
   });
+
+  const respondToFollowerRequestTitle = 'Respond to follower request';
+  describe(respondToFollowerRequestTitle, () => {
+    beforeEach(async (done) => {
+      this.options = {
+        method: 'PUT',
+        uri: url,
+        resolveWithFullResponse: true,
+        headers: {},
+        form: {},
+      };
+
+      this.updateUrl = function updateUrl(_user, _requestedUser) {
+        this.options.uri = `${url}/${_user}/followers/requests/${_requestedUser}`;
+      };
+
+      const authDetails = await UserMiddleware.getAuthToken(this.details1);
+      this.options.headers.authorization = authDetails.success.token;
+      done();
+    });
+
+    afterEach(() => {
+      delete this.options;
+      delete this.updateUrl;
+    });
+
+    it('returns an authentication error for a missing auth token', async (done) => {
+      this.options.form.accept = true;
+      this.updateUrl(this.user1.username, this.user2.username);
+      delete this.options.headers.authorization;
+      try {
+        const response = await Request(this.options);
+        expect(response).not.toBeDefined();
+        log(respondToFollowerRequestTitle, 'Should have thrown error');
+      } catch (response) {
+        expect(response).toBeDefined();
+        expect(response.statusCode).toBe(401);
+
+        const details = JSON.parse(response.error);
+        expect(details.error.type).toBe(DroppError.type.Auth.type);
+        expect(details.error.message).toBe(DroppError.TokenReason.missing);
+        log(respondToFollowerRequestTitle, response.error);
+      }
+
+      done();
+    });
+
+    it('returns an error for an invalid username', async (done) => {
+      this.options.form.accept = true;
+      this.updateUrl('__.', this.user2.username);
+      try {
+        const response = await Request(this.options);
+        expect(response).not.toBeDefined();
+        log(respondToFollowerRequestTitle, 'Should have thrown error');
+      } catch (response) {
+        expect(response).toBeDefined();
+        expect(response.statusCode).toBe(400);
+
+        const details = JSON.parse(response.error);
+        expect(details.error.type).toBe(DroppError.type.InvalidRequest.type);
+        expect(details.error.message).toBe('username');
+        log(respondToFollowerRequestTitle, response.error);
+      }
+
+      done();
+    });
+
+    it('returns an error for an invalid requested username', async (done) => {
+      this.options.form.accept = true;
+      this.updateUrl(this.user1.username, '__.');
+      try {
+        const response = await Request(this.options);
+        expect(response).not.toBeDefined();
+        log(respondToFollowerRequestTitle, 'Should have thrown error');
+      } catch (response) {
+        expect(response).toBeDefined();
+        expect(response.statusCode).toBe(400);
+
+        const details = JSON.parse(response.error);
+        expect(details.error.type).toBe(DroppError.type.InvalidRequest.type);
+        expect(details.error.message).toBe('requestedUser');
+        log(respondToFollowerRequestTitle, response.error);
+      }
+
+      done();
+    });
+
+    it('returns an error for an invalid username and requested username', async (done) => {
+      this.options.form.accept = true;
+      this.updateUrl('__.', '__.');
+      try {
+        const response = await Request(this.options);
+        expect(response).not.toBeDefined();
+        log(respondToFollowerRequestTitle, 'Should have thrown error');
+      } catch (response) {
+        expect(response).toBeDefined();
+        expect(response.statusCode).toBe(400);
+
+        const details = JSON.parse(response.error);
+        expect(details.error.type).toBe(DroppError.type.InvalidRequest.type);
+        expect(details.error.message).toBe('username,requestedUser');
+        log(respondToFollowerRequestTitle, response.error);
+      }
+
+      done();
+    });
+
+    it('returns an error for an invalid accept body parameter', async (done) => {
+      this.options.form.accept = Utils.newUuid();
+      this.updateUrl(this.user1.username, this.user2.username);
+      try {
+        const response = await Request(this.options);
+        expect(response).not.toBeDefined();
+        log(respondToFollowerRequestTitle, 'Should have thrown error');
+      } catch (response) {
+        expect(response).toBeDefined();
+        expect(response.statusCode).toBe(400);
+
+        const details = JSON.parse(response.error);
+        expect(details.error.type).toBe(DroppError.type.InvalidRequest.type);
+        expect(details.error.message).toBe('accept');
+        log(respondToFollowerRequestTitle, response.error);
+      }
+
+      done();
+    });
+
+    it(
+      'returns an error for attempting to access a different user\'s follower requests',
+      async (done) => {
+        this.options.form.accept = true;
+        this.updateUrl(this.user2.username, this.user2.username);
+        try {
+          const response = await Request(this.options);
+          expect(response).not.toBeDefined();
+          log(respondToFollowerRequestTitle, 'Should have thrown error');
+        } catch (response) {
+          expect(response).toBeDefined();
+          expect(response.statusCode).toBe(403);
+
+          const details = JSON.parse(response.error);
+          expect(details.error.type).toBe(DroppError.type.Resource.type);
+          expect(details.error.message).toBe('Unauthorized to access that user\'s follower requests');
+          log(respondToFollowerRequestTitle, response.error);
+        }
+
+        done();
+      }
+    );
+
+    it(
+      'returns an error for attempting to respond to a follower request from the same user',
+      async (done) => {
+        this.options.form.accept = true;
+        this.updateUrl(this.user1.username, this.user1.username);
+        try {
+          const response = await Request(this.options);
+          expect(response).not.toBeDefined();
+          log(respondToFollowerRequestTitle, 'Should have thrown error');
+        } catch (response) {
+          expect(response).toBeDefined();
+          expect(response.statusCode).toBe(403);
+
+          const details = JSON.parse(response.error);
+          expect(details.error.type).toBe(DroppError.type.Resource.type);
+          expect(details.error.message).toBe('You cannot respond to a follower request from yourself');
+          log(respondToFollowerRequestTitle, response.error);
+        }
+
+        done();
+      }
+    );
+
+    it('returns an error for a non-existent user', async (done) => {
+      this.options.form.accept = true;
+      this.updateUrl(this.user1.username, Utils.newUuid());
+      try {
+        const response = await Request(this.options);
+        expect(response).not.toBeDefined();
+        log(respondToFollowerRequestTitle, 'Should have thrown error');
+      } catch (response) {
+        expect(response).toBeDefined();
+        expect(response.statusCode).toBe(404);
+
+        const details = JSON.parse(response.error);
+        expect(details.error.type).toBe(DroppError.type.ResourceDNE.type);
+        expect(details.error.message).toBe('That user does not exist');
+        log(respondToFollowerRequestTitle, response.error);
+      }
+
+      done();
+    });
+
+    it(
+      'returns an error for attempting to remove a non-existent follow request',
+      async (done) => {
+        this.options.form.accept = true;
+        this.updateUrl(this.user1.username, this.user2.username);
+        try {
+          const response = await Request(this.options);
+          expect(response).not.toBeDefined();
+          log(removeFollowRequestTitle, 'Should have thrown error');
+        } catch (response) {
+          expect(response).toBeDefined();
+          expect(response.statusCode).toBe(403);
+
+          const details = JSON.parse(response.error);
+          expect(details.error.type).toBe(DroppError.type.Resource.type);
+          expect(details.error.message).toBe('That user has not requested to follow you');
+          log(removeFollowRequestTitle, response.error);
+        }
+
+        done();
+      }
+    );
+
+    const successRespondToFollowerRequestTitle = 'Success respond to follower request';
+    describe(successRespondToFollowerRequestTitle, () => {
+      beforeEach(async (done) => {
+        this.removeFollower = true;
+        await UserAccessor.addFollowRequest(this.user2, this.user1);
+        done();
+      });
+
+      afterEach(async (done) => {
+        if (this.removeFollower === true) {
+          await UserAccessor.removeFollow(this.user2, this.user1);
+        }
+
+        delete this.removeFollower;
+        done();
+      });
+
+      it('accepts a follower request from a user', async (done) => {
+        this.options.form.accept = true;
+        this.updateUrl(this.user1.username, this.user2.username);
+        const response = await Request(this.options);
+        expect(response).toBeDefined();
+        expect(response.statusCode).toBe(200);
+
+        const details = JSON.parse(response.body);
+        expect(details.success.message).toBe('Successful follow request acceptance');
+
+        // Verify user information from the backend
+        const user = await UserAccessor.get(this.user2.username);
+        expect(user.doesFollow(this.user1.username)).toBe(true);
+        expect(user.hasFollowRequest(this.user1.username)).toBe(false);
+        log(successRespondToFollowerRequestTitle, response.body);
+        done();
+      });
+
+      it('declines a follower request from a user', async (done) => {
+        this.options.form.accept = false;
+        this.updateUrl(this.user1.username, this.user2.username);
+        const response = await Request(this.options);
+        expect(response).toBeDefined();
+        expect(response.statusCode).toBe(200);
+
+        const details = JSON.parse(response.body);
+        expect(details.success.message).toBe('Successful follow request denial');
+
+        // Verify user information from the backend
+        const user = await UserAccessor.get(this.user2.username);
+        expect(user.doesFollow(this.user1.username)).toBe(false);
+        expect(user.hasFollowRequest(this.user1.username)).toBe(false);
+        log(successRespondToFollowerRequestTitle, response.body);
+        done();
+      });
+    });
+  });
 });
 /* eslint-enable no-undef */

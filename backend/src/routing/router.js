@@ -28,6 +28,11 @@ const routes = {
           '/<requestedUser>': 'DELETE',
         },
       },
+      '/followers': {
+        '/requests': {
+          '/<requestedUser>': 'PUT',
+        },
+      },
     },
   },
 };
@@ -282,6 +287,31 @@ const routing = function routing(_router) {
     .delete(async (request, response, next) => {
       try {
         const result = await UserMiddleware.removeFollowRequest(request.user, request.params);
+        response.json(result);
+      } catch (error) {
+        next(error);
+      }
+    });
+
+  /**
+   * Method: PUT
+   * Authentication: Yes
+   * Details: Accepts or declines a follower request from a user
+   * URL parameters:
+   *  username
+   *  requestedUser
+   * Body parameters:
+   *  accept
+   */
+  router.route('/users/:username/followers/requests/:requestedUser')
+    .all(validateAuthToken)
+    .put(async (request, response, next) => {
+      try {
+        const result = await UserMiddleware.respondToFollowerRequest(
+          request.user,
+          request.params,
+          request.body
+        );
         response.json(result);
       } catch (error) {
         next(error);

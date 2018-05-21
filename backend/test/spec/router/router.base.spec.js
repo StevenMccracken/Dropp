@@ -44,7 +44,7 @@ describe(baseRouteTitle, () => {
     expect(users['/']).toBe('POST');
 
     const username = users['/<username>'];
-    expect(Object.keys(username).length).toBe(4);
+    expect(Object.keys(username).length).toBe(5);
 
     const baseUsername = username['/'];
     expect(baseUsername[0]).toBe('GET');
@@ -60,6 +60,13 @@ describe(baseRouteTitle, () => {
     expect(Object.keys(followRequests).length).toBe(2);
     expect(followRequests['/']).toBe('POST');
     expect(followRequests['/<requestedUser>']).toBe('DELETE');
+
+    const followers = username['/followers'];
+    expect(Object.keys(follows).length).toBe(1);
+
+    const followerRequests = followers['/requests'];
+    expect(Object.keys(followerRequests).length).toBe(1);
+    expect(followerRequests['/<requestedUser>']).toBe('PUT');
 
     log(baseRouteTitle, response.body);
     done();
