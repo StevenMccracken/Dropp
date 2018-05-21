@@ -2009,7 +2009,11 @@ describe('User Middleware Tests', () => {
       });
 
       it('unfollows a user', async (done) => {
-        const usernameDetails = { username: this.testUser2.username };
+        const usernameDetails = {
+          username: this.testUser.username,
+          requestedUser: this.testUser2.username,
+        };
+
         const result = await UserMiddleware.unfollow(this.testUser, usernameDetails);
         expect(result).toBeDefined();
         expect(result.success).toBeDefined();
@@ -2044,7 +2048,11 @@ describe('User Middleware Tests', () => {
       });
 
       it('throws an error for an invalid current user', async (done) => {
-        const usernameDetails = { username: this.invalidUsername };
+        const usernameDetails = {
+          username: this.testUser.username,
+          requestedUser: this.invalidUsername,
+        };
+
         try {
           const result = await UserMiddleware.unfollow(null, usernameDetails);
           expect(result).not.toBeDefined();
@@ -2075,19 +2083,18 @@ describe('User Middleware Tests', () => {
           expect(error.details).toBeDefined();
           expect(error.details.error).toBeDefined();
           expect(error.details.error.type).toBe(DroppError.type.InvalidRequest.type);
-          expect(error.details.error.message).toBeDefined();
-          expect(typeof error.details.error.message).toBe('string');
-
-          const invalidParameters = error.details.error.message.split(',');
-          expect(invalidParameters.length).toBe(1);
-          expect(invalidParameters[0]).toBe('username');
+          expect(error.details.error.message).toBe('username,requestedUser');
           log(invalidUnfollowTitle, error.details);
           done();
         }
       });
 
-      it('throws an error for an invalid username', async (done) => {
-        const usernameDetails = { username: this.invalidUsername };
+      it('throws an error for an invalid requested username', async (done) => {
+        const usernameDetails = {
+          username: this.testUser.username,
+          requestedUser: this.invalidUsername,
+        };
+
         try {
           const result = await UserMiddleware.unfollow(this.testUser, usernameDetails);
           expect(result).not.toBeDefined();
@@ -2099,20 +2106,18 @@ describe('User Middleware Tests', () => {
           expect(error.details).toBeDefined();
           expect(error.details.error).toBeDefined();
           expect(error.details.error.type).toBe(DroppError.type.InvalidRequest.type);
-          expect(error.details.error.message).toBeDefined();
-          expect(typeof error.details.error.message).toBe('string');
-
-          const invalidParameters = error.details.error.message.split(',');
-          expect(invalidParameters.length).toBe(1);
-          expect(invalidParameters[0]).toBe('username');
+          expect(error.details.error.message).toBe('requestedUser');
           log(invalidUnfollowTitle, error.details);
           done();
         }
       });
 
-      it('throws an error for a missing username', async (done) => {
-        delete this.invalidUsername;
-        const usernameDetails = { username: this.invalidUsername };
+      it('throws an error for an invalid current username', async (done) => {
+        const usernameDetails = {
+          username: this.invalidUsername,
+          requestedUser: this.testUser2.username,
+        };
+
         try {
           const result = await UserMiddleware.unfollow(this.testUser, usernameDetails);
           expect(result).not.toBeDefined();
@@ -2124,19 +2129,64 @@ describe('User Middleware Tests', () => {
           expect(error.details).toBeDefined();
           expect(error.details.error).toBeDefined();
           expect(error.details.error.type).toBe(DroppError.type.InvalidRequest.type);
-          expect(error.details.error.message).toBeDefined();
-          expect(typeof error.details.error.message).toBe('string');
-
-          const invalidParameters = error.details.error.message.split(',');
-          expect(invalidParameters.length).toBe(1);
-          expect(invalidParameters[0]).toBe('username');
+          expect(error.details.error.message).toBe('username');
           log(invalidUnfollowTitle, error.details);
           done();
         }
+      });
+
+      it('throws an error for accessing a different user\'s follows', async (done) => {
+        const usernameDetails = {
+          username: this.testUser2.username,
+          requestedUser: this.testUser2.username,
+        };
+
+        try {
+          const result = await UserMiddleware.unfollow(this.testUser, usernameDetails);
+          expect(result).not.toBeDefined();
+          log(invalidUnfollowTitle, 'Should have thrown error');
+        } catch (error) {
+          expect(error).toBeDefined();
+          expect(error.name).toBe('DroppError');
+          expect(error.details).toBeDefined();
+          expect(error.details.error).toBeDefined();
+          expect(error.details.error.type).toBe(DroppError.type.Resource.type);
+          expect(error.details.error.message).toBe('Unauthorized to access that user\'s follows');
+          log(invalidUnfollowTitle, error.details);
+        }
+
+        done();
+      });
+
+      it('throws an error for attempting to unfollow the same user', async (done) => {
+        const usernameDetails = {
+          username: this.testUser.username,
+          requestedUser: this.testUser.username,
+        };
+
+        try {
+          const result = await UserMiddleware.unfollow(this.testUser, usernameDetails);
+          expect(result).not.toBeDefined();
+          log(invalidUnfollowTitle, 'Should have thrown error');
+        } catch (error) {
+          expect(error).toBeDefined();
+          expect(error.name).toBe('DroppError');
+          expect(error.details).toBeDefined();
+          expect(error.details.error).toBeDefined();
+          expect(error.details.error.type).toBe(DroppError.type.Resource.type);
+          expect(error.details.error.message).toBe('You cannot unfollow yourself');
+          log(invalidUnfollowTitle, error.details);
+        }
+
+        done();
       });
 
       it('throws an error for a non-existent user', async (done) => {
-        const usernameDetails = { username: 'test' };
+        const usernameDetails = {
+          requestedUser: Utils.newUuid(),
+          username: this.testUser.username,
+        };
+
         try {
           const result = await UserMiddleware.unfollow(this.testUser, usernameDetails);
           expect(result).not.toBeDefined();
@@ -2157,7 +2207,11 @@ describe('User Middleware Tests', () => {
       });
 
       it('throws an error for a non-existent follow', async (done) => {
-        const usernameDetails = { username: this.testUser2.username };
+        const usernameDetails = {
+          username: this.testUser.username,
+          requestedUser: this.testUser2.username,
+        };
+
         try {
           const result = await UserMiddleware.unfollow(this.testUser, usernameDetails);
           expect(result).not.toBeDefined();

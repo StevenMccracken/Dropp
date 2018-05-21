@@ -394,9 +394,10 @@ const removeFollowRequest = async function removeFollowRequest(_currentUser, _us
 /**
  * Responds to a follower request for the current user from the given username
  * @param {User} _currentUser the current user for the request
- * @param {Object} _usernameDetails the details containing
- * the username of the user to respond to the request for
- * @param {Object} _details the details containing accept boolean parameter
+ * @param {Object} _usernameDetails the details containing the
+ * username of the user's follower requests to access, and the
+ * username of the user to respond to the follower request for
+ * @param {Object} _details the details containing accept parameter
  * @return {Object} the success details
  * @throws {DroppError} if the given username or accept parameter is invalid, if
  * the user already follows the current user, or if there is no follower request
@@ -470,8 +471,8 @@ const respondToFollowerRequest = async function respondToFollowerRequest(
 /**
  * Removes a follow from the current user to a given username
  * @param {User} _currentUser the current user for the request
- * @param {Object} _usernameDetails the details
- * containing the username of the user to unfollow
+ * @param {Object} _usernameDetails the details containing the username of
+ * the user's follows to access, and the username of the user to unfollow
  * @return {Object} the success details
  * @throws {DroppError} if the given username is invalid,
  * or if the current user does not follow the given username
@@ -484,12 +485,26 @@ const unfollow = async function unfollow(_currentUser, _usernameDetails) {
     DroppError.throwServerError(source, null, 'Object is not a User');
   }
 
+  const invalidMembers = [];
   const usernameDetails = Utils.hasValue(_usernameDetails) ? _usernameDetails : {};
-  if (!Validator.isValidUsername(usernameDetails.username)) {
-    DroppError.throwInvalidRequestError(source, 'username');
+  if (!Validator.isValidUsername(usernameDetails.username)) invalidMembers.push('username');
+  if (!Validator.isValidUsername(usernameDetails.requestedUser)) {
+    invalidMembers.push('requestedUser');
   }
 
-  const user = await UserAccessor.get(usernameDetails.username);
+  if (invalidMembers.length > 0) {
+    DroppError.throwInvalidRequestError(source, invalidMembers);
+  }
+
+  if (_currentUser.username !== usernameDetails.username) {
+    DroppError.throwResourceError(source, 'Unauthorized to access that user\'s follows');
+  }
+
+  if (_currentUser.username === usernameDetails.requestedUser) {
+    DroppError.throwResourceError(source, 'You cannot unfollow yourself');
+  }
+
+  const user = await UserAccessor.get(usernameDetails.requestedUser);
   if (!Utils.hasValue(user)) DroppError.throwResourceDneError(source, 'user');
   if (!user.hasFollower(_currentUser.username)) {
     DroppError.throwResourceError(source, 'You do not follow that user');
