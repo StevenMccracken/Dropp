@@ -23,6 +23,7 @@ const routes = {
       '/email': 'PUT',
       '/password': 'PUT',
       '/follows': {
+        '/<follow>': 'DELETE',
         '/requests': {
           '/': 'POST',
           '/<requestedUser>': 'DELETE',
@@ -316,6 +317,20 @@ const routing = function routing(_router) {
       } catch (error) {
         next(error);
       }
+    });
+
+  /**
+   * Method: DELETE
+   * Authentication: Yes
+   * Details: Unfollows a user
+   * URL parameters:
+   *  username
+   *  follow
+   */
+  router.route('/users/:username/follows/:follow')
+    .all(validateAuthToken)
+    .delete(async (request, response, next) => {
+
     });
 
   /**

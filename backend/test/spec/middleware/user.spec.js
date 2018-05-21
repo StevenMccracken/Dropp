@@ -2010,8 +2010,8 @@ describe('User Middleware Tests', () => {
 
       it('unfollows a user', async (done) => {
         const usernameDetails = {
+          follow: this.testUser2.username,
           username: this.testUser.username,
-          requestedUser: this.testUser2.username,
         };
 
         const result = await UserMiddleware.unfollow(this.testUser, usernameDetails);
@@ -2049,8 +2049,8 @@ describe('User Middleware Tests', () => {
 
       it('throws an error for an invalid current user', async (done) => {
         const usernameDetails = {
+          follow: this.invalidUsername,
           username: this.testUser.username,
-          requestedUser: this.invalidUsername,
         };
 
         try {
@@ -2083,7 +2083,7 @@ describe('User Middleware Tests', () => {
           expect(error.details).toBeDefined();
           expect(error.details.error).toBeDefined();
           expect(error.details.error.type).toBe(DroppError.type.InvalidRequest.type);
-          expect(error.details.error.message).toBe('username,requestedUser');
+          expect(error.details.error.message).toBe('username,follow');
           log(invalidUnfollowTitle, error.details);
           done();
         }
@@ -2091,8 +2091,8 @@ describe('User Middleware Tests', () => {
 
       it('throws an error for an invalid requested username', async (done) => {
         const usernameDetails = {
+          follow: this.invalidUsername,
           username: this.testUser.username,
-          requestedUser: this.invalidUsername,
         };
 
         try {
@@ -2106,7 +2106,7 @@ describe('User Middleware Tests', () => {
           expect(error.details).toBeDefined();
           expect(error.details.error).toBeDefined();
           expect(error.details.error.type).toBe(DroppError.type.InvalidRequest.type);
-          expect(error.details.error.message).toBe('requestedUser');
+          expect(error.details.error.message).toBe('follow');
           log(invalidUnfollowTitle, error.details);
           done();
         }
@@ -2115,7 +2115,7 @@ describe('User Middleware Tests', () => {
       it('throws an error for an invalid current username', async (done) => {
         const usernameDetails = {
           username: this.invalidUsername,
-          requestedUser: this.testUser2.username,
+          follow: this.testUser2.username,
         };
 
         try {
@@ -2137,8 +2137,8 @@ describe('User Middleware Tests', () => {
 
       it('throws an error for accessing a different user\'s follows', async (done) => {
         const usernameDetails = {
+          follow: this.testUser2.username,
           username: this.testUser2.username,
-          requestedUser: this.testUser2.username,
         };
 
         try {
@@ -2160,8 +2160,8 @@ describe('User Middleware Tests', () => {
 
       it('throws an error for attempting to unfollow the same user', async (done) => {
         const usernameDetails = {
+          follow: this.testUser.username,
           username: this.testUser.username,
-          requestedUser: this.testUser.username,
         };
 
         try {
@@ -2183,7 +2183,7 @@ describe('User Middleware Tests', () => {
 
       it('throws an error for a non-existent user', async (done) => {
         const usernameDetails = {
-          requestedUser: Utils.newUuid(),
+          follow: Utils.newUuid(),
           username: this.testUser.username,
         };
 
@@ -2208,8 +2208,8 @@ describe('User Middleware Tests', () => {
 
       it('throws an error for a non-existent follow', async (done) => {
         const usernameDetails = {
+          follow: this.testUser2.username,
           username: this.testUser.username,
-          requestedUser: this.testUser2.username,
         };
 
         try {

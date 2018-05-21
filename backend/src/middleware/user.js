@@ -488,23 +488,17 @@ const unfollow = async function unfollow(_currentUser, _usernameDetails) {
   const invalidMembers = [];
   const usernameDetails = Utils.hasValue(_usernameDetails) ? _usernameDetails : {};
   if (!Validator.isValidUsername(usernameDetails.username)) invalidMembers.push('username');
-  if (!Validator.isValidUsername(usernameDetails.requestedUser)) {
-    invalidMembers.push('requestedUser');
-  }
-
-  if (invalidMembers.length > 0) {
-    DroppError.throwInvalidRequestError(source, invalidMembers);
-  }
-
+  if (!Validator.isValidUsername(usernameDetails.follow)) invalidMembers.push('follow');
+  if (invalidMembers.length > 0) DroppError.throwInvalidRequestError(source, invalidMembers);
   if (_currentUser.username !== usernameDetails.username) {
     DroppError.throwResourceError(source, 'Unauthorized to access that user\'s follows');
   }
 
-  if (_currentUser.username === usernameDetails.requestedUser) {
+  if (_currentUser.username === usernameDetails.follow) {
     DroppError.throwResourceError(source, 'You cannot unfollow yourself');
   }
 
-  const user = await UserAccessor.get(usernameDetails.requestedUser);
+  const user = await UserAccessor.get(usernameDetails.follow);
   if (!Utils.hasValue(user)) DroppError.throwResourceDneError(source, 'user');
   if (!user.hasFollower(_currentUser.username)) {
     DroppError.throwResourceError(source, 'You do not follow that user');

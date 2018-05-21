@@ -54,7 +54,8 @@ describe(baseRouteTitle, () => {
     expect(username['/password']).toBe('PUT');
 
     const follows = username['/follows'];
-    expect(Object.keys(follows).length).toBe(1);
+    expect(Object.keys(follows).length).toBe(2);
+    expect(follows['/<follow>']).toBe('DELETE');
 
     const followRequests = follows['/requests'];
     expect(Object.keys(followRequests).length).toBe(2);
@@ -62,7 +63,7 @@ describe(baseRouteTitle, () => {
     expect(followRequests['/<requestedUser>']).toBe('DELETE');
 
     const followers = username['/followers'];
-    expect(Object.keys(follows).length).toBe(1);
+    expect(Object.keys(followers).length).toBe(1);
 
     const followerRequests = followers['/requests'];
     expect(Object.keys(followerRequests).length).toBe(1);
