@@ -1680,5 +1680,207 @@ describe(interUserRoutes, () => {
       });
     });
   });
+
+  const removeFollowerTitle = 'Remove follower';
+  describe(removeFollowerTitle, () => {
+    beforeEach(async (done) => {
+      this.options = {
+        method: 'DELETE',
+        uri: url,
+        resolveWithFullResponse: true,
+        headers: {},
+      };
+
+      this.updateUrl = function updateUrl(_user, _follower) {
+        this.options.uri = `${url}/${_user}/followers/${_follower}`;
+      };
+
+      const authDetails = await UserMiddleware.getAuthToken(this.details1);
+      this.options.headers.authorization = authDetails.success.token;
+      done();
+    });
+
+    afterEach(() => {
+      delete this.options;
+      delete this.updateUrl;
+    });
+
+    it('returns an authentication error for a missing auth token', async (done) => {
+      this.updateUrl(this.user1.username, this.user2.username);
+      delete this.options.headers.authorization;
+      try {
+        const response = await Request(this.options);
+        expect(response).not.toBeDefined();
+        log(removeFollowerTitle, 'Should have thrown error');
+      } catch (response) {
+        expect(response).toBeDefined();
+        expect(response.statusCode).toBe(401);
+
+        const details = JSON.parse(response.error);
+        expect(details.error.type).toBe(DroppError.type.Auth.type);
+        expect(details.error.message).toBe(DroppError.TokenReason.missing);
+        log(removeFollowerTitle, response.error);
+      }
+
+      done();
+    });
+
+    it('returns an error for an invalid username', async (done) => {
+      this.updateUrl('__.', this.user2.username);
+      try {
+        const response = await Request(this.options);
+        expect(response).not.toBeDefined();
+        log(removeFollowerTitle, 'Should have thrown error');
+      } catch (response) {
+        expect(response).toBeDefined();
+        expect(response.statusCode).toBe(400);
+
+        const details = JSON.parse(response.error);
+        expect(details.error.type).toBe(DroppError.type.InvalidRequest.type);
+        expect(details.error.message).toBe('username');
+        log(removeFollowerTitle, response.error);
+      }
+
+      done();
+    });
+
+    it('returns an error for an invalid follower username', async (done) => {
+      this.updateUrl(this.user1.username, '__.');
+      try {
+        const response = await Request(this.options);
+        expect(response).not.toBeDefined();
+        log(removeFollowerTitle, 'Should have thrown error');
+      } catch (response) {
+        expect(response).toBeDefined();
+        expect(response.statusCode).toBe(400);
+
+        const details = JSON.parse(response.error);
+        expect(details.error.type).toBe(DroppError.type.InvalidRequest.type);
+        expect(details.error.message).toBe('follower');
+        log(removeFollowerTitle, response.error);
+      }
+
+      done();
+    });
+
+    it('returns an error for an invalid username and follower username', async (done) => {
+      this.updateUrl('__.', '__.');
+      try {
+        const response = await Request(this.options);
+        expect(response).not.toBeDefined();
+        log(removeFollowerTitle, 'Should have thrown error');
+      } catch (response) {
+        expect(response).toBeDefined();
+        expect(response.statusCode).toBe(400);
+
+        const details = JSON.parse(response.error);
+        expect(details.error.type).toBe(DroppError.type.InvalidRequest.type);
+        expect(details.error.message).toBe('username,follower');
+        log(removeFollowerTitle, response.error);
+      }
+
+      done();
+    });
+
+    it('returns an error for attempting to access a different user\'s followers', async (done) => {
+      this.updateUrl(this.user2.username, this.user2.username);
+      try {
+        const response = await Request(this.options);
+        expect(response).not.toBeDefined();
+        log(removeFollowerTitle, 'Should have thrown error');
+      } catch (response) {
+        expect(response).toBeDefined();
+        expect(response.statusCode).toBe(403);
+
+        const details = JSON.parse(response.error);
+        expect(details.error.type).toBe(DroppError.type.Resource.type);
+        expect(details.error.message).toBe('Unauthorized to access that user\'s followers');
+        log(removeFollowerTitle, response.error);
+      }
+
+      done();
+    });
+
+    it('returns an error for attempting to remove the same user as a follower', async (done) => {
+      this.updateUrl(this.user1.username, this.user1.username);
+      try {
+        const response = await Request(this.options);
+        expect(response).not.toBeDefined();
+        log(removeFollowerTitle, 'Should have thrown error');
+      } catch (response) {
+        expect(response).toBeDefined();
+        expect(response.statusCode).toBe(403);
+
+        const details = JSON.parse(response.error);
+        expect(details.error.type).toBe(DroppError.type.Resource.type);
+        expect(details.error.message).toBe('You cannot remove yourself as a follower');
+        log(removeFollowerTitle, response.error);
+      }
+
+      done();
+    });
+
+    it('returns an error for attempting to remove a non-existent user', async (done) => {
+      this.updateUrl(this.user1.username, Utils.newUuid());
+      try {
+        const response = await Request(this.options);
+        expect(response).not.toBeDefined();
+        log(removeFollowerTitle, 'Should have thrown error');
+      } catch (response) {
+        expect(response).toBeDefined();
+        expect(response.statusCode).toBe(404);
+
+        const details = JSON.parse(response.error);
+        expect(details.error.type).toBe(DroppError.type.ResourceDNE.type);
+        expect(details.error.message).toBe('That user does not exist');
+        log(removeFollowerTitle, response.error);
+      }
+
+      done();
+    });
+
+    it('returns an error for attempting to remove a non-existent follower', async (done) => {
+      this.updateUrl(this.user1.username, this.user2.username);
+      try {
+        const response = await Request(this.options);
+        expect(response).not.toBeDefined();
+        log(removeFollowerTitle, 'Should have thrown error');
+      } catch (response) {
+        expect(response).toBeDefined();
+        expect(response.statusCode).toBe(403);
+
+        const details = JSON.parse(response.error);
+        expect(details.error.type).toBe(DroppError.type.Resource.type);
+        expect(details.error.message).toBe('That user does not follow you');
+        log(removeFollowerTitle, response.error);
+      }
+
+      done();
+    });
+
+    const successRemoveFollowerTitle = 'Success unfollow';
+    describe(successRemoveFollowerTitle, () => {
+      beforeEach(async (done) => {
+        await UserAccessor.addFollow(this.user2, this.user1);
+        done();
+      });
+
+      it('removes a follower', async (done) => {
+        this.updateUrl(this.user1.username, this.user2.username);
+        const response = await Request(this.options);
+        expect(response).toBeDefined();
+        expect(response.statusCode).toBe(200);
+
+        const details = JSON.parse(response.body);
+        expect(details.success.message).toBe('Successful follower removal');
+
+        // Verify user information from the backend
+        const user = await UserAccessor.get(this.user2.username);
+        expect(user.doesFollow(this.user1.username)).toBe(false);
+        log(successRemoveFollowerTitle, response.body);
+        done();
+      });
+    });
+  });
 });
 /* eslint-enable no-undef */

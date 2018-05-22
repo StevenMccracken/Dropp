@@ -30,6 +30,7 @@ const routes = {
         },
       },
       '/followers': {
+        '/<follower>': 'DELETE',
         '/requests': {
           '/<requestedUser>': 'PUT',
         },
@@ -332,6 +333,25 @@ const routing = function routing(_router) {
     .delete(async (request, response, next) => {
       try {
         const result = await UserMiddleware.unfollow(request.user, request.params);
+        response.json(result);
+      } catch (error) {
+        next(error);
+      }
+    });
+
+  /**
+   * Method: DELETE
+   * Authentication: Yes
+   * Details: Removes a user as a follower
+   * URL parameters:
+   *  username
+   *  follower
+   */
+  router.route('/users/:username/followers/:follower')
+    .all(validateAuthToken)
+    .delete(async (request, response, next) => {
+      try {
+        const result = await UserMiddleware.removeFollower(request.user, request.params);
         response.json(result);
       } catch (error) {
         next(error);

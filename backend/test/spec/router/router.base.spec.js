@@ -63,7 +63,8 @@ describe(baseRouteTitle, () => {
     expect(followRequests['/<requestedUser>']).toBe('DELETE');
 
     const followers = username['/followers'];
-    expect(Object.keys(followers).length).toBe(1);
+    expect(Object.keys(followers).length).toBe(2);
+    expect(followers['/<follower>']).toBe('DELETE');
 
     const followerRequests = followers['/requests'];
     expect(Object.keys(followerRequests).length).toBe(1);
