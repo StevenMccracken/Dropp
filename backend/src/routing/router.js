@@ -330,7 +330,12 @@ const routing = function routing(_router) {
   router.route('/users/:username/follows/:follow')
     .all(validateAuthToken)
     .delete(async (request, response, next) => {
-
+      try {
+        const result = await UserMiddleware.unfollow(request.user, request.params);
+        response.json(result);
+      } catch (error) {
+        next(error);
+      }
     });
 
   /**
