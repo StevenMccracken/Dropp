@@ -1,13 +1,7 @@
 const Log = require('../logging/logger');
 const Utils = require('../utilities/utils');
 
-/**
- * Logs a message about model object errors
- * @param {Object} _details the details of the error to log
- */
-function log(_details) {
-  Log.log('Model Error', JSON.stringify(_details));
-}
+const moduleName = 'Model Error';
 
 /**
  * Custom error object to contain extra details
@@ -46,8 +40,9 @@ class ModelError extends Error {
   }
 
   static throw(_type, _source, _details) {
+    const source = 'throw()';
     const error = this.format(_type, _source, _details);
-    log(error.details);
+    Log.log(moduleName, source, error.details);
     throw error;
   }
 

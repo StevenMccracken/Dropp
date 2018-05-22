@@ -10,15 +10,7 @@ const UserAccessor = require('../database/user');
 const DroppError = require('../errors/DroppError');
 const Validator = require('../utilities/validator');
 
-/**
- * Logs a message about user interaction
- * @param {String} _source the source of the log
- * @param {String|Object} _message extra message to log
- */
-function log(_source, _message) {
-  const message = Utils.hasValue(_message) ? JSON.stringify(_message) : _message;
-  Log.log('User controller', `${_source} ${message}`);
-}
+const moduleName = 'User Middleware';
 
 // Single user functions
 
@@ -33,7 +25,7 @@ function log(_source, _message) {
  */
 const get = async function get(_currentUser, _details) {
   const source = 'get()';
-  log(source, _details);
+  Log.log(moduleName, source, _currentUser, _details);
 
   if (!(_currentUser instanceof User)) {
     DroppError.throwServerError(source, null, 'Object is not a User');
@@ -59,7 +51,7 @@ const get = async function get(_currentUser, _details) {
  */
 const create = async function create(_details) {
   const source = 'create()';
-  log(source, _details);
+  Log.log(moduleName, source, _details);
 
   const invalidMembers = [];
   const details = Utils.hasValue(_details) ? _details : {};
@@ -89,7 +81,7 @@ const create = async function create(_details) {
  */
 const getAuthToken = async function getAuthToken(_details) {
   const source = 'getAuthToken()';
-  log(source, _details);
+  Log.log(moduleName, source, _details);
 
   const invalidMembers = [];
   const details = Utils.hasValue(_details) ? _details : {};
@@ -129,7 +121,7 @@ const getAuthToken = async function getAuthToken(_details) {
  */
 const addNewUser = async function addNewUser(_details) {
   const source = 'addNewUser()';
-  log(source, _details);
+  Log.log(moduleName, source, _details);
 
   const user = await create(_details);
   const token = Auth.generateToken(user);
@@ -157,7 +149,7 @@ const addNewUser = async function addNewUser(_details) {
  */
 const updatePassword = async function updatePassword(_currentUser, _usernameDetails, _details) {
   const source = 'updatePassword()';
-  log(source, _usernameDetails);
+  Log.log(moduleName, source, _currentUser, _usernameDetails, _details);
 
   if (!(_currentUser instanceof User)) {
     DroppError.throwServerError(source, null, 'Object is not a User');
@@ -212,7 +204,7 @@ const updatePassword = async function updatePassword(_currentUser, _usernameDeta
  */
 const updateEmail = async function updateEmail(_currentUser, _usernameDetails, _details) {
   const source = 'updateEmail()';
-  log(source, _usernameDetails);
+  Log.log(moduleName, source, _currentUser, _usernameDetails, _details);
 
   if (!(_currentUser instanceof User)) {
     DroppError.throwServerError(source, null, 'Object is not a User');
@@ -249,7 +241,7 @@ const updateEmail = async function updateEmail(_currentUser, _usernameDetails, _
  */
 const remove = async function remove(_currentUser, _usernameDetails) {
   const source = 'remove()';
-  log(source, _usernameDetails);
+  Log.log(moduleName, source, _usernameDetails);
 
   if (!(_currentUser instanceof User)) {
     DroppError.throwServerError(source, null, 'Object is not a User');
@@ -302,7 +294,7 @@ const requestToFollow = async function requestToFollow(
   _requestedUserDetails
 ) {
   const source = 'requestToFollow()';
-  log(source, _requestedUserDetails);
+  Log.log(moduleName, source, _currentUser, _usernameDetails, _requestedUserDetails);
 
   if (!(_currentUser instanceof User)) {
     DroppError.throwServerError(source, null, 'Object is not a User');
@@ -356,7 +348,7 @@ const requestToFollow = async function requestToFollow(
  */
 const removeFollowRequest = async function removeFollowRequest(_currentUser, _usernameDetails) {
   const source = 'removeFollowRequest()';
-  log(source, _usernameDetails);
+  Log.log(moduleName, source, _usernameDetails);
 
   if (!(_currentUser instanceof User)) {
     DroppError.throwServerError(source, null, 'Object is not a User');
@@ -411,7 +403,7 @@ const respondToFollowerRequest = async function respondToFollowerRequest(
   _details
 ) {
   const source = 'respondToFollowerRequest()';
-  log(source, _usernameDetails);
+  Log.log(moduleName, source, _currentUser, _usernameDetails, _details);
 
   if (!(_currentUser instanceof User)) {
     DroppError.throwServerError(source, null, 'Object is not a User');
@@ -470,7 +462,7 @@ const respondToFollowerRequest = async function respondToFollowerRequest(
  */
 const unfollow = async function unfollow(_currentUser, _usernameDetails) {
   const source = 'unfollow()';
-  log(source, _usernameDetails);
+  Log.log(moduleName, source, _usernameDetails);
 
   if (!(_currentUser instanceof User)) {
     DroppError.throwServerError(source, null, 'Object is not a User');
@@ -517,7 +509,7 @@ const unfollow = async function unfollow(_currentUser, _usernameDetails) {
  */
 const removeFollower = async function removeFollower(_currentUser, _usernameDetails) {
   const source = 'removeFollower()';
-  log(source, _usernameDetails);
+  Log.log(moduleName, source, _currentUser, _usernameDetails);
 
   if (!(_currentUser instanceof User)) {
     DroppError.throwServerError(source, null, 'Object is not a User');

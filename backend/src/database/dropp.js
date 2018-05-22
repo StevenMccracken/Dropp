@@ -9,17 +9,7 @@ const Firebase = require('../firebase/firebase');
 const DroppError = require('../errors/DroppError');
 const Validator = require('../utilities/validator');
 
-/**
- * Logs a message about dropp database interaction
- * @param {String} _message the message to log
- * @param {String} _droppId the ID of the dropp to access
- */
-function log(_message, _droppId) {
-  let extraMessage = '';
-  if (Utils.hasValue(_droppId)) extraMessage = ` dropp ${_droppId}`;
-  Log.log('Dropp accessor', `${_message}${extraMessage}`);
-}
-
+const moduleName = 'Dropp Accessor';
 const baseUrl = '/dropps';
 const forbiddenDroppId = '-Kjsh';
 
@@ -31,7 +21,7 @@ const forbiddenDroppId = '-Kjsh';
  */
 const get = async function get(_id) {
   const source = 'get()';
-  log(source, _id);
+  Log.log(moduleName, source, _id);
 
   if (typeof _id !== 'string') {
     DroppError.throwServerError(source, null, 'Dropp ID is not a string');
@@ -53,7 +43,7 @@ const get = async function get(_id) {
  */
 const getAll = async function getAll() {
   const source = 'getAll()';
-  log(source);
+  Log.log(moduleName, source);
 
   const json = await Firebase.get(baseUrl);
   const dropps = [];
@@ -62,7 +52,7 @@ const getAll = async function getAll() {
     if (!Utils.hasValue(value)) return;
     /* eslint-disable no-param-reassign */
     value.id = key;
-    /* eslint-disable no-param-reassign */
+    /* eslint-enable no-param-reassign */
     dropps.push(new Dropp(value));
   });
 
@@ -77,7 +67,7 @@ const getAll = async function getAll() {
  */
 const add = async function add(_dropp) {
   const source = 'add()';
-  log(source, _dropp);
+  Log.log(moduleName, source, _dropp);
 
   if (!(_dropp instanceof Dropp)) {
     DroppError.throwServerError(source, null, 'Object is not a Dropp');
@@ -108,7 +98,7 @@ const add = async function add(_dropp) {
  */
 const updateText = async function updateText(_dropp, _text) {
   const source = 'updateText()';
-  log(source, _dropp);
+  Log.log(moduleName, source, _dropp, _text);
 
   if (!(_dropp instanceof Dropp)) {
     DroppError.throwServerError(source, null, 'Object is not a Dropp');
@@ -128,7 +118,7 @@ const updateText = async function updateText(_dropp, _text) {
  */
 const remove = async function remove(_dropp) {
   const source = 'remove()';
-  log(source, _dropp);
+  Log.log(moduleName, source, _dropp);
 
   if (!(_dropp instanceof Dropp)) {
     DroppError.throwServerError(source, null, 'Object is not a Dropp');
@@ -144,7 +134,7 @@ const remove = async function remove(_dropp) {
  */
 const bulkRemove = async function bulkRemove(_dropps) {
   const source = 'bulkRemove()';
-  log(source, _dropps);
+  Log.log(moduleName, source, _dropps);
 
   if (!Array.isArray(_dropps)) {
     DroppError.throwServerError(source, null, `Expected an array of dropps but got ${_dropps}`);

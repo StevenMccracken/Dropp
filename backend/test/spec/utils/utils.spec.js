@@ -221,3 +221,34 @@ describe(getRequestIdTitle, () => {
     done();
   });
 });
+
+const reduceToStringTitle = 'reduceToString function';
+describe(reduceToStringTitle, () => {
+  it('returns a string with one argument', (done) => {
+    const message = Utils.reduceToString([4]);
+    expect(message).toBe('4');
+    Log(reduceToStringTitle, reduceToStringTitle, message);
+    done();
+  });
+
+  it('returns a string with multiple arguments', (done) => {
+    const message = Utils.reduceToString([4, 'test']);
+    expect(message).toBe('4,"test"');
+    Log(reduceToStringTitle, reduceToStringTitle, message);
+    done();
+  });
+
+  it('returns a string with an invalid argument', (done) => {
+    const message = Utils.reduceToString([null]);
+    expect(message).toBeNull();
+    Log(reduceToStringTitle, reduceToStringTitle, message);
+    done();
+  });
+
+  it('returns a string with multiple invalid arguments', (done) => {
+    const message = Utils.reduceToString([null, undefined]);
+    expect(message).toBe('null,undefined');
+    Log(reduceToStringTitle, reduceToStringTitle, message);
+    done();
+  });
+});

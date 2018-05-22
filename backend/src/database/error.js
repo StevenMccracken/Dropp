@@ -6,14 +6,7 @@ const Log = require('../logging/logger');
 const Utils = require('../utilities/utils');
 const Firebase = require('../firebase/firebase');
 
-/**
- * Logs a message about error log database interaction
- * @param {String} _message the message to log
- */
-function log(_message) {
-  Log.log('Error Accessor', _message);
-}
-
+const moduleName = 'Error Accessor';
 const baseUrl = '/errorLogs';
 
 /**
@@ -24,14 +17,14 @@ const baseUrl = '/errorLogs';
  */
 const get = async function get(_id) {
   const source = 'get()';
-  log(source, _id);
+  Log.log(moduleName, source, _id);
 
   if (typeof _id !== 'string') return null;
   let result;
   try {
     result = await Firebase.get(`${baseUrl}/${_id}`);
   } catch (error) {
-    log(source, JSON.stringify(error));
+    Log.log(moduleName, source, error);
   }
 
   return result;
@@ -45,7 +38,7 @@ const get = async function get(_id) {
  */
 const add = async function add(_info) {
   const source = 'add()';
-  log(source, 'Uploading error info...');
+  Log.log(moduleName, source, 'Uploading error info...', _info);
 
   if (!Utils.hasValue(_info)) return undefined;
   let id;
@@ -53,7 +46,7 @@ const add = async function add(_info) {
     const url = await Firebase.add(baseUrl, _info);
     id = url.split('/').pop();
   } catch (error) {
-    log(source, JSON.stringify(error));
+    Log.log(moduleName, source, error);
   }
 
   return id;
@@ -65,13 +58,13 @@ const add = async function add(_info) {
  */
 const remove = async function remove(_id) {
   const source = 'remove()';
-  log(source, _id);
+  Log.log(moduleName, source, _id);
 
   if (typeof _id !== 'string') return;
   try {
     await Firebase.remove(`${baseUrl}/${_id}`);
   } catch (error) {
-    log(source, JSON.stringify(error));
+    Log.log(moduleName, source, error);
   }
 };
 

@@ -9,21 +9,7 @@ const Firebase = require('../firebase/firebase');
 const DroppError = require('../errors/DroppError');
 const Validator = require('../utilities/validator');
 
-/**
- * Logs a message about user database interaction
- * @param {String} _message the message to log
- * @param {String|Object} _user the user being accessed
- */
-function log(_message, _user) {
-  let extraMessage = '';
-  if (Utils.hasValue(_user)) {
-    if (typeof _user === 'string') extraMessage = _user;
-    else extraMessage = ` user ${_user.username}`;
-  }
-
-  Log.log('User Accessor', `${_message}${extraMessage}`);
-}
-
+const moduleName = 'User Accessor';
 const usersBaseUrl = '/users';
 const passwordsBaseUrl = '/passwords';
 
@@ -35,7 +21,7 @@ const passwordsBaseUrl = '/passwords';
  */
 const get = async function get(_username) {
   const source = 'get()';
-  log(source, _username);
+  Log.log(moduleName, source, _username);
 
   if (!Validator.isValidUsername(_username)) {
     DroppError.throwInvalidRequestError(source, 'username');
@@ -55,7 +41,7 @@ const get = async function get(_username) {
  */
 const getPassword = async function getPassword(_username) {
   const source = 'getPassword()';
-  log(source, _username);
+  Log.log(moduleName, source, _username);
 
   if (!Validator.isValidUsername(_username)) {
     DroppError.throwInvalidRequestError(source, 'username');
@@ -72,7 +58,7 @@ const getPassword = async function getPassword(_username) {
  */
 const create = async function create(_user, _password) {
   const source = 'create()';
-  log(source, _user);
+  Log.log(moduleName, source, _user, _password);
 
   if (!(_user instanceof User)) DroppError.throwServerError(source, null, 'Object is not a User');
   const invalidMembers = [];
@@ -94,7 +80,7 @@ const create = async function create(_user, _password) {
  */
 const updatePassword = async function updatePassword(_user, _password) {
   const source = 'updatePassword()';
-  log(source, _user);
+  Log.log(moduleName, source, _user, _password);
 
   if (!(_user instanceof User)) DroppError.throwServerError(source, null, 'Object is not a User');
   if (!Validator.isValidPassword(_password)) {
@@ -112,7 +98,7 @@ const updatePassword = async function updatePassword(_user, _password) {
  */
 const updateEmail = async function updateEmail(_user, _email) {
   const source = 'updateEmail()';
-  log(source, _user);
+  Log.log(moduleName, source, _user);
 
   if (!(_user instanceof User)) DroppError.throwServerError(source, null, 'Object is not a User');
   if (!Validator.isValidEmail(_email)) DroppError.throwInvalidRequestError(source, 'email');
@@ -132,7 +118,7 @@ const updateEmail = async function updateEmail(_user, _email) {
  */
 const addFollowRequest = async function addFollowRequest(_user, _follow) {
   const source = 'addFollowRequest()';
-  log(source, _user);
+  Log.log(moduleName, source, _user, _follow);
 
   if (!(_user instanceof User) || !(_follow instanceof User)) {
     DroppError.throwServerError(source, null, 'Object is not a User');
@@ -155,7 +141,7 @@ const addFollowRequest = async function addFollowRequest(_user, _follow) {
  */
 const addFollow = async function addFollow(_user, _follow) {
   const source = 'addFollow()';
-  log(source, _user);
+  Log.log(moduleName, source, _user);
 
   if (!(_user instanceof User) || !(_follow instanceof User)) {
     DroppError.throwServerError(source, null, 'Object is not a User');
@@ -187,7 +173,7 @@ const addFollow = async function addFollow(_user, _follow) {
  */
 const removeFollowRequest = async function removeFollowRequest(_user, _follow) {
   const source = 'removeFollowRequest()';
-  log(source, _user);
+  Log.log(moduleName, source, _user, _follow);
 
   if (!(_user instanceof User) || !(_follow instanceof User)) {
     DroppError.throwServerError(source, null, 'Object is not a User');
@@ -213,7 +199,7 @@ const removeFollowRequest = async function removeFollowRequest(_user, _follow) {
  */
 const removeFollow = async function removeFollow(_user, _follow) {
   const source = 'removeFollow()';
-  log(source, _user);
+  Log.log(moduleName, source, _user);
 
   if (!(_user instanceof User) || !(_follow instanceof User)) {
     DroppError.throwServerError(source, null, 'Object is not a User');
@@ -237,7 +223,7 @@ const removeFollow = async function removeFollow(_user, _follow) {
  */
 const remove = async function remove(_user) {
   const source = 'remove()';
-  log(source, _user);
+  Log.log(moduleName, source, _user);
 
   if (!(_user instanceof User)) DroppError.throwServerError(source, null, 'Object is not a User');
   const removals = [];

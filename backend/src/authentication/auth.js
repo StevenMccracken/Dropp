@@ -13,15 +13,7 @@ const JwtConfig = require('../../config/jwt');
 // Configure token storage and verification with Passport
 require('./passport')(Passport);
 
-/**
- * Logs a message about authentication
- * @param {String} _message the message to log
- * @param {Object} _request the HTTP request
- */
-function log(_message, _request) {
-  Log.log('Auth', _message, _request);
-}
-
+const moduleName = 'Authentication Module';
 const expirationTime = '7d';
 
 /**
@@ -34,7 +26,7 @@ const expirationTime = '7d';
  */
 const validatePasswords = async function validatePasswords(_given, _actual) {
   const source = 'validatePasswords()';
-  log(source);
+  Log.log(moduleName, source, _given, _actual);
 
   const matchResult = await Bcrypt.compare(_given, _actual);
   return matchResult;
@@ -49,7 +41,7 @@ const validatePasswords = async function validatePasswords(_given, _actual) {
  */
 const verifyToken = function verifyToken(_request, _response) {
   const source = 'verifyToken()';
-  log(source, _request);
+  Log.logRequest(moduleName, source, _request);
 
   const promise = new Promise((resolve, reject) => {
     Passport.authenticate('jwt', { session: false }, (passportError, user, tokenError) => {
@@ -76,7 +68,7 @@ const verifyToken = function verifyToken(_request, _response) {
  */
 const generateToken = function generateToken(_user) {
   const source = 'generateToken()';
-  log(source);
+  Log.log(moduleName, source, _user);
 
   if (!(_user instanceof User)) return null;
   return Jwt.sign(_user.privateData, JwtConfig.secret, { expiresIn: expirationTime });
@@ -90,7 +82,7 @@ const generateToken = function generateToken(_user) {
  */
 const hash = async function hash(_value) {
   const source = 'hash()';
-  log(source);
+  Log.log(moduleName, source, _value);
 
   const salt = await Bcrypt.genSalt(5);
   const hashedValue = await Bcrypt.hash(_value, salt);

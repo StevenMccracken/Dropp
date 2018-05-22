@@ -1,13 +1,7 @@
 const Log = require('../logging/logger');
 const Utils = require('../utilities/utils');
 
-/**
- * Logs a message about errors
- * @param {Object} _details the details of the error to log
- */
-function log(_details) {
-  Log.log('ERROR', JSON.stringify(_details));
-}
+const moduleName = 'Dropp Error';
 
 /**
  * Custom error object to contain extra details
@@ -84,8 +78,9 @@ class DroppError extends Error {
   }
 
   static throw(_type, _source, _clientMessage, _serverLog) {
+    const source = 'throw()';
     const error = this.format(_type, _source, _clientMessage, _serverLog);
-    log(error.privateDetails);
+    Log.log(moduleName, source, error.privateDetails);
     throw error;
   }
 

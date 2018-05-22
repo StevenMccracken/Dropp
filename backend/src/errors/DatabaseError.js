@@ -1,13 +1,7 @@
 const Log = require('../logging/logger');
 const Utils = require('../utilities/utils');
 
-/**
- * Logs a message about database errors
- * @param {Object} _details the details of the error to log
- */
-function log(_details) {
-  Log.log('Database Error', JSON.stringify(_details));
-}
+const moduleName = 'Database Error';
 
 /**
  * Custom error object to contain extra
@@ -45,8 +39,9 @@ class DatabaseError extends Error {
   }
 
   static throw(_type, _source, _details) {
+    const source = 'throw()';
     const error = this.format(_type, _source, _details);
-    log(error.details);
+    Log.log(moduleName, source, error.details);
     throw error;
   }
 

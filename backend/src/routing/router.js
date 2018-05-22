@@ -9,6 +9,7 @@ const DroppError = require('../errors/DroppError');
 const UserMiddleware = require('../middleware/user');
 const ErrorLogAccessor = require('../database/error');
 
+const moduleName = 'Router Module';
 const routes = {
   '/': 'GET',
   '/welcome': 'GET',
@@ -40,15 +41,6 @@ const routes = {
 };
 
 /**
- * Logs a message about routing
- * @param  {String} _message the message to log
- * @param  {Object} _request the HTTP request
- */
-function log(_message, _request) {
-  Log.log('Router', _message, _request);
-}
-
-/**
  * Sends an error response in JSON format
  * @param {Error} _error the error that occurred
  * @param {Object} _request the HTTP request
@@ -59,7 +51,7 @@ function log(_message, _request) {
 const handleError = function handleError(_error, _request, _response, _next) {
 /* eslint-enable no-unused-vars */
   const source = 'handleError()';
-  log(source, _request);
+  Log.logRequest(moduleName, source, _request, _error);
 
   let errorDetails;
   if (_error instanceof DroppError) {
@@ -126,11 +118,12 @@ const routing = function routing(_router) {
   // Middleware to log metadata about incoming requests
   router.use((request, response, next) => {
     // Add unique request ID to request and response headers
+    const source = 'middleware';
     const requestId = Utils.newUuid();
     request.headers.requestId = requestId;
     response.set('requestId', requestId);
     response.set('Access-Control-Expose-Headers', 'requestId');
-    log(`${request.method} ${request.url}`, request);
+    Log.logRequest(moduleName, source, request);
     next();
   });
 

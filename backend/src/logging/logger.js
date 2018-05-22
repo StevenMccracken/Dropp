@@ -5,30 +5,47 @@
 const Utils = require('../utilities/utils');
 
 /**
- * Logs a detailed message to the server console
- * @param {String} _source the origin of the log event
- * @param {String} _message a detailed message about the event
+ * Logs a detailed message about an HTTP request
+ * @param {String} _module the current module
+ * @param {String} _source the source location within the given module
  * @param {Object} _request the HTTP request
- * @return {String} the message logged to the console
+ * @param {[Any]} args additional details to log
  */
-const log = function log(_source, _message, _request) {
-  const now = new Date().toISOString();
-
-  // If _request is null, the IP address cannot be logged
-  let message;
-  if (!Utils.hasValue(_request)) message = `{${now}} [${_source}]: ${_message}`;
-  else {
-    // Capture info about the incoming HTTP request
-    const headers = Utils.hasValue(_request.headers) ? _request.headers : {};
-    const id = headers.requestId;
-    const ipAddress = Utils.getIpAddress(_request);
-    message = `{${now}} [${_source}] (${ipAddress}) <${id}>: ${_message}`;
+const logRequest = function logRequest(_module, _source, _request, ...args) {
+  // Capture info about the incoming HTTP request
+  const id = Utils.getRequestId(_request);
+  const ipAddress = Utils.getIpAddress(_request);
+  const appendedMessages = Utils.reduceToString(args);
+  const request = Utils.hasValue(_request) ? _request : {};
+  const timestamp = new Date().toISOString();
+  let formattedMessage;
+  if (appendedMessages === '') {
+    formattedMessage = `{${timestamp}} [${_module} -> ${_source}] (${ipAddress}) <${id}> | ${request.method} ${request.url} |`;
+  } else {
+    formattedMessage = `{${timestamp}} [${_module} -> ${_source}] (${ipAddress}) <${id}> | ${request.method} ${request.url} |: ${appendedMessages}`;
   }
 
-  console.log(message);
-  return message;
+  console.log(formattedMessage);
+  return formattedMessage;
+};
+
+/**
+ * Logs detailed messages to the console
+ * @param {String} _module the current module
+ * @param {String} _source the source location within the given module
+ * @param {[Any]} args additional details to log
+ */
+const log = function log(_module, _source, ...args) {
+  const appendedMessages = Utils.reduceToString(args);
+  const timestamp = new Date().toISOString();
+  let formattedMessage;
+  if (appendedMessages === '') formattedMessage = `{${timestamp}} [${_module} -> ${_source}]`;
+  else formattedMessage = `{${timestamp}} [${_module} -> ${_source}]: ${appendedMessages}`;
+  console.log(formattedMessage);
+  return formattedMessage;
 };
 
 module.exports = {
   log,
+  logRequest,
 };

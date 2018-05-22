@@ -9,6 +9,8 @@ const Validator = require('../utilities/validator');
 const DatabaseError = require('../errors/DatabaseError');
 const firebaseApiKey = require('../../config/secrets/firebaseApiKey.json');
 
+const moduleName = 'Firebase Accessor';
+
 // Firebase initialization
 
 let didStart = false;
@@ -45,15 +47,6 @@ const hasStarted = function hasStarted() {
 };
 
 /**
- * Logs a message about firebase interaction
- * @param {String} _message the message to log
- * @param {String} _url the firebase path to interact with
- */
-function log(_message, _url) {
-  Log.log('Firebase', `${_message} -> ${_url}`);
-}
-
-/**
  * Throws an error with the invalid URL in the details
  * @param {String} _source the source of the error
  * @param {String} _url the firebase path to interact with
@@ -82,7 +75,7 @@ function throwHasNotStartedError(_source) {
  */
 const get = async function get(_url) {
   const source = 'get()';
-  log(source, _url);
+  Log.log(moduleName, source, _url);
 
   if (!didStart) throwHasNotStartedError(source);
   if (!Validator.isValidFirebaseId(_url)) throwInvalidUrlError(source, _url);
@@ -100,7 +93,7 @@ const get = async function get(_url) {
  */
 const add = async function add(_url, _data) {
   const source = 'add()';
-  log(source, _url);
+  Log.log(moduleName, source, _url, _data);
 
   if (!didStart) throwHasNotStartedError(source);
   if (!Validator.isValidFirebaseId(_url)) throwInvalidUrlError(source, _url);
@@ -117,7 +110,7 @@ const add = async function add(_url, _data) {
  */
 const update = async function update(_url, _data) {
   const source = 'update()';
-  log(source, _url);
+  Log.log(moduleName, source, _url);
 
   if (!didStart) throwHasNotStartedError(source);
   if (!Validator.isValidFirebaseId(_url)) throwInvalidUrlError(source, _url);
@@ -133,7 +126,7 @@ const update = async function update(_url, _data) {
  */
 const bulkUpdate = async function bulkUpdate(_urlDataMap = {}) {
   const source = 'bulkUpdate()';
-  log(source, Object.keys(_urlDataMap));
+  Log.log(moduleName, source, _urlDataMap);
 
   if (!didStart) throwHasNotStartedError(source);
   Object.keys(_urlDataMap).forEach((key) => {
@@ -151,7 +144,7 @@ const bulkUpdate = async function bulkUpdate(_urlDataMap = {}) {
  */
 const remove = async function remove(_url) {
   const source = 'delete()';
-  log(source, _url);
+  Log.log(moduleName, source, _url);
 
   if (!didStart) throwHasNotStartedError(source);
   if (!Validator.isValidFirebaseId(_url)) throwInvalidUrlError(source, _url);
@@ -166,7 +159,7 @@ const remove = async function remove(_url) {
  */
 const bulkRemove = async function bulkRemove(_urls = []) {
   const source = 'bulkRemove()';
-  log(source, _urls);
+  Log.log(moduleName, source, _urls);
 
   if (!didStart) throwHasNotStartedError(source);
   const deleteUrlsMap = {};

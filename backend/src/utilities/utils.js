@@ -60,6 +60,21 @@ const getRequestId = function getRequestId(_request) {
   return headers.requestId || '';
 };
 
+/**
+ * Squashes a given list of values to a comma-delimited
+ * string, JSON stringifying valid values
+ * @param {[Any]} args the list of values
+ * @return {String} comma-separated stringified values. Can be null
+ * or undefined if `args` is an array like [null] or [undefined]
+ */
+const reduceToString = function reduceToString(_args) {
+  const args = Array.isArray(_args) ? _args : [];
+  return args.reduce((message, argument, index) => {
+    const formattedArgument = hasValue(argument) ? JSON.stringify(argument) : argument;
+    return index === 0 ? formattedArgument : `${message},${formattedArgument}`;
+  }, '');
+};
+
 module.exports = {
   Moment,
   stepper,
@@ -67,6 +82,7 @@ module.exports = {
   hasValue,
   getIpAddress,
   getRequestId,
+  reduceToString,
   unixEndTimeSeconds,
   unixEndTimeMilliseconds,
 };
