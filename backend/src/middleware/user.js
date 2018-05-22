@@ -518,6 +518,7 @@ const unfollow = async function unfollow(_currentUser, _usernameDetails) {
  * Removes a follower for the current user from the given username
  * @param {User} _currentUser the current user for the request
  * @param {Object} _usernameDetails the details containing
+ * the username of the user's followers to access, and
  * the username of the user to remove as a follower
  * @return {Object} the success details
  * @throws {DroppError} if the given username is invalid, or if
@@ -531,12 +532,20 @@ const removeFollower = async function removeFollower(_currentUser, _usernameDeta
     DroppError.throwServerError(source, null, 'Object is not a User');
   }
 
+  const invalidMembers = [];
   const usernameDetails = Utils.hasValue(_usernameDetails) ? _usernameDetails : {};
-  if (!Validator.isValidUsername(usernameDetails.username)) {
-    DroppError.throwInvalidRequestError(source, 'username');
+  if (!Validator.isValidUsername(usernameDetails.username)) invalidMembers.push('username');
+  if (!Validator.isValidUsername(usernameDetails.follower)) invalidMembers.push('follower');
+  if (invalidMembers.length > 0) DroppError.throwInvalidRequestError(source, invalidMembers);
+  if (_currentUser.username !== usernameDetails.username) {
+    DroppError.throwResourceError(source, 'Unauthorized to access that user\'s followers');
   }
 
-  const user = await UserAccessor.get(usernameDetails.username);
+  if (_currentUser.username === usernameDetails.follower) {
+    DroppError.throwResourceError(source, 'You cannot remove yourself as a follower');
+  }
+
+  const user = await UserAccessor.get(usernameDetails.follower);
   if (!Utils.hasValue(user)) DroppError.throwResourceDneError(source, 'user');
   if (!user.doesFollow(_currentUser.username)) {
     DroppError.throwResourceError(source, 'That user does not follow you');
