@@ -5,15 +5,7 @@ const Utils = require('../../../src/utilities/utils');
 const DroppError = require('../../../src/errors/DroppError');
 const UserMiddleware = require('../../../src/middleware/user');
 
-/**
- * Logs a message for the current test file
- * @param {String} _title the describe label
- * @param {String|Object} _details the log details
- */
-function log(_title, _details) {
-  Log(`Router Module ${_title}`, _details);
-}
-
+const testName = 'Router Module';
 const url = `http://localhost:${Server.port}/auth`;
 const authRouteTitle = 'Auth route';
 /* eslint-disable no-undef */
@@ -42,7 +34,8 @@ describe(authRouteTitle, () => {
     delete this.username;
     delete this.password;
     delete this.options;
-    await UserMiddleware.remove(this.user, { username: this.user.username });
+    const usernameDetails = { username: this.user.username };
+    await UserMiddleware.remove(this.user, usernameDetails);
     done();
   });
 
@@ -51,15 +44,13 @@ describe(authRouteTitle, () => {
     try {
       const response = await Request(this.options);
       expect(response).not.toBeDefined();
-      log(authRouteTitle, 'Should have thrown error');
+      Log(testName, authRouteTitle, 'Should have thrown error');
     } catch (response) {
-      expect(response).toBeDefined();
       expect(response.statusCode).toBe(400);
-
       const details = JSON.parse(response.error);
       expect(details.error.type).toBe(DroppError.type.InvalidRequest.type);
       expect(details.error.message).toBe('username');
-      log(authRouteTitle, response.error);
+      Log(testName, authRouteTitle, response.error);
     }
 
     done();
@@ -70,15 +61,13 @@ describe(authRouteTitle, () => {
     try {
       const response = await Request(this.options);
       expect(response).not.toBeDefined();
-      log(authRouteTitle, 'Should have thrown error');
+      Log(testName, authRouteTitle, 'Should have thrown error');
     } catch (response) {
-      expect(response).toBeDefined();
       expect(response.statusCode).toBe(400);
-
       const details = JSON.parse(response.error);
       expect(details.error.type).toBe(DroppError.type.InvalidRequest.type);
       expect(details.error.message).toBe('password');
-      log(authRouteTitle, response.error);
+      Log(testName, authRouteTitle, response.error);
     }
 
     done();
@@ -90,16 +79,14 @@ describe(authRouteTitle, () => {
     try {
       const response = await Request(this.options);
       expect(response).not.toBeDefined();
-      log(authRouteTitle, 'Should have thrown error');
+      Log(testName, authRouteTitle, 'Should have thrown error');
     } catch (response) {
-      expect(response).toBeDefined();
       expect(response.statusCode).toBe(400);
-
       const details = JSON.parse(response.error);
       expect(details.error.type).toBe(DroppError.type.InvalidRequest.type);
       expect(details.error.message).toContain('username');
       expect(details.error.message).toContain('password');
-      log(authRouteTitle, response.error);
+      Log(testName, authRouteTitle, response.error);
     }
 
     done();
@@ -110,15 +97,13 @@ describe(authRouteTitle, () => {
     try {
       const response = await Request(this.options);
       expect(response).not.toBeDefined();
-      log(authRouteTitle, 'Should have thrown error');
+      Log(testName, authRouteTitle, 'Should have thrown error');
     } catch (response) {
-      expect(response).toBeDefined();
       expect(response.statusCode).toBe(401);
-
       const details = JSON.parse(response.error);
       expect(details.error.type).toBe(DroppError.type.Login.type);
       expect(details.error.message).toBe('The username or password is incorrect');
-      log(authRouteTitle, response.error);
+      Log(testName, authRouteTitle, response.error);
     }
 
     done();
@@ -129,15 +114,13 @@ describe(authRouteTitle, () => {
     try {
       const response = await Request(this.options);
       expect(response).not.toBeDefined();
-      log(authRouteTitle, 'Should have thrown error');
+      Log(testName, authRouteTitle, 'Should have thrown error');
     } catch (response) {
-      expect(response).toBeDefined();
       expect(response.statusCode).toBe(401);
-
       const details = JSON.parse(response.error);
       expect(details.error.type).toBe(DroppError.type.Login.type);
       expect(details.error.message).toBe('The username or password is incorrect');
-      log(authRouteTitle, response.error);
+      Log(testName, authRouteTitle, response.error);
     }
 
     done();
@@ -145,14 +128,11 @@ describe(authRouteTitle, () => {
 
   it('gets an authentication token', async (done) => {
     const response = await Request(this.options);
-    expect(response).toBeDefined();
     expect(response.statusCode).toBe(200);
-
     const details = JSON.parse(response.body);
     expect(details.success.token.toLowerCase()).toContain('bearer');
     expect(details.success.message).toBe('Successful authentication');
-    log(authRouteTitle, response.body);
+    Log(testName, authRouteTitle, response.body);
     done();
   });
 });
-/* eslint-enable no-undef */

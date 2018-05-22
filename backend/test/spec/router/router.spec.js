@@ -4,15 +4,7 @@ const RouterModule = require('../../../src/routing/router');
 const DroppError = require('../../../src/errors/DroppError');
 const UserMiddleware = require('../../../src/middleware/user');
 
-/**
- * Logs a message for the current test file
- * @param {String} _title the describe label
- * @param {String|Object} _details the log details
- */
-function log(_title, _details) {
-  Log(`Router Module ${_title}`, _details);
-}
-
+const testName = 'Router Module';
 const handleErrorTitle = 'Handle error';
 /* eslint-disable no-undef */
 describe(handleErrorTitle, () => {
@@ -40,7 +32,7 @@ describe(handleErrorTitle, () => {
     expect(this.statusCode).toBe(DroppError.type.Server.status);
     expect(this.responseResult.error.type).toBe(DroppError.type.Server.type);
     expect(this.responseResult.error.message).toBe(DroppError.type.Server.message);
-    log(handleErrorTitle, this.responseResult);
+    Log(testName, handleErrorTitle, this.responseResult);
     done();
   });
 
@@ -51,7 +43,7 @@ describe(handleErrorTitle, () => {
     expect(this.statusCode).toBe(DroppError.type.Server.status);
     expect(this.responseResult.error.type).toBe(DroppError.type.Server.type);
     expect(this.responseResult.error.message).toBe(DroppError.type.Server.message);
-    log(handleErrorTitle, this.responseResult);
+    Log(testName, handleErrorTitle, this.responseResult);
     done();
   });
 
@@ -60,7 +52,7 @@ describe(handleErrorTitle, () => {
     RouterModule.errorHandler(error, this.request, this.response, null);
     expect(this.responseResult).toBe('test');
     expect(this.statusCode).toBe(DroppError.type.Server.status);
-    log(handleErrorTitle, this.responseResult);
+    Log(testName, handleErrorTitle, this.responseResult);
     done();
   });
 
@@ -77,13 +69,12 @@ describe(handleErrorTitle, () => {
     RouterModule.errorHandler(error, this.request, this.response, null);
     expect(this.statusCode).toBe(1);
     expect(this.responseResult).toBe('test');
-    log(handleErrorTitle, this.responseResult);
+    Log(testName, handleErrorTitle, this.responseResult);
     done();
   });
 });
 
 const validateAuthTokenTitle = 'Validate auth token';
-/* eslint-disable no-undef */
 describe(validateAuthTokenTitle, () => {
   beforeEach(async (done) => {
     this.didCallNext = false;
@@ -124,7 +115,8 @@ describe(validateAuthTokenTitle, () => {
     delete this.userDetails;
     delete this.didCallNext;
     delete this.responseResult;
-    await UserMiddleware.remove(this.user, { username: this.user.username });
+    const usernameDetails = { username: this.user.username };
+    await UserMiddleware.remove(this.user, usernameDetails);
     delete this.user;
     done();
   });
@@ -136,7 +128,7 @@ describe(validateAuthTokenTitle, () => {
     expect(this.statusCode).toBe(DroppError.type.Auth.status);
     expect(this.responseResult.error.type).toBe(DroppError.type.Auth.type);
     expect(this.responseResult.error.message).toBe(DroppError.TokenReason.missing);
-    log(validateAuthTokenTitle, this.responseResult.error.message);
+    Log(testName, validateAuthTokenTitle, this.responseResult.error.message);
     done();
   });
 
@@ -148,7 +140,7 @@ describe(validateAuthTokenTitle, () => {
     expect(this.statusCode).toBe(DroppError.type.Auth.status);
     expect(this.responseResult.error.type).toBe(DroppError.type.Auth.type);
     expect(this.responseResult.error.message).toBe(DroppError.TokenReason.invalid);
-    log(validateAuthTokenTitle, this.responseResult.error.message);
+    Log(testName, validateAuthTokenTitle, this.responseResult.error.message);
     done();
   });
 
@@ -157,8 +149,7 @@ describe(validateAuthTokenTitle, () => {
     await RouterModule.validateAuthToken(this.request, this.response, this.next);
     expect(this.didCallNext).toBe(true);
     expect(this.request.user.username).toBe(this.user.username);
-    log(validateAuthTokenTitle, this.didCallNext);
+    Log(testName, validateAuthTokenTitle, this.didCallNext);
     done();
   });
 });
-/* eslint-enable no-undef */

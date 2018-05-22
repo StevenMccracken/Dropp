@@ -1,15 +1,7 @@
 const Log = require('../../../logger');
 const Validator = require('../../../../src/utilities/validator');
 
-/**
- * Logs a message for the current test file
- * @param {String} _title the describe label
- * @param {String|Object} _details the log details
- */
-function log(_title, _details) {
-  Log(`Validator ${_title}`, _details);
-}
-
+const testName = 'Validator Module';
 const isValidPasswordTitle = 'isValidPassword()';
 /* eslint-disable no-undef */
 describe(isValidPasswordTitle, () => {
@@ -17,7 +9,7 @@ describe(isValidPasswordTitle, () => {
     const value = null;
     const result = Validator.isValidPassword(value);
     expect(result).toBe(false);
-    log(isValidPasswordTitle, `${value} returns ${result}`);
+    Log(testName, isValidPasswordTitle, `${value} returns ${result}`);
     done();
   });
 
@@ -25,7 +17,7 @@ describe(isValidPasswordTitle, () => {
     const value = undefined;
     const result = Validator.isValidPassword(value);
     expect(result).toBe(false);
-    log(isValidPasswordTitle, `${value} returns ${result}`);
+    Log(testName, isValidPasswordTitle, `${value} returns ${result}`);
     done();
   });
 
@@ -33,7 +25,7 @@ describe(isValidPasswordTitle, () => {
     const value = [];
     const result = Validator.isValidPassword(value);
     expect(result).toBe(false);
-    log(isValidPasswordTitle, `${value} returns ${result}`);
+    Log(testName, isValidPasswordTitle, `${value} returns ${result}`);
     done();
   });
 
@@ -41,7 +33,7 @@ describe(isValidPasswordTitle, () => {
     const value = {};
     const result = Validator.isValidPassword(value);
     expect(result).toBe(false);
-    log(isValidPasswordTitle, `${value} returns ${result}`);
+    Log(testName, isValidPasswordTitle, `${value} returns ${result}`);
     done();
   });
 
@@ -49,7 +41,7 @@ describe(isValidPasswordTitle, () => {
     const value = function value() {};
     const result = Validator.isValidPassword(value);
     expect(result).toBe(false);
-    log(isValidPasswordTitle, `${value} returns ${result}`);
+    Log(testName, isValidPasswordTitle, `${value} returns ${result}`);
     done();
   });
 
@@ -57,7 +49,7 @@ describe(isValidPasswordTitle, () => {
     const value = false;
     const result = Validator.isValidPassword(value);
     expect(result).toBe(false);
-    log(isValidPasswordTitle, `${value} returns ${result}`);
+    Log(testName, isValidPasswordTitle, `${value} returns ${result}`);
     done();
   });
 
@@ -65,7 +57,7 @@ describe(isValidPasswordTitle, () => {
     const value = true;
     const result = Validator.isValidPassword(value);
     expect(result).toBe(false);
-    log(isValidPasswordTitle, `${value} returns ${result}`);
+    Log(testName, isValidPasswordTitle, `${value} returns ${result}`);
     done();
   });
 
@@ -73,7 +65,7 @@ describe(isValidPasswordTitle, () => {
     const value = '';
     const result = Validator.isValidPassword(value);
     expect(result).toBe(false);
-    log(isValidPasswordTitle, `${value} returns ${result}`);
+    Log(testName, isValidPasswordTitle, `${value} returns ${result}`);
     done();
   });
 
@@ -81,7 +73,7 @@ describe(isValidPasswordTitle, () => {
     const value = '    ';
     const result = Validator.isValidPassword(value);
     expect(result).toBe(false);
-    log(isValidPasswordTitle, `${value} returns ${result}`);
+    Log(testName, isValidPasswordTitle, `${value} returns ${result}`);
     done();
   });
 
@@ -89,7 +81,7 @@ describe(isValidPasswordTitle, () => {
     const value = '\t';
     const result = Validator.isValidPassword(value);
     expect(result).toBe(false);
-    log(isValidPasswordTitle, `${value} returns ${result}`);
+    Log(testName, isValidPasswordTitle, `${value} returns ${result}`);
     done();
   });
 
@@ -97,7 +89,7 @@ describe(isValidPasswordTitle, () => {
     const value = '\n';
     const result = Validator.isValidPassword(value);
     expect(result).toBe(false);
-    log(isValidPasswordTitle, `${value} returns ${result}`);
+    Log(testName, isValidPasswordTitle, `${value} returns ${result}`);
     done();
   });
 
@@ -105,7 +97,7 @@ describe(isValidPasswordTitle, () => {
     const value = '\r';
     const result = Validator.isValidPassword(value);
     expect(result).toBe(false);
-    log(isValidPasswordTitle, `${value} returns ${result}`);
+    Log(testName, isValidPasswordTitle, `${value} returns ${result}`);
     done();
   });
 
@@ -113,7 +105,7 @@ describe(isValidPasswordTitle, () => {
     const value = 1.1;
     const result = Validator.isValidPassword(value);
     expect(result).toBe(false);
-    log(isValidPasswordTitle, `${value} returns ${result}`);
+    Log(testName, isValidPasswordTitle, `${value} returns ${result}`);
     done();
   });
 
@@ -121,7 +113,7 @@ describe(isValidPasswordTitle, () => {
     const value = 0;
     const result = Validator.isValidPassword(value);
     expect(result).toBe(false);
-    log(isValidPasswordTitle, `${value} returns ${result}`);
+    Log(testName, isValidPasswordTitle, `${value} returns ${result}`);
     done();
   });
 
@@ -129,7 +121,7 @@ describe(isValidPasswordTitle, () => {
     const value = '1';
     const result = Validator.isValidPassword(value);
     expect(result).toBe(false);
-    log(isValidPasswordTitle, `${value} returns ${result}`);
+    Log(testName, isValidPasswordTitle, `${value} returns ${result}`);
     done();
   });
 
@@ -137,7 +129,7 @@ describe(isValidPasswordTitle, () => {
     const value = 'he';
     const result = Validator.isValidPassword(value);
     expect(result).toBe(false);
-    log(isValidPasswordTitle, `${value} returns ${result}`);
+    Log(testName, isValidPasswordTitle, `${value} returns ${result}`);
     done();
   });
 
@@ -145,23 +137,26 @@ describe(isValidPasswordTitle, () => {
     const value = 'he$';
     const result = Validator.isValidPassword(value);
     expect(result).toBe(false);
-    log(isValidPasswordTitle, `${value} returns ${result}`);
+    Log(testName, isValidPasswordTitle, `${value} returns ${result}`);
     done();
   });
 
-  it('should return false for a string with starting whitespace, and then word characters', (done) => {
-    const value = '  hey-';
-    const result = Validator.isValidPassword(value);
-    expect(result).toBe(false);
-    log(isValidPasswordTitle, `${value} returns ${result}`);
-    done();
-  });
+  it(
+    'should return false for a string with starting whitespace, and then word characters',
+    (done) => {
+      const value = '  hey-';
+      const result = Validator.isValidPassword(value);
+      expect(result).toBe(false);
+      Log(testName, isValidPasswordTitle, `${value} returns ${result}`);
+      done();
+    }
+  );
 
   it('should return true for a string with at least 4 characters', (done) => {
     const value = 'he-w';
     const result = Validator.isValidPassword(value);
     expect(result).toBe(true);
-    log(isValidPasswordTitle, `${value} returns ${result}`);
+    Log(testName, isValidPasswordTitle, `${value} returns ${result}`);
     done();
   });
 
@@ -169,7 +164,7 @@ describe(isValidPasswordTitle, () => {
     const value = '$$$$';
     const result = Validator.isValidPassword(value);
     expect(result).toBe(true);
-    log(isValidPasswordTitle, `${value} returns ${result}`);
+    Log(testName, isValidPasswordTitle, `${value} returns ${result}`);
     done();
   });
 
@@ -177,7 +172,7 @@ describe(isValidPasswordTitle, () => {
     const value = 'hey😈';
     const result = Validator.isValidPassword(value);
     expect(result).toBe(true);
-    log(isValidPasswordTitle, `${value} returns ${result}`);
+    Log(testName, isValidPasswordTitle, `${value} returns ${result}`);
     done();
   });
 
@@ -185,8 +180,7 @@ describe(isValidPasswordTitle, () => {
     const value = 'console.log(\'hey\')';
     const result = Validator.isValidPassword(value);
     expect(result).toBe(true);
-    log(isValidPasswordTitle, `${value} returns ${result}`);
+    Log(testName, isValidPasswordTitle, `${value} returns ${result}`);
     done();
   });
 });
-/* eslint-enable no-undef */

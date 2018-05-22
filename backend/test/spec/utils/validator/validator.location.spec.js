@@ -1,15 +1,7 @@
 const Log = require('../../../logger');
 const Validator = require('../../../../src/utilities/validator');
 
-/**
- * Logs a message for the current test file
- * @param {String} _title the describe label
- * @param {String|Object} _details the log details
- */
-function log(_title, _details) {
-  Log(`Validator ${_title}`, _details);
-}
-
+const testName = 'Validator Module';
 const isValidLocationTitle = 'isValidLocation()';
 /* eslint-disable no-undef */
 describe(isValidLocationTitle, () => {
@@ -17,7 +9,7 @@ describe(isValidLocationTitle, () => {
     const value = null;
     const result = Validator.isValidLocation(value);
     expect(result).toBe(false);
-    log(isValidLocationTitle, `${value} returns ${result}`);
+    Log(testName, isValidLocationTitle, `${value} returns ${result}`);
     done();
   });
 
@@ -25,7 +17,7 @@ describe(isValidLocationTitle, () => {
     const value = undefined;
     const result = Validator.isValidLocation(value);
     expect(result).toBe(false);
-    log(isValidLocationTitle, `${value} returns ${result}`);
+    Log(testName, isValidLocationTitle, `${value} returns ${result}`);
     done();
   });
 
@@ -33,7 +25,7 @@ describe(isValidLocationTitle, () => {
     const value = [];
     const result = Validator.isValidLocation(value);
     expect(result).toBe(false);
-    log(isValidLocationTitle, `${value} returns ${result}`);
+    Log(testName, isValidLocationTitle, `${value} returns ${result}`);
     done();
   });
 
@@ -41,7 +33,7 @@ describe(isValidLocationTitle, () => {
     const value = {};
     const result = Validator.isValidLocation(value);
     expect(result).toBe(false);
-    log(isValidLocationTitle, `${value} returns ${result}`);
+    Log(testName, isValidLocationTitle, `${value} returns ${result}`);
     done();
   });
 
@@ -49,7 +41,7 @@ describe(isValidLocationTitle, () => {
     const value = 0;
     const result = Validator.isValidLocation(value);
     expect(result).toBe(false);
-    log(isValidLocationTitle, `${value} returns ${result}`);
+    Log(testName, isValidLocationTitle, `${value} returns ${result}`);
     done();
   });
 
@@ -57,7 +49,7 @@ describe(isValidLocationTitle, () => {
     const value = -1;
     const result = Validator.isValidLocation(value);
     expect(result).toBe(false);
-    log(isValidLocationTitle, `${value} returns ${result}`);
+    Log(testName, isValidLocationTitle, `${value} returns ${result}`);
     done();
   });
 
@@ -65,7 +57,7 @@ describe(isValidLocationTitle, () => {
     const value = 1;
     const result = Validator.isValidLocation(value);
     expect(result).toBe(false);
-    log(isValidLocationTitle, `${value} returns ${result}`);
+    Log(testName, isValidLocationTitle, `${value} returns ${result}`);
     done();
   });
 
@@ -73,7 +65,7 @@ describe(isValidLocationTitle, () => {
     const value = function value() {};
     const result = Validator.isValidLocation(value);
     expect(result).toBe(false);
-    log(isValidLocationTitle, `${value} returns ${result}`);
+    Log(testName, isValidLocationTitle, `${value} returns ${result}`);
     done();
   });
 
@@ -81,7 +73,7 @@ describe(isValidLocationTitle, () => {
     const value = false;
     const result = Validator.isValidLocation(value);
     expect(result).toBe(false);
-    log(isValidLocationTitle, `${value} returns ${result}`);
+    Log(testName, isValidLocationTitle, `${value} returns ${result}`);
     done();
   });
 
@@ -89,7 +81,7 @@ describe(isValidLocationTitle, () => {
     const value = true;
     const result = Validator.isValidLocation(value);
     expect(result).toBe(false);
-    log(isValidLocationTitle, `${value} returns ${result}`);
+    Log(testName, isValidLocationTitle, `${value} returns ${result}`);
     done();
   });
 
@@ -97,7 +89,7 @@ describe(isValidLocationTitle, () => {
     const value = '';
     const result = Validator.isValidLocation(value);
     expect(result).toBe(false);
-    log(isValidLocationTitle, `${value} returns ${result}`);
+    Log(testName, isValidLocationTitle, `${value} returns ${result}`);
     done();
   });
 
@@ -105,7 +97,7 @@ describe(isValidLocationTitle, () => {
     const value = 'hey';
     const result = Validator.isValidLocation(value);
     expect(result).toBe(false);
-    log(isValidLocationTitle, `${value} returns ${result}`);
+    Log(testName, isValidLocationTitle, `${value} returns ${result}`);
     done();
   });
 
@@ -113,7 +105,7 @@ describe(isValidLocationTitle, () => {
     const value = ',';
     const result = Validator.isValidLocation(value);
     expect(result).toBe(false);
-    log(isValidLocationTitle, `${value} returns ${result}`);
+    Log(testName, isValidLocationTitle, `${value} returns ${result}`);
     done();
   });
 
@@ -121,7 +113,7 @@ describe(isValidLocationTitle, () => {
     const value = '1,';
     const result = Validator.isValidLocation(value);
     expect(result).toBe(false);
-    log(isValidLocationTitle, `${value} returns ${result}`);
+    Log(testName, isValidLocationTitle, `${value} returns ${result}`);
     done();
   });
 
@@ -129,7 +121,7 @@ describe(isValidLocationTitle, () => {
     const value = ',1';
     const result = Validator.isValidLocation(value);
     expect(result).toBe(false);
-    log(isValidLocationTitle, `${value} returns ${result}`);
+    Log(testName, isValidLocationTitle, `${value} returns ${result}`);
     done();
   });
 
@@ -137,7 +129,7 @@ describe(isValidLocationTitle, () => {
     const value = '1,hey';
     const result = Validator.isValidLocation(value);
     expect(result).toBe(false);
-    log(isValidLocationTitle, `${value} returns ${result}`);
+    Log(testName, isValidLocationTitle, `${value} returns ${result}`);
     done();
   });
 
@@ -145,7 +137,7 @@ describe(isValidLocationTitle, () => {
     const value = 'hey,1';
     const result = Validator.isValidLocation(value);
     expect(result).toBe(false);
-    log(isValidLocationTitle, `${value} returns ${result}`);
+    Log(testName, isValidLocationTitle, `${value} returns ${result}`);
     done();
   });
 
@@ -153,8 +145,7 @@ describe(isValidLocationTitle, () => {
     const value = '1,1';
     const result = Validator.isValidLocation(value);
     expect(result).toBe(true);
-    log(isValidLocationTitle, `${value} returns ${result}`);
+    Log(testName, isValidLocationTitle, `${value} returns ${result}`);
     done();
   });
 });
-/* eslint-enable no-undef */

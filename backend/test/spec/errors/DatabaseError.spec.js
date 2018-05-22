@@ -1,15 +1,7 @@
 const Log = require('../../logger');
 const DatabaseError = require('../../../src/errors/DatabaseError');
 
-/**
- * Logs a message for the current test file
- * @param {String} _title the describe label
- * @param {String|Object} _details the log details
- */
-function log(_title, _details) {
-  Log(`Database Error ${_title}`, _details);
-}
-
+const testName = 'Database Error';
 const constructorTitle = 'Constructor';
 /* eslint-disable no-undef */
 describe(constructorTitle, () => {
@@ -17,7 +9,7 @@ describe(constructorTitle, () => {
     const error = new DatabaseError();
     expect(error.name).toBe('DatabaseError');
     expect(Object.keys(error.details).length).toBe(0);
-    log(constructorTitle, error);
+    Log(testName, constructorTitle, error);
     done();
   });
 
@@ -25,7 +17,7 @@ describe(constructorTitle, () => {
     const error = new DatabaseError('test');
     expect(error.name).toBe('DatabaseError');
     expect(error.details).toBe('test');
-    log(constructorTitle, error);
+    Log(testName, constructorTitle, error);
     done();
   });
 });
@@ -43,7 +35,7 @@ describe(formatTitle, () => {
     expect(error.details.type).toBe(type.type);
     expect(error.details.details).toBe('test');
     expect(typeof error.details.timestamp).toBe('string');
-    log(formatTitle, error);
+    Log(testName, formatTitle, error);
     done();
   });
 
@@ -54,7 +46,7 @@ describe(formatTitle, () => {
     expect(error.details.type).toBe(DatabaseError.type.Unknown.type);
     expect(error.details.details).toBe('test');
     expect(typeof error.details.timestamp).toBe('string');
-    log(formatTitle, error);
+    Log(testName, formatTitle, error);
     done();
   });
 });
@@ -65,13 +57,13 @@ describe(throwTitle, () => {
     try {
       DatabaseError.throw(null, 'test', 'test');
       expect(false).toBe(true);
-      log(throwTitle, 'Should have thrown error');
+      Log(testName, throwTitle, 'Should have thrown error');
     } catch (error) {
       expect(error.name).toBe('DatabaseError');
       expect(error.details.source).toBe('test');
       expect(error.details.details).toBe('test');
       expect(error.details.type).toBe(DatabaseError.type.Unknown.type);
-      log(throwTitle, error);
+      Log(testName, throwTitle, error);
     }
 
     done();
@@ -85,13 +77,13 @@ describe(throwTitle, () => {
     try {
       DatabaseError.throw(type, 'test', 'test');
       expect(false).toBe(true);
-      log(throwTitle, 'Should have thrown error');
+      Log(testName, throwTitle, 'Should have thrown error');
     } catch (error) {
       expect(error.name).toBe('DatabaseError');
       expect(error.details.type).toBe('test');
       expect(error.details.source).toBe('test');
       expect(error.details.details).toBe('test');
-      log(throwTitle, error);
+      Log(testName, throwTitle, error);
     }
 
     done();
@@ -104,13 +96,13 @@ describe(throwUrlErrorTitle, () => {
     try {
       DatabaseError.throwUrlError('test', 'test');
       expect(false).toBe(true);
-      log(throwUrlErrorTitle, 'Should have thrown error');
+      Log(testName, throwUrlErrorTitle, 'Should have thrown error');
     } catch (error) {
       expect(error.name).toBe('DatabaseError');
       expect(error.details.source).toBe('test');
       expect(error.details.details).toBe('Url: test');
       expect(error.details.type).toBe(DatabaseError.type.Url.type);
-      log(throwUrlErrorTitle, error);
+      Log(testName, throwUrlErrorTitle, error);
     }
 
     done();
@@ -123,13 +115,13 @@ describe(throwDataErrorTitle, () => {
     try {
       DatabaseError.throwDataError('test', 'test');
       expect(false).toBe(true);
-      log(throwDataErrorTitle, 'Should have thrown error');
+      Log(testName, throwDataErrorTitle, 'Should have thrown error');
     } catch (error) {
       expect(error.name).toBe('DatabaseError');
       expect(error.details.source).toBe('test');
       expect(error.details.details).toBe('test');
       expect(error.details.type).toBe(DatabaseError.type.Data.type);
-      log(throwDataErrorTitle, error);
+      Log(testName, throwDataErrorTitle, error);
     }
 
     done();
@@ -142,15 +134,14 @@ describe(throwInvalidStateErrorTitle, () => {
     try {
       DatabaseError.throwInvalidStateError('test');
       expect(false).toBe(true);
-      log(throwInvalidStateErrorTitle, 'Should have thrown error');
+      Log(testName, throwInvalidStateErrorTitle, 'Should have thrown error');
     } catch (error) {
       expect(error.name).toBe('DatabaseError');
       expect(error.details.source).toBe('test');
       expect(error.details.type).toBe(DatabaseError.type.State.type);
-      log(throwInvalidStateErrorTitle, error);
+      Log(testName, throwInvalidStateErrorTitle, error);
     }
 
     done();
   });
 });
-/* eslint-enable no-undef */

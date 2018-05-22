@@ -37,9 +37,11 @@ const get = async function get(_username) {
   const source = 'get()';
   log(source, _username);
 
-  if (!Validator.isValidUsername(_username)) DroppError.throwInvalidRequestError(source, 'username');
-  const json = await Firebase.get(`${usersBaseUrl}/${_username}`);
+  if (!Validator.isValidUsername(_username)) {
+    DroppError.throwInvalidRequestError(source, 'username');
+  }
 
+  const json = await Firebase.get(`${usersBaseUrl}/${_username}`);
   if (!Utils.hasValue(json)) return null;
   json.username = _username;
   return new User(json);
@@ -55,7 +57,10 @@ const getPassword = async function getPassword(_username) {
   const source = 'getPassword()';
   log(source, _username);
 
-  if (!Validator.isValidUsername(_username)) DroppError.throwInvalidRequestError(source, 'username');
+  if (!Validator.isValidUsername(_username)) {
+    DroppError.throwInvalidRequestError(source, 'username');
+  }
+
   return Firebase.get(`${passwordsBaseUrl}/${_username}`);
 };
 
@@ -92,7 +97,10 @@ const updatePassword = async function updatePassword(_user, _password) {
   log(source, _user);
 
   if (!(_user instanceof User)) DroppError.throwServerError(source, null, 'Object is not a User');
-  if (!Validator.isValidPassword(_password)) DroppError.throwInvalidRequestError(source, 'password');
+  if (!Validator.isValidPassword(_password)) {
+    DroppError.throwInvalidRequestError(source, 'password');
+  }
+
   await Firebase.update(`${passwordsBaseUrl}/${_user.username}`, _password);
 };
 
@@ -134,7 +142,6 @@ const addFollowRequest = async function addFollowRequest(_user, _follow) {
   updates[`${usersBaseUrl}/${_user.username}/follow_requests/${_follow.username}`] = _follow.username;
   updates[`${usersBaseUrl}/${_follow.username}/follower_requests/${_user.username}`] = _user.username;
   await Firebase.bulkUpdate(updates);
-
   _user.followRequests.push(_follow.username);
   _follow.followerRequests.push(_user.username);
 };

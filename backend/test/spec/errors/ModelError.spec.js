@@ -1,15 +1,7 @@
 const Log = require('../../logger');
 const ModelError = require('../../../src/errors/ModelError');
 
-/**
- * Logs a message for the current test file
- * @param {String} _title the describe label
- * @param {String|Object} _details the log details
- */
-function log(_title, _details) {
-  Log(`Model Error ${_title}`, _details);
-}
-
+const testName = 'Model Error';
 const constructorTitle = 'Constructor';
 /* eslint-disable no-undef */
 describe(constructorTitle, () => {
@@ -17,7 +9,7 @@ describe(constructorTitle, () => {
     const error = new ModelError();
     expect(error.name).toBe('ModelError');
     expect(Object.keys(error.details).length).toBe(0);
-    log(constructorTitle, error);
+    Log(testName, constructorTitle, error);
     done();
   });
 
@@ -25,7 +17,7 @@ describe(constructorTitle, () => {
     const error = new ModelError('test');
     expect(error.name).toBe('ModelError');
     expect(error.details).toBe('test');
-    log(constructorTitle, error);
+    Log(testName, constructorTitle, error);
     done();
   });
 });
@@ -43,7 +35,7 @@ describe(formatTitle, () => {
     expect(error.details.type).toBe(type.type);
     expect(error.details.details).toBe('test');
     expect(typeof error.details.timestamp).toBe('string');
-    log(formatTitle, error);
+    Log(testName, formatTitle, error);
     done();
   });
 
@@ -54,7 +46,7 @@ describe(formatTitle, () => {
     expect(error.details.type).toBe(ModelError.type.Unknown.type);
     expect(error.details.details).toBe('test');
     expect(typeof error.details.timestamp).toBe('string');
-    log(formatTitle, error);
+    Log(testName, formatTitle, error);
     done();
   });
 });
@@ -65,13 +57,13 @@ describe(throwTitle, () => {
     try {
       ModelError.throw(null, 'test', 'test');
       expect(false).toBe(true);
-      log(throwTitle, 'Should have thrown error');
+      Log(testName, throwTitle, 'Should have thrown error');
     } catch (error) {
       expect(error.name).toBe('ModelError');
       expect(error.details.source).toBe('test');
       expect(error.details.details).toBe('test');
       expect(error.details.type).toBe(ModelError.type.Unknown.type);
-      log(throwTitle, error);
+      Log(testName, throwTitle, error);
     }
 
     done();
@@ -85,13 +77,13 @@ describe(throwTitle, () => {
     try {
       ModelError.throw(type, 'test', 'test');
       expect(false).toBe(true);
-      log(throwTitle, 'Should have thrown error');
+      Log(testName, throwTitle, 'Should have thrown error');
     } catch (error) {
       expect(error.name).toBe('ModelError');
       expect(error.details.type).toBe('test');
       expect(error.details.source).toBe('test');
       expect(error.details.details).toBe('test');
-      log(throwTitle, error);
+      Log(testName, throwTitle, error);
     }
 
     done();
@@ -104,13 +96,13 @@ describe(throwConstructorErrorTitle, () => {
     try {
       ModelError.throwConstructorError('test', 'test');
       expect(false).toBe(true);
-      log(throwConstructorErrorTitle, 'Should have thrown error');
+      Log(testName, throwConstructorErrorTitle, 'Should have thrown error');
     } catch (error) {
       expect(error.name).toBe('ModelError');
       expect(error.details.source).toBe('test');
       expect(error.details.details).toBe('test');
       expect(error.details.type).toBe(ModelError.type.Constructor.type);
-      log(throwConstructorErrorTitle, error);
+      Log(testName, throwConstructorErrorTitle, error);
     }
 
     done();
@@ -123,16 +115,15 @@ describe(throwInvalidMembersErrorTitle, () => {
     try {
       ModelError.throwInvalidMembersError('test', 'test');
       expect(false).toBe(true);
-      log(throwInvalidMembersErrorTitle, 'Should have thrown error');
+      Log(testName, throwInvalidMembersErrorTitle, 'Should have thrown error');
     } catch (error) {
       expect(error.name).toBe('ModelError');
       expect(error.details.source).toBe('test');
       expect(error.details.details.invalidMembers).toBe('test');
       expect(error.details.type).toBe(ModelError.type.Constructor.type);
-      log(throwInvalidMembersErrorTitle, error);
+      Log(testName, throwInvalidMembersErrorTitle, error);
     }
 
     done();
   });
 });
-/* eslint-enable no-undef */

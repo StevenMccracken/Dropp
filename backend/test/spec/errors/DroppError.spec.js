@@ -2,15 +2,7 @@ const Log = require('../../logger');
 const Utils = require('../../../src/utilities/utils');
 const DroppError = require('../../../src/errors/DroppError');
 
-/**
- * Logs a message for the current test file
- * @param {String} _title the describe label
- * @param {String|Object} _details the log details
- */
-function log(_title, _details) {
-  Log(`Dropp Error ${_title}`, _details);
-}
-
+const testName = 'Dropp Error';
 const constructorTitle = 'Constructor';
 /* eslint-disable no-undef */
 describe(constructorTitle, () => {
@@ -20,7 +12,7 @@ describe(constructorTitle, () => {
     expect(error.statusCode).toBeNull();
     expect(Object.keys(error.details).length).toBe(0);
     expect(Object.keys(error.privateDetails).length).toBe(0);
-    log(constructorTitle, error);
+    Log(testName, constructorTitle, error);
     done();
   });
 
@@ -30,7 +22,7 @@ describe(constructorTitle, () => {
     expect(error.details).toBe('test');
     expect(error.privateDetails).toBe('test');
     expect(error.statusCode).toBeNull();
-    log(constructorTitle, error);
+    Log(testName, constructorTitle, error);
     done();
   });
 
@@ -44,7 +36,7 @@ describe(constructorTitle, () => {
     expect(error.details).toBe('test');
     expect(error.privateDetails).toBe(privateDetails);
     expect(error.statusCode).toBeNull();
-    log(constructorTitle, error);
+    Log(testName, constructorTitle, error);
     done();
   });
 
@@ -53,7 +45,7 @@ describe(constructorTitle, () => {
     error.privateDetails = null;
     expect(error.name).toBe('DroppError');
     expect(error.statusCode).toBeNull();
-    log(constructorTitle, error);
+    Log(testName, constructorTitle, error);
     done();
   });
 
@@ -68,7 +60,7 @@ describe(constructorTitle, () => {
     expect(error.name).toBe('DroppError');
     expect(error.privateDetails).toBe(privateDetails);
     expect(error.statusCode).not.toBeDefined();
-    log(constructorTitle, error);
+    Log(testName, constructorTitle, error);
     done();
   });
 
@@ -84,7 +76,7 @@ describe(constructorTitle, () => {
     expect(error.details).toBe('test');
     expect(error.privateDetails).toBe(privateDetails);
     expect(error.statusCode).not.toBeDefined();
-    log(constructorTitle, error);
+    Log(testName, constructorTitle, error);
     done();
   });
 
@@ -102,7 +94,7 @@ describe(constructorTitle, () => {
     expect(error.details).toBe('test');
     expect(error.privateDetails).toBe(privateDetails);
     expect(error.statusCode).toBe('test');
-    log(constructorTitle, error);
+    Log(testName, constructorTitle, error);
     done();
   });
 });
@@ -111,17 +103,15 @@ const formatTitle = 'Format';
 describe(formatTitle, () => {
   it('creates a dropp error object', (done) => {
     const error = DroppError.format();
-    expect(error.details.error).toBeDefined();
     expect(typeof error.details.error.id).toBe('string');
     expect(error.details.error.type).toBe(DroppError.type.Server.type);
     expect(error.details.error.message).toBe(DroppError.type.Server.message);
-    expect(error.privateDetails.error).toBeDefined();
     expect(error.privateDetails.error.id).toBe(error.details.error.id);
     expect(typeof error.privateDetails.error.timestamp).toBe('string');
     expect(error.privateDetails.error.type).not.toBeDefined();
     expect(error.privateDetails.error.source).not.toBeDefined();
     expect(error.privateDetails.error.details).toBe(DroppError.type.Server.message);
-    log(formatTitle, error);
+    Log(testName, formatTitle, error);
     done();
   });
 
@@ -129,7 +119,7 @@ describe(formatTitle, () => {
     const error = DroppError.format(null, null, [1, 2]);
     expect(error.details.error.message).toBe('1,2');
     expect(error.privateDetails.error.details).toBe('1,2');
-    log(formatTitle, error);
+    Log(testName, formatTitle, error);
     done();
   });
 
@@ -137,7 +127,7 @@ describe(formatTitle, () => {
     const error = DroppError.format(null, null, 'test');
     expect(error.details.error.message).toBe('test');
     expect(error.privateDetails.error.details).toBe('test');
-    log(formatTitle, error);
+    Log(testName, formatTitle, error);
     done();
   });
 
@@ -149,7 +139,7 @@ describe(formatTitle, () => {
     const error = DroppError.format(type);
     expect(error.details.error.message).toBe('test');
     expect(error.privateDetails.error.details).toBe('test');
-    log(formatTitle, error);
+    Log(testName, formatTitle, error);
     done();
   });
 
@@ -164,14 +154,14 @@ describe(formatTitle, () => {
     expect(error.privateDetails.error.type).toBe(type);
     expect(error.details.error.message).toBe('test');
     expect(error.privateDetails.error.details).toBe('test');
-    log(formatTitle, error);
+    Log(testName, formatTitle, error);
     done();
   });
 
   it('creates a dropp error object with a specific server message', (done) => {
     const error = DroppError.format(null, null, null, 'test');
     expect(error.privateDetails.error.details).toBe('test');
-    log(formatTitle, error);
+    Log(testName, formatTitle, error);
     done();
   });
 });
@@ -186,7 +176,7 @@ describe(throwTitle, () => {
     try {
       DroppError.throw(type, 'test', 'test', 'test');
       expect(false).toBe(true);
-      log(throwTitle, 'Should have thrown error');
+      Log(testName, throwTitle, 'Should have thrown error');
     } catch (error) {
       expect(error.name).toBe('DroppError');
       expect(error.details.error.type).toBe('test');
@@ -194,7 +184,7 @@ describe(throwTitle, () => {
       expect(error.privateDetails.error.source).toBe('test');
       expect(error.details.error.message).toBe('test');
       expect(error.privateDetails.error.details).toBe('test');
-      log(throwTitle, error);
+      Log(testName, throwTitle, error);
     }
 
     done();
@@ -207,7 +197,7 @@ describe(throwServerErrorTitle, () => {
     try {
       DroppError.throwServerError('test', 'test', 'test');
       expect(false).toBe(true);
-      log(throwServerErrorTitle, 'Should have thrown error');
+      Log(testName, throwServerErrorTitle, 'Should have thrown error');
     } catch (error) {
       expect(error.name).toBe('DroppError');
       expect(error.details.error.type).toBe(DroppError.type.Server.type);
@@ -215,7 +205,7 @@ describe(throwServerErrorTitle, () => {
       expect(error.privateDetails.error.source).toBe('test');
       expect(error.details.error.message).toBe('test');
       expect(error.privateDetails.error.details).toBe('test');
-      log(throwServerErrorTitle, error);
+      Log(testName, throwServerErrorTitle, error);
     }
 
     done();
@@ -228,7 +218,7 @@ describe(throwResourceErrorTitle, () => {
     try {
       DroppError.throwResourceError('test', 'test', 'test');
       expect(false).toBe(true);
-      log(throwResourceErrorTitle, 'Should have thrown error');
+      Log(testName, throwResourceErrorTitle, 'Should have thrown error');
     } catch (error) {
       expect(error.name).toBe('DroppError');
       expect(error.details.error.type).toBe(DroppError.type.Resource.type);
@@ -236,7 +226,7 @@ describe(throwResourceErrorTitle, () => {
       expect(error.privateDetails.error.source).toBe('test');
       expect(error.details.error.message).toBe('test');
       expect(error.privateDetails.error.details).toBe('test');
-      log(throwResourceErrorTitle, error);
+      Log(testName, throwResourceErrorTitle, error);
     }
 
     done();
@@ -249,7 +239,7 @@ describe(throwResourceDneErrorTitle, () => {
     try {
       DroppError.throwResourceDneError('test', 'test', 'test');
       expect(false).toBe(true);
-      log(throwResourceDneErrorTitle, 'Should have thrown error');
+      Log(testName, throwResourceDneErrorTitle, 'Should have thrown error');
     } catch (error) {
       expect(error.name).toBe('DroppError');
       expect(error.details.error.type).toBe(DroppError.type.ResourceDNE.type);
@@ -257,7 +247,7 @@ describe(throwResourceDneErrorTitle, () => {
       expect(error.privateDetails.error.source).toBe('test');
       expect(error.details.error.message).toBe('That test does not exist');
       expect(error.privateDetails.error.details).toBe('test');
-      log(throwResourceDneErrorTitle, error);
+      Log(testName, throwResourceDneErrorTitle, error);
     }
 
     done();
@@ -270,7 +260,7 @@ describe(throwInvalidRequestErrorTitle, () => {
     try {
       DroppError.throwInvalidRequestError('test', 'test', 'test');
       expect(false).toBe(true);
-      log(throwInvalidRequestErrorTitle, 'Should have thrown error');
+      Log(testName, throwInvalidRequestErrorTitle, 'Should have thrown error');
     } catch (error) {
       expect(error.name).toBe('DroppError');
       expect(error.details.error.type).toBe(DroppError.type.InvalidRequest.type);
@@ -278,7 +268,7 @@ describe(throwInvalidRequestErrorTitle, () => {
       expect(error.privateDetails.error.source).toBe('test');
       expect(error.details.error.message).toBe('test');
       expect(error.privateDetails.error.details).toBe('test');
-      log(throwInvalidRequestErrorTitle, error);
+      Log(testName, throwInvalidRequestErrorTitle, error);
     }
 
     done();
@@ -291,7 +281,7 @@ describe(throwLoginErrorTitle, () => {
     try {
       DroppError.throwLoginError('test', 'test', 'test');
       expect(false).toBe(true);
-      log(throwLoginErrorTitle, 'Should have thrown error');
+      Log(testName, throwLoginErrorTitle, 'Should have thrown error');
     } catch (error) {
       expect(error.name).toBe('DroppError');
       expect(error.details.error.type).toBe(DroppError.type.Login.type);
@@ -299,7 +289,7 @@ describe(throwLoginErrorTitle, () => {
       expect(error.privateDetails.error.source).toBe('test');
       expect(error.details.error.message).toBe('test');
       expect(error.privateDetails.error.details).toBe('test');
-      log(throwLoginErrorTitle, error);
+      Log(testName, throwLoginErrorTitle, error);
     }
 
     done();
@@ -311,7 +301,7 @@ describe(handleJwtErrorTitle, () => {
   it('returns the default message for an invalid error', (done) => {
     const message = DroppError.handleJwtError();
     expect(message).toBe(DroppError.TokenReason.unknown);
-    log(handleJwtErrorTitle, message);
+    Log(testName, handleJwtErrorTitle, message);
     done();
   });
 
@@ -319,7 +309,7 @@ describe(handleJwtErrorTitle, () => {
     const error = `${Utils.newUuid()}Unexpected token${Utils.newUuid()}`;
     const message = DroppError.handleJwtError(error);
     expect(message).toBe(DroppError.TokenReason.invalid);
-    log(handleJwtErrorTitle, message);
+    Log(testName, handleJwtErrorTitle, message);
     done();
   });
 
@@ -327,7 +317,7 @@ describe(handleJwtErrorTitle, () => {
     const error = 'jwt expired';
     const message = DroppError.handleJwtError(error);
     expect(message).toBe(DroppError.TokenReason.expired);
-    log(handleJwtErrorTitle, message);
+    Log(testName, handleJwtErrorTitle, message);
     done();
   });
 
@@ -335,7 +325,7 @@ describe(handleJwtErrorTitle, () => {
     const error = 'invalid token';
     const message = DroppError.handleJwtError(error);
     expect(message).toBe(DroppError.TokenReason.invalid);
-    log(handleJwtErrorTitle, message);
+    Log(testName, handleJwtErrorTitle, message);
     done();
   });
 
@@ -343,7 +333,7 @@ describe(handleJwtErrorTitle, () => {
     const error = 'invalid signature';
     const message = DroppError.handleJwtError(error);
     expect(message).toBe(DroppError.TokenReason.invalid);
-    log(handleJwtErrorTitle, message);
+    Log(testName, handleJwtErrorTitle, message);
     done();
   });
 
@@ -351,7 +341,7 @@ describe(handleJwtErrorTitle, () => {
     const error = 'jwt malformed';
     const message = DroppError.handleJwtError(error);
     expect(message).toBe(DroppError.TokenReason.invalid);
-    log(handleJwtErrorTitle, message);
+    Log(testName, handleJwtErrorTitle, message);
     done();
   });
 
@@ -359,7 +349,7 @@ describe(handleJwtErrorTitle, () => {
     const error = 'jwt malformed';
     const message = DroppError.handleJwtError(error);
     expect(message).toBe(DroppError.TokenReason.invalid);
-    log(handleJwtErrorTitle, message);
+    Log(testName, handleJwtErrorTitle, message);
     done();
   });
 
@@ -367,7 +357,7 @@ describe(handleJwtErrorTitle, () => {
     const error = 'No auth token';
     const message = DroppError.handleJwtError(error);
     expect(message).toBe(DroppError.TokenReason.missing);
-    log(handleJwtErrorTitle, message);
+    Log(testName, handleJwtErrorTitle, message);
     done();
   });
 
@@ -375,7 +365,7 @@ describe(handleJwtErrorTitle, () => {
     const error = 'jwt must be provided';
     const message = DroppError.handleJwtError(error);
     expect(message).toBe(DroppError.TokenReason.missing);
-    log(handleJwtErrorTitle, message);
+    Log(testName, handleJwtErrorTitle, message);
     done();
   });
 });
@@ -389,7 +379,7 @@ describe(handleAuthErrorTitle, () => {
     expect(error.privateDetails.error.source).toBe('test');
     expect(error.details.error.message).toBe(DroppError.type.Auth.message);
     expect(error.privateDetails.error.details).toBe('Unknown error');
-    log(handleAuthErrorTitle, error);
+    Log(testName, handleAuthErrorTitle, error);
     done();
   });
 
@@ -403,7 +393,7 @@ describe(handleAuthErrorTitle, () => {
     expect(error.privateDetails.error.type).toBe(DroppError.type.Auth);
     expect(error.details.error.message).toBe(DroppError.type.Auth.message);
     expect(error.privateDetails.error.details).toBe('test');
-    log(handleAuthErrorTitle, error);
+    Log(testName, handleAuthErrorTitle, error);
     done();
   });
 
@@ -419,7 +409,7 @@ describe(handleAuthErrorTitle, () => {
     expect(error.privateDetails.error.type).toBe(DroppError.type.Auth);
     expect(error.details.error.message).toBe(DroppError.TokenReason.unknown);
     expect(error.privateDetails.error.details).toBe('test');
-    log(handleAuthErrorTitle, error);
+    Log(testName, handleAuthErrorTitle, error);
     done();
   });
 
@@ -433,8 +423,7 @@ describe(handleAuthErrorTitle, () => {
     expect(error.privateDetails.error.type).toBe(DroppError.type.Auth);
     expect(error.details.error.message).toBe(DroppError.TokenReason.expired);
     expect(error.privateDetails.error.details).toBe('User for this token cannot be found');
-    log(handleAuthErrorTitle, error);
+    Log(testName, handleAuthErrorTitle, error);
     done();
   });
 });
-/* eslint-enable no-undef */

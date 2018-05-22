@@ -172,7 +172,7 @@ class DroppError extends Error {
       // The token in the request body is invalid
       serverLog = error.tokenError.message;
       clientErrorMessage = this.handleJwtError(error.tokenError.message);
-    } else if (error.userInfoMissing) {
+    } else if (error.userInfoMissing === true) {
       serverLog = 'User for this token cannot be found';
       clientErrorMessage = DroppError.TokenReason.expired;
     } else serverLog = 'Unknown error';

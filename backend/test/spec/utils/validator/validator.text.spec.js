@@ -1,15 +1,7 @@
 const Log = require('../../../logger');
 const Validator = require('../../../../src/utilities/validator');
 
-/**
- * Logs a message for the current test file
- * @param {String} _title the describe label
- * @param {String|Object} _details the log details
- */
-function log(_title, _details) {
-  Log(`Validator ${_title}`, _details);
-}
-
+const testName = 'Validator Module';
 const isValidTextPostTitle = 'isValidTextPost()';
 /* eslint-disable no-undef */
 describe(isValidTextPostTitle, () => {
@@ -17,7 +9,7 @@ describe(isValidTextPostTitle, () => {
     const value = null;
     const result = Validator.isValidTextPost(value);
     expect(result).toBe(false);
-    log(isValidTextPostTitle, `${value} returns ${result}`);
+    Log(testName, isValidTextPostTitle, `${value} returns ${result}`);
     done();
   });
 
@@ -25,7 +17,7 @@ describe(isValidTextPostTitle, () => {
     const value = undefined;
     const result = Validator.isValidTextPost(value);
     expect(result).toBe(false);
-    log(isValidTextPostTitle, `${value} returns ${result}`);
+    Log(testName, isValidTextPostTitle, `${value} returns ${result}`);
     done();
   });
 
@@ -33,7 +25,7 @@ describe(isValidTextPostTitle, () => {
     const value = [];
     const result = Validator.isValidTextPost(value);
     expect(result).toBe(false);
-    log(isValidTextPostTitle, `${value} returns ${result}`);
+    Log(testName, isValidTextPostTitle, `${value} returns ${result}`);
     done();
   });
 
@@ -41,7 +33,7 @@ describe(isValidTextPostTitle, () => {
     const value = {};
     const result = Validator.isValidTextPost(value);
     expect(result).toBe(false);
-    log(isValidTextPostTitle, `${value} returns ${result}`);
+    Log(testName, isValidTextPostTitle, `${value} returns ${result}`);
     done();
   });
 
@@ -49,7 +41,7 @@ describe(isValidTextPostTitle, () => {
     const value = function value() {};
     const result = Validator.isValidTextPost(value);
     expect(result).toBe(false);
-    log(isValidTextPostTitle, `${value} returns ${result}`);
+    Log(testName, isValidTextPostTitle, `${value} returns ${result}`);
     done();
   });
 
@@ -57,7 +49,7 @@ describe(isValidTextPostTitle, () => {
     const value = false;
     const result = Validator.isValidTextPost(value);
     expect(result).toBe(false);
-    log(isValidTextPostTitle, `${value} returns ${result}`);
+    Log(testName, isValidTextPostTitle, `${value} returns ${result}`);
     done();
   });
 
@@ -65,7 +57,7 @@ describe(isValidTextPostTitle, () => {
     const value = true;
     const result = Validator.isValidTextPost(value);
     expect(result).toBe(false);
-    log(isValidTextPostTitle, `${value} returns ${result}`);
+    Log(testName, isValidTextPostTitle, `${value} returns ${result}`);
     done();
   });
 
@@ -73,7 +65,7 @@ describe(isValidTextPostTitle, () => {
     const value = '';
     const result = Validator.isValidTextPost(value);
     expect(result).toBe(false);
-    log(isValidTextPostTitle, `${value} returns ${result}`);
+    Log(testName, isValidTextPostTitle, `${value} returns ${result}`);
     done();
   });
 
@@ -81,7 +73,7 @@ describe(isValidTextPostTitle, () => {
     const value = '    ';
     const result = Validator.isValidTextPost(value);
     expect(result).toBe(false);
-    log(isValidTextPostTitle, `${value} returns ${result}`);
+    Log(testName, isValidTextPostTitle, `${value} returns ${result}`);
     done();
   });
 
@@ -89,7 +81,7 @@ describe(isValidTextPostTitle, () => {
     const value = '\t';
     const result = Validator.isValidTextPost(value);
     expect(result).toBe(false);
-    log(isValidTextPostTitle, `${value} returns ${result}`);
+    Log(testName, isValidTextPostTitle, `${value} returns ${result}`);
     done();
   });
 
@@ -97,7 +89,7 @@ describe(isValidTextPostTitle, () => {
     const value = '\n';
     const result = Validator.isValidTextPost(value);
     expect(result).toBe(false);
-    log(isValidTextPostTitle, `${value} returns ${result}`);
+    Log(testName, isValidTextPostTitle, `${value} returns ${result}`);
     done();
   });
 
@@ -105,7 +97,7 @@ describe(isValidTextPostTitle, () => {
     const value = '\r';
     const result = Validator.isValidTextPost(value);
     expect(result).toBe(false);
-    log(isValidTextPostTitle, `${value} returns ${result}`);
+    Log(testName, isValidTextPostTitle, `${value} returns ${result}`);
     done();
   });
 
@@ -113,7 +105,7 @@ describe(isValidTextPostTitle, () => {
     const value = 1.1;
     const result = Validator.isValidTextPost(value);
     expect(result).toBe(false);
-    log(isValidTextPostTitle, `${value} returns ${result}`);
+    Log(testName, isValidTextPostTitle, `${value} returns ${result}`);
     done();
   });
 
@@ -121,7 +113,7 @@ describe(isValidTextPostTitle, () => {
     const value = 0;
     const result = Validator.isValidTextPost(value);
     expect(result).toBe(false);
-    log(isValidTextPostTitle, `${value} returns ${result}`);
+    Log(testName, isValidTextPostTitle, `${value} returns ${result}`);
     done();
   });
 
@@ -129,7 +121,7 @@ describe(isValidTextPostTitle, () => {
     const value = '1';
     const result = Validator.isValidTextPost(value);
     expect(result).toBe(true);
-    log(isValidTextPostTitle, `${value} returns ${result}`);
+    Log(testName, isValidTextPostTitle, `${value} returns ${result}`);
     done();
   });
 
@@ -137,7 +129,7 @@ describe(isValidTextPostTitle, () => {
     const value = '1.1';
     const result = Validator.isValidTextPost(value);
     expect(result).toBe(true);
-    log(isValidTextPostTitle, `${value} returns ${result}`);
+    Log(testName, isValidTextPostTitle, `${value} returns ${result}`);
     done();
   });
 
@@ -145,7 +137,7 @@ describe(isValidTextPostTitle, () => {
     const value = 'console.log(\'hey\')';
     const result = Validator.isValidTextPost(value);
     expect(result).toBe(true);
-    log(isValidTextPostTitle, `${value} returns ${result}`);
+    Log(testName, isValidTextPostTitle, `${value} returns ${result}`);
     done();
   });
 
@@ -153,7 +145,7 @@ describe(isValidTextPostTitle, () => {
     const value = '  hey-';
     const result = Validator.isValidTextPost(value);
     expect(result).toBe(true);
-    log(isValidTextPostTitle, `${value} returns ${result}`);
+    Log(testName, isValidTextPostTitle, `${value} returns ${result}`);
     done();
   });
 
@@ -161,7 +153,7 @@ describe(isValidTextPostTitle, () => {
     const value = 'he$';
     const result = Validator.isValidTextPost(value);
     expect(result).toBe(true);
-    log(isValidTextPostTitle, `${value} returns ${result}`);
+    Log(testName, isValidTextPostTitle, `${value} returns ${result}`);
     done();
   });
 
@@ -169,7 +161,7 @@ describe(isValidTextPostTitle, () => {
     const value = 'h.';
     const result = Validator.isValidTextPost(value);
     expect(result).toBe(true);
-    log(isValidTextPostTitle, `${value} returns ${result}`);
+    Log(testName, isValidTextPostTitle, `${value} returns ${result}`);
     done();
   });
 
@@ -177,7 +169,7 @@ describe(isValidTextPostTitle, () => {
     const value = 'he';
     const result = Validator.isValidTextPost(value);
     expect(result).toBe(true);
-    log(isValidTextPostTitle, `${value} returns ${result}`);
+    Log(testName, isValidTextPostTitle, `${value} returns ${result}`);
     done();
   });
 
@@ -185,8 +177,7 @@ describe(isValidTextPostTitle, () => {
     const value = '😈';
     const result = Validator.isValidTextPost(value);
     expect(result).toBe(true);
-    log(isValidTextPostTitle, `${value} returns ${result}`);
+    Log(testName, isValidTextPostTitle, `${value} returns ${result}`);
     done();
   });
 });
-/* eslint-enable no-undef */

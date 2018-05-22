@@ -3,15 +3,7 @@ const Utils = require('../../../src/utilities/utils');
 const Firebase = require('../../../src/firebase/firebase');
 const ErrorAccessor = require('../../../src/database/error');
 
-/**
- * Logs a message for the current test file
- * @param {String} _title the describe label
- * @param {String|Object} _details the log details
- */
-function log(_title, _details) {
-  Log(`Error Accessor ${_title}`, _details);
-}
-
+const testName = 'Error Accessor';
 Firebase.start(process.env.MOCK === '1');
 const getErrorTitle = 'Get error';
 /* eslint-disable no-undef */
@@ -35,21 +27,21 @@ describe(getErrorTitle, () => {
   it('returns null for an invalid error ID', async (done) => {
     const result = await ErrorAccessor.get(null);
     expect(result).toBeNull();
-    log(getErrorTitle, result);
+    Log(testName, getErrorTitle, result);
     done();
   });
 
   it('returns undefined when an error occurs', async (done) => {
     const result = await ErrorAccessor.get('$');
     expect(result).not.toBeDefined();
-    log(getErrorTitle, result);
+    Log(testName, getErrorTitle, result);
     done();
   });
 
   it('returns null for a non-existent error ID', async (done) => {
     const result = await ErrorAccessor.get(Utils.newUuid());
     expect(result).toBeNull();
-    log(getErrorTitle, result);
+    Log(testName, getErrorTitle, result);
     done();
   });
 
@@ -57,7 +49,7 @@ describe(getErrorTitle, () => {
     const result = await ErrorAccessor.get(this.testErrorId);
     expect(Object.keys(result).length).toBe(Object.keys(this.testError).length);
     expect(result.test).toBe(this.testError.test);
-    log(getErrorTitle, result);
+    Log(testName, getErrorTitle, result);
     done();
   });
 });
@@ -71,19 +63,16 @@ describe(addErrorTitle, () => {
   });
 
   afterEach(async (done) => {
-    if (this.testErrorId) {
-      await ErrorAccessor.remove(this.testErrorId);
-      delete this.testErrorId;
-    }
-
+    if (Utils.hasValue(this.testErrorId)) await ErrorAccessor.remove(this.testErrorId);
     delete this.testError;
+    delete this.testErrorId;
     done();
   });
 
   it('returns undefined for an invalid info object', async (done) => {
     this.testErrorId = await ErrorAccessor.add(null);
     expect(this.testErrorId).not.toBeDefined();
-    log(addErrorTitle, this.testErrorId);
+    Log(testName, addErrorTitle, this.testErrorId);
     done();
   });
 
@@ -94,7 +83,7 @@ describe(addErrorTitle, () => {
     const result = await ErrorAccessor.get(this.testErrorId);
     expect(Object.keys(result).length).toBe(Object.keys(this.testError).length);
     expect(result.test).toBe(this.testError.test);
-    log(addErrorTitle, this.testErrorId);
+    Log(testName, addErrorTitle, this.testErrorId);
     done();
   });
 });
@@ -111,12 +100,9 @@ describe(removeErrorTitle, () => {
   });
 
   afterEach(async (done) => {
-    if (this.testErrorId) {
-      await ErrorAccessor.remove(this.testErrorId);
-      delete this.testErrorId;
-    }
-
+    if (Utils.hasValue(this.testErrorId)) await ErrorAccessor.remove(this.testErrorId);
     delete this.testError;
+    delete this.testErrorId;
     done();
   });
 
@@ -125,7 +111,7 @@ describe(removeErrorTitle, () => {
     const result = await ErrorAccessor.get(this.testErrorId);
     expect(Object.keys(result).length).toBe(Object.keys(this.testError).length);
     expect(result.test).toBe(this.testError.test);
-    log(removeErrorTitle, result);
+    Log(testName, removeErrorTitle, result);
     done();
   });
 
@@ -134,7 +120,7 @@ describe(removeErrorTitle, () => {
     const result = await ErrorAccessor.get(this.testErrorId);
     expect(Object.keys(result).length).toBe(Object.keys(this.testError).length);
     expect(result.test).toBe(this.testError.test);
-    log(removeErrorTitle, result);
+    Log(testName, removeErrorTitle, result);
     done();
   });
 
@@ -142,8 +128,7 @@ describe(removeErrorTitle, () => {
     await ErrorAccessor.remove(this.testErrorId);
     const result = await ErrorAccessor.get(this.testErrorId);
     expect(result).toBeNull();
-    log(removeErrorTitle, result);
+    Log(testName, removeErrorTitle, result);
     done();
   });
 });
-/* eslint-enable no-undef */

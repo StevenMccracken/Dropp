@@ -1,15 +1,7 @@
 const Log = require('../../../logger');
 const Validator = require('../../../../src/utilities/validator');
 
-/**
- * Logs a message for the current test file
- * @param {String} _title the describe label
- * @param {String|Object} _details the log details
- */
-function log(_title, _details) {
-  Log(`Validator ${_title}`, _details);
-}
-
+const testName = 'Validator Module';
 const isValidFirebaseIdTitle = 'isValidFirebaseId()';
 /* eslint-disable no-undef */
 describe(isValidFirebaseIdTitle, () => {
@@ -17,7 +9,7 @@ describe(isValidFirebaseIdTitle, () => {
     const value = null;
     const result = Validator.isValidFirebaseId(value);
     expect(result).toBe(false);
-    log(isValidFirebaseIdTitle, `${value} returns ${result}`);
+    Log(testName, isValidFirebaseIdTitle, `${value} returns ${result}`);
     done();
   });
 
@@ -25,7 +17,7 @@ describe(isValidFirebaseIdTitle, () => {
     const value = undefined;
     const result = Validator.isValidFirebaseId(value);
     expect(result).toBe(false);
-    log(isValidFirebaseIdTitle, `${value} returns ${result}`);
+    Log(testName, isValidFirebaseIdTitle, `${value} returns ${result}`);
     done();
   });
 
@@ -33,7 +25,7 @@ describe(isValidFirebaseIdTitle, () => {
     const value = [];
     const result = Validator.isValidFirebaseId(value);
     expect(result).toBe(false);
-    log(isValidFirebaseIdTitle, `${value} returns ${result}`);
+    Log(testName, isValidFirebaseIdTitle, `${value} returns ${result}`);
     done();
   });
 
@@ -41,7 +33,7 @@ describe(isValidFirebaseIdTitle, () => {
     const value = {};
     const result = Validator.isValidFirebaseId(value);
     expect(result).toBe(false);
-    log(isValidFirebaseIdTitle, `${value} returns ${result}`);
+    Log(testName, isValidFirebaseIdTitle, `${value} returns ${result}`);
     done();
   });
 
@@ -49,7 +41,7 @@ describe(isValidFirebaseIdTitle, () => {
     const value = function value() {};
     const result = Validator.isValidFirebaseId(value);
     expect(result).toBe(false);
-    log(isValidFirebaseIdTitle, `${value} returns ${result}`);
+    Log(testName, isValidFirebaseIdTitle, `${value} returns ${result}`);
     done();
   });
 
@@ -57,7 +49,7 @@ describe(isValidFirebaseIdTitle, () => {
     const value = false;
     const result = Validator.isValidFirebaseId(value);
     expect(result).toBe(false);
-    log(isValidFirebaseIdTitle, `${value} returns ${result}`);
+    Log(testName, isValidFirebaseIdTitle, `${value} returns ${result}`);
     done();
   });
 
@@ -65,7 +57,7 @@ describe(isValidFirebaseIdTitle, () => {
     const value = true;
     const result = Validator.isValidFirebaseId(value);
     expect(result).toBe(false);
-    log(isValidFirebaseIdTitle, `${value} returns ${result}`);
+    Log(testName, isValidFirebaseIdTitle, `${value} returns ${result}`);
     done();
   });
 
@@ -73,7 +65,7 @@ describe(isValidFirebaseIdTitle, () => {
     const value = 1.1;
     const result = Validator.isValidFirebaseId(value);
     expect(result).toBe(false);
-    log(isValidFirebaseIdTitle, `${value} returns ${result}`);
+    Log(testName, isValidFirebaseIdTitle, `${value} returns ${result}`);
     done();
   });
 
@@ -81,7 +73,7 @@ describe(isValidFirebaseIdTitle, () => {
     const value = 0;
     const result = Validator.isValidFirebaseId(value);
     expect(result).toBe(false);
-    log(isValidFirebaseIdTitle, `${value} returns ${result}`);
+    Log(testName, isValidFirebaseIdTitle, `${value} returns ${result}`);
     done();
   });
 
@@ -89,7 +81,7 @@ describe(isValidFirebaseIdTitle, () => {
     const value = '.';
     const result = Validator.isValidFirebaseId(value);
     expect(result).toBe(false);
-    log(isValidFirebaseIdTitle, `${value} returns ${result}`);
+    Log(testName, isValidFirebaseIdTitle, `${value} returns ${result}`);
     done();
   });
 
@@ -97,7 +89,7 @@ describe(isValidFirebaseIdTitle, () => {
     const value = '#';
     const result = Validator.isValidFirebaseId(value);
     expect(result).toBe(false);
-    log(isValidFirebaseIdTitle, `${value} returns ${result}`);
+    Log(testName, isValidFirebaseIdTitle, `${value} returns ${result}`);
     done();
   });
 
@@ -105,7 +97,7 @@ describe(isValidFirebaseIdTitle, () => {
     const value = '$';
     const result = Validator.isValidFirebaseId(value);
     expect(result).toBe(false);
-    log(isValidFirebaseIdTitle, `${value} returns ${result}`);
+    Log(testName, isValidFirebaseIdTitle, `${value} returns ${result}`);
     done();
   });
 
@@ -113,7 +105,7 @@ describe(isValidFirebaseIdTitle, () => {
     const value = '[';
     const result = Validator.isValidFirebaseId(value);
     expect(result).toBe(false);
-    log(isValidFirebaseIdTitle, `${value} returns ${result}`);
+    Log(testName, isValidFirebaseIdTitle, `${value} returns ${result}`);
     done();
   });
 
@@ -121,7 +113,7 @@ describe(isValidFirebaseIdTitle, () => {
     const value = ']';
     const result = Validator.isValidFirebaseId(value);
     expect(result).toBe(false);
-    log(isValidFirebaseIdTitle, `${value} returns ${result}`);
+    Log(testName, isValidFirebaseIdTitle, `${value} returns ${result}`);
     done();
   });
 
@@ -129,7 +121,7 @@ describe(isValidFirebaseIdTitle, () => {
     const value = '';
     const result = Validator.isValidFirebaseId(value);
     expect(result).toBe(false);
-    log(isValidFirebaseIdTitle, `${value} returns ${result}`);
+    Log(testName, isValidFirebaseIdTitle, `${value} returns ${result}`);
     done();
   });
 
@@ -137,7 +129,7 @@ describe(isValidFirebaseIdTitle, () => {
     const value = '    ';
     const result = Validator.isValidFirebaseId(value);
     expect(result).toBe(false);
-    log(isValidFirebaseIdTitle, `${value} returns ${result}`);
+    Log(testName, isValidFirebaseIdTitle, `${value} returns ${result}`);
     done();
   });
 
@@ -145,7 +137,7 @@ describe(isValidFirebaseIdTitle, () => {
     const value = '\t';
     const result = Validator.isValidFirebaseId(value);
     expect(result).toBe(false);
-    log(isValidFirebaseIdTitle, `${value} returns ${result}`);
+    Log(testName, isValidFirebaseIdTitle, `${value} returns ${result}`);
     done();
   });
 
@@ -153,7 +145,7 @@ describe(isValidFirebaseIdTitle, () => {
     const value = '\n';
     const result = Validator.isValidFirebaseId(value);
     expect(result).toBe(false);
-    log(isValidFirebaseIdTitle, `${value} returns ${result}`);
+    Log(testName, isValidFirebaseIdTitle, `${value} returns ${result}`);
     done();
   });
 
@@ -161,7 +153,7 @@ describe(isValidFirebaseIdTitle, () => {
     const value = '\r';
     const result = Validator.isValidFirebaseId(value);
     expect(result).toBe(false);
-    log(isValidFirebaseIdTitle, `${value} returns ${result}`);
+    Log(testName, isValidFirebaseIdTitle, `${value} returns ${result}`);
     done();
   });
 
@@ -169,8 +161,7 @@ describe(isValidFirebaseIdTitle, () => {
     const value = 'hey';
     const result = Validator.isValidFirebaseId(value);
     expect(result).toBe(true);
-    log(isValidFirebaseIdTitle, `${value} returns ${result}`);
+    Log(testName, isValidFirebaseIdTitle, `${value} returns ${result}`);
     done();
   });
 });
-/* eslint-enable no-undef */

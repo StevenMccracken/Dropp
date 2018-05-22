@@ -2,15 +2,7 @@ const Log = require('../../logger');
 const User = require('../../../src/models/User');
 const ModelError = require('../../../src/errors/ModelError');
 
-/**
- * Logs a message for the current test file
- * @param {String} _title the describe label
- * @param {String|Object} _details the log details
- */
-function log(_title, _details) {
-  Log(`User Model ${_title}`, _details);
-}
-
+const testName = 'User Model';
 const constructorTitle = 'Constructor';
 /* eslint-disable no-undef */
 describe(constructorTitle, () => {
@@ -29,11 +21,11 @@ describe(constructorTitle, () => {
     try {
       const user = new User();
       expect(user).not.toBeDefined();
-      log(constructorTitle, 'Should have thrown error');
+      Log(testName, constructorTitle, 'Should have thrown error');
     } catch (error) {
       expect(error.name).toBe('ModelError');
       expect(error.details.type).toBe(ModelError.type.Constructor.type);
-      log(constructorTitle, error);
+      Log(testName, constructorTitle, error);
     }
 
     done();
@@ -44,13 +36,13 @@ describe(constructorTitle, () => {
       delete this.details.email;
       const user = new User(this.details);
       expect(user).not.toBeDefined();
-      log(constructorTitle, 'Should have thrown error');
+      Log(testName, constructorTitle, 'Should have thrown error');
     } catch (error) {
       expect(error.name).toBe('ModelError');
       expect(error.details.type).toBe(ModelError.type.Constructor.type);
       expect(error.details.details.invalidMembers.length).toBe(1);
       expect(error.details.details.invalidMembers[0]).toBe('email');
-      log(constructorTitle, error);
+      Log(testName, constructorTitle, error);
     }
 
     done();
@@ -61,13 +53,13 @@ describe(constructorTitle, () => {
       delete this.details.username;
       const user = new User(this.details);
       expect(user).not.toBeDefined();
-      log(constructorTitle, 'Should have thrown error');
+      Log(testName, constructorTitle, 'Should have thrown error');
     } catch (error) {
       expect(error.name).toBe('ModelError');
       expect(error.details.type).toBe(ModelError.type.Constructor.type);
       expect(error.details.details.invalidMembers.length).toBe(1);
       expect(error.details.details.invalidMembers[0]).toBe('username');
-      log(constructorTitle, error);
+      Log(testName, constructorTitle, error);
     }
 
     done();
@@ -117,7 +109,7 @@ describe(constructorTitle, () => {
     expect(publicData.followRequestCount).not.toBeDefined();
     expect(publicData.followerRequestCount).not.toBeDefined();
     /* eslint-enable prefer-destructuring */
-    log(constructorTitle, user);
+    Log(testName, constructorTitle, user);
     done();
   });
 
@@ -143,7 +135,7 @@ describe(constructorTitle, () => {
     expect(Object.keys(publicData.follows).length).toBe(1);
     expect(publicData.followsCount).toBe(1);
     /* eslint-enable prefer-destructuring */
-    log(constructorTitle, user);
+    Log(testName, constructorTitle, user);
     done();
   });
 
@@ -169,7 +161,7 @@ describe(constructorTitle, () => {
     expect(Object.keys(publicData.followers).length).toBe(1);
     expect(publicData.followerCount).toBe(1);
     /* eslint-enable prefer-destructuring */
-    log(constructorTitle, user);
+    Log(testName, constructorTitle, user);
     done();
   });
 
@@ -191,7 +183,7 @@ describe(constructorTitle, () => {
     expect(Object.keys(privateData.followRequests).length).toBe(1);
     expect(privateData.followRequestCount).toBe(1);
     /* eslint-enable prefer-destructuring */
-    log(constructorTitle, user);
+    Log(testName, constructorTitle, user);
     done();
   });
 
@@ -213,7 +205,7 @@ describe(constructorTitle, () => {
     expect(Object.keys(privateData.followerRequests).length).toBe(1);
     expect(privateData.followerRequestCount).toBe(1);
     /* eslint-enable prefer-destructuring */
-    log(constructorTitle, user);
+    Log(testName, constructorTitle, user);
     done();
   });
 
@@ -227,8 +219,7 @@ describe(constructorTitle, () => {
     expect(user.hasFollower('test')).toBe(false);
     expect(user.hasFollowRequest('test')).toBe(false);
     expect(user.hasFollowerRequest('test')).toBe(false);
-    log(constructorTitle, user);
+    Log(testName, constructorTitle, user);
     done();
   });
 });
-/* eslint-enable no-undef */

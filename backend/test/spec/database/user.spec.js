@@ -5,15 +5,7 @@ const Firebase = require('../../../src/firebase/firebase');
 const UserAccessor = require('../../../src/database/user');
 const DroppError = require('../../../src/errors/DroppError');
 
-/**
- * Logs a message for the current test file
- * @param {String} _title the describe label
- * @param {String|Object} _details the log details
- */
-function log(_title, _details) {
-  Log(`User Accessor ${_title}`, _details);
-}
-
+const testName = 'User Accessor';
 Firebase.start(process.env.MOCK === '1');
 const getUserTitle = 'Get user';
 /* eslint-disable no-undef */
@@ -38,20 +30,12 @@ describe(getUserTitle, () => {
     try {
       const result = await UserAccessor.get(null);
       expect(result).not.toBeDefined();
-      log(getUserTitle, 'Should have thrown error');
+      Log(testName, getUserTitle, 'Should have thrown error');
     } catch (error) {
-      expect(error).toBeDefined();
       expect(error.name).toBe('DroppError');
-      expect(error.details).toBeDefined();
-      expect(error.details.error).toBeDefined();
       expect(error.details.error.type).toBe(DroppError.type.InvalidRequest.type);
-      expect(error.details.error.message).toBeDefined();
-      expect(typeof error.details.error.message).toBe('string');
-
-      const invalidParameters = error.details.error.message.split(',');
-      expect(invalidParameters.length).toBe(1);
-      expect(invalidParameters[0]).toBe('username');
-      log(getUserTitle, error.details);
+      expect(error.details.error.message).toBe('username');
+      Log(testName, getUserTitle, error.details);
     }
 
     done();
@@ -61,20 +45,12 @@ describe(getUserTitle, () => {
     try {
       const result = await UserAccessor.get('%');
       expect(result).not.toBeDefined();
-      log(getUserTitle, 'Should have thrown error');
+      Log(testName, getUserTitle, 'Should have thrown error');
     } catch (error) {
-      expect(error).toBeDefined();
       expect(error.name).toBe('DroppError');
-      expect(error.details).toBeDefined();
-      expect(error.details.error).toBeDefined();
       expect(error.details.error.type).toBe(DroppError.type.InvalidRequest.type);
-      expect(error.details.error.message).toBeDefined();
-      expect(typeof error.details.error.message).toBe('string');
-
-      const invalidParameters = error.details.error.message.split(',');
-      expect(invalidParameters.length).toBe(1);
-      expect(invalidParameters[0]).toBe('username');
-      log(getUserTitle, error.details);
+      expect(error.details.error.message).toBe('username');
+      Log(testName, getUserTitle, error.details);
     }
 
     done();
@@ -83,23 +59,21 @@ describe(getUserTitle, () => {
   it('returns null for a non-existent user', async (done) => {
     const result = await UserAccessor.get(Utils.newUuid());
     expect(result).toBeNull();
-    log(getUserTitle, result);
+    Log(testName, getUserTitle, result);
     done();
   });
 
   it('returns a User for a valid, existing username', async (done) => {
     const result = await UserAccessor.get(this.user.username);
-    expect(result).not.toBeNull();
     expect(result instanceof User).toBe(true);
     expect(result.email).toBe(this.user.email);
     expect(result.username).toBe(this.user.username);
-    log(getUserTitle, result);
+    Log(testName, getUserTitle, result);
     done();
   });
 });
 
 const getPasswordTitle = 'Get password';
-/* eslint-disable no-undef */
 describe(getPasswordTitle, () => {
   beforeEach(async (done) => {
     this.user = new User({
@@ -123,20 +97,12 @@ describe(getPasswordTitle, () => {
     try {
       const result = await UserAccessor.getPassword(null);
       expect(result).not.toBeDefined();
-      log(getPasswordTitle, 'Should have thrown error');
+      Log(testName, getPasswordTitle, 'Should have thrown error');
     } catch (error) {
-      expect(error).toBeDefined();
       expect(error.name).toBe('DroppError');
-      expect(error.details).toBeDefined();
-      expect(error.details.error).toBeDefined();
       expect(error.details.error.type).toBe(DroppError.type.InvalidRequest.type);
-      expect(error.details.error.message).toBeDefined();
-      expect(typeof error.details.error.message).toBe('string');
-
-      const invalidParameters = error.details.error.message.split(',');
-      expect(invalidParameters.length).toBe(1);
-      expect(invalidParameters[0]).toBe('username');
-      log(getPasswordTitle, error.details);
+      expect(error.details.error.message).toBe('username');
+      Log(testName, getPasswordTitle, error.details);
     }
 
     done();
@@ -146,20 +112,12 @@ describe(getPasswordTitle, () => {
     try {
       const result = await UserAccessor.getPassword('%');
       expect(result).not.toBeDefined();
-      log(getPasswordTitle, 'Should have thrown error');
+      Log(testName, getPasswordTitle, 'Should have thrown error');
     } catch (error) {
-      expect(error).toBeDefined();
       expect(error.name).toBe('DroppError');
-      expect(error.details).toBeDefined();
-      expect(error.details.error).toBeDefined();
       expect(error.details.error.type).toBe(DroppError.type.InvalidRequest.type);
-      expect(error.details.error.message).toBeDefined();
-      expect(typeof error.details.error.message).toBe('string');
-
-      const invalidParameters = error.details.error.message.split(',');
-      expect(invalidParameters.length).toBe(1);
-      expect(invalidParameters[0]).toBe('username');
-      log(getPasswordTitle, error.details);
+      expect(error.details.error.message).toBe('username');
+      Log(testName, getPasswordTitle, error.details);
     }
 
     done();
@@ -168,16 +126,14 @@ describe(getPasswordTitle, () => {
   it('returns null for a non-existent user', async (done) => {
     const result = await UserAccessor.getPassword(Utils.newUuid());
     expect(result).toBeNull();
-    log(getPasswordTitle, result);
+    Log(testName, getPasswordTitle, result);
     done();
   });
 
   it('returns a password for a valid, existing username', async (done) => {
     const result = await UserAccessor.getPassword(this.user.username);
-    expect(result).toBeDefined();
-    expect(typeof result).toBe('string');
     expect(result).toBe(this.password);
-    log(getPasswordTitle, result);
+    Log(testName, getPasswordTitle, result);
     done();
   });
 });
@@ -201,142 +157,95 @@ describe(createUserTitle, () => {
     try {
       await UserAccessor.create(null, this.password);
       expect(false).toBe(true);
-      log(createUserTitle, 'Should have thrown error');
+      Log(testName, createUserTitle, 'Should have thrown error');
     } catch (error) {
-      expect(error).toBeDefined();
       expect(error.name).toBe('DroppError');
-      expect(error.details).toBeDefined();
-      expect(error.details.error).toBeDefined();
       expect(error.details.error.type).toBe(DroppError.type.Server.type);
-      expect(error.details.error.message).toBeDefined();
       expect(error.details.error.message).toBe(DroppError.type.Server.message);
-      log(createUserTitle, error.details);
+      Log(testName, createUserTitle, error.details);
     }
 
     done();
   });
 
   it('throws an error for an invalid username', async (done) => {
+    this.user.username = '%';
     try {
-      this.user.username = '%';
       await UserAccessor.create(this.user, this.password);
       expect(false).toBe(true);
-      log(createUserTitle, 'Should have thrown error');
+      Log(testName, createUserTitle, 'Should have thrown error');
     } catch (error) {
-      expect(error).toBeDefined();
       expect(error.name).toBe('DroppError');
-      expect(error.details).toBeDefined();
-      expect(error.details.error).toBeDefined();
       expect(error.details.error.type).toBe(DroppError.type.InvalidRequest.type);
-      expect(error.details.error.message).toBeDefined();
-      expect(typeof error.details.error.message).toBe('string');
-
-      const invalidParameters = error.details.error.message.split(',');
-      expect(invalidParameters.length).toBe(1);
-      expect(invalidParameters[0]).toBe('username');
-      log(createUserTitle, error.details);
+      expect(error.details.error.message).toBe('username');
+      Log(testName, createUserTitle, error.details);
     }
 
     done();
   });
 
   it('throws an error for an invalid password', async (done) => {
+    this.password = '%';
     try {
-      this.password = '%';
       await UserAccessor.create(this.user, this.password);
       expect(false).toBe(true);
-      log(createUserTitle, 'Should have thrown error');
+      Log(testName, createUserTitle, 'Should have thrown error');
     } catch (error) {
-      expect(error).toBeDefined();
       expect(error.name).toBe('DroppError');
-      expect(error.details).toBeDefined();
-      expect(error.details.error).toBeDefined();
       expect(error.details.error.type).toBe(DroppError.type.InvalidRequest.type);
-      expect(error.details.error.message).toBeDefined();
-      expect(typeof error.details.error.message).toBe('string');
-
-      const invalidParameters = error.details.error.message.split(',');
-      expect(invalidParameters.length).toBe(1);
-      expect(invalidParameters[0]).toBe('password');
-      log(createUserTitle, error.details);
+      expect(error.details.error.message).toBe('password');
+      Log(testName, createUserTitle, error.details);
     }
 
     done();
   });
 
   it('throws an error for an invalid email', async (done) => {
+    this.user.email = '%';
     try {
-      this.user.email = '%';
       await UserAccessor.create(this.user, this.password);
       expect(false).toBe(true);
-      log(createUserTitle, 'Should have thrown error');
+      Log(testName, createUserTitle, 'Should have thrown error');
     } catch (error) {
-      expect(error).toBeDefined();
       expect(error.name).toBe('DroppError');
-      expect(error.details).toBeDefined();
-      expect(error.details.error).toBeDefined();
       expect(error.details.error.type).toBe(DroppError.type.InvalidRequest.type);
-      expect(error.details.error.message).toBeDefined();
-      expect(typeof error.details.error.message).toBe('string');
-
-      const invalidParameters = error.details.error.message.split(',');
-      expect(invalidParameters.length).toBe(1);
-      expect(invalidParameters[0]).toBe('email');
-      log(createUserTitle, error.details);
+      expect(error.details.error.message).toBe('email');
+      Log(testName, createUserTitle, error.details);
     }
 
     done();
   });
 
   it('throws an error for 2 invalid attributes', async (done) => {
+    this.password = '%';
+    this.user.username = '%';
     try {
-      this.password = '%';
-      this.user.username = '%';
       await UserAccessor.create(this.user, this.password);
       expect(false).toBe(true);
-      log(createUserTitle, 'Should have thrown error');
+      Log(testName, createUserTitle, 'Should have thrown error');
     } catch (error) {
-      expect(error).toBeDefined();
       expect(error.name).toBe('DroppError');
-      expect(error.details).toBeDefined();
-      expect(error.details.error).toBeDefined();
       expect(error.details.error.type).toBe(DroppError.type.InvalidRequest.type);
-      expect(error.details.error.message).toBeDefined();
-      expect(typeof error.details.error.message).toBe('string');
-
-      const invalidParameters = error.details.error.message.split(',');
-      expect(invalidParameters.length).toBe(2);
-      expect(invalidParameters.includes('username')).toBe(true);
-      expect(invalidParameters.includes('password')).toBe(true);
-      log(createUserTitle, error.details);
+      expect(error.details.error.message).toBe('username,password');
+      Log(testName, createUserTitle, error.details);
     }
 
     done();
   });
 
   it('throws an error for 3 invalid attributes', async (done) => {
+    this.password = '%';
+    this.user.email = '%';
+    this.user.username = '%';
     try {
-      this.password = '%';
-      this.user.email = '%';
-      this.user.username = '%';
       await UserAccessor.create(this.user, this.password);
       expect(false).toBe(true);
-      log(createUserTitle, 'Should have thrown error');
+      Log(testName, createUserTitle, 'Should have thrown error');
     } catch (error) {
-      expect(error).toBeDefined();
       expect(error.name).toBe('DroppError');
-      expect(error.details).toBeDefined();
-      expect(error.details.error).toBeDefined();
       expect(error.details.error.type).toBe(DroppError.type.InvalidRequest.type);
-      expect(error.details.error.message).toBeDefined();
-      expect(typeof error.details.error.message).toBe('string');
-
-      const invalidParameters = error.details.error.message.split(',');
-      expect(invalidParameters.length).toBe(3);
-      expect(invalidParameters.includes('email')).toBe(true);
-      expect(invalidParameters.includes('username')).toBe(true);
-      expect(invalidParameters.includes('password')).toBe(true);
-      log(createUserTitle, error.details);
+      expect(error.details.error.message).toBe('email,username,password');
+      Log(testName, createUserTitle, error.details);
     }
 
     done();
@@ -352,17 +261,12 @@ describe(createUserTitle, () => {
     it('creates a user in the database for valid details', async (done) => {
       await UserAccessor.create(this.user, this.password);
       const user = await UserAccessor.get(this.user.username);
-      expect(user).not.toBeNull();
       expect(user instanceof User).toBe(true);
       expect(user.email).toBe(this.user.email);
       expect(user.username).toBe(this.user.username);
-
       const password = await UserAccessor.getPassword(this.user.username);
-      expect(password).toBeDefined();
-      expect(typeof password).toBe('string');
       expect(password).toBe(this.password);
-
-      log(successfulUserCreationTitle, { user, password });
+      Log(testName, successfulUserCreationTitle, user);
       done();
     });
   });
@@ -394,16 +298,12 @@ describe(updateUserAttributesTitle, () => {
       try {
         await UserAccessor.updatePassword(null, Utils.newUuid());
         expect(false).toBe(true);
-        log(updatePasswordTitle, 'Should have thrown error');
+        Log(testName, updatePasswordTitle, 'Should have thrown error');
       } catch (error) {
-        expect(error).toBeDefined();
         expect(error.name).toBe('DroppError');
-        expect(error.details).toBeDefined();
-        expect(error.details.error).toBeDefined();
         expect(error.details.error.type).toBe(DroppError.type.Server.type);
-        expect(error.details.error.message).toBeDefined();
         expect(error.details.error.message).toBe(DroppError.type.Server.message);
-        log(updatePasswordTitle, error.details);
+        Log(testName, updatePasswordTitle, error.details);
       }
 
       done();
@@ -413,20 +313,12 @@ describe(updateUserAttributesTitle, () => {
       try {
         await UserAccessor.updatePassword(this.user, '%');
         expect(false).toBe(true);
-        log(updatePasswordTitle, 'Should have thrown error');
+        Log(testName, updatePasswordTitle, 'Should have thrown error');
       } catch (error) {
-        expect(error).toBeDefined();
         expect(error.name).toBe('DroppError');
-        expect(error.details).toBeDefined();
-        expect(error.details.error).toBeDefined();
         expect(error.details.error.type).toBe(DroppError.type.InvalidRequest.type);
-        expect(error.details.error.message).toBeDefined();
-        expect(typeof error.details.error.message).toBe('string');
-
-        const invalidParameters = error.details.error.message.split(',');
-        expect(invalidParameters.length).toBe(1);
-        expect(invalidParameters[0]).toBe('password');
-        log(updatePasswordTitle, error.details);
+        expect(error.details.error.message).toBe('password');
+        Log(testName, updatePasswordTitle, error.details);
       }
 
       done();
@@ -436,10 +328,8 @@ describe(updateUserAttributesTitle, () => {
       const password = Utils.newUuid();
       await UserAccessor.updatePassword(this.user, password);
       const result = await UserAccessor.getPassword(this.user.username);
-      expect(result).toBeDefined();
-      expect(typeof result).toBe('string');
       expect(result).toBe(password);
-      log(updatePasswordTitle, result);
+      Log(testName, updatePasswordTitle, result);
       done();
     });
   });
@@ -450,16 +340,12 @@ describe(updateUserAttributesTitle, () => {
       try {
         await UserAccessor.updateEmail(null, 'test@test.com');
         expect(false).toBe(true);
-        log(updateEmailTitle, 'Should have thrown error');
+        Log(testName, updateEmailTitle, 'Should have thrown error');
       } catch (error) {
-        expect(error).toBeDefined();
         expect(error.name).toBe('DroppError');
-        expect(error.details).toBeDefined();
-        expect(error.details.error).toBeDefined();
         expect(error.details.error.type).toBe(DroppError.type.Server.type);
-        expect(error.details.error.message).toBeDefined();
         expect(error.details.error.message).toBe(DroppError.type.Server.message);
-        log(updateEmailTitle, error.details);
+        Log(testName, updateEmailTitle, error.details);
       }
 
       done();
@@ -469,20 +355,12 @@ describe(updateUserAttributesTitle, () => {
       try {
         await UserAccessor.updateEmail(this.user, Utils.newUuid());
         expect(false).toBe(true);
-        log(updateEmailTitle, 'Should have thrown error');
+        Log(testName, updateEmailTitle, 'Should have thrown error');
       } catch (error) {
-        expect(error).toBeDefined();
         expect(error.name).toBe('DroppError');
-        expect(error.details).toBeDefined();
-        expect(error.details.error).toBeDefined();
         expect(error.details.error.type).toBe(DroppError.type.InvalidRequest.type);
-        expect(error.details.error.message).toBeDefined();
-        expect(typeof error.details.error.message).toBe('string');
-
-        const invalidParameters = error.details.error.message.split(',');
-        expect(invalidParameters.length).toBe(1);
-        expect(invalidParameters[0]).toBe('email');
-        log(updateEmailTitle, error.details);
+        expect(error.details.error.message).toBe('email');
+        Log(testName, updateEmailTitle, error.details);
       }
 
       done();
@@ -492,7 +370,7 @@ describe(updateUserAttributesTitle, () => {
       const email = `${Utils.newUuid()}@${Utils.newUuid()}.com`;
       await UserAccessor.updateEmail(this.user, email);
       expect(this.user.email).toBe(email);
-      log(updateEmailTitle, this.user.email);
+      Log(testName, updateEmailTitle, this.user.email);
       done();
     });
   });
@@ -530,16 +408,12 @@ describe(interUserFunctions, () => {
       try {
         await UserAccessor.addFollowRequest(null, this.user2);
         expect(false).toBe(true);
-        log(addFollowRequestTitle, 'Should have thrown an error');
+        Log(testName, addFollowRequestTitle, 'Should have thrown an error');
       } catch (error) {
-        expect(error).toBeDefined();
         expect(error.name).toBe('DroppError');
-        expect(error.details).toBeDefined();
-        expect(error.details.error).toBeDefined();
         expect(error.details.error.type).toBe(DroppError.type.Server.type);
-        expect(error.details.error.message).toBeDefined();
         expect(error.details.error.message).toBe(DroppError.type.Server.message);
-        log(addFollowRequestTitle, error.details);
+        Log(testName, addFollowRequestTitle, error.details);
       }
 
       done();
@@ -549,16 +423,12 @@ describe(interUserFunctions, () => {
       try {
         await UserAccessor.addFollowRequest(this.user1, null);
         expect(false).toBe(true);
-        log(addFollowRequestTitle, 'Should have thrown an error');
+        Log(testName, addFollowRequestTitle, 'Should have thrown an error');
       } catch (error) {
-        expect(error).toBeDefined();
         expect(error.name).toBe('DroppError');
-        expect(error.details).toBeDefined();
-        expect(error.details.error).toBeDefined();
         expect(error.details.error.type).toBe(DroppError.type.Server.type);
-        expect(error.details.error.message).toBeDefined();
         expect(error.details.error.message).toBe(DroppError.type.Server.message);
-        log(addFollowRequestTitle, error.details);
+        Log(testName, addFollowRequestTitle, error.details);
       }
 
       done();
@@ -568,7 +438,7 @@ describe(interUserFunctions, () => {
       await UserAccessor.addFollowRequest(this.user1, this.user2);
       expect(this.user1.followRequests).toContain(this.user2.username);
       expect(this.user2.followerRequests).toContain(this.user1.username);
-      log(addFollowRequestTitle, this.user1.followRequests);
+      Log(testName, addFollowRequestTitle, this.user1.followRequests);
       done();
     });
   });
@@ -579,16 +449,12 @@ describe(interUserFunctions, () => {
       try {
         await UserAccessor.addFollow(null, this.user2);
         expect(false).toBe(true);
-        log(addFollowTitle, 'Should have thrown an error');
+        Log(testName, addFollowTitle, 'Should have thrown an error');
       } catch (error) {
-        expect(error).toBeDefined();
         expect(error.name).toBe('DroppError');
-        expect(error.details).toBeDefined();
-        expect(error.details.error).toBeDefined();
         expect(error.details.error.type).toBe(DroppError.type.Server.type);
-        expect(error.details.error.message).toBeDefined();
         expect(error.details.error.message).toBe(DroppError.type.Server.message);
-        log(addFollowTitle, error.details);
+        Log(testName, addFollowTitle, error.details);
       }
 
       done();
@@ -598,31 +464,31 @@ describe(interUserFunctions, () => {
       try {
         await UserAccessor.addFollow(this.user1, null);
         expect(false).toBe(true);
-        log(addFollowTitle, 'Should have thrown an error');
+        Log(testName, addFollowTitle, 'Should have thrown an error');
       } catch (error) {
-        expect(error).toBeDefined();
         expect(error.name).toBe('DroppError');
-        expect(error.details).toBeDefined();
-        expect(error.details.error).toBeDefined();
         expect(error.details.error.type).toBe(DroppError.type.Server.type);
-        expect(error.details.error.message).toBeDefined();
         expect(error.details.error.message).toBe(DroppError.type.Server.message);
-        log(addFollowTitle, error.details);
+        Log(testName, addFollowTitle, error.details);
       }
 
       done();
     });
 
-    it('adds a follow to the user\'s follows', async (done) => {
-      this.user1.followRequests.push(this.user2.username);
-      this.user2.followerRequests.push(this.user1.username);
-      await UserAccessor.addFollow(this.user1, this.user2);
-      expect(this.user1.followRequests).not.toContain(this.user2.username);
-      expect(this.user2.followerRequests).not.toContain(this.user1.username);
-      expect(this.user1.follows).toContain(this.user2.username);
-      expect(this.user2.followers).toContain(this.user1.username);
-      log(addFollowTitle, this.user1.follows);
-      done();
+    const addFollowSuccessTitle = 'Add follow success';
+    describe(addFollowSuccessTitle, () => {
+      beforeEach(() => {
+        this.user1.followRequests.push(this.user2.username);
+        this.user2.followerRequests.push(this.user1.username);
+      });
+
+      it('adds a follow to the user\'s follows', async (done) => {
+        await UserAccessor.addFollow(this.user1, this.user2);
+        expect(this.user1.follows).toContain(this.user2.username);
+        expect(this.user2.followers).toContain(this.user1.username);
+        Log(testName, addFollowSuccessTitle, this.user1.follows);
+        done();
+      });
     });
   });
 
@@ -632,16 +498,12 @@ describe(interUserFunctions, () => {
       try {
         await UserAccessor.removeFollowRequest(null, this.user2);
         expect(false).toBe(true);
-        log(removeFollowRequestTitle, 'Should have thrown an error');
+        Log(testName, removeFollowRequestTitle, 'Should have thrown an error');
       } catch (error) {
-        expect(error).toBeDefined();
         expect(error.name).toBe('DroppError');
-        expect(error.details).toBeDefined();
-        expect(error.details.error).toBeDefined();
         expect(error.details.error.type).toBe(DroppError.type.Server.type);
-        expect(error.details.error.message).toBeDefined();
         expect(error.details.error.message).toBe(DroppError.type.Server.message);
-        log(removeFollowRequestTitle, error.details);
+        Log(testName, removeFollowRequestTitle, error.details);
       }
 
       done();
@@ -651,29 +513,31 @@ describe(interUserFunctions, () => {
       try {
         await UserAccessor.removeFollowRequest(this.user1, null);
         expect(false).toBe(true);
-        log(removeFollowRequestTitle, 'Should have thrown an error');
+        Log(testName, removeFollowRequestTitle, 'Should have thrown an error');
       } catch (error) {
-        expect(error).toBeDefined();
         expect(error.name).toBe('DroppError');
-        expect(error.details).toBeDefined();
-        expect(error.details.error).toBeDefined();
         expect(error.details.error.type).toBe(DroppError.type.Server.type);
-        expect(error.details.error.message).toBeDefined();
         expect(error.details.error.message).toBe(DroppError.type.Server.message);
-        log(removeFollowRequestTitle, error.details);
+        Log(testName, removeFollowRequestTitle, error.details);
       }
 
       done();
     });
 
-    it('removes a follow request from the user\'s follow requests', async (done) => {
-      this.user1.followRequests.push(this.user2.username);
-      this.user2.followerRequests.push(this.user1.username);
-      await UserAccessor.removeFollowRequest(this.user1, this.user2);
-      expect(this.user1.followRequests).not.toContain(this.user2.username);
-      expect(this.user2.followerRequests).not.toContain(this.user1.username);
-      log(removeFollowRequestTitle, this.user1.followRequests);
-      done();
+    const successRemoveFollowRequestTitle = 'Success remove follow request';
+    describe(successRemoveFollowRequestTitle, () => {
+      beforeEach(() => {
+        this.user1.followRequests.push(this.user2.username);
+        this.user2.followerRequests.push(this.user1.username);
+      });
+
+      it('removes a follow request from the user\'s follow requests', async (done) => {
+        await UserAccessor.removeFollowRequest(this.user1, this.user2);
+        expect(this.user1.followRequests).not.toContain(this.user2.username);
+        expect(this.user2.followerRequests).not.toContain(this.user1.username);
+        Log(testName, successRemoveFollowRequestTitle, this.user1.followRequests);
+        done();
+      });
     });
   });
 
@@ -683,16 +547,12 @@ describe(interUserFunctions, () => {
       try {
         await UserAccessor.removeFollow(null, this.user2);
         expect(false).toBe(true);
-        log(removeFollowTitle, 'Should have thrown an error');
+        Log(testName, removeFollowTitle, 'Should have thrown an error');
       } catch (error) {
-        expect(error).toBeDefined();
         expect(error.name).toBe('DroppError');
-        expect(error.details).toBeDefined();
-        expect(error.details.error).toBeDefined();
         expect(error.details.error.type).toBe(DroppError.type.Server.type);
-        expect(error.details.error.message).toBeDefined();
         expect(error.details.error.message).toBe(DroppError.type.Server.message);
-        log(removeFollowTitle, error.details);
+        Log(testName, removeFollowTitle, error.details);
       }
 
       done();
@@ -702,29 +562,31 @@ describe(interUserFunctions, () => {
       try {
         await UserAccessor.removeFollow(this.user1, null);
         expect(false).toBe(true);
-        log(removeFollowTitle, 'Should have thrown an error');
+        Log(testName, removeFollowTitle, 'Should have thrown an error');
       } catch (error) {
-        expect(error).toBeDefined();
         expect(error.name).toBe('DroppError');
-        expect(error.details).toBeDefined();
-        expect(error.details.error).toBeDefined();
         expect(error.details.error.type).toBe(DroppError.type.Server.type);
-        expect(error.details.error.message).toBeDefined();
         expect(error.details.error.message).toBe(DroppError.type.Server.message);
-        log(removeFollowTitle, error.details);
+        Log(testName, removeFollowTitle, error.details);
       }
 
       done();
     });
 
-    it('removes a follow from the user\'s follows', async (done) => {
-      this.user1.follows.push(this.user2.username);
-      this.user2.followers.push(this.user1.username);
-      await UserAccessor.removeFollow(this.user1, this.user2);
-      expect(this.user1.follows).not.toContain(this.user2.username);
-      expect(this.user2.followers).not.toContain(this.user1.username);
-      log(removeFollowTitle, this.user1.follows);
-      done();
+    const successRemoveFollowTitle = 'Success remove follow';
+    describe(successRemoveFollowTitle, () => {
+      beforeEach(() => {
+        this.user1.follows.push(this.user2.username);
+        this.user2.followers.push(this.user1.username);
+      });
+
+      it('removes a follow from the user\'s follows', async (done) => {
+        await UserAccessor.removeFollow(this.user1, this.user2);
+        expect(this.user1.follows).not.toContain(this.user2.username);
+        expect(this.user2.followers).not.toContain(this.user1.username);
+        Log(testName, successRemoveFollowTitle, this.user1.follows);
+        done();
+      });
     });
   });
 });
@@ -742,11 +604,8 @@ describe(removeUserTitle, () => {
   });
 
   afterEach(async (done) => {
-    if (this.user) {
-      await UserAccessor.remove(this.user);
-      delete this.user;
-    }
-
+    if (Utils.hasValue(this.user)) await UserAccessor.remove(this.user);
+    delete this.user;
     done();
   });
 
@@ -754,16 +613,12 @@ describe(removeUserTitle, () => {
     try {
       await UserAccessor.remove(null);
       expect(false).toBe(true);
-      log(removeUserTitle, 'Should have thrown an error');
+      Log(testName, removeUserTitle, 'Should have thrown an error');
     } catch (error) {
-      expect(error).toBeDefined();
       expect(error.name).toBe('DroppError');
-      expect(error.details).toBeDefined();
-      expect(error.details.error).toBeDefined();
       expect(error.details.error.type).toBe(DroppError.type.Server.type);
-      expect(error.details.error.message).toBeDefined();
       expect(error.details.error.message).toBe(DroppError.type.Server.message);
-      log(removeUserTitle, error.details);
+      Log(testName, removeUserTitle, error.details);
     }
 
     done();
@@ -773,8 +628,6 @@ describe(removeUserTitle, () => {
     await UserAccessor.remove(this.user);
     const result = await UserAccessor.get(this.user.username);
     expect(result).toBeNull();
-    delete this.user;
     done();
   });
 });
-/* eslint-enable no-undef */

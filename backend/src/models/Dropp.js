@@ -19,10 +19,7 @@ class Dropp extends Object {
     if (!Validator.isValidUsername(_details.username)) invalidMembers.push('username');
     if (!Validator.isValidTextPost(_details.text)) invalidMembers.push('text');
     if (!Validator.isValidBooleanString(_details.media)) invalidMembers.push('media');
-    if (invalidMembers.length > 0) {
-      ModelError.throwInvalidMembersError('Dropp', invalidMembers);
-    }
-
+    if (invalidMembers.length > 0) ModelError.throwInvalidMembersError('Dropp', invalidMembers);
     this.id = _details.id;
     this.location = _details.location;
     this.media = _details.media;

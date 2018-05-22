@@ -6,15 +6,7 @@ const UserAccessor = require('../../../src/database/user');
 const DroppError = require('../../../src/errors/DroppError');
 const UserMiddleware = require('../../../src/middleware/user');
 
-/**
- * Logs a message for the current test file
- * @param {String} _title the describe label
- * @param {String|Object} _details the log details
- */
-function log(_title, _details) {
-  Log(`User Middleware ${_title}`, _details);
-}
-
+const testName = 'User Middleware';
 Firebase.start(process.env.MOCK === '1');
 /* eslint-disable no-undef */
 describe('User Middleware Tests', () => {
@@ -53,7 +45,7 @@ describe('User Middleware Tests', () => {
       expect(this.newUser.email).toBe(this.testUserData2.email);
       expect(this.newUser.username).toBe(this.testUserData2.username);
       expect(this.newUser.password).not.toBe(this.testUserData2.password);
-      log(createUserTitle, this.newUser);
+      Log(testName, createUserTitle, this.newUser);
       done();
     });
 
@@ -76,20 +68,13 @@ describe('User Middleware Tests', () => {
         try {
           const result = await UserMiddleware.create(null);
           expect(result).not.toBeDefined();
-          log(invalidCreateUserTitle, 'Should have thrown error');
+          Log(testName, invalidCreateUserTitle, 'Should have thrown error');
           done();
         } catch (error) {
-          expect(error).toBeDefined();
           expect(error.name).toBe('DroppError');
-          expect(error.details).toBeDefined();
-          expect(error.details.error).toBeDefined();
           expect(error.details.error.type).toBe(DroppError.type.InvalidRequest.type);
-          expect(error.details.error.message).toBeDefined();
-          expect(typeof error.details.error.message).toBe('string');
-
-          const invalidParameters = error.details.error.message.split(',');
-          expect(invalidParameters.length).toBe(3);
-          log(invalidCreateUserTitle, error.details);
+          expect(error.details.error.message).toBe('email,username,password');
+          Log(testName, invalidCreateUserTitle, error.details);
           done();
         }
       });
@@ -99,21 +84,13 @@ describe('User Middleware Tests', () => {
           delete this.invalidUserDetails.username;
           const result = await UserMiddleware.create(this.invalidUserDetails);
           expect(result).not.toBeDefined();
-          log(invalidCreateUserTitle, 'Should have thrown error');
+          Log(testName, invalidCreateUserTitle, 'Should have thrown error');
           done();
         } catch (error) {
-          expect(error).toBeDefined();
           expect(error.name).toBe('DroppError');
-          expect(error.details).toBeDefined();
-          expect(error.details.error).toBeDefined();
           expect(error.details.error.type).toBe(DroppError.type.InvalidRequest.type);
-          expect(error.details.error.message).toBeDefined();
-          expect(typeof error.details.error.message).toBe('string');
-
-          const invalidParameters = error.details.error.message.split(',');
-          expect(invalidParameters.length).toBe(1);
-          expect(invalidParameters[0]).toBe('username');
-          log(invalidCreateUserTitle, error.details);
+          expect(error.details.error.message).toBe('username');
+          Log(testName, invalidCreateUserTitle, error.details);
           done();
         }
       });
@@ -123,21 +100,13 @@ describe('User Middleware Tests', () => {
           delete this.invalidUserDetails.password;
           const result = await UserMiddleware.create(this.invalidUserDetails);
           expect(result).not.toBeDefined();
-          log(invalidCreateUserTitle, 'Should have thrown error');
+          Log(testName, invalidCreateUserTitle, 'Should have thrown error');
           done();
         } catch (error) {
-          expect(error).toBeDefined();
           expect(error.name).toBe('DroppError');
-          expect(error.details).toBeDefined();
-          expect(error.details.error).toBeDefined();
           expect(error.details.error.type).toBe(DroppError.type.InvalidRequest.type);
-          expect(error.details.error.message).toBeDefined();
-          expect(typeof error.details.error.message).toBe('string');
-
-          const invalidParameters = error.details.error.message.split(',');
-          expect(invalidParameters.length).toBe(1);
-          expect(invalidParameters[0]).toBe('password');
-          log(invalidCreateUserTitle, error.details);
+          expect(error.details.error.message).toBe('password');
+          Log(testName, invalidCreateUserTitle, error.details);
           done();
         }
       });
@@ -147,21 +116,13 @@ describe('User Middleware Tests', () => {
           delete this.invalidUserDetails.email;
           const result = await UserMiddleware.create(this.invalidUserDetails);
           expect(result).not.toBeDefined();
-          log(invalidCreateUserTitle, 'Should have thrown error');
+          Log(testName, invalidCreateUserTitle, 'Should have thrown error');
           done();
         } catch (error) {
-          expect(error).toBeDefined();
           expect(error.name).toBe('DroppError');
-          expect(error.details).toBeDefined();
-          expect(error.details.error).toBeDefined();
           expect(error.details.error.type).toBe(DroppError.type.InvalidRequest.type);
-          expect(error.details.error.message).toBeDefined();
-          expect(typeof error.details.error.message).toBe('string');
-
-          const invalidParameters = error.details.error.message.split(',');
-          expect(invalidParameters.length).toBe(1);
-          expect(invalidParameters[0]).toBe('email');
-          log(invalidCreateUserTitle, error.details);
+          expect(error.details.error.message).toBe('email');
+          Log(testName, invalidCreateUserTitle, error.details);
           done();
         }
       });
@@ -172,22 +133,13 @@ describe('User Middleware Tests', () => {
           delete this.invalidUserDetails.password;
           const result = await UserMiddleware.create(this.invalidUserDetails);
           expect(result).not.toBeDefined();
-          log(invalidCreateUserTitle, 'Should have thrown error');
+          Log(testName, invalidCreateUserTitle, 'Should have thrown error');
           done();
         } catch (error) {
-          expect(error).toBeDefined();
           expect(error.name).toBe('DroppError');
-          expect(error.details).toBeDefined();
-          expect(error.details.error).toBeDefined();
           expect(error.details.error.type).toBe(DroppError.type.InvalidRequest.type);
-          expect(error.details.error.message).toBeDefined();
-          expect(typeof error.details.error.message).toBe('string');
-
-          const invalidParameters = error.details.error.message.split(',');
-          expect(invalidParameters.length).toBe(2);
-          expect(invalidParameters.includes('username')).toBe(true);
-          expect(invalidParameters.includes('password')).toBe(true);
-          log(invalidCreateUserTitle, error.details);
+          expect(error.details.error.message).toBe('username,password');
+          Log(testName, invalidCreateUserTitle, error.details);
           done();
         }
       });
@@ -199,23 +151,13 @@ describe('User Middleware Tests', () => {
           delete this.invalidUserDetails.password;
           const result = await UserMiddleware.create(this.invalidUserDetails);
           expect(result).not.toBeDefined();
-          log(invalidCreateUserTitle, 'Should have thrown error');
+          Log(testName, invalidCreateUserTitle, 'Should have thrown error');
           done();
         } catch (error) {
-          expect(error).toBeDefined();
           expect(error.name).toBe('DroppError');
-          expect(error.details).toBeDefined();
-          expect(error.details.error).toBeDefined();
           expect(error.details.error.type).toBe(DroppError.type.InvalidRequest.type);
-          expect(error.details.error.message).toBeDefined();
-          expect(typeof error.details.error.message).toBe('string');
-
-          const invalidParameters = error.details.error.message.split(',');
-          expect(invalidParameters.length).toBe(3);
-          expect(invalidParameters.includes('email')).toBe(true);
-          expect(invalidParameters.includes('username')).toBe(true);
-          expect(invalidParameters.includes('password')).toBe(true);
-          log(invalidCreateUserTitle, error.details);
+          expect(error.details.error.message).toBe('email,username,password');
+          Log(testName, invalidCreateUserTitle, error.details);
           done();
         }
       });
@@ -225,16 +167,13 @@ describe('User Middleware Tests', () => {
           this.invalidUserDetails.username = this.testUserData.username;
           const result = await UserMiddleware.create(this.invalidUserDetails);
           expect(result).not.toBeDefined();
-          log(invalidCreateUserTitle, 'Should have thrown error');
+          Log(testName, invalidCreateUserTitle, 'Should have thrown error');
           done();
         } catch (error) {
-          expect(error).toBeDefined();
           expect(error.name).toBe('DroppError');
-          expect(error.details).toBeDefined();
-          expect(error.details.error).toBeDefined();
           expect(error.details.error.type).toBe(DroppError.type.Resource.type);
           expect(error.details.error.message).toBe('A user with that username already exists');
-          log(invalidCreateUserTitle, error.details);
+          Log(testName, invalidCreateUserTitle, error.details);
           done();
         }
       });
@@ -246,7 +185,6 @@ describe('User Middleware Tests', () => {
     const details = { username: this.uuid2 };
     it('retrieves a user\'s private details', async (done) => {
       const user = await UserMiddleware.get(this.newUser, details);
-      expect(user).toBeDefined();
       expect(user.email).toBe(this.newUser.email);
       expect(user.username).toBe(this.uuid2);
       expect(user.follows).toBeDefined();
@@ -265,7 +203,7 @@ describe('User Middleware Tests', () => {
       expect(typeof user.followRequestCount).toBe('number');
       expect(user.followerRequestCount).toBeDefined();
       expect(typeof user.followerRequestCount).toBe('number');
-      log(getSameUserTitle, user);
+      Log(testName, getSameUserTitle, user);
       done();
     });
   });
@@ -275,7 +213,6 @@ describe('User Middleware Tests', () => {
     const details = { username: this.uuid2 };
     it('retrieves a user\'s public details', async (done) => {
       const user = await UserMiddleware.get(this.testUser, details);
-      expect(user).toBeDefined();
       expect(user.email).not.toBeDefined();
       expect(user.username).toBe(this.uuid2);
       expect(user.follows).toBeDefined();
@@ -286,7 +223,7 @@ describe('User Middleware Tests', () => {
       expect(user.followerRequests).not.toBeDefined();
       expect(user.followRequestCount).not.toBeDefined();
       expect(user.followerRequestCount).not.toBeDefined();
-      log(getDifferentUserTitle, user);
+      Log(testName, getDifferentUserTitle, user);
       done();
     });
   });
@@ -307,17 +244,13 @@ describe('User Middleware Tests', () => {
       try {
         const result = await UserMiddleware.get(null, this.invalidDetails);
         expect(result).not.toBeDefined();
-        log(invalidGetUserTitle, 'Should have thrown error');
+        Log(testName, invalidGetUserTitle, 'Should have thrown error');
         done();
       } catch (error) {
-        expect(error).toBeDefined();
         expect(error.name).toBe('DroppError');
-        expect(error.details).toBeDefined();
-        expect(error.details.error).toBeDefined();
         expect(error.details.error.type).toBe(DroppError.type.Server.type);
-        expect(error.details.error.message).toBeDefined();
         expect(error.details.error.message).toBe(DroppError.type.Server.message);
-        log(invalidGetUserTitle, error.details);
+        Log(testName, invalidGetUserTitle, error.details);
         done();
       }
     });
@@ -326,20 +259,13 @@ describe('User Middleware Tests', () => {
       try {
         const result = await UserMiddleware.get(this.testUser, null);
         expect(result).not.toBeDefined();
-        log(invalidGetUserTitle, 'Should have thrown error');
+        Log(testName, invalidGetUserTitle, 'Should have thrown error');
         done();
       } catch (error) {
-        expect(error).toBeDefined();
         expect(error.name).toBe('DroppError');
-        expect(error.details).toBeDefined();
-        expect(error.details.error).toBeDefined();
         expect(error.details.error.type).toBe(DroppError.type.InvalidRequest.type);
-        expect(error.details.error.message).toBeDefined();
-        expect(typeof error.details.error.message).toBe('string');
-
-        const invalidParameters = error.details.error.message.split(',');
-        expect(invalidParameters.length).toBe(1);
-        log(invalidGetUserTitle, error.details);
+        expect(error.details.error.message).toBe('username');
+        Log(testName, invalidGetUserTitle, error.details);
         done();
       }
     });
@@ -348,21 +274,13 @@ describe('User Middleware Tests', () => {
       try {
         const result = await UserMiddleware.get(this.testUser, this.invalidDetails);
         expect(result).not.toBeDefined();
-        log(invalidGetUserTitle, 'Should have thrown error');
+        Log(testName, invalidGetUserTitle, 'Should have thrown error');
         done();
       } catch (error) {
-        expect(error).toBeDefined();
         expect(error.name).toBe('DroppError');
-        expect(error.details).toBeDefined();
-        expect(error.details.error).toBeDefined();
         expect(error.details.error.type).toBe(DroppError.type.InvalidRequest.type);
-        expect(error.details.error.message).toBeDefined();
-        expect(typeof error.details.error.message).toBe('string');
-
-        const invalidParameters = error.details.error.message.split(',');
-        expect(invalidParameters.length).toBe(1);
-        expect(invalidParameters[0]).toBe('username');
-        log(invalidGetUserTitle, error.details);
+        expect(error.details.error.message).toBe('username');
+        Log(testName, invalidGetUserTitle, error.details);
         done();
       }
     });
@@ -372,21 +290,13 @@ describe('User Middleware Tests', () => {
       try {
         const result = await UserMiddleware.get(this.testUser, this.invalidDetails);
         expect(result).not.toBeDefined();
-        log(invalidGetUserTitle, 'Should have thrown error');
+        Log(testName, invalidGetUserTitle, 'Should have thrown error');
         done();
       } catch (error) {
-        expect(error).toBeDefined();
         expect(error.name).toBe('DroppError');
-        expect(error.details).toBeDefined();
-        expect(error.details.error).toBeDefined();
         expect(error.details.error.type).toBe(DroppError.type.InvalidRequest.type);
-        expect(error.details.error.message).toBeDefined();
-        expect(typeof error.details.error.message).toBe('string');
-
-        const invalidParameters = error.details.error.message.split(',');
-        expect(invalidParameters.length).toBe(1);
-        expect(invalidParameters[0]).toBe('username');
-        log(invalidGetUserTitle, error.details);
+        expect(error.details.error.message).toBe('username');
+        Log(testName, invalidGetUserTitle, error.details);
         done();
       }
     });
@@ -396,18 +306,13 @@ describe('User Middleware Tests', () => {
       try {
         const result = await UserMiddleware.get(this.testUser, this.invalidDetails);
         expect(result).not.toBeDefined();
-        log(invalidGetUserTitle, 'Should have thrown error');
+        Log(testName, invalidGetUserTitle, 'Should have thrown error');
         done();
       } catch (error) {
-        expect(error).toBeDefined();
         expect(error.name).toBe('DroppError');
-        expect(error.details).toBeDefined();
-        expect(error.details.error).toBeDefined();
         expect(error.details.error.type).toBe(DroppError.type.ResourceDNE.type);
-        expect(error.details.error.message).toBeDefined();
-        expect(typeof error.details.error.message).toBe('string');
-        expect(error.details.error.message.toLowerCase()).toContain('user');
-        log(invalidGetUserTitle, error.details);
+        expect(error.details.error.message).toBe('That user does not exist');
+        Log(testName, invalidGetUserTitle, error.details);
         done();
       }
     });
@@ -430,12 +335,11 @@ describe('User Middleware Tests', () => {
 
     it('adds a new user', async (done) => {
       const result = await UserMiddleware.addNewUser(details);
-      expect(result).toBeDefined();
       expect(result.success).toBeDefined();
       expect(result.success.token).toBeDefined();
       expect(typeof result.success.token).toBe('string');
       expect(result.success.token).toContain('Bearer');
-      log(addNewUserTitle, result);
+      Log(testName, addNewUserTitle, result);
       done();
     });
   });
@@ -449,12 +353,11 @@ describe('User Middleware Tests', () => {
       };
 
       const result = await UserMiddleware.getAuthToken(details);
-      expect(result).toBeDefined();
       expect(result.success).toBeDefined();
       expect(result.success.token).toBeDefined();
       expect(typeof result.success.token).toBe('string');
       expect(result.success.token).toContain('Bearer');
-      log(getAuthTokenTitle, result);
+      Log(testName, getAuthTokenTitle, result);
       done();
     });
   });
@@ -476,20 +379,13 @@ describe('User Middleware Tests', () => {
       try {
         const result = await UserMiddleware.getAuthToken(null);
         expect(result).not.toBeDefined();
-        log(invalidGetAuthTokenTitle, 'Should have thrown error');
+        Log(testName, invalidGetAuthTokenTitle, 'Should have thrown error');
         done();
       } catch (error) {
-        expect(error).toBeDefined();
         expect(error.name).toBe('DroppError');
-        expect(error.details).toBeDefined();
-        expect(error.details.error).toBeDefined();
         expect(error.details.error.type).toBe(DroppError.type.InvalidRequest.type);
-        expect(error.details.error.message).toBeDefined();
-        expect(typeof error.details.error.message).toBe('string');
-
-        const invalidParameters = error.details.error.message.split(',');
-        expect(invalidParameters.length).toBe(2);
-        log(invalidGetAuthTokenTitle, error.details);
+        expect(error.details.error.message).toBe('username,password');
+        Log(testName, invalidGetAuthTokenTitle, error.details);
         done();
       }
     });
@@ -500,22 +396,13 @@ describe('User Middleware Tests', () => {
       try {
         const result = await UserMiddleware.getAuthToken(this.invalidDetails);
         expect(result).not.toBeDefined();
-        log(invalidGetAuthTokenTitle, 'Should have thrown error');
+        Log(testName, invalidGetAuthTokenTitle, 'Should have thrown error');
         done();
       } catch (error) {
-        expect(error).toBeDefined();
         expect(error.name).toBe('DroppError');
-        expect(error.details).toBeDefined();
-        expect(error.details.error).toBeDefined();
         expect(error.details.error.type).toBe(DroppError.type.InvalidRequest.type);
-        expect(error.details.error.message).toBeDefined();
-        expect(typeof error.details.error.message).toBe('string');
-
-        const invalidParameters = error.details.error.message.split(',');
-        expect(invalidParameters.length).toBe(2);
-        expect(invalidParameters.includes('username')).toBe(true);
-        expect(invalidParameters.includes('password')).toBe(true);
-        log(invalidGetAuthTokenTitle, error.details);
+        expect(error.details.error.message).toBe('username,password');
+        Log(testName, invalidGetAuthTokenTitle, error.details);
         done();
       }
     });
@@ -525,21 +412,13 @@ describe('User Middleware Tests', () => {
       try {
         const result = await UserMiddleware.getAuthToken(this.invalidDetails);
         expect(result).not.toBeDefined();
-        log(invalidGetAuthTokenTitle, 'Should have thrown error');
+        Log(testName, invalidGetAuthTokenTitle, 'Should have thrown error');
         done();
       } catch (error) {
-        expect(error).toBeDefined();
         expect(error.name).toBe('DroppError');
-        expect(error.details).toBeDefined();
-        expect(error.details.error).toBeDefined();
         expect(error.details.error.type).toBe(DroppError.type.InvalidRequest.type);
-        expect(error.details.error.message).toBeDefined();
-        expect(typeof error.details.error.message).toBe('string');
-
-        const invalidParameters = error.details.error.message.split(',');
-        expect(invalidParameters.length).toBe(1);
-        expect(invalidParameters[0]).toBe('username');
-        log(invalidGetAuthTokenTitle, error.details);
+        expect(error.details.error.message).toBe('username');
+        Log(testName, invalidGetAuthTokenTitle, error.details);
         done();
       }
     });
@@ -549,21 +428,13 @@ describe('User Middleware Tests', () => {
       try {
         const result = await UserMiddleware.getAuthToken(this.invalidDetails);
         expect(result).not.toBeDefined();
-        log(invalidGetAuthTokenTitle, 'Should have thrown error');
+        Log(testName, invalidGetAuthTokenTitle, 'Should have thrown error');
         done();
       } catch (error) {
-        expect(error).toBeDefined();
         expect(error.name).toBe('DroppError');
-        expect(error.details).toBeDefined();
-        expect(error.details.error).toBeDefined();
         expect(error.details.error.type).toBe(DroppError.type.InvalidRequest.type);
-        expect(error.details.error.message).toBeDefined();
-        expect(typeof error.details.error.message).toBe('string');
-
-        const invalidParameters = error.details.error.message.split(',');
-        expect(invalidParameters.length).toBe(1);
-        expect(invalidParameters[0]).toBe('password');
-        log(invalidGetAuthTokenTitle, error.details);
+        expect(error.details.error.message).toBe('password');
+        Log(testName, invalidGetAuthTokenTitle, error.details);
         done();
       }
     });
@@ -572,17 +443,13 @@ describe('User Middleware Tests', () => {
       try {
         const result = await UserMiddleware.getAuthToken(this.invalidDetails);
         expect(result).not.toBeDefined();
-        log(invalidGetAuthTokenTitle, 'Should have thrown error');
+        Log(testName, invalidGetAuthTokenTitle, 'Should have thrown error');
         done();
       } catch (error) {
-        expect(error).toBeDefined();
         expect(error.name).toBe('DroppError');
-        expect(error.details).toBeDefined();
-        expect(error.details.error).toBeDefined();
         expect(error.details.error.type).toBe(DroppError.type.Login.type);
-        expect(error.details.error.message).toBeDefined();
         expect(error.details.error.message).toBe(DroppError.type.Login.message);
-        log(invalidGetAuthTokenTitle, error.details);
+        Log(testName, invalidGetAuthTokenTitle, error.details);
         done();
       }
     });
@@ -592,17 +459,13 @@ describe('User Middleware Tests', () => {
       try {
         const result = await UserMiddleware.getAuthToken(this.invalidDetails);
         expect(result).not.toBeDefined();
-        log(invalidGetAuthTokenTitle, 'Should have thrown error');
+        Log(testName, invalidGetAuthTokenTitle, 'Should have thrown error');
         done();
       } catch (error) {
-        expect(error).toBeDefined();
         expect(error.name).toBe('DroppError');
-        expect(error.details).toBeDefined();
-        expect(error.details.error).toBeDefined();
         expect(error.details.error.type).toBe(DroppError.type.Login.type);
-        expect(error.details.error.message).toBeDefined();
         expect(error.details.error.message).toBe(DroppError.type.Login.message);
-        log(invalidGetAuthTokenTitle, error.details);
+        Log(testName, invalidGetAuthTokenTitle, error.details);
         done();
       }
     });
@@ -621,12 +484,11 @@ describe('User Middleware Tests', () => {
         this.testUserDetails,
         details
       );
-      expect(result).toBeDefined();
       expect(result.success).toBeDefined();
       expect(result.success.token).toBeDefined();
       expect(typeof result.success.token).toBe('string');
       expect(result.success.token).toContain('Bearer');
-      log(updatePasswordTitle, result);
+      Log(testName, updatePasswordTitle, result);
       done();
     });
   });
@@ -652,17 +514,13 @@ describe('User Middleware Tests', () => {
           this.invalidDetails
         );
         expect(result).not.toBeDefined();
-        log(invalidUpdatePasswordTitle, 'Should have thrown error');
+        Log(testName, invalidUpdatePasswordTitle, 'Should have thrown error');
         done();
       } catch (error) {
-        expect(error).toBeDefined();
         expect(error.name).toBe('DroppError');
-        expect(error.details).toBeDefined();
-        expect(error.details.error).toBeDefined();
         expect(error.details.error.type).toBe(DroppError.type.Server.type);
-        expect(error.details.error.message).toBeDefined();
         expect(error.details.error.message).toBe(DroppError.type.Server.message);
-        log(invalidUpdatePasswordTitle, error.details);
+        Log(testName, invalidUpdatePasswordTitle, error.details);
         done();
       }
     });
@@ -675,20 +533,13 @@ describe('User Middleware Tests', () => {
           null
         );
         expect(result).not.toBeDefined();
-        log(invalidUpdatePasswordTitle, 'Should have thrown error');
+        Log(testName, invalidUpdatePasswordTitle, 'Should have thrown error');
         done();
       } catch (error) {
-        expect(error).toBeDefined();
         expect(error.name).toBe('DroppError');
-        expect(error.details).toBeDefined();
-        expect(error.details.error).toBeDefined();
         expect(error.details.error.type).toBe(DroppError.type.InvalidRequest.type);
-        expect(error.details.error.message).toBeDefined();
-        expect(typeof error.details.error.message).toBe('string');
-
-        const invalidParameters = error.details.error.message.split(',');
-        expect(invalidParameters.length).toBe(2);
-        log(invalidUpdatePasswordTitle, error.details);
+        expect(error.details.error.message).toBe('oldPassword,newPassword');
+        Log(testName, invalidUpdatePasswordTitle, error.details);
         done();
       }
     });
@@ -702,16 +553,13 @@ describe('User Middleware Tests', () => {
       try {
         const result = await UserMiddleware.updatePassword(this.testUser, null, details);
         expect(result).not.toBeDefined();
-        log(invalidUpdatePasswordTitle, 'Should have thrown error');
+        Log(testName, invalidUpdatePasswordTitle, 'Should have thrown error');
         done();
       } catch (error) {
-        expect(error).toBeDefined();
         expect(error.name).toBe('DroppError');
-        expect(error.details).toBeDefined();
-        expect(error.details.error).toBeDefined();
         expect(error.details.error.type).toBe(DroppError.type.Resource.type);
         expect(error.details.error.message).toBe('Unauthorized to update that user\'s password');
-        log(invalidUpdatePasswordTitle, error.details);
+        Log(testName, invalidUpdatePasswordTitle, error.details);
         done();
       }
     });
@@ -726,22 +574,13 @@ describe('User Middleware Tests', () => {
           this.invalidDetails
         );
         expect(result).not.toBeDefined();
-        log(invalidUpdatePasswordTitle, 'Should have thrown error');
+        Log(testName, invalidUpdatePasswordTitle, 'Should have thrown error');
         done();
       } catch (error) {
-        expect(error).toBeDefined();
         expect(error.name).toBe('DroppError');
-        expect(error.details).toBeDefined();
-        expect(error.details.error).toBeDefined();
         expect(error.details.error.type).toBe(DroppError.type.InvalidRequest.type);
-        expect(error.details.error.message).toBeDefined();
-        expect(typeof error.details.error.message).toBe('string');
-
-        const invalidParameters = error.details.error.message.split(',');
-        expect(invalidParameters.length).toBe(2);
-        expect(invalidParameters.includes('oldPassword')).toBe(true);
-        expect(invalidParameters.includes('newPassword')).toBe(true);
-        log(invalidUpdatePasswordTitle, error.details);
+        expect(error.details.error.message).toBe('oldPassword,newPassword');
+        Log(testName, invalidUpdatePasswordTitle, error.details);
         done();
       }
     });
@@ -755,21 +594,13 @@ describe('User Middleware Tests', () => {
           this.invalidDetails
         );
         expect(result).not.toBeDefined();
-        log(invalidUpdatePasswordTitle, 'Should have thrown error');
+        Log(testName, invalidUpdatePasswordTitle, 'Should have thrown error');
         done();
       } catch (error) {
-        expect(error).toBeDefined();
         expect(error.name).toBe('DroppError');
-        expect(error.details).toBeDefined();
-        expect(error.details.error).toBeDefined();
         expect(error.details.error.type).toBe(DroppError.type.InvalidRequest.type);
-        expect(error.details.error.message).toBeDefined();
-        expect(typeof error.details.error.message).toBe('string');
-
-        const invalidParameters = error.details.error.message.split(',');
-        expect(invalidParameters.length).toBe(1);
-        expect(invalidParameters[0]).toBe('oldPassword');
-        log(invalidUpdatePasswordTitle, error.details);
+        expect(error.details.error.message).toBe('oldPassword');
+        Log(testName, invalidUpdatePasswordTitle, error.details);
         done();
       }
     });
@@ -783,21 +614,13 @@ describe('User Middleware Tests', () => {
           this.invalidDetails
         );
         expect(result).not.toBeDefined();
-        log(invalidUpdatePasswordTitle, 'Should have thrown error');
+        Log(testName, invalidUpdatePasswordTitle, 'Should have thrown error');
         done();
       } catch (error) {
-        expect(error).toBeDefined();
         expect(error.name).toBe('DroppError');
-        expect(error.details).toBeDefined();
-        expect(error.details.error).toBeDefined();
         expect(error.details.error.type).toBe(DroppError.type.InvalidRequest.type);
-        expect(error.details.error.message).toBeDefined();
-        expect(typeof error.details.error.message).toBe('string');
-
-        const invalidParameters = error.details.error.message.split(',');
-        expect(invalidParameters.length).toBe(1);
-        expect(invalidParameters[0]).toBe('newPassword');
-        log(invalidUpdatePasswordTitle, error.details);
+        expect(error.details.error.message).toBe('newPassword');
+        Log(testName, invalidUpdatePasswordTitle, error.details);
         done();
       }
     });
@@ -811,18 +634,13 @@ describe('User Middleware Tests', () => {
           this.invalidDetails
         );
         expect(result).not.toBeDefined();
-        log(invalidUpdatePasswordTitle, 'Should have thrown error');
+        Log(testName, invalidUpdatePasswordTitle, 'Should have thrown error');
         done();
       } catch (error) {
-        expect(error).toBeDefined();
         expect(error.name).toBe('DroppError');
-        expect(error.details).toBeDefined();
-        expect(error.details.error).toBeDefined();
         expect(error.details.error.type).toBe(DroppError.type.Resource.type);
-        expect(error.details.error.message).toBeDefined();
-        expect(typeof error.details.error.message).toBe('string');
-        expect(error.details.error.message.toLowerCase()).toContain('different');
-        log(invalidUpdatePasswordTitle, error.details);
+        expect(error.details.error.message).toBe('New password must be different from old password');
+        Log(testName, invalidUpdatePasswordTitle, error.details);
         done();
       }
     });
@@ -836,18 +654,13 @@ describe('User Middleware Tests', () => {
           this.invalidDetails
         );
         expect(result).not.toBeDefined();
-        log(invalidUpdatePasswordTitle, 'Should have thrown error');
+        Log(testName, invalidUpdatePasswordTitle, 'Should have thrown error');
         done();
       } catch (error) {
-        expect(error).toBeDefined();
         expect(error.name).toBe('DroppError');
-        expect(error.details).toBeDefined();
-        expect(error.details.error).toBeDefined();
         expect(error.details.error.type).toBe(DroppError.type.Resource.type);
-        expect(error.details.error.message).toBeDefined();
-        expect(typeof error.details.error.message).toBe('string');
-        expect(error.details.error.message.toLowerCase()).toContain('password');
-        log(invalidUpdatePasswordTitle, error.details);
+        expect(error.details.error.message).toBe('Unauthorized to update that user\'s password');
+        Log(testName, invalidUpdatePasswordTitle, error.details);
         done();
       }
     });
@@ -862,17 +675,13 @@ describe('User Middleware Tests', () => {
       try {
         const result = await UserMiddleware.updatePassword(user, details, this.invalidDetails);
         expect(result).not.toBeDefined();
-        log(invalidUpdatePasswordTitle, 'Should have thrown error');
+        Log(testName, invalidUpdatePasswordTitle, 'Should have thrown error');
         done();
       } catch (error) {
-        expect(error).toBeDefined();
         expect(error.name).toBe('DroppError');
-        expect(error.details).toBeDefined();
-        expect(error.details.error).toBeDefined();
         expect(error.details.error.type).toBe(DroppError.type.Server.type);
-        expect(error.details.error.message).toBeDefined();
         expect(error.details.error.message).toBe(DroppError.type.Server.message);
-        log(invalidUpdatePasswordTitle, error.details);
+        Log(testName, invalidUpdatePasswordTitle, error.details);
         done();
       }
     });
@@ -886,18 +695,13 @@ describe('User Middleware Tests', () => {
           this.invalidDetails
         );
         expect(result).not.toBeDefined();
-        log(invalidUpdatePasswordTitle, 'Should have thrown error');
+        Log(testName, invalidUpdatePasswordTitle, 'Should have thrown error');
         done();
       } catch (error) {
-        expect(error).toBeDefined();
         expect(error.name).toBe('DroppError');
-        expect(error.details).toBeDefined();
-        expect(error.details.error).toBeDefined();
         expect(error.details.error.type).toBe(DroppError.type.Resource.type);
-        expect(error.details.error.message).toBeDefined();
-        expect(typeof error.details.error.message).toBe('string');
-        expect(error.details.error.message.toLowerCase()).toContain('match');
-        log(invalidUpdatePasswordTitle, error.details);
+        expect(error.details.error.message).toBe('Old password must match existing password');
+        Log(testName, invalidUpdatePasswordTitle, error.details);
         done();
       }
     });
@@ -909,12 +713,11 @@ describe('User Middleware Tests', () => {
       const uuid2 = Utils.newUuid();
       const details = { newEmail: `${uuid2}@${uuid2}.com` };
       const result = await UserMiddleware.updateEmail(this.testUser, this.testUserDetails, details);
-      expect(result).toBeDefined();
       expect(result.success).toBeDefined();
       expect(result.success.message).toBeDefined();
       expect(typeof result.success.message).toBe('string');
       expect(result.success.message.toLowerCase()).toContain('email');
-      log(updateEmailTitle, result);
+      Log(testName, updateEmailTitle, result);
       done();
     });
   });
@@ -939,17 +742,13 @@ describe('User Middleware Tests', () => {
           this.invalidDetails
         );
         expect(result).not.toBeDefined();
-        log(invalidUpdateEmailTitle, 'Should have thrown error');
+        Log(testName, invalidUpdateEmailTitle, 'Should have thrown error');
         done();
       } catch (error) {
-        expect(error).toBeDefined();
         expect(error.name).toBe('DroppError');
-        expect(error.details).toBeDefined();
-        expect(error.details.error).toBeDefined();
         expect(error.details.error.type).toBe(DroppError.type.Server.type);
-        expect(error.details.error.message).toBeDefined();
         expect(error.details.error.message).toBe(DroppError.type.Server.message);
-        log(invalidUpdateEmailTitle, error.details);
+        Log(testName, invalidUpdateEmailTitle, error.details);
         done();
       }
     });
@@ -958,20 +757,13 @@ describe('User Middleware Tests', () => {
       try {
         const result = await UserMiddleware.updateEmail(this.testUser, this.testUserDetails, null);
         expect(result).not.toBeDefined();
-        log(invalidUpdateEmailTitle, 'Should have thrown error');
+        Log(testName, invalidUpdateEmailTitle, 'Should have thrown error');
         done();
       } catch (error) {
-        expect(error).toBeDefined();
         expect(error.name).toBe('DroppError');
-        expect(error.details).toBeDefined();
-        expect(error.details.error).toBeDefined();
         expect(error.details.error.type).toBe(DroppError.type.InvalidRequest.type);
-        expect(error.details.error.message).toBeDefined();
-        expect(typeof error.details.error.message).toBe('string');
-
-        const invalidParameters = error.details.error.message.split(',');
-        expect(invalidParameters.length).toBe(1);
-        log(invalidUpdateEmailTitle, error.details);
+        expect(error.details.error.message).toBe('newEmail');
+        Log(testName, invalidUpdateEmailTitle, error.details);
         done();
       }
     });
@@ -981,16 +773,13 @@ describe('User Middleware Tests', () => {
       try {
         const result = await UserMiddleware.updateEmail(this.testUser, null, details);
         expect(result).not.toBeDefined();
-        log(invalidUpdateEmailTitle, 'Should have thrown error');
+        Log(testName, invalidUpdateEmailTitle, 'Should have thrown error');
         done();
       } catch (error) {
-        expect(error).toBeDefined();
         expect(error.name).toBe('DroppError');
-        expect(error.details).toBeDefined();
-        expect(error.details.error).toBeDefined();
         expect(error.details.error.type).toBe(DroppError.type.Resource.type);
         expect(error.details.error.message).toBe('Unauthorized to update that user\'s email');
-        log(invalidUpdateEmailTitle, error.details);
+        Log(testName, invalidUpdateEmailTitle, error.details);
         done();
       }
     });
@@ -1003,21 +792,13 @@ describe('User Middleware Tests', () => {
           this.invalidDetails
         );
         expect(result).not.toBeDefined();
-        log(invalidUpdateEmailTitle, 'Should have thrown error');
+        Log(testName, invalidUpdateEmailTitle, 'Should have thrown error');
         done();
       } catch (error) {
-        expect(error).toBeDefined();
         expect(error.name).toBe('DroppError');
-        expect(error.details).toBeDefined();
-        expect(error.details.error).toBeDefined();
         expect(error.details.error.type).toBe(DroppError.type.InvalidRequest.type);
-        expect(error.details.error.message).toBeDefined();
-        expect(typeof error.details.error.message).toBe('string');
-
-        const invalidParameters = error.details.error.message.split(',');
-        expect(invalidParameters.length).toBe(1);
-        expect(invalidParameters[0]).toBe('newEmail');
-        log(invalidUpdateEmailTitle, error.details);
+        expect(error.details.error.message).toBe('newEmail');
+        Log(testName, invalidUpdateEmailTitle, error.details);
         done();
       }
     });
@@ -1031,21 +812,13 @@ describe('User Middleware Tests', () => {
           this.invalidDetails
         );
         expect(result).not.toBeDefined();
-        log(invalidUpdateEmailTitle, 'Should have thrown error');
+        Log(testName, invalidUpdateEmailTitle, 'Should have thrown error');
         done();
       } catch (error) {
-        expect(error).toBeDefined();
         expect(error.name).toBe('DroppError');
-        expect(error.details).toBeDefined();
-        expect(error.details.error).toBeDefined();
         expect(error.details.error.type).toBe(DroppError.type.InvalidRequest.type);
-        expect(error.details.error.message).toBeDefined();
-        expect(typeof error.details.error.message).toBe('string');
-
-        const invalidParameters = error.details.error.message.split(',');
-        expect(invalidParameters.length).toBe(1);
-        expect(invalidParameters[0]).toBe('newEmail');
-        log(invalidUpdateEmailTitle, error.details);
+        expect(error.details.error.message).toBe('newEmail');
+        Log(testName, invalidUpdateEmailTitle, error.details);
         done();
       }
     });
@@ -1060,18 +833,13 @@ describe('User Middleware Tests', () => {
           this.invalidDetails
         );
         expect(result).not.toBeDefined();
-        log(invalidUpdateEmailTitle, 'Should have thrown error');
+        Log(testName, invalidUpdateEmailTitle, 'Should have thrown error');
         done();
       } catch (error) {
-        expect(error).toBeDefined();
         expect(error.name).toBe('DroppError');
-        expect(error.details).toBeDefined();
-        expect(error.details.error).toBeDefined();
         expect(error.details.error.type).toBe(DroppError.type.Resource.type);
-        expect(error.details.error.message).toBeDefined();
-        expect(typeof error.details.error.message).toBe('string');
-        expect(error.details.error.message.toLowerCase()).toContain('email');
-        log(invalidUpdateEmailTitle, error.details);
+        expect(error.details.error.message).toBe('Unauthorized to update that user\'s email');
+        Log(testName, invalidUpdateEmailTitle, error.details);
         done();
       }
     });
@@ -1103,13 +871,12 @@ describe('User Middleware Tests', () => {
         const details = { username: this.testUser.username };
         const requestedUser = { requestedUser: this.testUser2.username };
         const result = await UserMiddleware.requestToFollow(this.testUser, details, requestedUser);
-        expect(result).toBeDefined();
         expect(result.success).toBeDefined();
         expect(result.success.message).toBeDefined();
         expect(typeof result.success.message).toBe('string');
         expect(result.success.message.toLowerCase()).toContain('follow request');
         expect(this.testUser.followRequests.includes(this.testUser2.username)).toBe(true);
-        log(requestToFollowTitle, result);
+        Log(testName, requestToFollowTitle, result);
         done();
       });
     });
@@ -1130,17 +897,13 @@ describe('User Middleware Tests', () => {
         try {
           const result = await UserMiddleware.requestToFollow(null, details, requestedUser);
           expect(result).not.toBeDefined();
-          log(invalidRequestToFollowTitle, 'Should have thrown error');
+          Log(testName, invalidRequestToFollowTitle, 'Should have thrown error');
           done();
         } catch (error) {
-          expect(error).toBeDefined();
           expect(error.name).toBe('DroppError');
-          expect(error.details).toBeDefined();
-          expect(error.details.error).toBeDefined();
           expect(error.details.error.type).toBe(DroppError.type.Server.type);
-          expect(error.details.error.message).toBeDefined();
           expect(error.details.error.message).toBe(DroppError.type.Server.message);
-          log(invalidRequestToFollowTitle, error.details);
+          Log(testName, invalidRequestToFollowTitle, error.details);
           done();
         }
       });
@@ -1150,20 +913,12 @@ describe('User Middleware Tests', () => {
         try {
           const result = await UserMiddleware.requestToFollow(this.testUser, null, requestedUser);
           expect(result).not.toBeDefined();
-          log(invalidRequestToFollowTitle, 'Should have thrown error');
+          Log(testName, invalidRequestToFollowTitle, 'Should have thrown error');
         } catch (error) {
-          expect(error).toBeDefined();
           expect(error.name).toBe('DroppError');
-          expect(error.details).toBeDefined();
-          expect(error.details.error).toBeDefined();
           expect(error.details.error.type).toBe(DroppError.type.InvalidRequest.type);
-          expect(error.details.error.message).toBeDefined();
-          expect(typeof error.details.error.message).toBe('string');
-
-          const invalidParameters = error.details.error.message.split(',');
-          expect(invalidParameters.length).toBe(1);
-          expect(invalidParameters[0]).toBe('username');
-          log(invalidRequestToFollowTitle, error.details);
+          expect(error.details.error.message).toBe('username');
+          Log(testName, invalidRequestToFollowTitle, error.details);
         }
 
         done();
@@ -1174,20 +929,12 @@ describe('User Middleware Tests', () => {
         try {
           const result = await UserMiddleware.requestToFollow(this.testUser, details, null);
           expect(result).not.toBeDefined();
-          log(invalidRequestToFollowTitle, 'Should have thrown error');
+          Log(testName, invalidRequestToFollowTitle, 'Should have thrown error');
         } catch (error) {
-          expect(error).toBeDefined();
           expect(error.name).toBe('DroppError');
-          expect(error.details).toBeDefined();
-          expect(error.details.error).toBeDefined();
           expect(error.details.error.type).toBe(DroppError.type.InvalidRequest.type);
-          expect(error.details.error.message).toBeDefined();
-          expect(typeof error.details.error.message).toBe('string');
-
-          const invalidParameters = error.details.error.message.split(',');
-          expect(invalidParameters.length).toBe(1);
-          expect(invalidParameters[0]).toBe('requestedUser');
-          log(invalidRequestToFollowTitle, error.details);
+          expect(error.details.error.message).toBe('requestedUser');
+          Log(testName, invalidRequestToFollowTitle, error.details);
         }
 
         done();
@@ -1203,21 +950,13 @@ describe('User Middleware Tests', () => {
             requestedUser
           );
           expect(result).not.toBeDefined();
-          log(invalidRequestToFollowTitle, 'Should have thrown error');
+          Log(testName, invalidRequestToFollowTitle, 'Should have thrown error');
           done();
         } catch (error) {
-          expect(error).toBeDefined();
           expect(error.name).toBe('DroppError');
-          expect(error.details).toBeDefined();
-          expect(error.details.error).toBeDefined();
           expect(error.details.error.type).toBe(DroppError.type.InvalidRequest.type);
-          expect(error.details.error.message).toBeDefined();
-          expect(typeof error.details.error.message).toBe('string');
-
-          const invalidParameters = error.details.error.message.split(',');
-          expect(invalidParameters.length).toBe(1);
-          expect(invalidParameters[0]).toBe('requestedUser');
-          log(invalidRequestToFollowTitle, error.details);
+          expect(error.details.error.message).toBe('requestedUser');
+          Log(testName, invalidRequestToFollowTitle, error.details);
           done();
         }
       });
@@ -1233,21 +972,13 @@ describe('User Middleware Tests', () => {
             requestedUser
           );
           expect(result).not.toBeDefined();
-          log(invalidRequestToFollowTitle, 'Should have thrown error');
+          Log(testName, invalidRequestToFollowTitle, 'Should have thrown error');
           done();
         } catch (error) {
-          expect(error).toBeDefined();
           expect(error.name).toBe('DroppError');
-          expect(error.details).toBeDefined();
-          expect(error.details.error).toBeDefined();
           expect(error.details.error.type).toBe(DroppError.type.InvalidRequest.type);
-          expect(error.details.error.message).toBeDefined();
-          expect(typeof error.details.error.message).toBe('string');
-
-          const invalidParameters = error.details.error.message.split(',');
-          expect(invalidParameters.length).toBe(1);
-          expect(invalidParameters[0]).toBe('requestedUser');
-          log(invalidRequestToFollowTitle, error.details);
+          expect(error.details.error.message).toBe('requestedUser');
+          Log(testName, invalidRequestToFollowTitle, error.details);
           done();
         }
       });
@@ -1262,15 +993,12 @@ describe('User Middleware Tests', () => {
             requestedUser
           );
           expect(result).not.toBeDefined();
-          log(invalidRequestToFollowTitle, 'Should have thrown error');
+          Log(testName, invalidRequestToFollowTitle, 'Should have thrown error');
         } catch (error) {
-          expect(error).toBeDefined();
           expect(error.name).toBe('DroppError');
-          expect(error.details).toBeDefined();
-          expect(error.details.error).toBeDefined();
           expect(error.details.error.type).toBe(DroppError.type.Resource.type);
           expect(error.details.error.message).toBe('Unauthorized to access that user\'s follow requests');
-          log(invalidRequestToFollowTitle, error.details);
+          Log(testName, invalidRequestToFollowTitle, error.details);
         }
 
         done();
@@ -1286,15 +1014,12 @@ describe('User Middleware Tests', () => {
             requestedUser
           );
           expect(result).not.toBeDefined();
-          log(invalidRequestToFollowTitle, 'Should have thrown error');
+          Log(testName, invalidRequestToFollowTitle, 'Should have thrown error');
         } catch (error) {
-          expect(error).toBeDefined();
           expect(error.name).toBe('DroppError');
-          expect(error.details).toBeDefined();
-          expect(error.details.error).toBeDefined();
           expect(error.details.error.type).toBe(DroppError.type.Resource.type);
           expect(error.details.error.message).toBe('You cannot request to follow yourself');
-          log(invalidRequestToFollowTitle, error.details);
+          Log(testName, invalidRequestToFollowTitle, error.details);
         }
 
         done();
@@ -1310,18 +1035,13 @@ describe('User Middleware Tests', () => {
             requestedUser
           );
           expect(result).not.toBeDefined();
-          log(invalidRequestToFollowTitle, 'Should have thrown error');
+          Log(testName, invalidRequestToFollowTitle, 'Should have thrown error');
           done();
         } catch (error) {
-          expect(error).toBeDefined();
           expect(error.name).toBe('DroppError');
-          expect(error.details).toBeDefined();
-          expect(error.details.error).toBeDefined();
           expect(error.details.error.type).toBe(DroppError.type.ResourceDNE.type);
-          expect(error.details.error.message).toBeDefined();
-          expect(typeof error.details.error.message).toBe('string');
-          expect(error.details.error.message.toLowerCase()).toContain('user');
-          log(invalidRequestToFollowTitle, error.details);
+          expect(error.details.error.message).toBe('That user does not exist');
+          Log(testName, invalidRequestToFollowTitle, error.details);
           done();
         }
       });
@@ -1342,7 +1062,7 @@ describe('User Middleware Tests', () => {
           await UserMiddleware.requestToFollow(this.testUser, usernameDetails, requestedUser);
         } catch (error) {
           expect(error).not.toBeDefined();
-          log(invalidRequestToFollowTitle, 'Should not have thrown error');
+          Log(testName, invalidRequestToFollowTitle, 'Should not have thrown error');
           done();
         }
 
@@ -1355,18 +1075,13 @@ describe('User Middleware Tests', () => {
             requestedUser
           );
           expect(result).not.toBeDefined();
-          log(invalidRequestToFollowTitle, 'Should have thrown error');
+          Log(testName, invalidRequestToFollowTitle, 'Should have thrown error');
           done();
         } catch (error) {
-          expect(error).toBeDefined();
           expect(error.name).toBe('DroppError');
-          expect(error.details).toBeDefined();
-          expect(error.details.error).toBeDefined();
           expect(error.details.error.type).toBe(DroppError.type.Resource.type);
-          expect(error.details.error.message).toBeDefined();
-          expect(typeof error.details.error.message).toBe('string');
-          expect(error.details.error.message.toLowerCase()).toContain('pending follow request');
-          log(invalidRequestToFollowTitle, error.details);
+          expect(error.details.error.message).toBe('You already have a pending follow request for that user');
+          Log(testName, invalidRequestToFollowTitle, error.details);
         }
 
         // Clean up test case
@@ -1375,7 +1090,7 @@ describe('User Middleware Tests', () => {
           expect(result.success).toBeDefined();
         } catch (error) {
           expect(error).not.toBeDefined();
-          log(invalidRequestToFollowTitle, 'Should not have thrown error');
+          Log(testName, invalidRequestToFollowTitle, 'Should not have thrown error');
         }
 
         done();
@@ -1398,13 +1113,12 @@ describe('User Middleware Tests', () => {
         };
 
         const result = await UserMiddleware.removeFollowRequest(this.testUser, details);
-        expect(result).toBeDefined();
         expect(result.success).toBeDefined();
         expect(result.success.message).toBeDefined();
         expect(typeof result.success.message).toBe('string');
         expect(result.success.message.toLowerCase()).toContain('removal');
         expect(this.testUser.followRequests.includes(this.testUser2.username)).toBe(false);
-        log(removeFollowRequestTitle, result);
+        Log(testName, removeFollowRequestTitle, result);
         done();
       });
     });
@@ -1428,17 +1142,13 @@ describe('User Middleware Tests', () => {
         try {
           const result = await UserMiddleware.removeFollowRequest(null, details);
           expect(result).not.toBeDefined();
-          log(invalidRemoveFollowRequestTitle, 'Should have thrown error');
+          Log(testName, invalidRemoveFollowRequestTitle, 'Should have thrown error');
           done();
         } catch (error) {
-          expect(error).toBeDefined();
           expect(error.name).toBe('DroppError');
-          expect(error.details).toBeDefined();
-          expect(error.details.error).toBeDefined();
           expect(error.details.error.type).toBe(DroppError.type.Server.type);
-          expect(error.details.error.message).toBeDefined();
           expect(error.details.error.message).toBe(DroppError.type.Server.message);
-          log(invalidRemoveFollowRequestTitle, error.details);
+          Log(testName, invalidRemoveFollowRequestTitle, error.details);
           done();
         }
       });
@@ -1447,21 +1157,12 @@ describe('User Middleware Tests', () => {
         try {
           const result = await UserMiddleware.removeFollowRequest(this.testUser, null);
           expect(result).not.toBeDefined();
-          log(invalidRemoveFollowRequestTitle, 'Should have thrown error');
+          Log(testName, invalidRemoveFollowRequestTitle, 'Should have thrown error');
         } catch (error) {
-          expect(error).toBeDefined();
           expect(error.name).toBe('DroppError');
-          expect(error.details).toBeDefined();
-          expect(error.details.error).toBeDefined();
           expect(error.details.error.type).toBe(DroppError.type.InvalidRequest.type);
-          expect(error.details.error.message).toBeDefined();
-          expect(typeof error.details.error.message).toBe('string');
-
-          const invalidParameters = error.details.error.message.split(',');
-          expect(invalidParameters.length).toBe(2);
-          expect(invalidParameters[0]).toBe('username');
-          expect(invalidParameters[1]).toBe('requestedUser');
-          log(invalidRemoveFollowRequestTitle, error.details);
+          expect(error.details.error.message).toBe('username,requestedUser');
+          Log(testName, invalidRemoveFollowRequestTitle, error.details);
         }
 
         done();
@@ -1476,21 +1177,13 @@ describe('User Middleware Tests', () => {
         try {
           const result = await UserMiddleware.removeFollowRequest(this.testUser, details);
           expect(result).not.toBeDefined();
-          log(invalidRemoveFollowRequestTitle, 'Should have thrown error');
+          Log(testName, invalidRemoveFollowRequestTitle, 'Should have thrown error');
           done();
         } catch (error) {
-          expect(error).toBeDefined();
           expect(error.name).toBe('DroppError');
-          expect(error.details).toBeDefined();
-          expect(error.details.error).toBeDefined();
           expect(error.details.error.type).toBe(DroppError.type.InvalidRequest.type);
-          expect(error.details.error.message).toBeDefined();
-          expect(typeof error.details.error.message).toBe('string');
-
-          const invalidParameters = error.details.error.message.split(',');
-          expect(invalidParameters.length).toBe(1);
-          expect(invalidParameters[0]).toBe('username');
-          log(invalidRemoveFollowRequestTitle, error.details);
+          expect(error.details.error.message).toBe('username');
+          Log(testName, invalidRemoveFollowRequestTitle, error.details);
           done();
         }
       });
@@ -1504,21 +1197,13 @@ describe('User Middleware Tests', () => {
         try {
           const result = await UserMiddleware.removeFollowRequest(this.testUser, details);
           expect(result).not.toBeDefined();
-          log(invalidRemoveFollowRequestTitle, 'Should have thrown error');
+          Log(testName, invalidRemoveFollowRequestTitle, 'Should have thrown error');
           done();
         } catch (error) {
-          expect(error).toBeDefined();
           expect(error.name).toBe('DroppError');
-          expect(error.details).toBeDefined();
-          expect(error.details.error).toBeDefined();
           expect(error.details.error.type).toBe(DroppError.type.InvalidRequest.type);
-          expect(error.details.error.message).toBeDefined();
-          expect(typeof error.details.error.message).toBe('string');
-
-          const invalidParameters = error.details.error.message.split(',');
-          expect(invalidParameters.length).toBe(1);
-          expect(invalidParameters[0]).toBe('requestedUser');
-          log(invalidRemoveFollowRequestTitle, error.details);
+          expect(error.details.error.message).toBe('requestedUser');
+          Log(testName, invalidRemoveFollowRequestTitle, error.details);
           done();
         }
       });
@@ -1532,21 +1217,13 @@ describe('User Middleware Tests', () => {
         try {
           const result = await UserMiddleware.removeFollowRequest(this.testUser, details);
           expect(result).not.toBeDefined();
-          log(invalidRemoveFollowRequestTitle, 'Should have thrown error');
+          Log(testName, invalidRemoveFollowRequestTitle, 'Should have thrown error');
           done();
         } catch (error) {
-          expect(error).toBeDefined();
           expect(error.name).toBe('DroppError');
-          expect(error.details).toBeDefined();
-          expect(error.details.error).toBeDefined();
           expect(error.details.error.type).toBe(DroppError.type.InvalidRequest.type);
-          expect(error.details.error.message).toBeDefined();
-          expect(typeof error.details.error.message).toBe('string');
-
-          const invalidParameters = error.details.error.message.split(',');
-          expect(invalidParameters.length).toBe(1);
-          expect(invalidParameters[0]).toBe('requestedUser');
-          log(invalidRemoveFollowRequestTitle, error.details);
+          expect(error.details.error.message).toBe('requestedUser');
+          Log(testName, invalidRemoveFollowRequestTitle, error.details);
           done();
         }
       });
@@ -1560,17 +1237,12 @@ describe('User Middleware Tests', () => {
         try {
           const result = await UserMiddleware.removeFollowRequest(this.testUser, details);
           expect(result).not.toBeDefined();
-          log(invalidRemoveFollowRequestTitle, 'Should have thrown error');
+          Log(testName, invalidRemoveFollowRequestTitle, 'Should have thrown error');
         } catch (error) {
-          expect(error).toBeDefined();
           expect(error.name).toBe('DroppError');
-          expect(error.details).toBeDefined();
-          expect(error.details.error).toBeDefined();
           expect(error.details.error.type).toBe(DroppError.type.Resource.type);
-          expect(error.details.error.message).toBeDefined();
-          expect(typeof error.details.error.message).toBe('string');
           expect(error.details.error.message).toBe('Unauthorized to access that user\'s follow requests');
-          log(invalidRemoveFollowRequestTitle, error.details);
+          Log(testName, invalidRemoveFollowRequestTitle, error.details);
         }
 
         done();
@@ -1585,17 +1257,12 @@ describe('User Middleware Tests', () => {
         try {
           const result = await UserMiddleware.removeFollowRequest(this.testUser, details);
           expect(result).not.toBeDefined();
-          log(invalidRemoveFollowRequestTitle, 'Should have thrown error');
+          Log(testName, invalidRemoveFollowRequestTitle, 'Should have thrown error');
         } catch (error) {
-          expect(error).toBeDefined();
           expect(error.name).toBe('DroppError');
-          expect(error.details).toBeDefined();
-          expect(error.details.error).toBeDefined();
           expect(error.details.error.type).toBe(DroppError.type.Resource.type);
-          expect(error.details.error.message).toBeDefined();
-          expect(typeof error.details.error.message).toBe('string');
           expect(error.details.error.message).toBe('You cannot remove a follow request from yourself');
-          log(invalidRemoveFollowRequestTitle, error.details);
+          Log(testName, invalidRemoveFollowRequestTitle, error.details);
         }
 
         done();
@@ -1610,18 +1277,13 @@ describe('User Middleware Tests', () => {
         try {
           const result = await UserMiddleware.removeFollowRequest(this.testUser, details);
           expect(result).not.toBeDefined();
-          log(invalidRemoveFollowRequestTitle, 'Should have thrown error');
+          Log(testName, invalidRemoveFollowRequestTitle, 'Should have thrown error');
           done();
         } catch (error) {
-          expect(error).toBeDefined();
           expect(error.name).toBe('DroppError');
-          expect(error.details).toBeDefined();
-          expect(error.details.error).toBeDefined();
           expect(error.details.error.type).toBe(DroppError.type.ResourceDNE.type);
-          expect(error.details.error.message).toBeDefined();
-          expect(typeof error.details.error.message).toBe('string');
-          expect(error.details.error.message.toLowerCase()).toContain('user');
-          log(invalidRemoveFollowRequestTitle, error.details);
+          expect(error.details.error.message).toBe('That user does not exist');
+          Log(testName, invalidRemoveFollowRequestTitle, error.details);
           done();
         }
       });
@@ -1635,18 +1297,13 @@ describe('User Middleware Tests', () => {
         try {
           const result = await UserMiddleware.removeFollowRequest(this.testUser, details);
           expect(result).not.toBeDefined();
-          log(invalidRemoveFollowRequestTitle, 'Should have thrown error');
+          Log(testName, invalidRemoveFollowRequestTitle, 'Should have thrown error');
           done();
         } catch (error) {
-          expect(error).toBeDefined();
           expect(error.name).toBe('DroppError');
-          expect(error.details).toBeDefined();
-          expect(error.details.error).toBeDefined();
           expect(error.details.error.type).toBe(DroppError.type.Resource.type);
-          expect(error.details.error.message).toBeDefined();
-          expect(typeof error.details.error.message).toBe('string');
-          expect(error.details.error.message.toLowerCase()).toContain('pending follow request');
-          log(invalidRemoveFollowRequestTitle, error.details);
+          expect(error.details.error.message).toBe('You do not have a pending follow request for that user');
+          Log(testName, invalidRemoveFollowRequestTitle, error.details);
           done();
         }
       });
@@ -1673,12 +1330,11 @@ describe('User Middleware Tests', () => {
           usernameDetails,
           details
         );
-        expect(result).toBeDefined();
         expect(result.success).toBeDefined();
         expect(result.success.message).toBe('Successful follow request acceptance');
         expect(this.testUser2.followerRequests.includes(this.testUser.username)).toBe(false);
         expect(this.testUser2.followers.includes(this.testUser.username)).toBe(true);
-        log(respondToFollowerRequestTitle, result);
+        Log(testName, respondToFollowerRequestTitle, result);
         done();
       });
 
@@ -1694,12 +1350,11 @@ describe('User Middleware Tests', () => {
           usernameDetails,
           details
         );
-        expect(result).toBeDefined();
         expect(result.success).toBeDefined();
         expect(result.success.message).toBe('Successful follow request denial');
         expect(this.testUser2.followerRequests.includes(this.testUser.username)).toBe(false);
         expect(this.testUser2.followers.includes(this.testUser.username)).toBe(false);
-        log(respondToFollowerRequestTitle, result);
+        Log(testName, respondToFollowerRequestTitle, result);
         done();
       });
     });
@@ -1731,16 +1386,13 @@ describe('User Middleware Tests', () => {
             this.invalidDetails
           );
           expect(result).not.toBeDefined();
-          log(invalidRespondToFollowerRequestTitle, 'Should have thrown error');
+          Log(testName, invalidRespondToFollowerRequestTitle, 'Should have thrown error');
           done();
         } catch (error) {
-          expect(error).toBeDefined();
           expect(error.name).toBe('DroppError');
-          expect(error.details).toBeDefined();
-          expect(error.details.error).toBeDefined();
           expect(error.details.error.type).toBe(DroppError.type.Server.type);
           expect(error.details.error.message).toBe(DroppError.type.Server.message);
-          log(invalidRespondToFollowerRequestTitle, error.details);
+          Log(testName, invalidRespondToFollowerRequestTitle, error.details);
           done();
         }
       });
@@ -1753,16 +1405,13 @@ describe('User Middleware Tests', () => {
             this.invalidDetails
           );
           expect(result).not.toBeDefined();
-          log(invalidRespondToFollowerRequestTitle, 'Should have thrown error');
+          Log(testName, invalidRespondToFollowerRequestTitle, 'Should have thrown error');
           done();
         } catch (error) {
-          expect(error).toBeDefined();
           expect(error.name).toBe('DroppError');
-          expect(error.details).toBeDefined();
-          expect(error.details.error).toBeDefined();
           expect(error.details.error.type).toBe(DroppError.type.InvalidRequest.type);
           expect(error.details.error.message).toBe('username,requestedUser');
-          log(invalidRespondToFollowerRequestTitle, error.details);
+          Log(testName, invalidRespondToFollowerRequestTitle, error.details);
           done();
         }
       });
@@ -1780,16 +1429,13 @@ describe('User Middleware Tests', () => {
             null
           );
           expect(result).not.toBeDefined();
-          log(invalidRespondToFollowerRequestTitle, 'Should have thrown error');
+          Log(testName, invalidRespondToFollowerRequestTitle, 'Should have thrown error');
           done();
         } catch (error) {
-          expect(error).toBeDefined();
           expect(error.name).toBe('DroppError');
-          expect(error.details).toBeDefined();
-          expect(error.details.error).toBeDefined();
           expect(error.details.error.type).toBe(DroppError.type.InvalidRequest.type);
           expect(error.details.error.message).toBe('accept');
-          log(invalidRespondToFollowerRequestTitle, error.details);
+          Log(testName, invalidRespondToFollowerRequestTitle, error.details);
           done();
         }
       });
@@ -1807,16 +1453,13 @@ describe('User Middleware Tests', () => {
             this.invalidDetails
           );
           expect(result).not.toBeDefined();
-          log(invalidRespondToFollowerRequestTitle, 'Should have thrown error');
+          Log(testName, invalidRespondToFollowerRequestTitle, 'Should have thrown error');
           done();
         } catch (error) {
-          expect(error).toBeDefined();
           expect(error.name).toBe('DroppError');
-          expect(error.details).toBeDefined();
-          expect(error.details.error).toBeDefined();
           expect(error.details.error.type).toBe(DroppError.type.InvalidRequest.type);
           expect(error.details.error.message).toBe('requestedUser');
-          log(invalidRespondToFollowerRequestTitle, error.details);
+          Log(testName, invalidRespondToFollowerRequestTitle, error.details);
           done();
         }
       });
@@ -1835,16 +1478,13 @@ describe('User Middleware Tests', () => {
             this.invalidDetails
           );
           expect(result).not.toBeDefined();
-          log(invalidRespondToFollowerRequestTitle, 'Should have thrown error');
+          Log(testName, invalidRespondToFollowerRequestTitle, 'Should have thrown error');
           done();
         } catch (error) {
-          expect(error).toBeDefined();
           expect(error.name).toBe('DroppError');
-          expect(error.details).toBeDefined();
-          expect(error.details.error).toBeDefined();
           expect(error.details.error.type).toBe(DroppError.type.InvalidRequest.type);
           expect(error.details.error.message).toBe('accept');
-          log(invalidRespondToFollowerRequestTitle, error.details);
+          Log(testName, invalidRespondToFollowerRequestTitle, error.details);
           done();
         }
       });
@@ -1863,16 +1503,13 @@ describe('User Middleware Tests', () => {
             this.invalidDetails
           );
           expect(result).not.toBeDefined();
-          log(invalidRespondToFollowerRequestTitle, 'Should have thrown error');
+          Log(testName, invalidRespondToFollowerRequestTitle, 'Should have thrown error');
           done();
         } catch (error) {
-          expect(error).toBeDefined();
           expect(error.name).toBe('DroppError');
-          expect(error.details).toBeDefined();
-          expect(error.details.error).toBeDefined();
           expect(error.details.error.type).toBe(DroppError.type.InvalidRequest.type);
           expect(error.details.error.message).toBe('requestedUser,accept');
-          log(invalidRespondToFollowerRequestTitle, error.details);
+          Log(testName, invalidRespondToFollowerRequestTitle, error.details);
           done();
         }
       });
@@ -1890,15 +1527,12 @@ describe('User Middleware Tests', () => {
             this.invalidDetails
           );
           expect(result).not.toBeDefined();
-          log(invalidRespondToFollowerRequestTitle, 'Should have thrown error');
+          Log(testName, invalidRespondToFollowerRequestTitle, 'Should have thrown error');
         } catch (error) {
-          expect(error).toBeDefined();
           expect(error.name).toBe('DroppError');
-          expect(error.details).toBeDefined();
-          expect(error.details.error).toBeDefined();
           expect(error.details.error.type).toBe(DroppError.type.Resource.type);
           expect(error.details.error.message).toBe('Unauthorized to access that user\'s follower requests');
-          log(invalidRespondToFollowerRequestTitle, error.details);
+          Log(testName, invalidRespondToFollowerRequestTitle, error.details);
         }
 
         done();
@@ -1919,15 +1553,12 @@ describe('User Middleware Tests', () => {
               this.invalidDetails
             );
             expect(result).not.toBeDefined();
-            log(invalidRespondToFollowerRequestTitle, 'Should have thrown error');
+            Log(testName, invalidRespondToFollowerRequestTitle, 'Should have thrown error');
           } catch (error) {
-            expect(error).toBeDefined();
             expect(error.name).toBe('DroppError');
-            expect(error.details).toBeDefined();
-            expect(error.details.error).toBeDefined();
             expect(error.details.error.type).toBe(DroppError.type.Resource.type);
             expect(error.details.error.message).toBe('You cannot respond to a follower request from yourself');
-            log(invalidRespondToFollowerRequestTitle, error.details);
+            Log(testName, invalidRespondToFollowerRequestTitle, error.details);
           }
 
           done();
@@ -1947,16 +1578,13 @@ describe('User Middleware Tests', () => {
             this.invalidDetails
           );
           expect(result).not.toBeDefined();
-          log(invalidRespondToFollowerRequestTitle, 'Should have thrown error');
+          Log(testName, invalidRespondToFollowerRequestTitle, 'Should have thrown error');
           done();
         } catch (error) {
-          expect(error).toBeDefined();
           expect(error.name).toBe('DroppError');
-          expect(error.details).toBeDefined();
-          expect(error.details.error).toBeDefined();
           expect(error.details.error.type).toBe(DroppError.type.ResourceDNE.type);
           expect(error.details.error.message).toBe('That user does not exist');
-          log(invalidRespondToFollowerRequestTitle, error.details);
+          Log(testName, invalidRespondToFollowerRequestTitle, error.details);
           done();
         }
       });
@@ -1974,16 +1602,13 @@ describe('User Middleware Tests', () => {
             this.invalidDetails
           );
           expect(result).not.toBeDefined();
-          log(invalidRespondToFollowerRequestTitle, 'Should have thrown error');
+          Log(testName, invalidRespondToFollowerRequestTitle, 'Should have thrown error');
           done();
         } catch (error) {
-          expect(error).toBeDefined();
           expect(error.name).toBe('DroppError');
-          expect(error.details).toBeDefined();
-          expect(error.details.error).toBeDefined();
           expect(error.details.error.type).toBe(DroppError.type.Resource.type);
           expect(error.details.error.message).toBe('That user has not requested to follow you');
-          log(invalidRespondToFollowerRequestTitle, error.details);
+          Log(testName, invalidRespondToFollowerRequestTitle, error.details);
           done();
         }
       });
@@ -2015,7 +1640,6 @@ describe('User Middleware Tests', () => {
         };
 
         const result = await UserMiddleware.unfollow(this.testUser, usernameDetails);
-        expect(result).toBeDefined();
         expect(result.success).toBeDefined();
         expect(result.success.message).toBeDefined();
         expect(typeof result.success.message).toBe('string');
@@ -2031,7 +1655,6 @@ describe('User Middleware Tests', () => {
         };
 
         const result = await UserMiddleware.removeFollower(this.testUser2, usernameDetails);
-        expect(result).toBeDefined();
         expect(result.success).toBeDefined();
         expect(result.success.message).toBeDefined();
         expect(typeof result.success.message).toBe('string');
@@ -2060,17 +1683,13 @@ describe('User Middleware Tests', () => {
         try {
           const result = await UserMiddleware.unfollow(null, usernameDetails);
           expect(result).not.toBeDefined();
-          log(invalidUnfollowTitle, 'Should have thrown error');
+          Log(testName, invalidUnfollowTitle, 'Should have thrown error');
           done();
         } catch (error) {
-          expect(error).toBeDefined();
           expect(error.name).toBe('DroppError');
-          expect(error.details).toBeDefined();
-          expect(error.details.error).toBeDefined();
           expect(error.details.error.type).toBe(DroppError.type.Server.type);
-          expect(error.details.error.message).toBeDefined();
           expect(error.details.error.message).toBe(DroppError.type.Server.message);
-          log(invalidUnfollowTitle, error.details);
+          Log(testName, invalidUnfollowTitle, error.details);
           done();
         }
       });
@@ -2079,16 +1698,13 @@ describe('User Middleware Tests', () => {
         try {
           const result = await UserMiddleware.unfollow(this.testUser, null);
           expect(result).not.toBeDefined();
-          log(invalidUnfollowTitle, 'Should have thrown error');
+          Log(testName, invalidUnfollowTitle, 'Should have thrown error');
           done();
         } catch (error) {
-          expect(error).toBeDefined();
           expect(error.name).toBe('DroppError');
-          expect(error.details).toBeDefined();
-          expect(error.details.error).toBeDefined();
           expect(error.details.error.type).toBe(DroppError.type.InvalidRequest.type);
           expect(error.details.error.message).toBe('username,follow');
-          log(invalidUnfollowTitle, error.details);
+          Log(testName, invalidUnfollowTitle, error.details);
           done();
         }
       });
@@ -2102,16 +1718,13 @@ describe('User Middleware Tests', () => {
         try {
           const result = await UserMiddleware.unfollow(this.testUser, usernameDetails);
           expect(result).not.toBeDefined();
-          log(invalidUnfollowTitle, 'Should have thrown error');
+          Log(testName, invalidUnfollowTitle, 'Should have thrown error');
           done();
         } catch (error) {
-          expect(error).toBeDefined();
           expect(error.name).toBe('DroppError');
-          expect(error.details).toBeDefined();
-          expect(error.details.error).toBeDefined();
           expect(error.details.error.type).toBe(DroppError.type.InvalidRequest.type);
           expect(error.details.error.message).toBe('follow');
-          log(invalidUnfollowTitle, error.details);
+          Log(testName, invalidUnfollowTitle, error.details);
           done();
         }
       });
@@ -2125,16 +1738,13 @@ describe('User Middleware Tests', () => {
         try {
           const result = await UserMiddleware.unfollow(this.testUser, usernameDetails);
           expect(result).not.toBeDefined();
-          log(invalidUnfollowTitle, 'Should have thrown error');
+          Log(testName, invalidUnfollowTitle, 'Should have thrown error');
           done();
         } catch (error) {
-          expect(error).toBeDefined();
           expect(error.name).toBe('DroppError');
-          expect(error.details).toBeDefined();
-          expect(error.details.error).toBeDefined();
           expect(error.details.error.type).toBe(DroppError.type.InvalidRequest.type);
           expect(error.details.error.message).toBe('username');
-          log(invalidUnfollowTitle, error.details);
+          Log(testName, invalidUnfollowTitle, error.details);
           done();
         }
       });
@@ -2148,15 +1758,12 @@ describe('User Middleware Tests', () => {
         try {
           const result = await UserMiddleware.unfollow(this.testUser, usernameDetails);
           expect(result).not.toBeDefined();
-          log(invalidUnfollowTitle, 'Should have thrown error');
+          Log(testName, invalidUnfollowTitle, 'Should have thrown error');
         } catch (error) {
-          expect(error).toBeDefined();
           expect(error.name).toBe('DroppError');
-          expect(error.details).toBeDefined();
-          expect(error.details.error).toBeDefined();
           expect(error.details.error.type).toBe(DroppError.type.Resource.type);
           expect(error.details.error.message).toBe('Unauthorized to access that user\'s follows');
-          log(invalidUnfollowTitle, error.details);
+          Log(testName, invalidUnfollowTitle, error.details);
         }
 
         done();
@@ -2171,15 +1778,12 @@ describe('User Middleware Tests', () => {
         try {
           const result = await UserMiddleware.unfollow(this.testUser, usernameDetails);
           expect(result).not.toBeDefined();
-          log(invalidUnfollowTitle, 'Should have thrown error');
+          Log(testName, invalidUnfollowTitle, 'Should have thrown error');
         } catch (error) {
-          expect(error).toBeDefined();
           expect(error.name).toBe('DroppError');
-          expect(error.details).toBeDefined();
-          expect(error.details.error).toBeDefined();
           expect(error.details.error.type).toBe(DroppError.type.Resource.type);
           expect(error.details.error.message).toBe('You cannot unfollow yourself');
-          log(invalidUnfollowTitle, error.details);
+          Log(testName, invalidUnfollowTitle, error.details);
         }
 
         done();
@@ -2194,18 +1798,13 @@ describe('User Middleware Tests', () => {
         try {
           const result = await UserMiddleware.unfollow(this.testUser, usernameDetails);
           expect(result).not.toBeDefined();
-          log(invalidUnfollowTitle, 'Should have thrown error');
+          Log(testName, invalidUnfollowTitle, 'Should have thrown error');
           done();
         } catch (error) {
-          expect(error).toBeDefined();
           expect(error.name).toBe('DroppError');
-          expect(error.details).toBeDefined();
-          expect(error.details.error).toBeDefined();
           expect(error.details.error.type).toBe(DroppError.type.ResourceDNE.type);
-          expect(error.details.error.message).toBeDefined();
-          expect(typeof error.details.error.message).toBe('string');
-          expect(error.details.error.message.toLowerCase()).toContain('user');
-          log(invalidUnfollowTitle, error.details);
+          expect(error.details.error.message).toBe('That user does not exist');
+          Log(testName, invalidUnfollowTitle, error.details);
           done();
         }
       });
@@ -2219,18 +1818,13 @@ describe('User Middleware Tests', () => {
         try {
           const result = await UserMiddleware.unfollow(this.testUser, usernameDetails);
           expect(result).not.toBeDefined();
-          log(invalidUnfollowTitle, 'Should have thrown error');
+          Log(testName, invalidUnfollowTitle, 'Should have thrown error');
           done();
         } catch (error) {
-          expect(error).toBeDefined();
           expect(error.name).toBe('DroppError');
-          expect(error.details).toBeDefined();
-          expect(error.details.error).toBeDefined();
           expect(error.details.error.type).toBe(DroppError.type.Resource.type);
-          expect(error.details.error.message).toBeDefined();
-          expect(typeof error.details.error.message).toBe('string');
-          expect(error.details.error.message.toLowerCase()).toContain('do not follow');
-          log(invalidUnfollowTitle, error.details);
+          expect(error.details.error.message).toBe('You do not follow that user');
+          Log(testName, invalidUnfollowTitle, error.details);
           done();
         }
       });
@@ -2255,16 +1849,13 @@ describe('User Middleware Tests', () => {
         try {
           const result = await UserMiddleware.removeFollower(null, usernameDetails);
           expect(result).not.toBeDefined();
-          log(invalidRemoveFollowerTitle, 'Should have thrown error');
+          Log(testName, invalidRemoveFollowerTitle, 'Should have thrown error');
           done();
         } catch (error) {
-          expect(error).toBeDefined();
           expect(error.name).toBe('DroppError');
-          expect(error.details).toBeDefined();
-          expect(error.details.error).toBeDefined();
           expect(error.details.error.type).toBe(DroppError.type.Server.type);
           expect(error.details.error.message).toBe(DroppError.type.Server.message);
-          log(invalidRemoveFollowerTitle, error.details);
+          Log(testName, invalidRemoveFollowerTitle, error.details);
           done();
         }
       });
@@ -2273,16 +1864,13 @@ describe('User Middleware Tests', () => {
         try {
           const result = await UserMiddleware.removeFollower(this.testUser, null);
           expect(result).not.toBeDefined();
-          log(invalidRemoveFollowerTitle, 'Should have thrown error');
+          Log(testName, invalidRemoveFollowerTitle, 'Should have thrown error');
           done();
         } catch (error) {
-          expect(error).toBeDefined();
           expect(error.name).toBe('DroppError');
-          expect(error.details).toBeDefined();
-          expect(error.details.error).toBeDefined();
           expect(error.details.error.type).toBe(DroppError.type.InvalidRequest.type);
           expect(error.details.error.message).toBe('username,follower');
-          log(invalidRemoveFollowerTitle, error.details);
+          Log(testName, invalidRemoveFollowerTitle, error.details);
           done();
         }
       });
@@ -2296,15 +1884,12 @@ describe('User Middleware Tests', () => {
         try {
           const result = await UserMiddleware.removeFollower(this.testUser, usernameDetails);
           expect(result).not.toBeDefined();
-          log(invalidRemoveFollowerTitle, 'Should have thrown error');
+          Log(testName, invalidRemoveFollowerTitle, 'Should have thrown error');
         } catch (error) {
-          expect(error).toBeDefined();
           expect(error.name).toBe('DroppError');
-          expect(error.details).toBeDefined();
-          expect(error.details.error).toBeDefined();
           expect(error.details.error.type).toBe(DroppError.type.Resource.type);
           expect(error.details.error.message).toBe('Unauthorized to access that user\'s followers');
-          log(invalidRemoveFollowerTitle, error.details);
+          Log(testName, invalidRemoveFollowerTitle, error.details);
         }
 
         done();
@@ -2319,15 +1904,12 @@ describe('User Middleware Tests', () => {
         try {
           const result = await UserMiddleware.removeFollower(this.testUser, usernameDetails);
           expect(result).not.toBeDefined();
-          log(invalidRemoveFollowerTitle, 'Should have thrown error');
+          Log(testName, invalidRemoveFollowerTitle, 'Should have thrown error');
         } catch (error) {
-          expect(error).toBeDefined();
           expect(error.name).toBe('DroppError');
-          expect(error.details).toBeDefined();
-          expect(error.details.error).toBeDefined();
           expect(error.details.error.type).toBe(DroppError.type.Resource.type);
           expect(error.details.error.message).toBe('You cannot remove yourself as a follower');
-          log(invalidRemoveFollowerTitle, error.details);
+          Log(testName, invalidRemoveFollowerTitle, error.details);
         }
 
         done();
@@ -2342,16 +1924,13 @@ describe('User Middleware Tests', () => {
         try {
           const result = await UserMiddleware.removeFollower(this.testUser, usernameDetails);
           expect(result).not.toBeDefined();
-          log(invalidRemoveFollowerTitle, 'Should have thrown error');
+          Log(testName, invalidRemoveFollowerTitle, 'Should have thrown error');
           done();
         } catch (error) {
-          expect(error).toBeDefined();
           expect(error.name).toBe('DroppError');
-          expect(error.details).toBeDefined();
-          expect(error.details.error).toBeDefined();
           expect(error.details.error.type).toBe(DroppError.type.ResourceDNE.type);
           expect(error.details.error.message).toBe('That user does not exist');
-          log(invalidRemoveFollowerTitle, error.details);
+          Log(testName, invalidRemoveFollowerTitle, error.details);
           done();
         }
       });
@@ -2365,16 +1944,13 @@ describe('User Middleware Tests', () => {
         try {
           const result = await UserMiddleware.removeFollower(this.testUser, usernameDetails);
           expect(result).not.toBeDefined();
-          log(invalidRemoveFollowerTitle, 'Should have thrown error');
+          Log(testName, invalidRemoveFollowerTitle, 'Should have thrown error');
           done();
         } catch (error) {
-          expect(error).toBeDefined();
           expect(error.name).toBe('DroppError');
-          expect(error.details).toBeDefined();
-          expect(error.details.error).toBeDefined();
           expect(error.details.error.type).toBe(DroppError.type.Resource.type);
           expect(error.details.error.message).toBe('That user does not follow you');
-          log(invalidRemoveFollowerTitle, error.details);
+          Log(testName, invalidRemoveFollowerTitle, error.details);
           done();
         }
       });
@@ -2389,11 +1965,11 @@ describe('User Middleware Tests', () => {
       try {
         const user = await UserMiddleware.get(this.testUser, { username: this.newUser.username });
         expect(user).not.toBeDefined();
-        log(removeUserTitle, `Was able to fetch ${user.username} after removing them`);
+        Log(testName, removeUserTitle, `Was able to fetch ${user.username} after removing them`);
       } catch (retrieveUserError) {
         expect(retrieveUserError.name).toBe('DroppError');
         expect(retrieveUserError.statusCode).toBe(DroppError.type.ResourceDNE.status);
-        log(removeUserTitle, retrieveUserError);
+        Log(testName, removeUserTitle, retrieveUserError);
       }
 
       done();
@@ -2414,17 +1990,13 @@ describe('User Middleware Tests', () => {
       try {
         const result = await UserMiddleware.remove(null, { username: this.invalidUsername });
         expect(result).not.toBeDefined();
-        log(invalidRemoveTitle, 'Should have thrown error');
+        Log(testName, invalidRemoveTitle, 'Should have thrown error');
         done();
       } catch (error) {
-        expect(error).toBeDefined();
         expect(error.name).toBe('DroppError');
-        expect(error.details).toBeDefined();
-        expect(error.details.error).toBeDefined();
         expect(error.details.error.type).toBe(DroppError.type.Server.type);
-        expect(error.details.error.message).toBeDefined();
         expect(error.details.error.message).toBe(DroppError.type.Server.message);
-        log(invalidRemoveTitle, error.details);
+        Log(testName, invalidRemoveTitle, error.details);
         done();
       }
     });
@@ -2433,21 +2005,13 @@ describe('User Middleware Tests', () => {
       try {
         const result = await UserMiddleware.remove(this.testUser, null);
         expect(result).not.toBeDefined();
-        log(invalidRemoveTitle, 'Should have thrown error');
+        Log(testName, invalidRemoveTitle, 'Should have thrown error');
         done();
       } catch (error) {
-        expect(error).toBeDefined();
         expect(error.name).toBe('DroppError');
-        expect(error.details).toBeDefined();
-        expect(error.details.error).toBeDefined();
         expect(error.details.error.type).toBe(DroppError.type.InvalidRequest.type);
-        expect(error.details.error.message).toBeDefined();
-        expect(typeof error.details.error.message).toBe('string');
-
-        const invalidParameters = error.details.error.message.split(',');
-        expect(invalidParameters.length).toBe(1);
-        expect(invalidParameters[0]).toBe('username');
-        log(invalidRemoveTitle, error.details);
+        expect(error.details.error.message).toBe('username');
+        Log(testName, invalidRemoveTitle, error.details);
         done();
       }
     });
@@ -2457,21 +2021,13 @@ describe('User Middleware Tests', () => {
       try {
         const result = await UserMiddleware.remove(this.testUser, details);
         expect(result).not.toBeDefined();
-        log(invalidRemoveTitle, 'Should have thrown error');
+        Log(testName, invalidRemoveTitle, 'Should have thrown error');
         done();
       } catch (error) {
-        expect(error).toBeDefined();
         expect(error.name).toBe('DroppError');
-        expect(error.details).toBeDefined();
-        expect(error.details.error).toBeDefined();
         expect(error.details.error.type).toBe(DroppError.type.InvalidRequest.type);
-        expect(error.details.error.message).toBeDefined();
-        expect(typeof error.details.error.message).toBe('string');
-
-        const invalidParameters = error.details.error.message.split(',');
-        expect(invalidParameters.length).toBe(1);
-        expect(invalidParameters[0]).toBe('username');
-        log(invalidRemoveTitle, error.details);
+        expect(error.details.error.message).toBe('username');
+        Log(testName, invalidRemoveTitle, error.details);
         done();
       }
     });
@@ -2482,21 +2038,13 @@ describe('User Middleware Tests', () => {
       try {
         const result = await UserMiddleware.remove(this.testUser, details);
         expect(result).not.toBeDefined();
-        log(invalidRemoveTitle, 'Should have thrown error');
+        Log(testName, invalidRemoveTitle, 'Should have thrown error');
         done();
       } catch (error) {
-        expect(error).toBeDefined();
         expect(error.name).toBe('DroppError');
-        expect(error.details).toBeDefined();
-        expect(error.details.error).toBeDefined();
         expect(error.details.error.type).toBe(DroppError.type.InvalidRequest.type);
-        expect(error.details.error.message).toBeDefined();
-        expect(typeof error.details.error.message).toBe('string');
-
-        const invalidParameters = error.details.error.message.split(',');
-        expect(invalidParameters.length).toBe(1);
-        expect(invalidParameters[0]).toBe('username');
-        log(invalidRemoveTitle, error.details);
+        expect(error.details.error.message).toBe('username');
+        Log(testName, invalidRemoveTitle, error.details);
         done();
       }
     });
@@ -2505,18 +2053,13 @@ describe('User Middleware Tests', () => {
       try {
         const result = await UserMiddleware.remove(this.testUser, { username: 'test' });
         expect(result).not.toBeDefined();
-        log(invalidRemoveTitle, 'Should have thrown error');
+        Log(testName, invalidRemoveTitle, 'Should have thrown error');
         done();
       } catch (error) {
-        expect(error).toBeDefined();
         expect(error.name).toBe('DroppError');
-        expect(error.details).toBeDefined();
-        expect(error.details.error).toBeDefined();
         expect(error.details.error.type).toBe(DroppError.type.Resource.type);
-        expect(error.details.error.message).toBeDefined();
-        expect(typeof error.details.error.message).toBe('string');
-        expect(error.details.error.message.toLowerCase()).toContain('unauthorized');
-        log(invalidRemoveTitle, error.details);
+        expect(error.details.error.message).toBe('Unauthorized to remove that user');
+        Log(testName, invalidRemoveTitle, error.details);
         done();
       }
     });
@@ -2530,16 +2073,13 @@ describe('User Middleware Tests', () => {
       try {
         const result = await UserMiddleware.remove(user, { username: user.username });
         expect(result).not.toBeDefined();
-        log(invalidRemoveTitle, 'Should have thrown error');
+        Log(testName, invalidRemoveTitle, 'Should have thrown error');
         done();
       } catch (error) {
-        expect(error).toBeDefined();
         expect(error.name).toBe('DroppError');
-        expect(error.details).toBeDefined();
-        expect(error.details.error).toBeDefined();
         expect(error.details.error.type).toBe(DroppError.type.Server.type);
         expect(error.details.error.message).toBe(DroppError.type.Server.message);
-        log(invalidRemoveTitle, error.details);
+        Log(testName, invalidRemoveTitle, error.details);
         done();
       }
     });

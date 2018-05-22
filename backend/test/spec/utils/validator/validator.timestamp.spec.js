@@ -1,15 +1,7 @@
 const Log = require('../../../logger');
 const Validator = require('../../../../src/utilities/validator');
 
-/**
- * Logs a message for the current test file
- * @param {String} _title the describe label
- * @param {String|Object} _details the log details
- */
-function log(_title, _details) {
-  Log(`Validator ${_title}`, _details);
-}
-
+const testName = 'Validator Module';
 const isValidTimestampTitle = 'isValidTimestamp()';
 /* eslint-disable no-undef */
 describe(isValidTimestampTitle, () => {
@@ -17,7 +9,7 @@ describe(isValidTimestampTitle, () => {
     const value = null;
     const result = Validator.isValidTimestamp(value);
     expect(result).toBe(false);
-    log(isValidTimestampTitle, `${value} returns ${result}`);
+    Log(testName, isValidTimestampTitle, `${value} returns ${result}`);
     done();
   });
 
@@ -25,7 +17,7 @@ describe(isValidTimestampTitle, () => {
     const value = undefined;
     const result = Validator.isValidTimestamp(value);
     expect(result).toBe(false);
-    log(isValidTimestampTitle, `${value} returns ${result}`);
+    Log(testName, isValidTimestampTitle, `${value} returns ${result}`);
     done();
   });
 
@@ -33,7 +25,7 @@ describe(isValidTimestampTitle, () => {
     const value = [];
     const result = Validator.isValidTimestamp(value);
     expect(result).toBe(false);
-    log(isValidTimestampTitle, `${value} returns ${result}`);
+    Log(testName, isValidTimestampTitle, `${value} returns ${result}`);
     done();
   });
 
@@ -41,7 +33,7 @@ describe(isValidTimestampTitle, () => {
     const value = {};
     const result = Validator.isValidTimestamp(value);
     expect(result).toBe(false);
-    log(isValidTimestampTitle, `${value} returns ${result}`);
+    Log(testName, isValidTimestampTitle, `${value} returns ${result}`);
     done();
   });
 
@@ -49,7 +41,7 @@ describe(isValidTimestampTitle, () => {
     const value = function value() {};
     const result = Validator.isValidTimestamp(value);
     expect(result).toBe(false);
-    log(isValidTimestampTitle, `${value} returns ${result}`);
+    Log(testName, isValidTimestampTitle, `${value} returns ${result}`);
     done();
   });
 
@@ -57,7 +49,7 @@ describe(isValidTimestampTitle, () => {
     const value = false;
     const result = Validator.isValidTimestamp(value);
     expect(result).toBe(false);
-    log(isValidTimestampTitle, `${value} returns ${result}`);
+    Log(testName, isValidTimestampTitle, `${value} returns ${result}`);
     done();
   });
 
@@ -65,7 +57,7 @@ describe(isValidTimestampTitle, () => {
     const value = true;
     const result = Validator.isValidTimestamp(value);
     expect(result).toBe(false);
-    log(isValidTimestampTitle, `${value} returns ${result}`);
+    Log(testName, isValidTimestampTitle, `${value} returns ${result}`);
     done();
   });
 
@@ -73,7 +65,7 @@ describe(isValidTimestampTitle, () => {
     const value = '';
     const result = Validator.isValidTimestamp(value);
     expect(result).toBe(false);
-    log(isValidTimestampTitle, `${value} returns ${result}`);
+    Log(testName, isValidTimestampTitle, `${value} returns ${result}`);
     done();
   });
 
@@ -81,7 +73,7 @@ describe(isValidTimestampTitle, () => {
     const value = 'hey';
     const result = Validator.isValidTimestamp(value);
     expect(result).toBe(false);
-    log(isValidTimestampTitle, `${value} returns ${result}`);
+    Log(testName, isValidTimestampTitle, `${value} returns ${result}`);
     done();
   });
 
@@ -89,7 +81,7 @@ describe(isValidTimestampTitle, () => {
     const value = '1';
     const result = Validator.isValidTimestamp(value);
     expect(result).toBe(false);
-    log(isValidTimestampTitle, `${value} returns ${result}`);
+    Log(testName, isValidTimestampTitle, `${value} returns ${result}`);
     done();
   });
 
@@ -97,7 +89,7 @@ describe(isValidTimestampTitle, () => {
     const value = '1.0';
     const result = Validator.isValidTimestamp(value);
     expect(result).toBe(false);
-    log(isValidTimestampTitle, `${value} returns ${result}`);
+    Log(testName, isValidTimestampTitle, `${value} returns ${result}`);
     done();
   });
 
@@ -105,7 +97,7 @@ describe(isValidTimestampTitle, () => {
     const value = 1.1;
     const result = Validator.isValidTimestamp(value);
     expect(result).toBe(false);
-    log(isValidTimestampTitle, `${value} returns ${result}`);
+    Log(testName, isValidTimestampTitle, `${value} returns ${result}`);
     done();
   });
 
@@ -113,7 +105,7 @@ describe(isValidTimestampTitle, () => {
     const value = -1;
     const result = Validator.isValidTimestamp(value);
     expect(result).toBe(false);
-    log(isValidTimestampTitle, `${value} returns ${result}`);
+    Log(testName, isValidTimestampTitle, `${value} returns ${result}`);
     done();
   });
 
@@ -121,7 +113,7 @@ describe(isValidTimestampTitle, () => {
     const value = 0;
     const result = Validator.isValidTimestamp(value);
     expect(result).toBe(true);
-    log(isValidTimestampTitle, `${value} returns ${result}`);
+    Log(testName, isValidTimestampTitle, `${value} returns ${result}`);
     done();
   });
 
@@ -129,8 +121,7 @@ describe(isValidTimestampTitle, () => {
     const value = 1;
     const result = Validator.isValidTimestamp(value);
     expect(result).toBe(true);
-    log(isValidTimestampTitle, `${value} returns ${result}`);
+    Log(testName, isValidTimestampTitle, `${value} returns ${result}`);
     done();
   });
 });
-/* eslint-enable no-undef */

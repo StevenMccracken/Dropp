@@ -24,11 +24,9 @@ const configOptions = {
  * @param {Boolean} [_shouldMock=false] whether or not to use the mock database
  */
 const start = function start(_shouldMock = false) {
-  if (didStart) return;
-
-  if (_shouldMock) {
-    db = MockFirebase;
-  } else {
+  if (didStart === true) return;
+  if (_shouldMock === true) db = MockFirebase;
+  else {
     Firebase.initializeApp(configOptions);
     db = Firebase.database();
   }

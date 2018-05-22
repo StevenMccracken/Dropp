@@ -1,15 +1,7 @@
 const Log = require('../../../logger');
 const Validator = require('../../../../src/utilities/validator');
 
-/**
- * Logs a message for the current test file
- * @param {String} _title the describe label
- * @param {String|Object} _details the log details
- */
-function log(_title, _details) {
-  Log(`Validator ${_title}`, _details);
-}
-
+const testName = 'Validator Module';
 const isValidEmailTitle = 'isValidEmail()';
 /* eslint-disable no-undef */
 describe(isValidEmailTitle, () => {
@@ -17,7 +9,7 @@ describe(isValidEmailTitle, () => {
     const value = null;
     const result = Validator.isValidEmail(value);
     expect(result).toBe(false);
-    log(isValidEmailTitle, `${value} returns ${result}`);
+    Log(testName, isValidEmailTitle, `${value} returns ${result}`);
     done();
   });
 
@@ -25,7 +17,7 @@ describe(isValidEmailTitle, () => {
     const value = undefined;
     const result = Validator.isValidEmail(value);
     expect(result).toBe(false);
-    log(isValidEmailTitle, `${value} returns ${result}`);
+    Log(testName, isValidEmailTitle, `${value} returns ${result}`);
     done();
   });
 
@@ -33,7 +25,7 @@ describe(isValidEmailTitle, () => {
     const value = [];
     const result = Validator.isValidEmail(value);
     expect(result).toBe(false);
-    log(isValidEmailTitle, `${value} returns ${result}`);
+    Log(testName, isValidEmailTitle, `${value} returns ${result}`);
     done();
   });
 
@@ -41,7 +33,7 @@ describe(isValidEmailTitle, () => {
     const value = {};
     const result = Validator.isValidEmail(value);
     expect(result).toBe(false);
-    log(isValidEmailTitle, `${value} returns ${result}`);
+    Log(testName, isValidEmailTitle, `${value} returns ${result}`);
     done();
   });
 
@@ -49,7 +41,7 @@ describe(isValidEmailTitle, () => {
     const value = function value() {};
     const result = Validator.isValidEmail(value);
     expect(result).toBe(false);
-    log(isValidEmailTitle, `${value} returns ${result}`);
+    Log(testName, isValidEmailTitle, `${value} returns ${result}`);
     done();
   });
 
@@ -57,7 +49,7 @@ describe(isValidEmailTitle, () => {
     const value = false;
     const result = Validator.isValidEmail(value);
     expect(result).toBe(false);
-    log(isValidEmailTitle, `${value} returns ${result}`);
+    Log(testName, isValidEmailTitle, `${value} returns ${result}`);
     done();
   });
 
@@ -65,7 +57,7 @@ describe(isValidEmailTitle, () => {
     const value = true;
     const result = Validator.isValidEmail(value);
     expect(result).toBe(false);
-    log(isValidEmailTitle, `${value} returns ${result}`);
+    Log(testName, isValidEmailTitle, `${value} returns ${result}`);
     done();
   });
 
@@ -73,7 +65,7 @@ describe(isValidEmailTitle, () => {
     const value = '';
     const result = Validator.isValidEmail(value);
     expect(result).toBe(false);
-    log(isValidEmailTitle, `${value} returns ${result}`);
+    Log(testName, isValidEmailTitle, `${value} returns ${result}`);
     done();
   });
 
@@ -81,7 +73,7 @@ describe(isValidEmailTitle, () => {
     const value = '    ';
     const result = Validator.isValidEmail(value);
     expect(result).toBe(false);
-    log(isValidEmailTitle, `${value} returns ${result}`);
+    Log(testName, isValidEmailTitle, `${value} returns ${result}`);
     done();
   });
 
@@ -89,7 +81,7 @@ describe(isValidEmailTitle, () => {
     const value = '\t';
     const result = Validator.isValidEmail(value);
     expect(result).toBe(false);
-    log(isValidEmailTitle, `${value} returns ${result}`);
+    Log(testName, isValidEmailTitle, `${value} returns ${result}`);
     done();
   });
 
@@ -97,7 +89,7 @@ describe(isValidEmailTitle, () => {
     const value = '\n';
     const result = Validator.isValidEmail(value);
     expect(result).toBe(false);
-    log(isValidEmailTitle, `${value} returns ${result}`);
+    Log(testName, isValidEmailTitle, `${value} returns ${result}`);
     done();
   });
 
@@ -105,7 +97,7 @@ describe(isValidEmailTitle, () => {
     const value = '\r';
     const result = Validator.isValidEmail(value);
     expect(result).toBe(false);
-    log(isValidEmailTitle, `${value} returns ${result}`);
+    Log(testName, isValidEmailTitle, `${value} returns ${result}`);
     done();
   });
 
@@ -113,7 +105,7 @@ describe(isValidEmailTitle, () => {
     const value = 'console.log(\'hey\')';
     const result = Validator.isValidEmail(value);
     expect(result).toBe(false);
-    log(isValidEmailTitle, `${value} returns ${result}`);
+    Log(testName, isValidEmailTitle, `${value} returns ${result}`);
     done();
   });
 
@@ -121,7 +113,7 @@ describe(isValidEmailTitle, () => {
     const value = 1.1;
     const result = Validator.isValidEmail(value);
     expect(result).toBe(false);
-    log(isValidEmailTitle, `${value} returns ${result}`);
+    Log(testName, isValidEmailTitle, `${value} returns ${result}`);
     done();
   });
 
@@ -129,7 +121,7 @@ describe(isValidEmailTitle, () => {
     const value = 0;
     const result = Validator.isValidEmail(value);
     expect(result).toBe(false);
-    log(isValidEmailTitle, `${value} returns ${result}`);
+    Log(testName, isValidEmailTitle, `${value} returns ${result}`);
     done();
   });
 
@@ -137,23 +129,26 @@ describe(isValidEmailTitle, () => {
     const value = '1';
     const result = Validator.isValidEmail(value);
     expect(result).toBe(false);
-    log(isValidEmailTitle, `${value} returns ${result}`);
+    Log(testName, isValidEmailTitle, `${value} returns ${result}`);
     done();
   });
 
-  it('should return false for a string with starting whitespace, and then word characters', (done) => {
-    const value = '  hey-';
-    const result = Validator.isValidEmail(value);
-    expect(result).toBe(false);
-    log(isValidEmailTitle, `${value} returns ${result}`);
-    done();
-  });
+  it(
+    'should return false for a string with starting whitespace, and then word characters',
+    (done) => {
+      const value = '  hey-';
+      const result = Validator.isValidEmail(value);
+      expect(result).toBe(false);
+      Log(testName, isValidEmailTitle, `${value} returns ${result}`);
+      done();
+    }
+  );
 
   it('should return false for a string with a non-word character', (done) => {
     const value = 'he$';
     const result = Validator.isValidEmail(value);
     expect(result).toBe(false);
-    log(isValidEmailTitle, `${value} returns ${result}`);
+    Log(testName, isValidEmailTitle, `${value} returns ${result}`);
     done();
   });
 
@@ -161,7 +156,7 @@ describe(isValidEmailTitle, () => {
     const value = 'h.';
     const result = Validator.isValidEmail(value);
     expect(result).toBe(false);
-    log(isValidEmailTitle, `${value} returns ${result}`);
+    Log(testName, isValidEmailTitle, `${value} returns ${result}`);
     done();
   });
 
@@ -169,7 +164,7 @@ describe(isValidEmailTitle, () => {
     const value = '__.';
     const result = Validator.isValidEmail(value);
     expect(result).toBe(false);
-    log(isValidEmailTitle, `${value} returns ${result}`);
+    Log(testName, isValidEmailTitle, `${value} returns ${result}`);
     done();
   });
 
@@ -177,7 +172,7 @@ describe(isValidEmailTitle, () => {
     const value = '__-';
     const result = Validator.isValidEmail(value);
     expect(result).toBe(false);
-    log(isValidEmailTitle, `${value} returns ${result}`);
+    Log(testName, isValidEmailTitle, `${value} returns ${result}`);
     done();
   });
 
@@ -185,7 +180,7 @@ describe(isValidEmailTitle, () => {
     const value = 'first.last@sub.do,com';
     const result = Validator.isValidEmail(value);
     expect(result).toBe(false);
-    log(isValidEmailTitle, `${value} returns ${result}`);
+    Log(testName, isValidEmailTitle, `${value} returns ${result}`);
     done();
   });
 
@@ -195,7 +190,7 @@ describe(isValidEmailTitle, () => {
     /* eslint-enable no-useless-escape */
     const result = Validator.isValidEmail(value);
     expect(result).toBe(false);
-    log(isValidEmailTitle, `${value} returns ${result}`);
+    Log(testName, isValidEmailTitle, `${value} returns ${result}`);
     done();
   });
 
@@ -203,7 +198,7 @@ describe(isValidEmailTitle, () => {
     const value = '"""@iana.org';
     const result = Validator.isValidEmail(value);
     expect(result).toBe(false);
-    log(isValidEmailTitle, `${value} returns ${result}`);
+    Log(testName, isValidEmailTitle, `${value} returns ${result}`);
     done();
   });
 
@@ -211,7 +206,7 @@ describe(isValidEmailTitle, () => {
     const value = 'first.last@[IPv6:1111:2222:3333:4444:5555:12.34.56.78]';
     const result = Validator.isValidEmail(value);
     expect(result).toBe(false);
-    log(isValidEmailTitle, `${value} returns ${result}`);
+    Log(testName, isValidEmailTitle, `${value} returns ${result}`);
     done();
   });
 
@@ -219,7 +214,7 @@ describe(isValidEmailTitle, () => {
     const value = 'first.last@-xample.com';
     const result = Validator.isValidEmail(value);
     expect(result).toBe(false);
-    log(isValidEmailTitle, `${value} returns ${result}`);
+    Log(testName, isValidEmailTitle, `${value} returns ${result}`);
     done();
   });
 
@@ -227,7 +222,7 @@ describe(isValidEmailTitle, () => {
     const value = '@iana.org';
     const result = Validator.isValidEmail(value);
     expect(result).toBe(false);
-    log(isValidEmailTitle, `${value} returns ${result}`);
+    Log(testName, isValidEmailTitle, `${value} returns ${result}`);
     done();
   });
 
@@ -235,7 +230,7 @@ describe(isValidEmailTitle, () => {
     const value = 'gatsby@f.sc.ot.t.f.i.tzg.era.l.d.';
     const result = Validator.isValidEmail(value);
     expect(result).toBe(false);
-    log(isValidEmailTitle, `${value} returns ${result}`);
+    Log(testName, isValidEmailTitle, `${value} returns ${result}`);
     done();
   });
 
@@ -243,7 +238,7 @@ describe(isValidEmailTitle, () => {
     const value = '12345678901234567890123456789012345678901234567890123456789012345@iana.org';
     const result = Validator.isValidEmail(value);
     expect(result).toBe(true);
-    log(isValidEmailTitle, `${value} returns ${result}`);
+    Log(testName, isValidEmailTitle, `${value} returns ${result}`);
     done();
   });
 
@@ -251,7 +246,7 @@ describe(isValidEmailTitle, () => {
     const value = '123456789012345678901234567890123456789012345678901234567890@12345678901234567890123456789012345678901234567890123456789.12345678901234567890123456789012345678901234567890123456789.12345678901234567890123456789012345678901234567890123456789.12345.iana.org';
     const result = Validator.isValidEmail(value);
     expect(result).toBe(true);
-    log(isValidEmailTitle, `${value} returns ${result}`);
+    Log(testName, isValidEmailTitle, `${value} returns ${result}`);
     done();
   });
 
@@ -259,7 +254,7 @@ describe(isValidEmailTitle, () => {
     const value = 'test@test.com';
     const result = Validator.isValidEmail(value);
     expect(result).toBe(true);
-    log(isValidEmailTitle, `${value} returns ${result}`);
+    Log(testName, isValidEmailTitle, `${value} returns ${result}`);
     done();
   });
 
@@ -267,7 +262,7 @@ describe(isValidEmailTitle, () => {
     const value = 'test@test.co';
     const result = Validator.isValidEmail(value);
     expect(result).toBe(true);
-    log(isValidEmailTitle, `${value} returns ${result}`);
+    Log(testName, isValidEmailTitle, `${value} returns ${result}`);
     done();
   });
 
@@ -275,8 +270,7 @@ describe(isValidEmailTitle, () => {
     const value = '89022932-6bf8-4639-a42e-7ef3c182a719@89022932-6bf8-4639-a42e-7ef3c182a719.com';
     const result = Validator.isValidEmail(value);
     expect(result).toBe(true);
-    log(isValidEmailTitle, `${value} returns ${result}`);
+    Log(testName, isValidEmailTitle, `${value} returns ${result}`);
     done();
   });
 });
-/* eslint-enable no-undef */

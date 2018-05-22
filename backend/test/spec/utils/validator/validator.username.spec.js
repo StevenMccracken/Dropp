@@ -1,15 +1,7 @@
 const Log = require('../../../logger');
 const Validator = require('../../../../src/utilities/validator');
 
-/**
- * Logs a message for the current test file
- * @param {String} _title the describe label
- * @param {String|Object} _details the log details
- */
-function log(_title, _details) {
-  Log(`Validator ${_title}`, _details);
-}
-
+const testName = 'Validator Module';
 const isValidUsernameTitle = 'isValidUsername()';
 /* eslint-disable no-undef */
 describe(isValidUsernameTitle, () => {
@@ -17,7 +9,7 @@ describe(isValidUsernameTitle, () => {
     const value = null;
     const result = Validator.isValidUsername(value);
     expect(result).toBe(false);
-    log(isValidUsernameTitle, `${value} returns ${result}`);
+    Log(testName, isValidUsernameTitle, `${value} returns ${result}`);
     done();
   });
 
@@ -25,7 +17,7 @@ describe(isValidUsernameTitle, () => {
     const value = undefined;
     const result = Validator.isValidUsername(value);
     expect(result).toBe(false);
-    log(isValidUsernameTitle, `${value} returns ${result}`);
+    Log(testName, isValidUsernameTitle, `${value} returns ${result}`);
     done();
   });
 
@@ -33,7 +25,7 @@ describe(isValidUsernameTitle, () => {
     const value = [];
     const result = Validator.isValidUsername(value);
     expect(result).toBe(false);
-    log(isValidUsernameTitle, `${value} returns ${result}`);
+    Log(testName, isValidUsernameTitle, `${value} returns ${result}`);
     done();
   });
 
@@ -41,7 +33,7 @@ describe(isValidUsernameTitle, () => {
     const value = {};
     const result = Validator.isValidUsername(value);
     expect(result).toBe(false);
-    log(isValidUsernameTitle, `${value} returns ${result}`);
+    Log(testName, isValidUsernameTitle, `${value} returns ${result}`);
     done();
   });
 
@@ -49,7 +41,7 @@ describe(isValidUsernameTitle, () => {
     const value = function value() {};
     const result = Validator.isValidUsername(value);
     expect(result).toBe(false);
-    log(isValidUsernameTitle, `${value} returns ${result}`);
+    Log(testName, isValidUsernameTitle, `${value} returns ${result}`);
     done();
   });
 
@@ -57,7 +49,7 @@ describe(isValidUsernameTitle, () => {
     const value = false;
     const result = Validator.isValidUsername(value);
     expect(result).toBe(false);
-    log(isValidUsernameTitle, `${value} returns ${result}`);
+    Log(testName, isValidUsernameTitle, `${value} returns ${result}`);
     done();
   });
 
@@ -65,7 +57,7 @@ describe(isValidUsernameTitle, () => {
     const value = true;
     const result = Validator.isValidUsername(value);
     expect(result).toBe(false);
-    log(isValidUsernameTitle, `${value} returns ${result}`);
+    Log(testName, isValidUsernameTitle, `${value} returns ${result}`);
     done();
   });
 
@@ -73,7 +65,7 @@ describe(isValidUsernameTitle, () => {
     const value = '';
     const result = Validator.isValidUsername(value);
     expect(result).toBe(false);
-    log(isValidUsernameTitle, `${value} returns ${result}`);
+    Log(testName, isValidUsernameTitle, `${value} returns ${result}`);
     done();
   });
 
@@ -81,7 +73,7 @@ describe(isValidUsernameTitle, () => {
     const value = '    ';
     const result = Validator.isValidUsername(value);
     expect(result).toBe(false);
-    log(isValidUsernameTitle, `${value} returns ${result}`);
+    Log(testName, isValidUsernameTitle, `${value} returns ${result}`);
     done();
   });
 
@@ -89,7 +81,7 @@ describe(isValidUsernameTitle, () => {
     const value = '\t';
     const result = Validator.isValidUsername(value);
     expect(result).toBe(false);
-    log(isValidUsernameTitle, `${value} returns ${result}`);
+    Log(testName, isValidUsernameTitle, `${value} returns ${result}`);
     done();
   });
 
@@ -97,7 +89,7 @@ describe(isValidUsernameTitle, () => {
     const value = '\n';
     const result = Validator.isValidUsername(value);
     expect(result).toBe(false);
-    log(isValidUsernameTitle, `${value} returns ${result}`);
+    Log(testName, isValidUsernameTitle, `${value} returns ${result}`);
     done();
   });
 
@@ -105,7 +97,7 @@ describe(isValidUsernameTitle, () => {
     const value = '\r';
     const result = Validator.isValidUsername(value);
     expect(result).toBe(false);
-    log(isValidUsernameTitle, `${value} returns ${result}`);
+    Log(testName, isValidUsernameTitle, `${value} returns ${result}`);
     done();
   });
 
@@ -113,7 +105,7 @@ describe(isValidUsernameTitle, () => {
     const value = 'console.log(\'hey\')';
     const result = Validator.isValidUsername(value);
     expect(result).toBe(false);
-    log(isValidUsernameTitle, `${value} returns ${result}`);
+    Log(testName, isValidUsernameTitle, `${value} returns ${result}`);
     done();
   });
 
@@ -121,7 +113,7 @@ describe(isValidUsernameTitle, () => {
     const value = 1.1;
     const result = Validator.isValidUsername(value);
     expect(result).toBe(false);
-    log(isValidUsernameTitle, `${value} returns ${result}`);
+    Log(testName, isValidUsernameTitle, `${value} returns ${result}`);
     done();
   });
 
@@ -129,7 +121,7 @@ describe(isValidUsernameTitle, () => {
     const value = 0;
     const result = Validator.isValidUsername(value);
     expect(result).toBe(false);
-    log(isValidUsernameTitle, `${value} returns ${result}`);
+    Log(testName, isValidUsernameTitle, `${value} returns ${result}`);
     done();
   });
 
@@ -137,23 +129,26 @@ describe(isValidUsernameTitle, () => {
     const value = '1';
     const result = Validator.isValidUsername(value);
     expect(result).toBe(false);
-    log(isValidUsernameTitle, `${value} returns ${result}`);
+    Log(testName, isValidUsernameTitle, `${value} returns ${result}`);
     done();
   });
 
-  it('should return false for a string with starting whitespace, and then word characters', (done) => {
-    const value = '  hey-';
-    const result = Validator.isValidUsername(value);
-    expect(result).toBe(false);
-    log(isValidUsernameTitle, `${value} returns ${result}`);
-    done();
-  });
+  it(
+    'should return false for a string with starting whitespace, and then word characters',
+    (done) => {
+      const value = '  hey-';
+      const result = Validator.isValidUsername(value);
+      expect(result).toBe(false);
+      Log(testName, isValidUsernameTitle, `${value} returns ${result}`);
+      done();
+    }
+  );
 
   it('should return false for a string with a non-word character', (done) => {
     const value = 'he$';
     const result = Validator.isValidUsername(value);
     expect(result).toBe(false);
-    log(isValidUsernameTitle, `${value} returns ${result}`);
+    Log(testName, isValidUsernameTitle, `${value} returns ${result}`);
     done();
   });
 
@@ -161,7 +156,7 @@ describe(isValidUsernameTitle, () => {
     const value = 'h.';
     const result = Validator.isValidUsername(value);
     expect(result).toBe(false);
-    log(isValidUsernameTitle, `${value} returns ${result}`);
+    Log(testName, isValidUsernameTitle, `${value} returns ${result}`);
     done();
   });
 
@@ -169,7 +164,7 @@ describe(isValidUsernameTitle, () => {
     const value = '__.';
     const result = Validator.isValidUsername(value);
     expect(result).toBe(false);
-    log(isValidUsernameTitle, `${value} returns ${result}`);
+    Log(testName, isValidUsernameTitle, `${value} returns ${result}`);
     done();
   });
 
@@ -177,7 +172,7 @@ describe(isValidUsernameTitle, () => {
     const value = '__-';
     const result = Validator.isValidUsername(value);
     expect(result).toBe(false);
-    log(isValidUsernameTitle, `${value} returns ${result}`);
+    Log(testName, isValidUsernameTitle, `${value} returns ${result}`);
     done();
   });
 
@@ -185,32 +180,40 @@ describe(isValidUsernameTitle, () => {
     const value = 'he';
     const result = Validator.isValidUsername(value);
     expect(result).toBe(true);
-    log(isValidUsernameTitle, `${value} returns ${result}`);
+    Log(testName, isValidUsernameTitle, `${value} returns ${result}`);
     done();
   });
 
-  it('should return true for a string with an underscore after the first two characters', (done) => {
-    const value = 'he_';
-    const result = Validator.isValidUsername(value);
-    expect(result).toBe(true);
-    log(isValidUsernameTitle, `${value} returns ${result}`);
-    done();
-  });
+  it(
+    'should return true for a string with an underscore after the first two characters',
+    (done) => {
+      const value = 'he_';
+      const result = Validator.isValidUsername(value);
+      expect(result).toBe(true);
+      Log(testName, isValidUsernameTitle, `${value} returns ${result}`);
+      done();
+    }
+  );
 
-  it('should return true for a string with a period after the first two characters, followed by a word character', (done) => {
-    const value = 'he._';
-    const result = Validator.isValidUsername(value);
-    expect(result).toBe(true);
-    log(isValidUsernameTitle, `${value} returns ${result}`);
-    done();
-  });
+  it(
+    'should return true for a string with a period after the first two characters, followed by a word character',
+    (done) => {
+      const value = 'he._';
+      const result = Validator.isValidUsername(value);
+      expect(result).toBe(true);
+      Log(testName, isValidUsernameTitle, `${value} returns ${result}`);
+      done();
+    }
+  );
 
-  it('should return true for a string with a dash after the first two characters, followed by a word character', (done) => {
-    const value = 'he-w';
-    const result = Validator.isValidUsername(value);
-    expect(result).toBe(true);
-    log(isValidUsernameTitle, `${value} returns ${result}`);
-    done();
-  });
+  it(
+    'should return true for a string with a dash after the first two characters, followed by a word character',
+    (done) => {
+      const value = 'he-w';
+      const result = Validator.isValidUsername(value);
+      expect(result).toBe(true);
+      Log(testName, isValidUsernameTitle, `${value} returns ${result}`);
+      done();
+    }
+  );
 });
-/* eslint-enable no-undef */

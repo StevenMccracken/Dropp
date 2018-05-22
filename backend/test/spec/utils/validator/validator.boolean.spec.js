@@ -1,15 +1,7 @@
 const Log = require('../../../logger');
 const Validator = require('../../../../src/utilities/validator');
 
-/**
- * Logs a message for the current test file
- * @param {String} _title the describe label
- * @param {String|Object} _details the log details
- */
-function log(_title, _details) {
-  Log(`Validator ${_title}`, _details);
-}
-
+const testName = 'Validator Module';
 const isValidBooleanStringTitle = 'isValidBooleanString()';
 /* eslint-disable no-undef */
 describe(isValidBooleanStringTitle, () => {
@@ -17,7 +9,7 @@ describe(isValidBooleanStringTitle, () => {
     const value = null;
     const result = Validator.isValidBooleanString(value);
     expect(result).toBe(false);
-    log(isValidBooleanStringTitle, `${value} returns ${result}`);
+    Log(testName, isValidBooleanStringTitle, `${value} returns ${result}`);
     done();
   });
 
@@ -25,7 +17,7 @@ describe(isValidBooleanStringTitle, () => {
     const value = undefined;
     const result = Validator.isValidBooleanString(value);
     expect(result).toBe(false);
-    log(isValidBooleanStringTitle, `${value} returns ${result}`);
+    Log(testName, isValidBooleanStringTitle, `${value} returns ${result}`);
     done();
   });
 
@@ -33,7 +25,7 @@ describe(isValidBooleanStringTitle, () => {
     const value = [];
     const result = Validator.isValidBooleanString(value);
     expect(result).toBe(false);
-    log(isValidBooleanStringTitle, `${value} returns ${result}`);
+    Log(testName, isValidBooleanStringTitle, `${value} returns ${result}`);
     done();
   });
 
@@ -41,7 +33,7 @@ describe(isValidBooleanStringTitle, () => {
     const value = {};
     const result = Validator.isValidBooleanString(value);
     expect(result).toBe(false);
-    log(isValidBooleanStringTitle, `${value} returns ${result}`);
+    Log(testName, isValidBooleanStringTitle, `${value} returns ${result}`);
     done();
   });
 
@@ -49,7 +41,7 @@ describe(isValidBooleanStringTitle, () => {
     const value = function value() {};
     const result = Validator.isValidBooleanString(value);
     expect(result).toBe(false);
-    log(isValidBooleanStringTitle, `${value} returns ${result}`);
+    Log(testName, isValidBooleanStringTitle, `${value} returns ${result}`);
     done();
   });
 
@@ -57,7 +49,7 @@ describe(isValidBooleanStringTitle, () => {
     const value = false;
     const result = Validator.isValidBooleanString(value);
     expect(result).toBe(false);
-    log(isValidBooleanStringTitle, `${value} returns ${result}`);
+    Log(testName, isValidBooleanStringTitle, `${value} returns ${result}`);
     done();
   });
 
@@ -65,7 +57,7 @@ describe(isValidBooleanStringTitle, () => {
     const value = true;
     const result = Validator.isValidBooleanString(value);
     expect(result).toBe(false);
-    log(isValidBooleanStringTitle, `${value} returns ${result}`);
+    Log(testName, isValidBooleanStringTitle, `${value} returns ${result}`);
     done();
   });
 
@@ -73,7 +65,7 @@ describe(isValidBooleanStringTitle, () => {
     const value = '';
     const result = Validator.isValidBooleanString(value);
     expect(result).toBe(false);
-    log(isValidBooleanStringTitle, `${value} returns ${result}`);
+    Log(testName, isValidBooleanStringTitle, `${value} returns ${result}`);
     done();
   });
 
@@ -81,7 +73,7 @@ describe(isValidBooleanStringTitle, () => {
     const value = '    ';
     const result = Validator.isValidBooleanString(value);
     expect(result).toBe(false);
-    log(isValidBooleanStringTitle, `${value} returns ${result}`);
+    Log(testName, isValidBooleanStringTitle, `${value} returns ${result}`);
     done();
   });
 
@@ -89,7 +81,7 @@ describe(isValidBooleanStringTitle, () => {
     const value = '\t';
     const result = Validator.isValidBooleanString(value);
     expect(result).toBe(false);
-    log(isValidBooleanStringTitle, `${value} returns ${result}`);
+    Log(testName, isValidBooleanStringTitle, `${value} returns ${result}`);
     done();
   });
 
@@ -97,7 +89,7 @@ describe(isValidBooleanStringTitle, () => {
     const value = '\n';
     const result = Validator.isValidBooleanString(value);
     expect(result).toBe(false);
-    log(isValidBooleanStringTitle, `${value} returns ${result}`);
+    Log(testName, isValidBooleanStringTitle, `${value} returns ${result}`);
     done();
   });
 
@@ -105,7 +97,7 @@ describe(isValidBooleanStringTitle, () => {
     const value = '\r';
     const result = Validator.isValidBooleanString(value);
     expect(result).toBe(false);
-    log(isValidBooleanStringTitle, `${value} returns ${result}`);
+    Log(testName, isValidBooleanStringTitle, `${value} returns ${result}`);
     done();
   });
 
@@ -113,7 +105,7 @@ describe(isValidBooleanStringTitle, () => {
     const value = 1.1;
     const result = Validator.isValidBooleanString(value);
     expect(result).toBe(false);
-    log(isValidBooleanStringTitle, `${value} returns ${result}`);
+    Log(testName, isValidBooleanStringTitle, `${value} returns ${result}`);
     done();
   });
 
@@ -121,7 +113,7 @@ describe(isValidBooleanStringTitle, () => {
     const value = 0;
     const result = Validator.isValidBooleanString(value);
     expect(result).toBe(false);
-    log(isValidBooleanStringTitle, `${value} returns ${result}`);
+    Log(testName, isValidBooleanStringTitle, `${value} returns ${result}`);
     done();
   });
 
@@ -129,7 +121,7 @@ describe(isValidBooleanStringTitle, () => {
     const value = '1';
     const result = Validator.isValidBooleanString(value);
     expect(result).toBe(false);
-    log(isValidBooleanStringTitle, `${value} returns ${result}`);
+    Log(testName, isValidBooleanStringTitle, `${value} returns ${result}`);
     done();
   });
 
@@ -137,7 +129,7 @@ describe(isValidBooleanStringTitle, () => {
     const value = '1.1';
     const result = Validator.isValidBooleanString(value);
     expect(result).toBe(false);
-    log(isValidBooleanStringTitle, `${value} returns ${result}`);
+    Log(testName, isValidBooleanStringTitle, `${value} returns ${result}`);
     done();
   });
 
@@ -145,7 +137,7 @@ describe(isValidBooleanStringTitle, () => {
     const value = 'console.log(\'hey\')';
     const result = Validator.isValidBooleanString(value);
     expect(result).toBe(false);
-    log(isValidBooleanStringTitle, `${value} returns ${result}`);
+    Log(testName, isValidBooleanStringTitle, `${value} returns ${result}`);
     done();
   });
 
@@ -153,7 +145,7 @@ describe(isValidBooleanStringTitle, () => {
     const value = '  hey-';
     const result = Validator.isValidBooleanString(value);
     expect(result).toBe(false);
-    log(isValidBooleanStringTitle, `${value} returns ${result}`);
+    Log(testName, isValidBooleanStringTitle, `${value} returns ${result}`);
     done();
   });
 
@@ -161,7 +153,7 @@ describe(isValidBooleanStringTitle, () => {
     const value = 'he$';
     const result = Validator.isValidBooleanString(value);
     expect(result).toBe(false);
-    log(isValidBooleanStringTitle, `${value} returns ${result}`);
+    Log(testName, isValidBooleanStringTitle, `${value} returns ${result}`);
     done();
   });
 
@@ -169,7 +161,7 @@ describe(isValidBooleanStringTitle, () => {
     const value = '😈';
     const result = Validator.isValidBooleanString(value);
     expect(result).toBe(false);
-    log(isValidBooleanStringTitle, `${value} returns ${result}`);
+    Log(testName, isValidBooleanStringTitle, `${value} returns ${result}`);
     done();
   });
 
@@ -177,7 +169,7 @@ describe(isValidBooleanStringTitle, () => {
     const value = 'true';
     const result = Validator.isValidBooleanString(value);
     expect(result).toBe(true);
-    log(isValidBooleanStringTitle, `${value} returns ${result}`);
+    Log(testName, isValidBooleanStringTitle, `${value} returns ${result}`);
     done();
   });
 
@@ -185,7 +177,7 @@ describe(isValidBooleanStringTitle, () => {
     const value = 'false';
     const result = Validator.isValidBooleanString(value);
     expect(result).toBe(true);
-    log(isValidBooleanStringTitle, `${value} returns ${result}`);
+    Log(testName, isValidBooleanStringTitle, `${value} returns ${result}`);
     done();
   });
 });
@@ -196,7 +188,7 @@ describe(booleanInputValidator, () => {
     const value = null;
     const result = Validator.isValidBoolean(value);
     expect(result).toBe(false);
-    log(booleanInputValidator, `${value} returns ${result}`);
+    Log(testName, booleanInputValidator, `${value} returns ${result}`);
     done();
   });
 
@@ -204,7 +196,7 @@ describe(booleanInputValidator, () => {
     const value = undefined;
     const result = Validator.isValidBoolean(value);
     expect(result).toBe(false);
-    log(booleanInputValidator, `${value} returns ${result}`);
+    Log(testName, booleanInputValidator, `${value} returns ${result}`);
     done();
   });
 
@@ -212,7 +204,7 @@ describe(booleanInputValidator, () => {
     const value = [];
     const result = Validator.isValidBoolean(value);
     expect(result).toBe(false);
-    log(booleanInputValidator, `${value} returns ${result}`);
+    Log(testName, booleanInputValidator, `${value} returns ${result}`);
     done();
   });
 
@@ -220,7 +212,7 @@ describe(booleanInputValidator, () => {
     const value = {};
     const result = Validator.isValidBoolean(value);
     expect(result).toBe(false);
-    log(booleanInputValidator, `${value} returns ${result}`);
+    Log(testName, booleanInputValidator, `${value} returns ${result}`);
     done();
   });
 
@@ -228,7 +220,7 @@ describe(booleanInputValidator, () => {
     const value = function value() {};
     const result = Validator.isValidBoolean(value);
     expect(result).toBe(false);
-    log(booleanInputValidator, `${value} returns ${result}`);
+    Log(testName, booleanInputValidator, `${value} returns ${result}`);
     done();
   });
 
@@ -236,7 +228,7 @@ describe(booleanInputValidator, () => {
     const value = '';
     const result = Validator.isValidBoolean(value);
     expect(result).toBe(false);
-    log(booleanInputValidator, `${value} returns ${result}`);
+    Log(testName, booleanInputValidator, `${value} returns ${result}`);
     done();
   });
 
@@ -244,7 +236,7 @@ describe(booleanInputValidator, () => {
     const value = '    ';
     const result = Validator.isValidBoolean(value);
     expect(result).toBe(false);
-    log(booleanInputValidator, `${value} returns ${result}`);
+    Log(testName, booleanInputValidator, `${value} returns ${result}`);
     done();
   });
 
@@ -252,7 +244,7 @@ describe(booleanInputValidator, () => {
     const value = '\t';
     const result = Validator.isValidBoolean(value);
     expect(result).toBe(false);
-    log(booleanInputValidator, `${value} returns ${result}`);
+    Log(testName, booleanInputValidator, `${value} returns ${result}`);
     done();
   });
 
@@ -260,7 +252,7 @@ describe(booleanInputValidator, () => {
     const value = '\n';
     const result = Validator.isValidBoolean(value);
     expect(result).toBe(false);
-    log(booleanInputValidator, `${value} returns ${result}`);
+    Log(testName, booleanInputValidator, `${value} returns ${result}`);
     done();
   });
 
@@ -268,7 +260,7 @@ describe(booleanInputValidator, () => {
     const value = '\r';
     const result = Validator.isValidBoolean(value);
     expect(result).toBe(false);
-    log(booleanInputValidator, `${value} returns ${result}`);
+    Log(testName, booleanInputValidator, `${value} returns ${result}`);
     done();
   });
 
@@ -276,7 +268,7 @@ describe(booleanInputValidator, () => {
     const value = 1.1;
     const result = Validator.isValidBoolean(value);
     expect(result).toBe(false);
-    log(booleanInputValidator, `${value} returns ${result}`);
+    Log(testName, booleanInputValidator, `${value} returns ${result}`);
     done();
   });
 
@@ -284,7 +276,7 @@ describe(booleanInputValidator, () => {
     const value = 0;
     const result = Validator.isValidBoolean(value);
     expect(result).toBe(false);
-    log(booleanInputValidator, `${value} returns ${result}`);
+    Log(testName, booleanInputValidator, `${value} returns ${result}`);
     done();
   });
 
@@ -292,7 +284,7 @@ describe(booleanInputValidator, () => {
     const value = '1';
     const result = Validator.isValidBoolean(value);
     expect(result).toBe(false);
-    log(booleanInputValidator, `${value} returns ${result}`);
+    Log(testName, booleanInputValidator, `${value} returns ${result}`);
     done();
   });
 
@@ -300,7 +292,7 @@ describe(booleanInputValidator, () => {
     const value = '1.1';
     const result = Validator.isValidBoolean(value);
     expect(result).toBe(false);
-    log(booleanInputValidator, `${value} returns ${result}`);
+    Log(testName, booleanInputValidator, `${value} returns ${result}`);
     done();
   });
 
@@ -308,7 +300,7 @@ describe(booleanInputValidator, () => {
     const value = 'console.log(\'hey\')';
     const result = Validator.isValidBoolean(value);
     expect(result).toBe(false);
-    log(booleanInputValidator, `${value} returns ${result}`);
+    Log(testName, booleanInputValidator, `${value} returns ${result}`);
     done();
   });
 
@@ -316,7 +308,7 @@ describe(booleanInputValidator, () => {
     const value = '  hey-';
     const result = Validator.isValidBoolean(value);
     expect(result).toBe(false);
-    log(booleanInputValidator, `${value} returns ${result}`);
+    Log(testName, booleanInputValidator, `${value} returns ${result}`);
     done();
   });
 
@@ -324,7 +316,7 @@ describe(booleanInputValidator, () => {
     const value = 'he$';
     const result = Validator.isValidBoolean(value);
     expect(result).toBe(false);
-    log(booleanInputValidator, `${value} returns ${result}`);
+    Log(testName, booleanInputValidator, `${value} returns ${result}`);
     done();
   });
 
@@ -332,7 +324,7 @@ describe(booleanInputValidator, () => {
     const value = '😈';
     const result = Validator.isValidBoolean(value);
     expect(result).toBe(false);
-    log(booleanInputValidator, `${value} returns ${result}`);
+    Log(testName, booleanInputValidator, `${value} returns ${result}`);
     done();
   });
 
@@ -340,7 +332,7 @@ describe(booleanInputValidator, () => {
     const value = false;
     const result = Validator.isValidBoolean(value);
     expect(result).toBe(true);
-    log(booleanInputValidator, `${value} returns ${result}`);
+    Log(testName, booleanInputValidator, `${value} returns ${result}`);
     done();
   });
 
@@ -348,8 +340,7 @@ describe(booleanInputValidator, () => {
     const value = true;
     const result = Validator.isValidBoolean(value);
     expect(result).toBe(true);
-    log(booleanInputValidator, `${value} returns ${result}`);
+    Log(testName, booleanInputValidator, `${value} returns ${result}`);
     done();
   });
 });
-/* eslint-enable no-undef */

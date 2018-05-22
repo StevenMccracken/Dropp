@@ -2,15 +2,7 @@ const Request = require('request-promise-native');
 const Log = require('../../logger');
 const Server = require('../../../index');
 
-/**
- * Logs a message for the current test file
- * @param {String} _title the describe label
- * @param {String|Object} _details the log details
- */
-function log(_title, _details) {
-  Log(`Router Module ${_title}`, _details);
-}
-
+const testName = 'Router Module';
 const url = `http://localhost:${Server.port}`;
 const baseRouteTitle = 'Base route';
 /* eslint-disable no-undef */
@@ -29,7 +21,6 @@ describe(baseRouteTitle, () => {
 
   it('gets the list of routes', async (done) => {
     const response = await Request(this.options);
-    expect(response).toBeDefined();
     expect(response.statusCode).toBe(200);
 
     // Verify routes
@@ -70,8 +61,7 @@ describe(baseRouteTitle, () => {
     expect(Object.keys(followerRequests).length).toBe(1);
     expect(followerRequests['/<requestedUser>']).toBe('PUT');
 
-    log(baseRouteTitle, response.body);
+    Log(testName, baseRouteTitle, response.body);
     done();
   });
 });
-/* eslint-enable no-undef */

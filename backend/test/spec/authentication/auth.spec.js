@@ -5,15 +5,7 @@ const Firebase = require('../../../src/firebase/firebase');
 const UserAccessor = require('../../../src/database/user');
 const AuthModule = require('../../../src/authentication/auth');
 
-/**
- * Logs a message for the current test file
- * @param {String} _title the describe label
- * @param {String|Object} _details the log details
- */
-function log(_title, _details) {
-  Log(`Authentication Module ${_title}`, _details);
-}
-
+const testName = 'Authentication Module';
 const validatePasswordTitle = 'Validate password';
 /* eslint-disable no-undef */
 describe(validatePasswordTitle, () => {
@@ -32,10 +24,10 @@ describe(validatePasswordTitle, () => {
     try {
       const result = await AuthModule.validatePasswords(null, this.hashedPassword);
       expect(result).not.toBeDefined();
-      log(validatePasswordTitle, 'Should have thrown error');
+      Log(testName, validatePasswordTitle, 'Should have thrown error');
     } catch (error) {
       expect(error.message.toLowerCase()).toContain('illegal arguments');
-      log(validatePasswordTitle, error);
+      Log(testName, validatePasswordTitle, error);
     }
 
     done();
@@ -45,10 +37,10 @@ describe(validatePasswordTitle, () => {
     try {
       const result = await AuthModule.validatePasswords(this.testPassword, null);
       expect(result).not.toBeDefined();
-      log(validatePasswordTitle, 'Should have thrown error');
+      Log(testName, validatePasswordTitle, 'Should have thrown error');
     } catch (error) {
       expect(error.message.toLowerCase()).toContain('illegal arguments');
-      log(validatePasswordTitle, error);
+      Log(testName, validatePasswordTitle, error);
     }
 
     done();
@@ -57,21 +49,21 @@ describe(validatePasswordTitle, () => {
   it('returns false for an unhashed password to test against', async (done) => {
     const result = await AuthModule.validatePasswords(this.testPassword, Utils.newUuid());
     expect(result).toBe(false);
-    log(validatePasswordTitle, result);
+    Log(testName, validatePasswordTitle, result);
     done();
   });
 
   it('returns false for an incorrect password', async (done) => {
     const result = await AuthModule.validatePasswords(Utils.newUuid(), this.hashedPassword);
     expect(result).toBe(false);
-    log(validatePasswordTitle, result);
+    Log(testName, validatePasswordTitle, result);
     done();
   });
 
   it('returns true for a matching password', async (done) => {
     const result = await AuthModule.validatePasswords(this.testPassword, this.hashedPassword);
     expect(result).toBe(true);
-    log(validatePasswordTitle, result);
+    Log(testName, validatePasswordTitle, result);
     done();
   });
 });
@@ -81,7 +73,7 @@ describe(generateTokenTitle, () => {
   it('returns null for an invalid user object', (done) => {
     const result = AuthModule.generateToken(null);
     expect(result).toBeNull();
-    log(generateTokenTitle, result);
+    Log(testName, generateTokenTitle, result);
     done();
   });
 
@@ -93,7 +85,7 @@ describe(generateTokenTitle, () => {
 
     const result = AuthModule.generateToken(user);
     expect(typeof result).toBe('string');
-    log(generateTokenTitle, result);
+    Log(testName, generateTokenTitle, result);
     done();
   });
 });
@@ -104,10 +96,10 @@ describe(hashTitle, () => {
     try {
       const result = await AuthModule.hash(null);
       expect(result).not.toBeDefined();
-      log(hashTitle, 'Should have thrown error');
+      Log(testName, hashTitle, 'Should have thrown error');
     } catch (error) {
       expect(error.message.toLowerCase()).toContain('illegal arguments');
-      log(hashTitle, error);
+      Log(testName, hashTitle, error);
     }
 
     done();
@@ -117,7 +109,7 @@ describe(hashTitle, () => {
     const result = await AuthModule.hash('test');
     expect(typeof result).toBe('string');
     expect(result).not.toBe('test');
-    log(hashTitle, result);
+    Log(testName, hashTitle, result);
     done();
   });
 });
@@ -126,6 +118,10 @@ const verifyTokenTitle = 'Verify token';
 describe(verifyTokenTitle, () => {
   beforeEach(async (done) => {
     Firebase.start(process.env.MOCK === '1');
+    this.request = {
+      headers: {},
+    };
+
     this.user = new User({
       username: Utils.newUuid(),
       email: `${Utils.newUuid()}@${Utils.newUuid()}.com`,
@@ -141,6 +137,7 @@ describe(verifyTokenTitle, () => {
     await UserAccessor.remove(this.user);
     delete this.user;
     delete this.token;
+    delete this.request;
     done();
   });
 
@@ -148,51 +145,40 @@ describe(verifyTokenTitle, () => {
     try {
       const result = await AuthModule.verifyToken({}, {});
       expect(result).not.toBeDefined();
-      log(verifyTokenTitle, 'Should have thrown error');
+      Log(testName, verifyTokenTitle, 'Should have thrown error');
     } catch (error) {
       expect(error.tokenError).not.toBeDefined();
       expect(error.passportError).not.toBeDefined();
       expect(error.userInfoMissing).not.toBeDefined();
-      log(verifyTokenTitle, error);
+      Log(testName, verifyTokenTitle, error);
     }
 
     done();
   });
 
   it('throws an error for an invalid authorization header', async (done) => {
-    const request = {
-      headers: {
-        authorization: 'test',
-      },
-    };
-
+    this.request.headers.authorization = 'test';
     try {
-      const result = await AuthModule.verifyToken(request, {});
+      const result = await AuthModule.verifyToken(this.request, {});
       expect(result).not.toBeDefined();
-      log(verifyTokenTitle, 'Should have thrown error');
+      Log(testName, verifyTokenTitle, 'Should have thrown error');
     } catch (error) {
       expect(error.passportError).toBeNull();
       expect(error.userInfoMissing).toBe(false);
       expect(error.tokenError.message.toLowerCase()).toContain('no auth token');
-      log(verifyTokenTitle, error);
+      Log(testName, verifyTokenTitle, error);
     }
 
     done();
   });
 
   it('returns a user for a valid authorization token', async (done) => {
-    const request = {
-      headers: {
-        authorization: `Bearer ${this.token}`,
-      },
-    };
-
-    const user = await AuthModule.verifyToken(request, {});
+    this.request.headers.authorization = `Bearer ${this.token}`;
+    const user = await AuthModule.verifyToken(this.request, {});
     expect(user instanceof User).toBe(true);
     expect(user.email).toBe(this.user.email);
     expect(user.username).toBe(this.user.username);
-    log(verifyTokenTitle, user);
+    Log(testName, verifyTokenTitle, user);
     done();
   });
 });
-/* eslint-enable no-undef */

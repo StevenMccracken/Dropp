@@ -1,15 +1,7 @@
 const Log = require('../../logger');
 const Utils = require('../../../src/utilities/utils');
 
-/**
- * Logs a message for the current test file
- * @param {String} _title the describe label
- * @param {String|Object} _details the log details
- */
-function log(_title, _details) {
-  Log(`Utils ${_title}`, _details);
-}
-
+const testName = 'Utility Module';
 const hasValueTitle = 'hasValue function';
 /* eslint-disable no-undef */
 describe(hasValueTitle, () => {
@@ -17,7 +9,7 @@ describe(hasValueTitle, () => {
     const value = null;
     const result = Utils.hasValue(value);
     expect(result).toBe(false);
-    log(hasValueTitle, `${value} returns ${result}`);
+    Log(testName, hasValueTitle, `${value} returns ${result}`);
     done();
   });
 
@@ -25,7 +17,7 @@ describe(hasValueTitle, () => {
     const value = undefined;
     const result = Utils.hasValue(value);
     expect(result).toBe(false);
-    log(hasValueTitle, `${value} returns ${result}`);
+    Log(testName, hasValueTitle, `${value} returns ${result}`);
     done();
   });
 
@@ -33,7 +25,7 @@ describe(hasValueTitle, () => {
     const value = [];
     const result = Utils.hasValue(value);
     expect(result).toBe(true);
-    log(hasValueTitle, `${value} returns ${result}`);
+    Log(testName, hasValueTitle, `${value} returns ${result}`);
     done();
   });
 
@@ -41,15 +33,15 @@ describe(hasValueTitle, () => {
     const value = {};
     const result = Utils.hasValue(value);
     expect(result).toBe(true);
-    log(hasValueTitle, `${value} returns ${result}`);
+    Log(testName, hasValueTitle, `${value} returns ${result}`);
     done();
   });
 
   it('should return true for a function', (done) => {
-    const value = function value() {};
+    const value = () => {};
     const result = Utils.hasValue(value);
     expect(result).toBe(true);
-    log(hasValueTitle, `${value} returns ${result}`);
+    Log(testName, hasValueTitle, `${value} returns ${result}`);
     done();
   });
 
@@ -57,7 +49,7 @@ describe(hasValueTitle, () => {
     const value = false;
     const result = Utils.hasValue(value);
     expect(result).toBe(true);
-    log(hasValueTitle, `${value} returns ${result}`);
+    Log(testName, hasValueTitle, `${value} returns ${result}`);
     done();
   });
 
@@ -65,7 +57,7 @@ describe(hasValueTitle, () => {
     const value = true;
     const result = Utils.hasValue(value);
     expect(result).toBe(true);
-    log(hasValueTitle, `${value} returns ${result}`);
+    Log(testName, hasValueTitle, `${value} returns ${result}`);
     done();
   });
 
@@ -73,7 +65,7 @@ describe(hasValueTitle, () => {
     const value = '';
     const result = Utils.hasValue(value);
     expect(result).toBe(true);
-    log(hasValueTitle, `${value} returns ${result}`);
+    Log(testName, hasValueTitle, `${value} returns ${result}`);
     done();
   });
 
@@ -81,7 +73,7 @@ describe(hasValueTitle, () => {
     const value = '    ';
     const result = Utils.hasValue(value);
     expect(result).toBe(true);
-    log(hasValueTitle, `${value} returns ${result}`);
+    Log(testName, hasValueTitle, `${value} returns ${result}`);
     done();
   });
 
@@ -89,7 +81,7 @@ describe(hasValueTitle, () => {
     const value = '\t';
     const result = Utils.hasValue(value);
     expect(result).toBe(true);
-    log(hasValueTitle, `${value} returns ${result}`);
+    Log(testName, hasValueTitle, `${value} returns ${result}`);
     done();
   });
 
@@ -97,7 +89,7 @@ describe(hasValueTitle, () => {
     const value = '\n';
     const result = Utils.hasValue(value);
     expect(result).toBe(true);
-    log(hasValueTitle, `${value} returns ${result}`);
+    Log(testName, hasValueTitle, `${value} returns ${result}`);
     done();
   });
 
@@ -105,7 +97,7 @@ describe(hasValueTitle, () => {
     const value = '\r';
     const result = Utils.hasValue(value);
     expect(result).toBe(true);
-    log(hasValueTitle, `${value} returns ${result}`);
+    Log(testName, hasValueTitle, `${value} returns ${result}`);
     done();
   });
 
@@ -113,7 +105,7 @@ describe(hasValueTitle, () => {
     const value = 'console.log(\'hey\')';
     const result = Utils.hasValue(value);
     expect(result).toBe(true);
-    log(hasValueTitle, `${value} returns ${result}`);
+    Log(testName, hasValueTitle, `${value} returns ${result}`);
     done();
   });
 
@@ -121,7 +113,7 @@ describe(hasValueTitle, () => {
     const value = 1.1;
     const result = Utils.hasValue(value);
     expect(result).toBe(true);
-    log(hasValueTitle, `${value} returns ${result}`);
+    Log(testName, hasValueTitle, `${value} returns ${result}`);
     done();
   });
 
@@ -129,7 +121,7 @@ describe(hasValueTitle, () => {
     const value = 0;
     const result = Utils.hasValue(value);
     expect(result).toBe(true);
-    log(hasValueTitle, `${value} returns ${result}`);
+    Log(testName, hasValueTitle, `${value} returns ${result}`);
     done();
   });
 
@@ -137,7 +129,7 @@ describe(hasValueTitle, () => {
     const value = '1';
     const result = Utils.hasValue(value);
     expect(result).toBe(true);
-    log(hasValueTitle, `${value} returns ${result}`);
+    Log(testName, hasValueTitle, `${value} returns ${result}`);
     done();
   });
 });
@@ -150,7 +142,7 @@ describe(stepperTitle, () => {
     stepper.next();
     const step = stepper.next().value;
     expect(step).toBe(3);
-    log(stepperTitle, `After 3 calls to the generator, the value returned is ${step}`);
+    Log(testName, stepperTitle, `After 3 calls to the generator, the value returned is ${step}`);
     done();
   });
 });
@@ -160,7 +152,7 @@ describe(getIpAddressTitle, () => {
   it('returns emtpy string for a null value', (done) => {
     const ip = Utils.getIpAddress(null);
     expect(ip).toBe('');
-    log(getIpAddressTitle, ip);
+    Log(testName, getIpAddressTitle, ip);
     done();
   });
 
@@ -173,7 +165,7 @@ describe(getIpAddressTitle, () => {
 
     const ip = Utils.getIpAddress(details);
     expect(ip).toBe('test');
-    log(getIpAddressTitle, ip);
+    Log(testName, getIpAddressTitle, ip);
     done();
   });
 
@@ -186,7 +178,7 @@ describe(getIpAddressTitle, () => {
 
     const ip = Utils.getIpAddress(details);
     expect(ip).toBe('test');
-    log(getIpAddressTitle, ip);
+    Log(testName, getIpAddressTitle, ip);
     done();
   });
 
@@ -202,7 +194,7 @@ describe(getIpAddressTitle, () => {
 
     const ip = Utils.getIpAddress(details);
     expect(ip).toBe('test');
-    log(getIpAddressTitle, ip);
+    Log(testName, getIpAddressTitle, ip);
     done();
   });
 });
@@ -212,7 +204,7 @@ describe(getRequestIdTitle, () => {
   it('returns emtpy string for a null value', (done) => {
     const id = Utils.getRequestId(null);
     expect(id).toBe('');
-    log(getRequestIdTitle, id);
+    Log(testName, getRequestIdTitle, id);
     done();
   });
 
@@ -225,8 +217,7 @@ describe(getRequestIdTitle, () => {
 
     const id = Utils.getRequestId(details);
     expect(id).toBe('test');
-    log(getRequestIdTitle, id);
+    Log(testName, getRequestIdTitle, id);
     done();
   });
 });
-/* eslint-enable no-undef */

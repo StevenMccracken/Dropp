@@ -40,10 +40,7 @@ const urlParts = function urlParts(_url) {
   const parts = url.split('/');
 
   // Drop the first element empty space, if it exists
-  if (parts.length > 0 && parts[0] === '') {
-    parts.splice(0, 1);
-  }
-
+  if (parts.length > 0 && parts[0] === '') parts.splice(0, 1);
   return parts;
 };
 
@@ -91,17 +88,12 @@ const get = function get(_paths) {
  * the data's key at the given path, as a URL
  */
 const push = function push(_paths, _data) {
-  if (!Array.isArray(_paths)) {
-    return new Promise(resolve => resolve());
-  }
-
+  if (!Array.isArray(_paths)) return new Promise(resolve => resolve());
   const promise = new Promise((resolve) => {
     const key = Utils.newUuid();
     const fullPaths = _paths.concat(key);
     set(fullPaths, _data);
-    let fullPath;
-    if (_paths.length > 0) fullPath = `${_paths.join('/')}/${key}`;
-    else fullPath = `${key}`;
+    const fullPath = _paths.length === 0 ? key : `${_paths.join('/')}/${key}`;
     resolve(fullPath);
   });
 

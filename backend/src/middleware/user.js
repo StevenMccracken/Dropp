@@ -68,7 +68,7 @@ const create = async function create(_details) {
   if (!Validator.isValidPassword(details.password)) invalidMembers.push('password');
   if (invalidMembers.length > 0) DroppError.throwInvalidRequestError(source, invalidMembers);
   const existingUser = await UserAccessor.get(details.username);
-  if (Utils.hasValue(existingUser) && existingUser instanceof User) {
+  if (existingUser instanceof User) {
     DroppError.throwResourceError(source, 'A user with that username already exists');
   }
 
@@ -328,7 +328,10 @@ const requestToFollow = async function requestToFollow(
   const user = await UserAccessor.get(requestedUserDetails.requestedUser);
   if (!Utils.hasValue(user)) DroppError.throwResourceDneError(source, 'user');
   if (user.hasFollowerRequest(_currentUser.username)) {
-    DroppError.throwResourceError(source, 'You already have a pending follow request for that user');
+    DroppError.throwResourceError(
+      source,
+      'You already have a pending follow request for that user'
+    );
   }
 
   await UserAccessor.addFollowRequest(_currentUser, user);
@@ -359,8 +362,8 @@ const removeFollowRequest = async function removeFollowRequest(_currentUser, _us
     DroppError.throwServerError(source, null, 'Object is not a User');
   }
 
-  const usernameDetails = Utils.hasValue(_usernameDetails) ? _usernameDetails : {};
   const invalidMembers = [];
+  const usernameDetails = Utils.hasValue(_usernameDetails) ? _usernameDetails : {};
   if (!Validator.isValidUsername(usernameDetails.username)) invalidMembers.push('username');
   if (!Validator.isValidUsername(usernameDetails.requestedUser)) {
     invalidMembers.push('requestedUser');
@@ -417,31 +420,19 @@ const respondToFollowerRequest = async function respondToFollowerRequest(
   const invalidMembers = [];
   const details = Utils.hasValue(_details) ? _details : {};
   const usernameDetails = Utils.hasValue(_usernameDetails) ? _usernameDetails : {};
-  if (!Validator.isValidUsername(usernameDetails.username)) {
-    invalidMembers.push('username');
-  }
-
+  if (!Validator.isValidUsername(usernameDetails.username)) invalidMembers.push('username');
   if (!Validator.isValidUsername(usernameDetails.requestedUser)) {
     invalidMembers.push('requestedUser');
   }
 
   if (!Validator.isValidBooleanString(details.accept)) invalidMembers.push('accept');
-  if (invalidMembers.length > 0) {
-    DroppError.throwInvalidRequestError(source, invalidMembers);
-  }
-
+  if (invalidMembers.length > 0) DroppError.throwInvalidRequestError(source, invalidMembers);
   if (_currentUser.username !== usernameDetails.username) {
-    DroppError.throwResourceError(
-      source,
-      'Unauthorized to access that user\'s follower requests'
-    );
+    DroppError.throwResourceError(source, 'Unauthorized to access that user\'s follower requests');
   }
 
   if (_currentUser.username === usernameDetails.requestedUser) {
-    DroppError.throwResourceError(
-      source,
-      'You cannot respond to a follower request from yourself'
-    );
+    DroppError.throwResourceError(source, 'You cannot respond to a follower request from yourself');
   }
 
   const user = await UserAccessor.get(usernameDetails.requestedUser);

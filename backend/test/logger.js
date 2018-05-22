@@ -1,12 +1,14 @@
+const Utils = require('../src/utilities/utils');
+
 /**
  * Logs testing messages to the console
- * @param {String} _topic the test specification
- * @param {String} _message a result of the test
+ * @param {String} _test the current test file or module
+ * @param {String} _spec the current specification within the test
+ * @param {Any} _details details to log
  */
-const log = function log(_topic, _message) {
-  if (_message === undefined) console.log('[TEST]: %s', _topic);
-  else if (typeof _message === 'string') console.log('[TEST] %s: %s', _topic, _message);
-  else console.log('[TEST] %s: %s', _topic, JSON.stringify(_message));
+const log = function log(_test, _spec, _details) {
+  const message = Utils.hasValue(_details) ? JSON.stringify(_details) : _details;
+  console.log('[TEST] <%s> {%s}: %s', _test, _spec, message);
 };
 
 module.exports = log;

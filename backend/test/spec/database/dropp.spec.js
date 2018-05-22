@@ -5,15 +5,7 @@ const Firebase = require('../../../src/firebase/firebase');
 const DroppError = require('../../../src/errors/DroppError');
 const DroppAccessor = require('../../../src/database/dropp');
 
-/**
- * Logs a message for the current test file
- * @param {String} _title the describe label
- * @param {String|Object} _details the log details
- */
-function log(_title, _details) {
-  Log(`Dropp Accessor ${_title}`, _details);
-}
-
+const testName = 'Dropp Accessor';
 Firebase.start(process.env.MOCK === '1');
 const getDroppTitle = 'Get dropp';
 /* eslint-disable no-undef */
@@ -41,16 +33,12 @@ describe(getDroppTitle, () => {
     try {
       await DroppAccessor.get(null);
       expect(false).toBe(true);
-      log(getDroppTitle, 'Should have thrown error');
+      Log(testName, getDroppTitle, 'Should have thrown error');
     } catch (error) {
-      expect(error).toBeDefined();
       expect(error.name).toBe('DroppError');
-      expect(error.details).toBeDefined();
-      expect(error.details.error).toBeDefined();
       expect(error.details.error.type).toBe(DroppError.type.Server.type);
-      expect(error.details.error.message).toBeDefined();
       expect(error.details.error.message).toBe(DroppError.type.Server.message);
-      log(getDroppTitle, error.details);
+      Log(testName, getDroppTitle, error.details);
     }
 
     done();
@@ -59,28 +47,27 @@ describe(getDroppTitle, () => {
   it('returns null for the forbidden dropp', async (done) => {
     const dropp = await DroppAccessor.get(DroppAccessor.forbiddenDroppId);
     expect(dropp).toBeNull();
-    log(getDroppTitle, dropp);
+    Log(testName, getDroppTitle, dropp);
     done();
   });
 
   it('returns null for a non-existent dropp', async (done) => {
     const dropp = await DroppAccessor.get(Utils.newUuid());
     expect(dropp).toBeNull();
-    log(getDroppTitle, dropp);
+    Log(testName, getDroppTitle, dropp);
     done();
   });
 
   it('returns a dropp for a valid ID', async (done) => {
     const dropp = await DroppAccessor.get(this.testDropp.id);
-    expect(dropp).toBeDefined();
-    expect(dropp).not.toBeNull();
+    expect(dropp instanceof Dropp).toBe(true);
     expect(dropp.id).toBe(this.testDropp.id);
     expect(dropp.text).toBe(this.testDropp.text);
     expect(dropp.media).toBe(this.testDropp.media);
     expect(dropp.location).toBe(this.testDropp.location);
     expect(dropp.username).toBe(this.testDropp.username);
     expect(dropp.timestamp).toBe(this.testDropp.timestamp);
-    log(getDroppTitle, dropp);
+    Log(testName, getDroppTitle, dropp);
     done();
   });
 });
@@ -116,7 +103,7 @@ describe(getAllDroppsTitle, () => {
 
     // Check that array has expected value
     expect(dropps.filter(dropp => dropp.id === this.testDropp.id).length).toBe(1);
-    log(getAllDroppsTitle, dropps.length);
+    Log(testName, getAllDroppsTitle, dropps.length);
     done();
   });
 });
@@ -141,16 +128,12 @@ describe(createDroppTitle, () => {
     try {
       await DroppAccessor.add(null);
       expect(false).toBe(true);
-      log(createDroppTitle, 'Should have thrown error');
+      Log(testName, createDroppTitle, 'Should have thrown error');
     } catch (error) {
-      expect(error).toBeDefined();
       expect(error.name).toBe('DroppError');
-      expect(error.details).toBeDefined();
-      expect(error.details.error).toBeDefined();
       expect(error.details.error.type).toBe(DroppError.type.Server.type);
-      expect(error.details.error.message).toBeDefined();
       expect(error.details.error.message).toBe(DroppError.type.Server.message);
-      log(createDroppTitle, error.details);
+      Log(testName, createDroppTitle, error.details);
     }
 
     done();
@@ -161,20 +144,12 @@ describe(createDroppTitle, () => {
     try {
       await DroppAccessor.add(this.testDropp);
       expect(false).toBe(true);
-      log(createDroppTitle, 'Should have thrown error');
+      Log(testName, createDroppTitle, 'Should have thrown error');
     } catch (error) {
-      expect(error).toBeDefined();
       expect(error.name).toBe('DroppError');
-      expect(error.details).toBeDefined();
-      expect(error.details.error).toBeDefined();
       expect(error.details.error.type).toBe(DroppError.type.InvalidRequest.type);
-      expect(error.details.error.message).toBeDefined();
-      expect(typeof error.details.error.message).toBe('string');
-
-      const invalidParameters = error.details.error.message.split(',');
-      expect(invalidParameters.length).toBe(1);
-      expect(invalidParameters[0]).toBe('text');
-      log(createDroppTitle, error.details);
+      expect(error.details.error.message).toBe('text');
+      Log(testName, createDroppTitle, error.details);
     }
 
     done();
@@ -185,20 +160,12 @@ describe(createDroppTitle, () => {
     try {
       await DroppAccessor.add(this.testDropp);
       expect(false).toBe(true);
-      log(createDroppTitle, 'Should have thrown error');
+      Log(testName, createDroppTitle, 'Should have thrown error');
     } catch (error) {
-      expect(error).toBeDefined();
       expect(error.name).toBe('DroppError');
-      expect(error.details).toBeDefined();
-      expect(error.details.error).toBeDefined();
       expect(error.details.error.type).toBe(DroppError.type.InvalidRequest.type);
-      expect(error.details.error.message).toBeDefined();
-      expect(typeof error.details.error.message).toBe('string');
-
-      const invalidParameters = error.details.error.message.split(',');
-      expect(invalidParameters.length).toBe(1);
-      expect(invalidParameters[0]).toBe('media');
-      log(createDroppTitle, error.details);
+      expect(error.details.error.message).toBe('media');
+      Log(testName, createDroppTitle, error.details);
     }
 
     done();
@@ -209,20 +176,12 @@ describe(createDroppTitle, () => {
     try {
       await DroppAccessor.add(this.testDropp);
       expect(false).toBe(true);
-      log(createDroppTitle, 'Should have thrown error');
+      Log(testName, createDroppTitle, 'Should have thrown error');
     } catch (error) {
-      expect(error).toBeDefined();
       expect(error.name).toBe('DroppError');
-      expect(error.details).toBeDefined();
-      expect(error.details.error).toBeDefined();
       expect(error.details.error.type).toBe(DroppError.type.InvalidRequest.type);
-      expect(error.details.error.message).toBeDefined();
-      expect(typeof error.details.error.message).toBe('string');
-
-      const invalidParameters = error.details.error.message.split(',');
-      expect(invalidParameters.length).toBe(1);
-      expect(invalidParameters[0]).toBe('location');
-      log(createDroppTitle, error.details);
+      expect(error.details.error.message).toBe('location');
+      Log(testName, createDroppTitle, error.details);
     }
 
     done();
@@ -233,20 +192,12 @@ describe(createDroppTitle, () => {
     try {
       await DroppAccessor.add(this.testDropp);
       expect(false).toBe(true);
-      log(createDroppTitle, 'Should have thrown error');
+      Log(testName, createDroppTitle, 'Should have thrown error');
     } catch (error) {
-      expect(error).toBeDefined();
       expect(error.name).toBe('DroppError');
-      expect(error.details).toBeDefined();
-      expect(error.details.error).toBeDefined();
       expect(error.details.error.type).toBe(DroppError.type.InvalidRequest.type);
-      expect(error.details.error.message).toBeDefined();
-      expect(typeof error.details.error.message).toBe('string');
-
-      const invalidParameters = error.details.error.message.split(',');
-      expect(invalidParameters.length).toBe(1);
-      expect(invalidParameters[0]).toBe('username');
-      log(createDroppTitle, error.details);
+      expect(error.details.error.message).toBe('username');
+      Log(testName, createDroppTitle, error.details);
     }
 
     done();
@@ -257,20 +208,12 @@ describe(createDroppTitle, () => {
     try {
       await DroppAccessor.add(this.testDropp);
       expect(false).toBe(true);
-      log(createDroppTitle, 'Should have thrown error');
+      Log(testName, createDroppTitle, 'Should have thrown error');
     } catch (error) {
-      expect(error).toBeDefined();
       expect(error.name).toBe('DroppError');
-      expect(error.details).toBeDefined();
-      expect(error.details.error).toBeDefined();
       expect(error.details.error.type).toBe(DroppError.type.InvalidRequest.type);
-      expect(error.details.error.message).toBeDefined();
-      expect(typeof error.details.error.message).toBe('string');
-
-      const invalidParameters = error.details.error.message.split(',');
-      expect(invalidParameters.length).toBe(1);
-      expect(invalidParameters[0]).toBe('timestamp');
-      log(createDroppTitle, error.details);
+      expect(error.details.error.message).toBe('timestamp');
+      Log(testName, createDroppTitle, error.details);
     }
 
     done();
@@ -278,9 +221,10 @@ describe(createDroppTitle, () => {
 
   it('adds a dropp to the database for a valid dropp', async (done) => {
     const result = await DroppAccessor.add(this.testDropp);
-    expect(result.id).toBeDefined();
-    expect(typeof result.id).toBe('string');
     expect(result).toBe(this.testDropp);
+    expect(typeof result.id).toBe('string');
+    expect(result.id.length).not.toBe(0);
+    Log(testName, createDroppTitle, result);
     done();
   });
 });
@@ -310,16 +254,12 @@ describe(updateDroppTitle, () => {
     try {
       await DroppAccessor.updateText(null, 'test');
       expect(false).toBe(true);
-      log(updateDroppTitle, 'Should have thrown error');
+      Log(testName, updateDroppTitle, 'Should have thrown error');
     } catch (error) {
-      expect(error).toBeDefined();
       expect(error.name).toBe('DroppError');
-      expect(error.details).toBeDefined();
-      expect(error.details.error).toBeDefined();
       expect(error.details.error.type).toBe(DroppError.type.Server.type);
-      expect(error.details.error.message).toBeDefined();
       expect(error.details.error.message).toBe(DroppError.type.Server.message);
-      log(updateDroppTitle, error.details);
+      Log(testName, updateDroppTitle, error.details);
     }
 
     done();
@@ -329,32 +269,22 @@ describe(updateDroppTitle, () => {
     try {
       await DroppAccessor.updateText(this.testDropp, null);
       expect(false).toBe(true);
-      log(updateDroppTitle, 'Should have thrown error');
+      Log(testName, updateDroppTitle, 'Should have thrown error');
     } catch (error) {
-      expect(error).toBeDefined();
       expect(error.name).toBe('DroppError');
-      expect(error.details).toBeDefined();
-      expect(error.details.error).toBeDefined();
       expect(error.details.error.type).toBe(DroppError.type.InvalidRequest.type);
-      expect(error.details.error.message).toBeDefined();
-      expect(typeof error.details.error.message).toBe('string');
-
-      const invalidParameters = error.details.error.message.split(',');
-      expect(invalidParameters.length).toBe(1);
-      expect(invalidParameters[0]).toBe('text');
-      log(updateDroppTitle, error.details);
+      expect(error.details.error.message).toBe('text');
+      Log(testName, updateDroppTitle, error.details);
     }
 
     done();
   });
 
   it('updates the text for valid text', async (done) => {
-    const oldText = this.testDropp.text;
     const newText = Utils.newUuid();
     await DroppAccessor.updateText(this.testDropp, newText);
-    expect(this.testDropp.text).not.toBe(oldText);
     expect(this.testDropp.text).toBe(newText);
-    log(updateDroppTitle, this.testDropp.text);
+    Log(testName, updateDroppTitle, this.testDropp);
     done();
   });
 });
@@ -375,11 +305,8 @@ describe(removeDroppTitle, () => {
   });
 
   afterEach(async (done) => {
-    if (this.testDropp) {
-      await DroppAccessor.remove(this.testDropp);
-      delete this.testDropp;
-    }
-
+    if (Utils.hasValue(this.testDropp)) await DroppAccessor.remove(this.testDropp);
+    delete this.testDropp;
     done();
   });
 
@@ -387,16 +314,12 @@ describe(removeDroppTitle, () => {
     try {
       await DroppAccessor.remove(null);
       expect(false).toBe(true);
-      log(removeDroppTitle, 'Should have thrown error');
+      Log(testName, removeDroppTitle, 'Should have thrown error');
     } catch (error) {
-      expect(error).toBeDefined();
       expect(error.name).toBe('DroppError');
-      expect(error.details).toBeDefined();
-      expect(error.details.error).toBeDefined();
       expect(error.details.error.type).toBe(DroppError.type.Server.type);
-      expect(error.details.error.message).toBeDefined();
       expect(error.details.error.message).toBe(DroppError.type.Server.message);
-      log(removeDroppTitle, error.details);
+      Log(testName, removeDroppTitle, error.details);
     }
 
     done();
@@ -406,10 +329,7 @@ describe(removeDroppTitle, () => {
     await DroppAccessor.remove(this.testDropp);
     const result = await DroppAccessor.get(this.testDropp.id);
     expect(result).toBeNull();
-    log(removeDroppTitle, result);
-
-    // Clean up
-    delete this.testDropp;
+    Log(testName, removeDroppTitle, result);
     done();
   });
 });
@@ -439,16 +359,10 @@ describe(bulkRemoveTitle, () => {
   });
 
   afterEach(async (done) => {
-    if (this.testDropp1) {
-      await DroppAccessor.remove(this.testDropp1);
-      delete this.testDropp1;
-    }
-
-    if (this.testDropp2) {
-      await DroppAccessor.remove(this.testDropp2);
-      delete this.testDropp2;
-    }
-
+    if (Utils.hasValue(this.testDropp1)) await DroppAccessor.remove(this.testDropp1);
+    if (Utils.hasValue(this.testDropp2)) await DroppAccessor.remove(this.testDropp2);
+    delete this.testDropp1;
+    delete this.testDropp2;
     done();
   });
 
@@ -456,16 +370,12 @@ describe(bulkRemoveTitle, () => {
     try {
       await DroppAccessor.bulkRemove(null);
       expect(false).toBe(true);
-      log(bulkRemoveTitle, 'Should have thrown error');
+      Log(testName, bulkRemoveTitle, 'Should have thrown error');
     } catch (error) {
-      expect(error).toBeDefined();
       expect(error.name).toBe('DroppError');
-      expect(error.details).toBeDefined();
-      expect(error.details.error).toBeDefined();
       expect(error.details.error.type).toBe(DroppError.type.Server.type);
-      expect(error.details.error.message).toBeDefined();
       expect(error.details.error.message).toBe(DroppError.type.Server.message);
-      log(bulkRemoveTitle, error.details);
+      Log(testName, bulkRemoveTitle, error.details);
     }
 
     done();
@@ -476,16 +386,12 @@ describe(bulkRemoveTitle, () => {
     try {
       await DroppAccessor.bulkRemove(dropps);
       expect(false).toBe(true);
-      log(bulkRemoveTitle, 'Should have thrown error');
+      Log(testName, bulkRemoveTitle, 'Should have thrown error');
     } catch (error) {
-      expect(error).toBeDefined();
       expect(error.name).toBe('DroppError');
-      expect(error.details).toBeDefined();
-      expect(error.details.error).toBeDefined();
       expect(error.details.error.type).toBe(DroppError.type.Server.type);
-      expect(error.details.error.message).toBeDefined();
       expect(error.details.error.message).toBe(DroppError.type.Server.message);
-      log(bulkRemoveTitle, error.details);
+      Log(testName, bulkRemoveTitle, error.details);
     }
 
     done();
@@ -498,11 +404,7 @@ describe(bulkRemoveTitle, () => {
     const dropp2 = await DroppAccessor.get(this.testDropp2.id);
     expect(dropp1).toBeNull();
     expect(dropp2).toBeNull();
-    log(bulkRemoveTitle, [dropp1, dropp2]);
-
-    // Clean up
-    delete this.testDropp1;
-    delete this.testDropp2;
+    Log(testName, bulkRemoveTitle, [dropp1, dropp2]);
     done();
   });
 
@@ -512,14 +414,12 @@ describe(bulkRemoveTitle, () => {
     const dropps = [this.testDropp1];
     await DroppAccessor.bulkRemove(dropps);
     const result = await DroppAccessor.get(originalId);
-    expect(result).toBeDefined();
     expect(result).not.toBeNull();
     expect(result.id).toBe(originalId);
-    log(bulkRemoveTitle, result);
+    Log(testName, bulkRemoveTitle, result);
 
-    // Clean up
+    // Reset dropp ID
     this.testDropp1.id = originalId;
     done();
   });
 });
-/* eslint-enable no-undef */

@@ -16,10 +16,7 @@ class User extends Object {
     const invalidMembers = [];
     if (!Validator.isValidEmail(_details.email)) invalidMembers.push('email');
     if (!Validator.isValidUsername(_details.username)) invalidMembers.push('username');
-    if (invalidMembers.length > 0) {
-      ModelError.throwInvalidMembersError('Dropp', invalidMembers);
-    }
-
+    if (invalidMembers.length > 0) ModelError.throwInvalidMembersError('User', invalidMembers);
     this.email = _details.email;
     this.username = _details.username;
     this.follows = [];
@@ -108,25 +105,25 @@ class User extends Object {
       follower_requests: {},
     };
 
-    if (Utils.hasValue(this._follows) && this._follows.length > 0) {
+    if (Array.isArray(this._follows) && this._follows.length > 0) {
       this._follows.forEach((follow) => {
         data.follows[follow] = follow;
       });
     }
 
-    if (Utils.hasValue(this._followers) && this._followers.length > 0) {
+    if (Array.isArray(this._followers) && this._followers.length > 0) {
       this._followers.forEach((follower) => {
         data.followers[follower] = follower;
       });
     }
 
-    if (Utils.hasValue(this._followRequests) && this._followRequests.length > 0) {
+    if (Array.isArray(this._followRequests) && this._followRequests.length > 0) {
       this._followRequests.forEach((follow) => {
         data.follow_requests[follow] = follow;
       });
     }
 
-    if (Utils.hasValue(this._followerRequests) && this._followerRequests.length > 0) {
+    if (Array.isArray(this._followerRequests) && this._followerRequests.length > 0) {
       this._followerRequests.forEach((follow) => {
         data.follower_requests[follow] = follow;
       });
@@ -149,28 +146,28 @@ class User extends Object {
       username: this._username,
     };
 
-    if (Utils.hasValue(this._follows) && this._follows.length > 0) {
+    if (Array.isArray(this._follows) && this._follows.length > 0) {
       this._follows.forEach((follow) => {
         data.followsCount++;
         data.follows[follow] = follow;
       });
     }
 
-    if (Utils.hasValue(this._followers) && this._followers.length > 0) {
+    if (Array.isArray(this._followers) && this._followers.length > 0) {
       this._followers.forEach((follower) => {
         data.followerCount++;
         data.followers[follower] = follower;
       });
     }
 
-    if (Utils.hasValue(this._followRequests) && this._followRequests.length > 0) {
+    if (Array.isArray(this._followRequests) && this._followRequests.length > 0) {
       this._followRequests.forEach((follow) => {
         data.followRequestCount++;
         data.followRequests[follow] = follow;
       });
     }
 
-    if (Utils.hasValue(this._followerRequests) && this._followerRequests.length > 0) {
+    if (Array.isArray(this._followerRequests) && this._followerRequests.length > 0) {
       this._followerRequests.forEach((follow) => {
         data.followerRequestCount++;
         data.followerRequests[follow] = follow;

@@ -10,10 +10,7 @@ const Utils = require('./utils');
  * @return {Boolean} whether the ID is valid or not
  */
 const validateFirebaseId = function validateFirebaseId(_firebaseId) {
-  if (!Utils.hasValue(_firebaseId) || typeof _firebaseId !== 'string') {
-    return false;
-  }
-
+  if (!Utils.hasValue(_firebaseId) || typeof _firebaseId !== 'string') return false;
   return _firebaseId.trim() !== '' && !(/[.#$[\]]/).test(_firebaseId);
 };
 
@@ -25,10 +22,7 @@ const validateFirebaseId = function validateFirebaseId(_firebaseId) {
  * @return {Boolean} whether the username is valid or not
  */
 const validateUsername = function validateUsername(_username) {
-  if (!Utils.hasValue(_username) || typeof _username !== 'string') {
-    return false;
-  }
-
+  if (!Utils.hasValue(_username) || typeof _username !== 'string') return false;
   return (/^[a-zA-Z0-9]{2,}([.-]?\w+)*$/).test(_username);
 };
 
@@ -38,10 +32,7 @@ const validateUsername = function validateUsername(_username) {
  * @return {Boolean} whether the email address is valid or not
  */
 const validateEmail = function validateEmail(_email) {
-  if (!Utils.hasValue(_email) || typeof _email !== 'string') {
-    return false;
-  }
-
+  if (!Utils.hasValue(_email) || typeof _email !== 'string') return false;
   return (/^\w+([.-]?\w+)*@\w+([.-]?\w+)*(\.\w{2,3})+$/).test(_email);
 };
 
@@ -51,10 +42,7 @@ const validateEmail = function validateEmail(_email) {
  * @return {Boolean} whether the password is valid or not
  */
 const validatePassword = function validatePassword(_password) {
-  if (!Utils.hasValue(_password) || typeof _password !== 'string') {
-    return false;
-  }
-
+  if (!Utils.hasValue(_password) || typeof _password !== 'string') return false;
   return (/^[\w\S]{4,}$/).test(_password);
 };
 
@@ -66,10 +54,7 @@ const validatePassword = function validatePassword(_password) {
  * @return {Boolean} whether the location string is valid or not
  */
 const validateLocation = function validateLocation(_location) {
-  if (!Utils.hasValue(_location) || typeof _location !== 'string') {
-    return false;
-  }
-
+  if (!Utils.hasValue(_location) || typeof _location !== 'string') return false;
   return (/^(-?\d+(\.\d+)?),\s*(-?\d+(\.\d+)?)$/).test(_location);
 };
 
@@ -79,10 +64,7 @@ const validateLocation = function validateLocation(_location) {
  * @return {Boolean} whether or not the integer is valid
  */
 const validateInteger = function validateInteger(_integer) {
-  if (!Utils.hasValue(_integer) || typeof _integer !== 'number') {
-    return false;
-  }
-
+  if (!Utils.hasValue(_integer) || typeof _integer !== 'number') return false;
   return (_integer % 1) === 0;
 };
 
@@ -92,10 +74,7 @@ const validateInteger = function validateInteger(_integer) {
  * @return {Boolean} whether or not the UNIX timestamp is valid
  */
 const validateTimestamp = function validateTimestamp(_timestamp) {
-  if (!Utils.hasValue(_timestamp) || typeof _timestamp !== 'number') {
-    return false;
-  }
-
+  if (!Utils.hasValue(_timestamp) || typeof _timestamp !== 'number') return false;
   return validateInteger(_timestamp) && _timestamp >= 0;
 };
 
@@ -105,10 +84,7 @@ const validateTimestamp = function validateTimestamp(_timestamp) {
  * @return {Boolean} whether or not the floating-point number is valid
  */
 const validatePositiveFloat = function validatePositiveFloat(_float) {
-  if (!Utils.hasValue(_float) || typeof _float !== 'number') {
-    return false;
-  }
-
+  if (!Utils.hasValue(_float) || typeof _float !== 'number') return false;
   return Number(_float) > 0.0 && (/^\d+(\.\d*)?$/).test(_float);
 };
 
@@ -118,10 +94,7 @@ const validatePositiveFloat = function validatePositiveFloat(_float) {
  * @return {Boolean} whether the text post is valid or not
  */
 const validateTextPost = function validateTextPost(_text) {
-  if (!Utils.hasValue(_text) || typeof _text !== 'string') {
-    return false;
-  }
-
+  if (!Utils.hasValue(_text) || typeof _text !== 'string') return false;
   return _text.toString().trim().length !== 0;
 };
 
@@ -131,10 +104,7 @@ const validateTextPost = function validateTextPost(_text) {
  * @return {Boolean} whether the boolean string is valid or not
  */
 const validateBooleanString = function validateBooleanString(_booleanString) {
-  if (!Utils.hasValue(_booleanString) || typeof _booleanString !== 'string') {
-    return false;
-  }
-
+  if (!Utils.hasValue(_booleanString) || typeof _booleanString !== 'string') return false;
   return _booleanString === 'true' || _booleanString === 'false';
 };
 

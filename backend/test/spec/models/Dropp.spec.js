@@ -2,15 +2,7 @@ const Log = require('../../logger');
 const Dropp = require('../../../src/models/Dropp');
 const ModelError = require('../../../src/errors/ModelError');
 
-/**
- * Logs a message for the current test file
- * @param {String} _title the describe label
- * @param {String|Object} _details the log details
- */
-function log(_title, _details) {
-  Log(`Dropp Model ${_title}`, _details);
-}
-
+const testName = 'Dropp Model';
 const constructorTitle = 'Constructor';
 /* eslint-disable no-undef */
 describe(constructorTitle, () => {
@@ -32,11 +24,11 @@ describe(constructorTitle, () => {
     try {
       const dropp = new Dropp();
       expect(dropp).not.toBeDefined();
-      log(constructorTitle, 'Should have thrown error');
+      Log(testName, constructorTitle, 'Should have thrown error');
     } catch (error) {
       expect(error.name).toBe('ModelError');
       expect(error.details.type).toBe(ModelError.type.Constructor.type);
-      log(constructorTitle, error);
+      Log(testName, constructorTitle, error);
     }
 
     done();
@@ -47,13 +39,13 @@ describe(constructorTitle, () => {
       delete this.details.location;
       const dropp = new Dropp(this.details);
       expect(dropp).not.toBeDefined();
-      log(constructorTitle, 'Should have thrown error');
+      Log(testName, constructorTitle, 'Should have thrown error');
     } catch (error) {
       expect(error.name).toBe('ModelError');
       expect(error.details.type).toBe(ModelError.type.Constructor.type);
       expect(error.details.details.invalidMembers.length).toBe(1);
       expect(error.details.details.invalidMembers[0]).toBe('location');
-      log(constructorTitle, error);
+      Log(testName, constructorTitle, error);
     }
 
     done();
@@ -64,13 +56,13 @@ describe(constructorTitle, () => {
       delete this.details.timestamp;
       const dropp = new Dropp(this.details);
       expect(dropp).not.toBeDefined();
-      log(constructorTitle, 'Should have thrown error');
+      Log(testName, constructorTitle, 'Should have thrown error');
     } catch (error) {
       expect(error.name).toBe('ModelError');
       expect(error.details.type).toBe(ModelError.type.Constructor.type);
       expect(error.details.details.invalidMembers.length).toBe(1);
       expect(error.details.details.invalidMembers[0]).toBe('timestamp');
-      log(constructorTitle, error);
+      Log(testName, constructorTitle, error);
     }
 
     done();
@@ -81,13 +73,13 @@ describe(constructorTitle, () => {
       delete this.details.username;
       const dropp = new Dropp(this.details);
       expect(dropp).not.toBeDefined();
-      log(constructorTitle, 'Should have thrown error');
+      Log(testName, constructorTitle, 'Should have thrown error');
     } catch (error) {
       expect(error.name).toBe('ModelError');
       expect(error.details.type).toBe(ModelError.type.Constructor.type);
       expect(error.details.details.invalidMembers.length).toBe(1);
       expect(error.details.details.invalidMembers[0]).toBe('username');
-      log(constructorTitle, error);
+      Log(testName, constructorTitle, error);
     }
 
     done();
@@ -98,13 +90,13 @@ describe(constructorTitle, () => {
       delete this.details.text;
       const dropp = new Dropp(this.details);
       expect(dropp).not.toBeDefined();
-      log(constructorTitle, 'Should have thrown error');
+      Log(testName, constructorTitle, 'Should have thrown error');
     } catch (error) {
       expect(error.name).toBe('ModelError');
       expect(error.details.type).toBe(ModelError.type.Constructor.type);
       expect(error.details.details.invalidMembers.length).toBe(1);
       expect(error.details.details.invalidMembers[0]).toBe('text');
-      log(constructorTitle, error);
+      Log(testName, constructorTitle, error);
     }
 
     done();
@@ -115,13 +107,13 @@ describe(constructorTitle, () => {
       delete this.details.media;
       const dropp = new Dropp(this.details);
       expect(dropp).not.toBeDefined();
-      log(constructorTitle, 'Should have thrown error');
+      Log(testName, constructorTitle, 'Should have thrown error');
     } catch (error) {
       expect(error.name).toBe('ModelError');
       expect(error.details.type).toBe(ModelError.type.Constructor.type);
       expect(error.details.details.invalidMembers.length).toBe(1);
       expect(error.details.details.invalidMembers[0]).toBe('media');
-      log(constructorTitle, error);
+      Log(testName, constructorTitle, error);
     }
 
     done();
@@ -143,8 +135,7 @@ describe(constructorTitle, () => {
     expect(responseData.text).toBe(this.details.text);
     expect(responseData.timestamp).toBe(this.details.timestamp);
     expect(responseData.username).toBe(this.details.username);
-    log(constructorTitle, dropp);
+    Log(testName, constructorTitle, dropp);
     done();
   });
 });
-/* eslint-enable no-undef */

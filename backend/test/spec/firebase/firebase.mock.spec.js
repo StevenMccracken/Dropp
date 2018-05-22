@@ -2,29 +2,21 @@ const Log = require('../../logger');
 const Utils = require('../../../src/utilities/utils');
 const MockFirebase = require('../../../src/firebase/firebase.mock');
 
-/**
- * Logs a message for the current test file
- * @param {String} _title the describe label
- * @param {String|Object} _details the log details
- */
-function log(_title, _details) {
-  Log(`Mock Firebase ${_title}`, _details);
-}
-
+const testName = 'Mock Firebase';
 const urlPartsTitle = 'URL parts';
 /* eslint-disable no-undef */
 describe(urlPartsTitle, () => {
   it('returns empty array for non-string argument', (done) => {
     const result = MockFirebase.urlParts(null);
     expect(result.length).toBe(0);
-    log(urlPartsTitle, result);
+    Log(testName, urlPartsTitle, result);
     done();
   });
 
   it('returns empty array for an empty string', (done) => {
     const result = MockFirebase.urlParts('');
     expect(result.length).toBe(0);
-    log(urlPartsTitle, result);
+    Log(testName, urlPartsTitle, result);
     done();
   });
 
@@ -33,17 +25,20 @@ describe(urlPartsTitle, () => {
     const result = MockFirebase.urlParts(url);
     expect(result.length).toBe(1);
     expect(result[0]).toBe(url);
-    log(urlPartsTitle, result);
+    Log(testName, urlPartsTitle, result);
     done();
   });
 
-  it('returns an array without an empty string as the first element when the url starts with a \'/\'', (done) => {
-    const result = MockFirebase.urlParts('/test');
-    expect(result.length).toBe(1);
-    expect(result[0]).toBe('test');
-    log(urlPartsTitle, result);
-    done();
-  });
+  it(
+    'returns an array without an empty string as the first element when the url starts with a \'/\'',
+    (done) => {
+      const result = MockFirebase.urlParts('/test');
+      expect(result.length).toBe(1);
+      expect(result[0]).toBe('test');
+      Log(testName, urlPartsTitle, result);
+      done();
+    }
+  );
 
   it('returns an array with all the correct parts', (done) => {
     const parts = [
@@ -59,7 +54,7 @@ describe(urlPartsTitle, () => {
     expect(result[1]).toBe(parts[1]);
     expect(result[2]).toBe(parts[2]);
     expect(result[3]).toBe(parts[3]);
-    log(urlPartsTitle, result);
+    Log(testName, urlPartsTitle, result);
     done();
   });
 });
@@ -76,7 +71,7 @@ describe(getTitle, () => {
   it('returns null for a null path', async (done) => {
     const result = await MockFirebase.get(null);
     expect(result.val()).toBeNull();
-    log(getTitle, result.val());
+    Log(testName, getTitle, result.val());
     done();
   });
 
@@ -84,7 +79,7 @@ describe(getTitle, () => {
     const paths = this.paths.concat([this.data, Utils.newUuid()]);
     const result = await MockFirebase.get(paths);
     expect(result.val()).toBeNull();
-    log(getTitle, result.val());
+    Log(testName, getTitle, result.val());
     done();
   });
 
@@ -97,14 +92,14 @@ describe(getTitle, () => {
 
     const result = await MockFirebase.get(paths);
     expect(result.val()).toBeNull();
-    log(getTitle, result.val());
+    Log(testName, getTitle, result.val());
     done();
   });
 
   it('returns a value for an existing path', async (done) => {
     const result = await MockFirebase.get(this.paths);
     expect(result.val()).toBe(this.data);
-    log(getTitle, result.val());
+    Log(testName, getTitle, result.val());
     done();
   });
 });
@@ -118,11 +113,8 @@ describe(pushTitle, () => {
   });
 
   afterEach(async (done) => {
-    if (this.url) {
-      await MockFirebase.remove(this.paths);
-      delete this.url;
-    }
-
+    if (Utils.hasValue(this.url)) await MockFirebase.remove(this.paths);
+    delete this.url;
     delete this.data;
     delete this.paths;
     done();
@@ -131,7 +123,7 @@ describe(pushTitle, () => {
   it('returns undefined for a non-array path argument', async (done) => {
     const result = await MockFirebase.push(null, this.data);
     expect(result).not.toBeDefined();
-    log(pushTitle, result);
+    Log(testName, pushTitle, result);
     done();
   });
 
@@ -140,7 +132,7 @@ describe(pushTitle, () => {
     expect(this.url).not.toContain('/');
     const data = await MockFirebase.get([this.url]);
     expect(data.val()).toBe(this.data);
-    log(pushTitle, this.url);
+    Log(testName, pushTitle, this.url);
     done();
   });
 
@@ -149,7 +141,7 @@ describe(pushTitle, () => {
     expect(this.url).toContain('test/test/test/');
     const data = await MockFirebase.get(this.url.split('/'));
     expect(data.val()).toBe(this.data);
-    log(pushTitle, this.url);
+    Log(testName, pushTitle, this.url);
     done();
   });
 });
@@ -168,7 +160,7 @@ describe(setTitle, () => {
   });
 
   afterEach(async (done) => {
-    if (this.deleteTestData) await MockFirebase.remove(this.paths);
+    if (this.deleteTestData === true) await MockFirebase.remove(this.paths);
     delete this.data;
     delete this.paths;
     delete this.deleteTestData;
@@ -180,7 +172,7 @@ describe(setTitle, () => {
     const result = await MockFirebase.get(this.paths);
     expect(result.val()).toBeNull();
     this.deleteTestData = false;
-    log(setTitle, result.val());
+    Log(testName, setTitle, result.val());
     done();
   });
 
@@ -188,7 +180,7 @@ describe(setTitle, () => {
     await MockFirebase.setData(this.paths, this.data);
     const result = await MockFirebase.get(this.paths);
     expect(result.val()).toBe(this.data);
-    log(setTitle, result.val());
+    Log(testName, setTitle, result.val());
     done();
   });
 
@@ -210,7 +202,7 @@ describe(setTitle, () => {
       // Verify data after update
       const newResult = await MockFirebase.get(this.paths);
       expect(newResult.val()).toBe(newData);
-      log(editDeleteSetTitle, result.val());
+      Log(testName, editDeleteSetTitle, result.val());
       done();
     });
 
@@ -224,7 +216,7 @@ describe(setTitle, () => {
       // Verify data after update
       const newResult = await MockFirebase.get(this.paths);
       expect(newResult.val()).toBeNull();
-      log(editDeleteSetTitle, result.val());
+      Log(testName, editDeleteSetTitle, result.val());
       done();
     });
   });
@@ -253,7 +245,7 @@ describe(updateTitle, () => {
   });
 
   afterEach(async (done) => {
-    if (this.deleteTestData) {
+    if (this.deleteTestData === true) {
       this.updates[this.path1.join('/')] = null;
       this.updates[this.path2.join('/')] = null;
       await MockFirebase.update(this.updates);
@@ -273,7 +265,7 @@ describe(updateTitle, () => {
     expect(result1.val()).toBeNull();
     expect(result2.val()).toBeNull();
     this.deleteTestData = false;
-    log(updateTitle);
+    Log(testName, updateTitle, { result1, result2 });
     done();
   });
 
@@ -283,7 +275,7 @@ describe(updateTitle, () => {
     const result2 = await MockFirebase.get(this.path2);
     expect(result1.val()).toBe(this.data);
     expect(result2.val()).toBe(this.data);
-    log(updateTitle);
+    Log(testName, updateTitle, { result1, result2 });
     done();
   });
 
@@ -313,7 +305,7 @@ describe(updateTitle, () => {
       expect(result3.val()).toBe(editedData);
       expect(result4.val()).toBe(editedData);
 
-      log(updateTitle, editDeleteUpdateTitle);
+      Log(testName, updateTitle, editDeleteUpdateTitle);
       done();
     });
 
@@ -336,7 +328,7 @@ describe(updateTitle, () => {
       expect(result4.val()).toBeNull();
 
       this.deleteTestData = false;
-      log(updateTitle, editDeleteUpdateTitle);
+      Log(testName, updateTitle, editDeleteUpdateTitle);
       done();
     });
   });
@@ -358,7 +350,7 @@ describe(removeTitle, () => {
   });
 
   afterEach(async (done) => {
-    if (this.deleteTestData) await MockFirebase.remove(this.paths);
+    if (this.deleteTestData === true) await MockFirebase.remove(this.paths);
     delete this.data;
     delete this.paths;
     delete this.deleteTestData;
@@ -369,7 +361,7 @@ describe(removeTitle, () => {
     await MockFirebase.remove(null);
     const result = await MockFirebase.get(this.paths);
     expect(result.val()).toBe(this.data);
-    log(removeTitle, result.val());
+    Log(testName, removeTitle, result.val());
     done();
   });
 
@@ -378,7 +370,7 @@ describe(removeTitle, () => {
     const result = await MockFirebase.get(this.paths);
     expect(result.val()).toBeNull();
     this.deleteTestData = false;
-    log(removeTitle, result.val());
+    Log(testName, removeTitle, result.val());
     done();
   });
 });
@@ -387,7 +379,6 @@ const refTitle = 'Datastore reference';
 describe(refTitle, () => {
   it('returns an object with only 5 functions', (done) => {
     const result = MockFirebase.ref();
-    expect(result).toBeDefined();
     expect(result).not.toBeNull();
     expect(Object.keys(result).length).toBe(5);
     expect(typeof result.once).toBe('function');
@@ -395,8 +386,7 @@ describe(refTitle, () => {
     expect(typeof result.set).toBe('function');
     expect(typeof result.update).toBe('function');
     expect(typeof result.remove).toBe('function');
-    log(refTitle, result);
+    Log(testName, refTitle, result);
     done();
   });
 });
-/* eslint-enable no-undef */

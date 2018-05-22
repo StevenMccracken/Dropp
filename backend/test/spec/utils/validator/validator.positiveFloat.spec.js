@@ -1,15 +1,7 @@
 const Log = require('../../../logger');
 const Validator = require('../../../../src/utilities/validator');
 
-/**
- * Logs a message for the current test file
- * @param {String} _title the describe label
- * @param {String|Object} _details the log details
- */
-function log(_title, _details) {
-  Log(`Validator ${_title}`, _details);
-}
-
+const testName = 'Validator Module';
 const isValidPositiveFloatTitle = 'isValidPositiveFloat()';
 /* eslint-disable no-undef */
 describe(isValidPositiveFloatTitle, () => {
@@ -17,7 +9,7 @@ describe(isValidPositiveFloatTitle, () => {
     const value = null;
     const result = Validator.isValidPositiveFloat(value);
     expect(result).toBe(false);
-    log(isValidPositiveFloatTitle, `${value} returns ${result}`);
+    Log(testName, isValidPositiveFloatTitle, `${value} returns ${result}`);
     done();
   });
 
@@ -25,7 +17,7 @@ describe(isValidPositiveFloatTitle, () => {
     const value = undefined;
     const result = Validator.isValidPositiveFloat(value);
     expect(result).toBe(false);
-    log(isValidPositiveFloatTitle, `${value} returns ${result}`);
+    Log(testName, isValidPositiveFloatTitle, `${value} returns ${result}`);
     done();
   });
 
@@ -33,7 +25,7 @@ describe(isValidPositiveFloatTitle, () => {
     const value = [];
     const result = Validator.isValidPositiveFloat(value);
     expect(result).toBe(false);
-    log(isValidPositiveFloatTitle, `${value} returns ${result}`);
+    Log(testName, isValidPositiveFloatTitle, `${value} returns ${result}`);
     done();
   });
 
@@ -41,7 +33,7 @@ describe(isValidPositiveFloatTitle, () => {
     const value = {};
     const result = Validator.isValidPositiveFloat(value);
     expect(result).toBe(false);
-    log(isValidPositiveFloatTitle, `${value} returns ${result}`);
+    Log(testName, isValidPositiveFloatTitle, `${value} returns ${result}`);
     done();
   });
 
@@ -49,7 +41,7 @@ describe(isValidPositiveFloatTitle, () => {
     const value = function value() {};
     const result = Validator.isValidPositiveFloat(value);
     expect(result).toBe(false);
-    log(isValidPositiveFloatTitle, `${value} returns ${result}`);
+    Log(testName, isValidPositiveFloatTitle, `${value} returns ${result}`);
     done();
   });
 
@@ -57,7 +49,7 @@ describe(isValidPositiveFloatTitle, () => {
     const value = false;
     const result = Validator.isValidPositiveFloat(value);
     expect(result).toBe(false);
-    log(isValidPositiveFloatTitle, `${value} returns ${result}`);
+    Log(testName, isValidPositiveFloatTitle, `${value} returns ${result}`);
     done();
   });
 
@@ -65,7 +57,7 @@ describe(isValidPositiveFloatTitle, () => {
     const value = true;
     const result = Validator.isValidPositiveFloat(value);
     expect(result).toBe(false);
-    log(isValidPositiveFloatTitle, `${value} returns ${result}`);
+    Log(testName, isValidPositiveFloatTitle, `${value} returns ${result}`);
     done();
   });
 
@@ -73,7 +65,7 @@ describe(isValidPositiveFloatTitle, () => {
     const value = '';
     const result = Validator.isValidPositiveFloat(value);
     expect(result).toBe(false);
-    log(isValidPositiveFloatTitle, `${value} returns ${result}`);
+    Log(testName, isValidPositiveFloatTitle, `${value} returns ${result}`);
     done();
   });
 
@@ -81,7 +73,7 @@ describe(isValidPositiveFloatTitle, () => {
     const value = 'hey';
     const result = Validator.isValidPositiveFloat(value);
     expect(result).toBe(false);
-    log(isValidPositiveFloatTitle, `${value} returns ${result}`);
+    Log(testName, isValidPositiveFloatTitle, `${value} returns ${result}`);
     done();
   });
 
@@ -89,7 +81,7 @@ describe(isValidPositiveFloatTitle, () => {
     const value = '1';
     const result = Validator.isValidPositiveFloat(value);
     expect(result).toBe(false);
-    log(isValidPositiveFloatTitle, `${value} returns ${result}`);
+    Log(testName, isValidPositiveFloatTitle, `${value} returns ${result}`);
     done();
   });
 
@@ -97,7 +89,7 @@ describe(isValidPositiveFloatTitle, () => {
     const value = '1.0';
     const result = Validator.isValidPositiveFloat(value);
     expect(result).toBe(false);
-    log(isValidPositiveFloatTitle, `${value} returns ${result}`);
+    Log(testName, isValidPositiveFloatTitle, `${value} returns ${result}`);
     done();
   });
 
@@ -105,7 +97,7 @@ describe(isValidPositiveFloatTitle, () => {
     const value = -1;
     const result = Validator.isValidPositiveFloat(value);
     expect(result).toBe(false);
-    log(isValidPositiveFloatTitle, `${value} returns ${result}`);
+    Log(testName, isValidPositiveFloatTitle, `${value} returns ${result}`);
     done();
   });
 
@@ -113,7 +105,7 @@ describe(isValidPositiveFloatTitle, () => {
     const value = -0.1;
     const result = Validator.isValidPositiveFloat(value);
     expect(result).toBe(false);
-    log(isValidPositiveFloatTitle, `${value} returns ${result}`);
+    Log(testName, isValidPositiveFloatTitle, `${value} returns ${result}`);
     done();
   });
 
@@ -121,7 +113,7 @@ describe(isValidPositiveFloatTitle, () => {
     const value = 1.1;
     const result = Validator.isValidPositiveFloat(value);
     expect(result).toBe(true);
-    log(isValidPositiveFloatTitle, `${value} returns ${result}`);
+    Log(testName, isValidPositiveFloatTitle, `${value} returns ${result}`);
     done();
   });
 
@@ -129,7 +121,7 @@ describe(isValidPositiveFloatTitle, () => {
     const value = 0;
     const result = Validator.isValidPositiveFloat(value);
     expect(result).toBe(false);
-    log(isValidPositiveFloatTitle, `${value} returns ${result}`);
+    Log(testName, isValidPositiveFloatTitle, `${value} returns ${result}`);
     done();
   });
 
@@ -137,8 +129,7 @@ describe(isValidPositiveFloatTitle, () => {
     const value = 0.1;
     const result = Validator.isValidPositiveFloat(value);
     expect(result).toBe(true);
-    log(isValidPositiveFloatTitle, `${value} returns ${result}`);
+    Log(testName, isValidPositiveFloatTitle, `${value} returns ${result}`);
     done();
   });
 });
-/* eslint-enable no-undef */
