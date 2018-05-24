@@ -4,7 +4,6 @@
 
 const Uuid = require('uuid/v4');
 const Moment = require('moment');
-const Validator = require('./validator');
 
 const unixEndTimeSeconds = 2147471999;
 const unixEndTimeMilliseconds = unixEndTimeSeconds * 1000;
@@ -83,7 +82,13 @@ const reduceToString = function reduceToString(_args) {
  * @return {Number} `degrees` in radians
  */
 const degreesToRadians = function degreesToRadians(_degrees) {
-  const degrees = Validator.isValidNumber(_degrees) ? _degrees : 0;
+  let degrees;
+  /* eslint-disable no-restricted-globals */
+  if (typeof _degrees === 'number' && !isNaN(parseFloat(_degrees)) && isFinite(_degrees))  {
+    /* eslint-enable no-restricted-globals */
+    degrees = _degrees;
+  } else degrees = 0;
+
   return degrees * (Math.PI / 180);
 };
 

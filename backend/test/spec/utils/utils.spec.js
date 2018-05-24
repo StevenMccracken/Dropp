@@ -224,6 +224,13 @@ describe(getRequestIdTitle, () => {
 
 const reduceToStringTitle = 'reduceToString function';
 describe(reduceToStringTitle, () => {
+  it('returns a string with a null argument', (done) => {
+    const message = Utils.reduceToString(null);
+    expect(message).toBe('');
+    Log(testName, reduceToStringTitle, message);
+    done();
+  });
+
   it('returns a string with one argument', (done) => {
     const message = Utils.reduceToString([4]);
     expect(message).toBe('4');
@@ -275,7 +282,7 @@ describe(degreesToRadiansTitle, () => {
 
   it('returns a valid number of radians for a valid number of degrees', () => {
     const result = Utils.degreesToRadians(1);
-    expect(result).toBe(0.01745329252);
+    expect(result).toBe(0.017453292519943295);
     Log(testName, degreesToRadiansTitle, result);
   });
 });
