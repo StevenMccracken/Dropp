@@ -227,28 +227,55 @@ describe(reduceToStringTitle, () => {
   it('returns a string with one argument', (done) => {
     const message = Utils.reduceToString([4]);
     expect(message).toBe('4');
-    Log(reduceToStringTitle, reduceToStringTitle, message);
+    Log(testName, reduceToStringTitle, message);
     done();
   });
 
   it('returns a string with multiple arguments', (done) => {
     const message = Utils.reduceToString([4, 'test']);
     expect(message).toBe('4,"test"');
-    Log(reduceToStringTitle, reduceToStringTitle, message);
+    Log(testName, reduceToStringTitle, message);
     done();
   });
 
   it('returns a string with an invalid argument', (done) => {
     const message = Utils.reduceToString([null]);
     expect(message).toBeNull();
-    Log(reduceToStringTitle, reduceToStringTitle, message);
+    Log(testName, reduceToStringTitle, message);
     done();
   });
 
   it('returns a string with multiple invalid arguments', (done) => {
     const message = Utils.reduceToString([null, undefined]);
     expect(message).toBe('null,undefined');
-    Log(reduceToStringTitle, reduceToStringTitle, message);
+    Log(testName, reduceToStringTitle, message);
     done();
+  });
+});
+
+const degreesToRadiansTitle = 'degreesToRadians function';
+describe(degreesToRadiansTitle, () => {
+  it('returns 0 for a null argument', () => {
+    const result = Utils.degreesToRadians(null);
+    expect(result).toBe(0);
+    Log(testName, degreesToRadiansTitle, result);
+  });
+
+  it('returns 0 for a non-numeric argument', () => {
+    const result = Utils.degreesToRadians('test');
+    expect(result).toBe(0);
+    Log(testName, degreesToRadiansTitle, result);
+  });
+
+  it('returns 0 for a non-zero number string', () => {
+    const result = Utils.degreesToRadians('4.4');
+    expect(result).toBe(0);
+    Log(testName, degreesToRadiansTitle, result);
+  });
+
+  it('returns a valid number of radians for a valid number of degrees', () => {
+    const result = Utils.degreesToRadians(1);
+    expect(result).toBe(0.01745329252);
+    Log(testName, degreesToRadiansTitle, result);
   });
 });

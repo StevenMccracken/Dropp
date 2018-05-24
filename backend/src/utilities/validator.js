@@ -59,6 +59,17 @@ const validateLocation = function validateLocation(_location) {
 };
 
 /**
+ * Validates a given number
+ * @param {Number} _number the number to validate
+ * @return {Boolean} whether the number is valid or not
+ */
+const validateNumber = function validateNumber(_number) {
+  /* eslint-disable no-restricted-globals */
+  return typeof _number === 'number' && !isNaN(parseFloat(_number)) && isFinite(_number);
+  /* eslint-enable no-restricted-globals */
+};
+
+/**
  * Validates a given integer
  * @param {Number} _integer the integer to validate
  * @return {Boolean} whether or not the integer is valid
@@ -119,6 +130,7 @@ const validateBoolean = function validateBoolean(_boolean) {
 
 module.exports = {
   isValidEmail: validateEmail,
+  isValidNumber: validateNumber,
   isValidInteger: validateInteger,
   isValidTextPost: validateTextPost,
   isValidUsername: validateUsername,

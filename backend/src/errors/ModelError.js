@@ -57,12 +57,20 @@ class ModelError extends Error {
 
     this.throw(this.type.Constructor, _source, details);
   }
+
+  static throwTypeMismatchError(_model) {
+    this.throw(this.type.TypeMismatch, _model);
+  }
 }
 
 ModelError.type = {
   Constructor: {
     type: 'constructor',
     message: 'Invalid data given to the constructor',
+  },
+  TypeMismatch: {
+    type: 'type_mismatch',
+    message: 'Given model was not of the expected type',
   },
   Unknown: {
     type: 'unknown',

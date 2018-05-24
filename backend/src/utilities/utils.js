@@ -4,6 +4,7 @@
 
 const Uuid = require('uuid/v4');
 const Moment = require('moment');
+const Validator = require('./validator');
 
 const unixEndTimeSeconds = 2147471999;
 const unixEndTimeMilliseconds = unixEndTimeSeconds * 1000;
@@ -75,6 +76,18 @@ const reduceToString = function reduceToString(_args) {
   }, '');
 };
 
+/**
+ * Converts a given measure of degrees to radians
+ * @param {Number} _degrees degrees to convert.
+ * Defaults to 0 if `degrees` is not numeric
+ * @return {Number} `degrees` in radians
+ */
+const degreesToRadians = function degreesToRadians(_degrees) {
+  const degrees = Validator.isValidNumber(_degrees) ? _degrees : 0;
+  return degrees * (Math.PI / 180);
+};
+
+
 module.exports = {
   Moment,
   stepper,
@@ -83,6 +96,7 @@ module.exports = {
   getIpAddress,
   getRequestId,
   reduceToString,
+  degreesToRadians,
   unixEndTimeSeconds,
   unixEndTimeMilliseconds,
 };
