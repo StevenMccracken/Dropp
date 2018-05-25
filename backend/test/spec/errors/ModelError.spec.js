@@ -127,3 +127,22 @@ describe(throwInvalidMembersErrorTitle, () => {
     done();
   });
 });
+
+const throwTypeMismatchErrorTitle = 'Throw Type Mismatch error';
+describe(throwTypeMismatchErrorTitle, () => {
+  it('throws a model error of type Type Mismatch', (done) => {
+    try {
+      ModelError.throwTypeMismatchError('test');
+      expect(false).toBe(true);
+      Log(testName, throwTypeMismatchErrorTitle, 'Should have thrown error');
+    } catch (error) {
+      expect(error.name).toBe('ModelError');
+      expect(error.details.source).toBe('test');
+      expect(error.details.details).not.toBeDefined();
+      expect(error.details.type).toBe(ModelError.type.TypeMismatch.type);
+      Log(testName, throwTypeMismatchErrorTitle, error);
+    }
+
+    done();
+  });
+});

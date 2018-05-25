@@ -285,4 +285,10 @@ describe(degreesToRadiansTitle, () => {
     expect(result).toBe(0.017453292519943295);
     Log(testName, degreesToRadiansTitle, result);
   });
+
+  it('returns a valid number of radians for another valid number of degrees', () => {
+    const result = Utils.degreesToRadians(49.267804550637528394);
+    expect(result).toBe(0.8598854046376703);
+    Log(testName, degreesToRadiansTitle, result);
+  });
 });
