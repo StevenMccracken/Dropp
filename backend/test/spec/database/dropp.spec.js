@@ -1,6 +1,7 @@
 const Log = require('../../logger');
 const Dropp = require('../../../src/models/Dropp');
 const Utils = require('../../../src/utilities/utils');
+const Location = require('../../../src/models/Location');
 const Firebase = require('../../../src/firebase/firebase');
 const DroppError = require('../../../src/errors/DroppError');
 const DroppAccessor = require('../../../src/database/dropp');
@@ -11,8 +12,13 @@ const getDroppTitle = 'Get dropp';
 /* eslint-disable no-undef */
 describe(getDroppTitle, () => {
   beforeEach(async (done) => {
+    this.location = new Location({
+      latitude: 0,
+      longitude: 0,
+    });
+
     this.testDropp = new Dropp({
-      location: '0,0',
+      location: this.location,
       media: 'false',
       text: 'test',
       timestamp: 1,
@@ -25,6 +31,7 @@ describe(getDroppTitle, () => {
 
   afterEach(async (done) => {
     await DroppAccessor.remove(this.testDropp);
+    delete this.location;
     delete this.testDropp;
     done();
   });
@@ -64,7 +71,8 @@ describe(getDroppTitle, () => {
     expect(dropp.id).toBe(this.testDropp.id);
     expect(dropp.text).toBe(this.testDropp.text);
     expect(dropp.media).toBe(this.testDropp.media);
-    expect(dropp.location).toBe(this.testDropp.location);
+    expect(dropp.location.latitude).toBe(this.testDropp.location.latitude);
+    expect(dropp.location.longitude).toBe(this.testDropp.location.longitude);
     expect(dropp.username).toBe(this.testDropp.username);
     expect(dropp.timestamp).toBe(this.testDropp.timestamp);
     Log(testName, getDroppTitle, dropp);
@@ -75,8 +83,13 @@ describe(getDroppTitle, () => {
 const getAllDroppsTitle = 'Get all dropps';
 describe(getAllDroppsTitle, () => {
   beforeEach(async (done) => {
+    this.location = new Location({
+      latitude: 0,
+      longitude: 0,
+    });
+
     this.testDropp = new Dropp({
-      location: '0,0',
+      location: this.location,
       media: 'false',
       text: 'test',
       timestamp: 1,
@@ -89,6 +102,7 @@ describe(getAllDroppsTitle, () => {
 
   afterEach(async (done) => {
     await DroppAccessor.remove(this.testDropp);
+    delete this.location;
     delete this.testDropp;
     done();
   });
@@ -111,8 +125,13 @@ describe(getAllDroppsTitle, () => {
 const createDroppTitle = 'Create dropp';
 describe(createDroppTitle, () => {
   beforeEach(() => {
+    this.location = new Location({
+      latitude: 0,
+      longitude: 0,
+    });
+
     this.testDropp = new Dropp({
-      location: '0,0',
+      location: this.location,
       media: 'false',
       text: 'test',
       timestamp: 1,
@@ -121,6 +140,7 @@ describe(createDroppTitle, () => {
   });
 
   afterEach(() => {
+    delete this.location;
     delete this.testDropp;
   });
 
@@ -232,8 +252,13 @@ describe(createDroppTitle, () => {
 const updateDroppTitle = 'Update dropp';
 describe(updateDroppTitle, () => {
   beforeEach(async (done) => {
+    this.location = new Location({
+      latitude: 0,
+      longitude: 0,
+    });
+
     this.testDropp = new Dropp({
-      location: '0,0',
+      location: this.location,
       media: 'false',
       text: 'test',
       timestamp: 1,
@@ -246,6 +271,7 @@ describe(updateDroppTitle, () => {
 
   afterEach(async (done) => {
     await DroppAccessor.remove(this.testDropp);
+    delete this.location;
     delete this.testDropp;
     done();
   });
@@ -292,8 +318,13 @@ describe(updateDroppTitle, () => {
 const removeDroppTitle = 'Remove dropp';
 describe(removeDroppTitle, () => {
   beforeEach(async (done) => {
+    this.location = new Location({
+      latitude: 0,
+      longitude: 0,
+    });
+
     this.testDropp = new Dropp({
-      location: '0,0',
+      location: this.location,
       media: 'false',
       text: 'test',
       timestamp: 1,
@@ -306,6 +337,7 @@ describe(removeDroppTitle, () => {
 
   afterEach(async (done) => {
     if (Utils.hasValue(this.testDropp)) await DroppAccessor.remove(this.testDropp);
+    delete this.location;
     delete this.testDropp;
     done();
   });
@@ -337,8 +369,13 @@ describe(removeDroppTitle, () => {
 const bulkRemoveTitle = 'Bulk remove dropps';
 describe(bulkRemoveTitle, () => {
   beforeEach(async (done) => {
+    this.location = new Location({
+      latitude: 0,
+      longitude: 0,
+    });
+
     this.testDropp1 = new Dropp({
-      location: '0,0',
+      location: this.location,
       media: 'false',
       text: 'test',
       timestamp: 1,
@@ -346,7 +383,7 @@ describe(bulkRemoveTitle, () => {
     });
 
     this.testDropp2 = new Dropp({
-      location: '0,0',
+      location: this.location,
       media: 'false',
       text: 'test',
       timestamp: 1,
@@ -361,6 +398,7 @@ describe(bulkRemoveTitle, () => {
   afterEach(async (done) => {
     if (Utils.hasValue(this.testDropp1)) await DroppAccessor.remove(this.testDropp1);
     if (Utils.hasValue(this.testDropp2)) await DroppAccessor.remove(this.testDropp2);
+    delete this.location;
     delete this.testDropp1;
     delete this.testDropp2;
     done();

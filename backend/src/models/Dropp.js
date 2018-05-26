@@ -1,3 +1,4 @@
+const Location = require('./Location');
 const Utils = require('../utilities/utils');
 const ModelError = require('../errors/ModelError');
 const Validator = require('../utilities/validator');
@@ -14,7 +15,7 @@ class Dropp extends Object {
     }
 
     const invalidMembers = [];
-    if (!Validator.isValidLocation(_details.location)) invalidMembers.push('location');
+    if (!(_details.location instanceof Location)) invalidMembers.push('location');
     if (!Validator.isValidTimestamp(_details.timestamp)) invalidMembers.push('timestamp');
     if (!Validator.isValidUsername(_details.username)) invalidMembers.push('username');
     if (!Validator.isValidTextPost(_details.text)) invalidMembers.push('text');

@@ -1,5 +1,6 @@
 const Log = require('../../logger');
 const Dropp = require('../../../src/models/Dropp');
+const Location = require('../../../src/models/Location');
 const ModelError = require('../../../src/errors/ModelError');
 
 const testName = 'Dropp Model';
@@ -7,8 +8,13 @@ const constructorTitle = 'Constructor';
 /* eslint-disable no-undef */
 describe(constructorTitle, () => {
   beforeEach(() => {
+    this.location = new Location({
+      latitude: 0,
+      longitude: 0,
+    });
+
     this.details = {
-      location: '0,0',
+      location: this.location,
       timestamp: 1,
       username: 'test',
       text: 'test',
@@ -18,6 +24,7 @@ describe(constructorTitle, () => {
 
   afterEach(() => {
     delete this.details;
+    delete this.location;
   });
 
   it('throws an error for an invalid details object', (done) => {
@@ -122,7 +129,8 @@ describe(constructorTitle, () => {
   it('creates a dropp object with the given details', (done) => {
     const dropp = new Dropp(this.details);
     expect(dropp.id).not.toBeDefined();
-    expect(dropp.location).toBe(this.details.location);
+    expect(dropp.location.latitude).toBe(this.details.location.latitude);
+    expect(dropp.location.longitude).toBe(this.details.location.longitude);
     expect(dropp.media).toBe(this.details.media);
     expect(dropp.text).toBe(this.details.text);
     expect(dropp.timestamp).toBe(this.details.timestamp);
@@ -130,7 +138,8 @@ describe(constructorTitle, () => {
 
     const responseData = dropp.databaseData;
     expect(responseData.id).not.toBeDefined();
-    expect(responseData.location).toBe(this.details.location);
+    expect(responseData.location.latitude).toBe(this.details.location.latitude);
+    expect(responseData.location.longitude).toBe(this.details.location.longitude);
     expect(responseData.media).toBe(this.details.media);
     expect(responseData.text).toBe(this.details.text);
     expect(responseData.timestamp).toBe(this.details.timestamp);

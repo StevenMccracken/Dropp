@@ -5,6 +5,7 @@
 const Log = require('../logging/logger');
 const Dropp = require('../models/Dropp');
 const Utils = require('../utilities/utils');
+const Location = require('../models/Location');
 const Firebase = require('../firebase/firebase');
 const DroppError = require('../errors/DroppError');
 const Validator = require('../utilities/validator');
@@ -76,7 +77,7 @@ const add = async function add(_dropp) {
   const invalidMembers = [];
   if (!Validator.isValidTextPost(_dropp.text)) invalidMembers.push('text');
   if (!Validator.isValidBooleanString(_dropp.media)) invalidMembers.push('media');
-  if (!Validator.isValidLocation(_dropp.location)) invalidMembers.push('location');
+  if (!(_dropp.location instanceof Location)) invalidMembers.push('location');
   if (!Validator.isValidUsername(_dropp.username)) invalidMembers.push('username');
   if (!Validator.isValidTimestamp(_dropp.timestamp)) invalidMembers.push('timestamp');
   if (invalidMembers.length > 0) DroppError.throwInvalidRequestError(source, invalidMembers);

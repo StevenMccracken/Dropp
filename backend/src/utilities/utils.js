@@ -84,7 +84,7 @@ const reduceToString = function reduceToString(_args) {
 const degreesToRadians = function degreesToRadians(_degrees) {
   let degrees;
   /* eslint-disable no-restricted-globals */
-  if (typeof _degrees === 'number' && !isNaN(parseFloat(_degrees)) && isFinite(_degrees))  {
+  if (typeof _degrees === 'number' && !isNaN(parseFloat(_degrees)) && isFinite(_degrees)) {
     /* eslint-enable no-restricted-globals */
     degrees = _degrees;
   } else degrees = 0;
