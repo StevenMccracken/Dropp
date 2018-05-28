@@ -39,7 +39,7 @@ const get = async function get(_id) {
 
 /**
  * Gets all the dropps from the database
- * @return {Array} list of dropps
+ * @return {[Dropp]} list of dropps
  * @throws {DroppError|Error}
  */
 const getAll = async function getAll() {
