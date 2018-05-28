@@ -86,6 +86,17 @@ class Dropp extends Object {
       timestamp: this._timestamp,
     };
   }
+
+  get publicData() {
+    return {
+      id: this._id,
+      text: this._text,
+      media: this._media,
+      location: this._location,
+      username: this._username,
+      timestamp: this._timestamp,
+    };
+  }
 }
 
 module.exports = Dropp;

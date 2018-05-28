@@ -144,6 +144,15 @@ describe(constructorTitle, () => {
     expect(responseData.text).toBe(this.details.text);
     expect(responseData.timestamp).toBe(this.details.timestamp);
     expect(responseData.username).toBe(this.details.username);
+
+    const data = dropp.publicData;
+    expect(data.id).toBe(this.details.id);
+    expect(data.location.latitude).toBe(this.details.location.latitude);
+    expect(data.location.longitude).toBe(this.details.location.longitude);
+    expect(data.media).toBe(this.details.media);
+    expect(data.text).toBe(this.details.text);
+    expect(data.timestamp).toBe(this.details.timestamp);
+    expect(data.username).toBe(this.details.username);
     Log(testName, constructorTitle, dropp);
     done();
   });

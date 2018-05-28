@@ -9,7 +9,7 @@ const UserMiddleware = require('../../../src/middleware/user');
 const testName = 'User Middleware';
 Firebase.start(process.env.MOCK === '1');
 /* eslint-disable no-undef */
-describe('User Middleware Tests', () => {
+describe(testName, () => {
   const uuid = Utils.newUuid();
   this.testUserData = {
     username: uuid,
