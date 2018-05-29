@@ -15,6 +15,23 @@ const Validator = require('../utilities/validator');
 const moduleName = 'Dropp Middleware';
 
 /**
+ * Retrieves all dropps and returns a given filtered result
+ * @param {Function} filter the criteria used for filtering all dropps on
+ * @return {Object} JSON containing the count of the filtered
+ * dropps, and a list of the public data of each dropp
+ */
+const filterAllDropps = async function filterAllDropps(filter) {
+  const dropps = await DroppAccessor.getAll();
+  const filteredDropps = dropps.filter(filter);
+  const result = {
+    count: filteredDropps.length,
+    dropps: filteredDropps.map(dropp => dropp.publicData),
+  };
+
+  return result;
+};
+
+/**
  * Retrieves a dropp by it's ID
  * @param {User} _currentUser the current user for the request
  * @param {Object} _details the information to get the dropp
@@ -68,18 +85,57 @@ const getByUser = async function getByUser(_currentUser, _details) {
     DroppError.throwResourceError(source, 'You must follow that user see their dropps');
   }
 
-  const dropps = await DroppAccessor.getAll();
-  const filteredDropps = dropps.filter(dropp => dropp.username === details.username);
-  const result = {
-    count: filteredDropps.length,
-    dropps: filteredDropps.map(dropp => dropp.publicData),
-  };
-
+  const result = await filterAllDropps(dropp => dropp.username === details.username);
   return result;
 };
 
+/**
+* Retrieves dropps created by a user's follows
+* @param {User} _currentUser the current user for the request
+* @param {Object} _details the information
+* containing the user's dropps to retrieve
+* @return {Object} count of dropps retrieved, and a list of those dropps
+ */
+const getByFollows = async function getByFollows(_currentUser, _details) {
+  const source = 'getByFollows()';
+  Log.log(moduleName, source, _currentUser, _details);
+
+  if (!(_currentUser instanceof User)) {
+    DroppError.throwServerError(source, null, 'Object is not a User');
+  }
+
+  const details = Utils.hasValue(_details) ? _details : {};
+  if (!Validator.isValidUsername(details.username)) {
+    DroppError.throwInvalidRequestError(source, 'username');
+  }
+
+  if (_currentUser.username !== details.username) {
+    DroppError.throwResourceError(source, 'Unauthorized to access that user\'s follows');
+  }
+
+  const user = await UserAccessor.get(details.username);
+  if (!Utils.hasValue(user)) {
+    DroppError.throwServerError(
+      source,
+      null,
+      `Current user was valid, but retrieved user was ${user}`
+    );
+  }
+
+  // Iterate through follows add them to a set to save time when iterating
+  // over each dropp to determine if it's posted by the current user's follow
+  const followsDictionary = {};
+  user.follows.forEach((follow) => {
+    followsDictionary[follow] = follow;
+  });
+
+  const result = await filterAllDropps(dropp => Utils.hasValue(followsDictionary[dropp.username]));
+  return result;
+};
 
 module.exports = {
   get,
   getByUser,
+  getByFollows,
+  filter: filterAllDropps,
 };
