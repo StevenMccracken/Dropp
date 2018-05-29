@@ -596,13 +596,54 @@ describe(testName, () => {
       done();
     });
 
-    it('creates a dropp and returns an ID', async (done) => {
-      const result = await DroppMiddleware.create(this.user, this.droppInfo);
-      expect(result.success.message).toBe('Successful dropp creation');
-      expect(typeof result.success.droppId).toBe('string');
-      expect(result.success.droppId.length > 0).toBe(true);
-      Log(testName, createDroppTitle, result);
+    it('throws an error for no media and empty text', async (done) => {
+      this.droppInfo.text = '';
+      try {
+        const result = await DroppMiddleware.create(this.user, this.droppInfo);
+        expect(result).not.toBeDefined();
+        Log(testName, createDroppTitle, 'Should have thrown error');
+      } catch (error) {
+        expect(error.name).toBe('DroppError');
+        expect(error.details.error.type).toBe(DroppError.type.Resource.type);
+        expect(error.details.error.message).toBe('This dropp must contain non-empty text');
+        Log(testName, createDroppTitle, error.details);
+      }
+
       done();
+    });
+
+    const createDroppSuccessTitle = 'Create dropp success';
+    describe(createDroppSuccessTitle, () => {
+      afterEach(async (done) => {
+        await DroppAccessor.remove(this.dropp);
+        delete this.dropp;
+        done();
+      });
+
+      it('creates a dropp and returns an ID', async (done) => {
+        const result = await DroppMiddleware.create(this.user, this.droppInfo);
+        expect(result.success.message).toBe('Successful dropp creation');
+        expect(typeof result.success.droppId).toBe('string');
+        expect(result.success.droppId.length > 0).toBe(true);
+        this.dropp = await DroppAccessor.get(result.success.droppId);
+        expect(this.dropp.id).toBe(result.success.droppId);
+        Log(testName, createDroppSuccessTitle, result);
+        done();
+      });
+
+      it('creates a dropp with media and no text', async (done) => {
+        this.droppInfo.text = '\t';
+        this.droppInfo.media = 'true';
+        const result = await DroppMiddleware.create(this.user, this.droppInfo);
+        expect(result.success.message).toBe('Successful dropp creation');
+        expect(typeof result.success.droppId).toBe('string');
+        expect(result.success.droppId.length > 0).toBe(true);
+        this.dropp = await DroppAccessor.get(result.success.droppId);
+        expect(this.dropp.id).toBe(result.success.droppId);
+        expect(this.dropp.text).toBe('');
+        Log(testName, createDroppSuccessTitle, result);
+        done();
+      });
     });
   });
 });

@@ -130,7 +130,7 @@ const remove = async function remove(_dropp) {
 
 /**
  * Deletes dropps from the database in bulk
- * @param {Array} _dropps the dropps to delete
+ * @param {[Dropp]} _dropps the dropps to delete
  * @throws {DroppError|Error}
  */
 const bulkRemove = async function bulkRemove(_dropps) {

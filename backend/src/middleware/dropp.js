@@ -135,7 +135,7 @@ const getByFollows = async function getByFollows(_currentUser, _details) {
 };
 
 /**
- * Retrieves dropps created near a given location
+ * Retrieves dropps created within a 1000 meter radius of a given location
  * @param {User} _currentUser the current user for the request
  * @param {Object} _details the information
  * containing the location to search around
@@ -190,9 +190,12 @@ const create = async function create(_currentUser, _details) {
     if (!Validator.isValidNumber(details.location.longitude)) invalidMembers.push('longitude');
   } else invalidMembers.push('location');
   if (invalidMembers.length > 0) DroppError.throwInvalidRequestError(source, invalidMembers);
+  if (details.media === 'false' && details.text.toString().trim().length === 0) {
+    DroppError.throwResourceError(source, 'This dropp must contain non-empty text');
+  }
 
   const droppInfo = {
-    text: details.text,
+    text: details.text.toString().trim(),
     media: details.media,
     username: details.username,
     timestamp: details.timestamp,

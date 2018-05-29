@@ -105,8 +105,7 @@ const validatePositiveFloat = function validatePositiveFloat(_float) {
  * @return {Boolean} whether the text post is valid or not
  */
 const validateTextPost = function validateTextPost(_text) {
-  if (!Utils.hasValue(_text) || typeof _text !== 'string') return false;
-  return _text.toString().trim().length !== 0;
+  return Utils.hasValue(_text) && typeof _text === 'string';
 };
 
 /**
