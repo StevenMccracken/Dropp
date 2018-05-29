@@ -23,7 +23,7 @@ class Location extends Object {
     /**
      * Returns the straight-path distance from this location to a given location
      * @param {Location} _location the location to get the distance from
-     * @return {Number} distance between the two locations
+     * @return {Number} distance between the two locations in meters
      * @throws `ModelError` if `_location` is not of the correct type
      */
     this.distance = (_location) => {

@@ -6,13 +6,14 @@ const User = require('../models/User');
 const Log = require('../logging/logger');
 // const Dropp = require('../models/Dropp');
 const Utils = require('../utilities/utils');
-// const Location = require('../models/Location');
+const Location = require('../models/Location');
 const UserAccessor = require('../database/user');
 const DroppError = require('../errors/DroppError');
 const DroppAccessor = require('../database/dropp');
 const Validator = require('../utilities/validator');
 
 const moduleName = 'Dropp Middleware';
+const maxDistanceMeters = 1000;
 
 /**
  * Retrieves all dropps and returns a given filtered result
@@ -90,11 +91,11 @@ const getByUser = async function getByUser(_currentUser, _details) {
 };
 
 /**
-* Retrieves dropps created by a user's follows
-* @param {User} _currentUser the current user for the request
-* @param {Object} _details the information
-* containing the user's dropps to retrieve
-* @return {Object} count of dropps retrieved, and a list of those dropps
+ * Retrieves dropps created by a user's follows
+ * @param {User} _currentUser the current user for the request
+ * @param {Object} _details the information
+ * containing the user's dropps to retrieve
+ * @return {Object} count of dropps retrieved, and a list of those dropps
  */
 const getByFollows = async function getByFollows(_currentUser, _details) {
   const source = 'getByFollows()';
@@ -133,9 +134,42 @@ const getByFollows = async function getByFollows(_currentUser, _details) {
   return result;
 };
 
+/**
+ * Retrieves dropps created near a given location
+ * @param {User} _currentUser the current user for the request
+ * @param {Object} _details the information
+ * containing the location to search around
+ * @return {Object} count of dropps retrieved, and a list of those dropps
+ */
+const getByLocation = async function getByLocation(_currentUser, _details) {
+  const source = 'getByLocation()';
+  Log.log(moduleName, source, _currentUser, _details);
+
+  if (!(_currentUser instanceof User)) {
+    DroppError.throwServerError(source, null, 'Object is not a User');
+  }
+
+  const details = Utils.hasValue(_details) ? _details : {};
+  if (!Validator.isValidLocation(`${details.latitude},${details.longitude}`)) {
+    DroppError.throwInvalidRequestError(source, 'latitude,longitude');
+  }
+
+  const coordinates = {
+    latitude: parseFloat(details.latitude),
+    longitude: parseFloat(details.longitude),
+  };
+
+  const location = new Location(coordinates);
+  const result = await filterAllDropps(dropp =>
+    location.distance(dropp.location) <= maxDistanceMeters);
+  return result;
+};
+
 module.exports = {
   get,
   getByUser,
   getByFollows,
+  getByLocation,
+  maxDistanceMeters,
   filter: filterAllDropps,
 };

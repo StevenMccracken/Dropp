@@ -422,4 +422,111 @@ describe(testName, () => {
       done();
     });
   });
+
+  const getByLocationTitle = 'Get dropps by location';
+  describe(getByLocationTitle, () => {
+    beforeEach(async (done) => {
+      const coordinate = Math.random() * 100;
+      this.location = new Location({
+        latitude: coordinate,
+        longitude: coordinate,
+      });
+
+      this.dropp1 = new Dropp({
+        location: this.location,
+        media: 'false',
+        text: 'test',
+        timestamp: 1,
+        username: this.user.username,
+      });
+
+      await DroppAccessor.add(this.dropp1);
+      done();
+    });
+
+    afterEach(async (done) => {
+      await DroppAccessor.remove(this.dropp1);
+      delete this.dropp1;
+      delete this.location;
+      done();
+    });
+
+    it('throws an error for an invalid current user', async (done) => {
+      try {
+        const result = await DroppMiddleware.getByLocation(null, this.location.databaseData);
+        expect(result).not.toBeDefined();
+        Log(testName, getByLocationTitle, 'Should have thrown error');
+      } catch (error) {
+        expect(error.name).toBe('DroppError');
+        expect(error.details.error.type).toBe(DroppError.type.Server.type);
+        expect(error.details.error.message).toBe(DroppError.type.Server.message);
+        Log(testName, getByLocationTitle, error.details);
+      }
+
+      done();
+    });
+
+    it('throws an error for null details', async (done) => {
+      try {
+        const result = await DroppMiddleware.getByLocation(this.user, null);
+        expect(result).not.toBeDefined();
+        Log(testName, getByLocationTitle, 'Should have thrown error');
+      } catch (error) {
+        expect(error.name).toBe('DroppError');
+        expect(error.details.error.type).toBe(DroppError.type.InvalidRequest.type);
+        expect(error.details.error.message).toBe('latitude,longitude');
+        Log(testName, getByLocationTitle, error.details);
+      }
+
+      done();
+    });
+
+    it('throws an error for invalid latitude', async (done) => {
+      const details = {
+        latitude: '$',
+        longitude: '0',
+      };
+
+      try {
+        const result = await DroppMiddleware.getByLocation(this.user, details);
+        expect(result).not.toBeDefined();
+        Log(testName, getByLocationTitle, 'Should have thrown error');
+      } catch (error) {
+        expect(error.name).toBe('DroppError');
+        expect(error.details.error.type).toBe(DroppError.type.InvalidRequest.type);
+        expect(error.details.error.message).toBe('latitude,longitude');
+        Log(testName, getByLocationTitle, error.details);
+      }
+
+      done();
+    });
+
+    it('throws an error for invalid longitude', async (done) => {
+      const details = {
+        latitude: '0',
+        longitude: '$',
+      };
+
+      try {
+        const result = await DroppMiddleware.getByLocation(this.user, details);
+        expect(result).not.toBeDefined();
+        Log(testName, getByLocationTitle, 'Should have thrown error');
+      } catch (error) {
+        expect(error.name).toBe('DroppError');
+        expect(error.details.error.type).toBe(DroppError.type.InvalidRequest.type);
+        expect(error.details.error.message).toBe('latitude,longitude');
+        Log(testName, getByLocationTitle, error.details);
+      }
+
+      done();
+    });
+
+    it('returns dropps around a location', async (done) => {
+      const result = await DroppMiddleware.getByLocation(this.user, this.location.databaseData);
+      expect(result.count).toBe(1);
+      expect(result.dropps[0].id).toBe(this.dropp1.id);
+      Log(testName, getByLocationTitle, result);
+      done();
+    });
+  });
 });
