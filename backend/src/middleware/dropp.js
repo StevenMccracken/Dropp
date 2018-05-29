@@ -216,10 +216,64 @@ const create = async function create(_currentUser, _details) {
   return result;
 };
 
+/**
+ * Updates an existing dropp's text content
+ * @param {User} _currentUser the current user for the request
+ * @param {Object} _details the information containing the new dropp text
+ * @return {Object} JSON containing the success message
+ */
+const updateText = async function updateText(_currentUser, _details) {
+  const source = 'updateText()';
+  Log.log(moduleName, source, _currentUser, _details);
+
+  if (!(_currentUser instanceof User)) {
+    DroppError.throwServerError(source, null, 'Object is not a User');
+  }
+
+  const invalidMembers = [];
+  const details = Utils.hasValue(_details) ? _details : {};
+  if (!Validator.isValidFirebaseId(details.id)) invalidMembers.push('id');
+  if (!Validator.isValidTextPost(details.newText)) invalidMembers.push('newText');
+  if (invalidMembers.length > 0) {
+    DroppError.throwInvalidRequestError(source, invalidMembers);
+  }
+
+  const dropp = await DroppAccessor.get(details.id);
+  if (!Utils.hasValue(dropp)) DroppError.throwResourceDneError(source, 'dropp');
+  if (dropp.username !== _currentUser.username) {
+    DroppError.throwResourceError(
+      source,
+      'Unauthorized to update that dropp\'s text'
+    );
+  }
+
+  const newText = details.newText.toString().trim();
+  if (dropp.text === newText) {
+    DroppError.throwResourceError(
+      source,
+      'New text must be different than existing text'
+    );
+  }
+
+  if (dropp.media === 'false' && newText.length === 0) {
+    DroppError.throwResourceError(source, 'This dropp must contain non-empty text');
+  }
+
+  await DroppAccessor.updateText(dropp, newText);
+  const result = {
+    success: {
+      message: 'Successful text update',
+    },
+  };
+
+  return result;
+};
+
 module.exports = {
   get,
   create,
   getByUser,
+  updateText,
   getByFollows,
   getByLocation,
   maxDistanceMeters,

@@ -646,4 +646,143 @@ describe(testName, () => {
       });
     });
   });
+
+  const updateDroppTextTitle = 'Update dropp text';
+  describe(updateDroppTextTitle, () => {
+    beforeEach(async (done) => {
+      this.dropp = new Dropp({
+        text: 'test',
+        media: 'false',
+        username: this.user.username,
+        timestamp: 1,
+        location: new Location({
+          latitude: 0,
+          longitude: 0,
+        }),
+      });
+
+      await DroppAccessor.add(this.dropp);
+      this.details = {
+        id: this.dropp.id,
+        newText: `${Utils.newUuid()}\t`,
+      };
+
+      done();
+    });
+
+    afterEach(async (done) => {
+      await DroppAccessor.remove(this.dropp);
+      delete this.dropp;
+      delete this.details;
+      done();
+    });
+
+    it('throws an error for an invalid current user', async (done) => {
+      try {
+        const result = await DroppMiddleware.updateText(null, this.details);
+        expect(result).not.toBeDefined();
+        Log(testName, updateDroppTextTitle, 'Should have thrown error');
+      } catch (error) {
+        expect(error.name).toBe('DroppError');
+        expect(error.details.error.type).toBe(DroppError.type.Server.type);
+        expect(error.details.error.message).toBe(DroppError.type.Server.message);
+        Log(testName, updateDroppTextTitle, error.details);
+      }
+
+      done();
+    });
+
+    it('throws an error for null details', async (done) => {
+      try {
+        const result = await DroppMiddleware.updateText(this.user, null);
+        expect(result).not.toBeDefined();
+        Log(testName, updateDroppTextTitle, 'Should have thrown error');
+      } catch (error) {
+        expect(error.name).toBe('DroppError');
+        expect(error.details.error.type).toBe(DroppError.type.InvalidRequest.type);
+        expect(error.details.error.message).toBe('id,newText');
+        Log(testName, updateDroppTextTitle, error.details);
+      }
+
+      done();
+    });
+
+    it('throws an error for a non-existent dropp ID', async (done) => {
+      this.details.id = Utils.newUuid();
+      try {
+        const result = await DroppMiddleware.updateText(this.user, this.details);
+        expect(result).not.toBeDefined();
+        Log(testName, updateDroppTextTitle, 'Should have thrown error');
+      } catch (error) {
+        expect(error.name).toBe('DroppError');
+        expect(error.details.error.type).toBe(DroppError.type.ResourceDNE.type);
+        expect(error.details.error.message).toBe('That dropp does not exist');
+        Log(testName, updateDroppTextTitle, error.details);
+      }
+
+      done();
+    });
+
+    it('throws an error for updating a different user\'s dropp', async (done) => {
+      const uuid = Utils.newUuid();
+      const user = new User({
+        username: uuid,
+        email: `${uuid}@${uuid}.com`,
+      });
+
+      try {
+        const result = await DroppMiddleware.updateText(user, this.details);
+        expect(result).not.toBeDefined();
+        Log(testName, updateDroppTextTitle, 'Should have thrown error');
+      } catch (error) {
+        expect(error.name).toBe('DroppError');
+        expect(error.details.error.type).toBe(DroppError.type.Resource.type);
+        expect(error.details.error.message).toBe('Unauthorized to update that dropp\'s text');
+        Log(testName, updateDroppTextTitle, error.details);
+      }
+
+      done();
+    });
+
+    it('throws an error for updating a dropp with the same text', async (done) => {
+      this.details.newText = this.dropp.text;
+      try {
+        const result = await DroppMiddleware.updateText(this.user, this.details);
+        expect(result).not.toBeDefined();
+        Log(testName, updateDroppTextTitle, 'Should have thrown error');
+      } catch (error) {
+        expect(error.name).toBe('DroppError');
+        expect(error.details.error.type).toBe(DroppError.type.Resource.type);
+        expect(error.details.error.message).toBe('New text must be different than existing text');
+        Log(testName, updateDroppTextTitle, error.details);
+      }
+
+      done();
+    });
+
+    it('throws an error for updating a dropp with no media and empty text', async (done) => {
+      this.details.newText = '\t';
+      try {
+        const result = await DroppMiddleware.updateText(this.user, this.details);
+        expect(result).not.toBeDefined();
+        Log(testName, updateDroppTextTitle, 'Should have thrown error');
+      } catch (error) {
+        expect(error.name).toBe('DroppError');
+        expect(error.details.error.type).toBe(DroppError.type.Resource.type);
+        expect(error.details.error.message).toBe('This dropp must contain non-empty text');
+        Log(testName, updateDroppTextTitle, error.details);
+      }
+
+      done();
+    });
+
+    it('updates a dropp\'s text', async (done) => {
+      const result = await DroppMiddleware.updateText(this.user, this.details);
+      expect(result.success.message).toBe('Successful text update');
+      const dropp = await DroppAccessor.get(this.dropp.id);
+      expect(dropp.text).toBe(this.details.newText.trim());
+      Log(testName, updateDroppTextTitle, result);
+      done();
+    });
+  });
 });
