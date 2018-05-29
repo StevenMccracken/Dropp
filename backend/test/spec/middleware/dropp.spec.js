@@ -274,8 +274,8 @@ describe(testName, () => {
       it('gets dropps posted by the same user', async (done) => {
         const details = { username: this.user.username };
         const result = await DroppMiddleware.getByUser(this.user, details);
-        expect(result.count).toBe(1);
-        expect(result.dropps[0].id).toBe(this.dropp1.id);
+        expect(result.success.count).toBe(1);
+        expect(result.success.dropps[0].id).toBe(this.dropp1.id);
         Log(testName, getDroppsByUserSuccessTitle, result);
         done();
       });
@@ -283,8 +283,8 @@ describe(testName, () => {
       it('gets dropps posted by a user\'s follow', async (done) => {
         const details = { username: this.user2.username };
         const result = await DroppMiddleware.getByUser(this.user, details);
-        expect(result.count).toBe(1);
-        expect(result.dropps[0].id).toBe(this.dropp2.id);
+        expect(result.success.count).toBe(1);
+        expect(result.success.dropps[0].id).toBe(this.dropp2.id);
         Log(testName, getDroppsByUserSuccessTitle, result);
         done();
       });
@@ -416,8 +416,8 @@ describe(testName, () => {
     it('returns dropps posted by the user\'s follows', async (done) => {
       const details = { username: this.user.username };
       const result = await DroppMiddleware.getByFollows(this.user, details);
-      expect(result.count).toBe(1);
-      expect(result.dropps[0].id).toBe(this.dropp1.id);
+      expect(result.success.count).toBe(1);
+      expect(result.success.dropps[0].id).toBe(this.dropp1.id);
       Log(testName, getByFollowsTitle, result);
       done();
     });
@@ -523,9 +523,85 @@ describe(testName, () => {
 
     it('returns dropps around a location', async (done) => {
       const result = await DroppMiddleware.getByLocation(this.user, this.location.databaseData);
-      expect(result.count).toBe(1);
-      expect(result.dropps[0].id).toBe(this.dropp1.id);
+      expect(result.success.count).toBe(1);
+      expect(result.success.dropps[0].id).toBe(this.dropp1.id);
       Log(testName, getByLocationTitle, result);
+      done();
+    });
+  });
+
+  const createDroppTitle = 'Create dropp';
+  describe(createDroppTitle, () => {
+    beforeEach(() => {
+      this.droppInfo = {
+        text: 'test',
+        media: 'false',
+        username: this.user.username,
+        timestamp: 1,
+        location: {
+          latitude: 0,
+          longitude: 0,
+        },
+      };
+    });
+
+    afterEach(() => {
+      delete this.droppInfo;
+    });
+
+    it('throws an error for an invalid current user', async (done) => {
+      try {
+        const result = await DroppMiddleware.create(null, this.droppInfo);
+        expect(result).not.toBeDefined();
+        Log(testName, createDroppTitle, 'Should have thrown error');
+      } catch (error) {
+        expect(error.name).toBe('DroppError');
+        expect(error.details.error.type).toBe(DroppError.type.Server.type);
+        expect(error.details.error.message).toBe(DroppError.type.Server.message);
+        Log(testName, createDroppTitle, error.details);
+      }
+
+      done();
+    });
+
+    it('throws an error for null details', async (done) => {
+      try {
+        const result = await DroppMiddleware.create(this.user, null);
+        expect(result).not.toBeDefined();
+        Log(testName, createDroppTitle, 'Should have thrown error');
+      } catch (error) {
+        expect(error.name).toBe('DroppError');
+        expect(error.details.error.type).toBe(DroppError.type.InvalidRequest.type);
+        expect(error.details.error.message).toBe('text,media,username,timestamp,location');
+        Log(testName, createDroppTitle, error.details);
+      }
+
+      done();
+    });
+
+    it('throws an error for invalid location details', async (done) => {
+      delete this.droppInfo.location.latitude;
+      delete this.droppInfo.location.longitude;
+      try {
+        const result = await DroppMiddleware.create(this.user, this.droppInfo);
+        expect(result).not.toBeDefined();
+        Log(testName, createDroppTitle, 'Should have thrown error');
+      } catch (error) {
+        expect(error.name).toBe('DroppError');
+        expect(error.details.error.type).toBe(DroppError.type.InvalidRequest.type);
+        expect(error.details.error.message).toBe('latitude,longitude');
+        Log(testName, createDroppTitle, error.details);
+      }
+
+      done();
+    });
+
+    it('creates a dropp and returns an ID', async (done) => {
+      const result = await DroppMiddleware.create(this.user, this.droppInfo);
+      expect(result.success.message).toBe('Successful dropp creation');
+      expect(typeof result.success.droppId).toBe('string');
+      expect(result.success.droppId.length > 0).toBe(true);
+      Log(testName, createDroppTitle, result);
       done();
     });
   });

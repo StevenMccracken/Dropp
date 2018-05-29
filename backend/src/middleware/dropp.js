@@ -4,7 +4,7 @@
 
 const User = require('../models/User');
 const Log = require('../logging/logger');
-// const Dropp = require('../models/Dropp');
+const Dropp = require('../models/Dropp');
 const Utils = require('../utilities/utils');
 const Location = require('../models/Location');
 const UserAccessor = require('../database/user');
@@ -87,7 +87,7 @@ const getByUser = async function getByUser(_currentUser, _details) {
   }
 
   const result = await filterAllDropps(dropp => dropp.username === details.username);
-  return result;
+  return { success: result };
 };
 
 /**
@@ -131,7 +131,7 @@ const getByFollows = async function getByFollows(_currentUser, _details) {
   });
 
   const result = await filterAllDropps(dropp => Utils.hasValue(followsDictionary[dropp.username]));
-  return result;
+  return { success: result };
 };
 
 /**
@@ -162,11 +162,60 @@ const getByLocation = async function getByLocation(_currentUser, _details) {
   const location = new Location(coordinates);
   const result = await filterAllDropps(dropp =>
     location.distance(dropp.location) <= maxDistanceMeters);
+  return { success: result };
+};
+
+/**
+ * Creates a new dropp
+ * @param {User} _currentUser the current user for the request
+ * @param {Object} _details the information containing the new dropp details
+ * @return {Object} success message and the new dropp's ID
+ */
+const create = async function create(_currentUser, _details) {
+  const source = 'create()';
+  Log.log(moduleName, source, _currentUser, _details);
+
+  if (!(_currentUser instanceof User)) {
+    DroppError.throwServerError(source, null, 'Object is not a User');
+  }
+
+  const invalidMembers = [];
+  const details = Utils.hasValue(_details) ? _details : {};
+  if (!Validator.isValidTextPost(details.text)) invalidMembers.push('text');
+  if (!Validator.isValidBooleanString(details.media)) invalidMembers.push('media');
+  if (!Validator.isValidUsername(details.username)) invalidMembers.push('username');
+  if (!Validator.isValidTimestamp(details.timestamp)) invalidMembers.push('timestamp');
+  if (Utils.hasValue(details.location)) {
+    if (!Validator.isValidNumber(details.location.latitude)) invalidMembers.push('latitude');
+    if (!Validator.isValidNumber(details.location.longitude)) invalidMembers.push('longitude');
+  } else invalidMembers.push('location');
+  if (invalidMembers.length > 0) DroppError.throwInvalidRequestError(source, invalidMembers);
+
+  const droppInfo = {
+    text: details.text,
+    media: details.media,
+    username: details.username,
+    timestamp: details.timestamp,
+    location: new Location({
+      latitude: details.location.latitude,
+      longitude: details.location.longitude,
+    }),
+  };
+
+  const dropp = await DroppAccessor.add(new Dropp(droppInfo));
+  const result = {
+    success: {
+      droppId: dropp.id,
+      message: 'Successful dropp creation',
+    },
+  };
+
   return result;
 };
 
 module.exports = {
   get,
+  create,
   getByUser,
   getByFollows,
   getByLocation,
