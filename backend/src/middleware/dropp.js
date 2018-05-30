@@ -269,9 +269,45 @@ const updateText = async function updateText(_currentUser, _details) {
   return result;
 };
 
+/**
+ * Removes a dropp
+ * @param {User} _currentUser the current user for the request
+ * @param {Object} _details the information containing the dropp to remove
+ * @return {Object} JSON containing the success message
+ */
+const remove = async function remove(_currentUser, _details) {
+  const source = 'remove()';
+  Log.log(moduleName, source, _currentUser, _details);
+
+  if (!(_currentUser instanceof User)) {
+    DroppError.throwServerError(source, null, 'Object is not a User');
+  }
+
+  const details = Utils.hasValue(_details) ? _details : {};
+  if (!Validator.isValidFirebaseId(details.id)) {
+    DroppError.throwInvalidRequestError(source, 'id');
+  }
+
+  const dropp = await DroppAccessor.get(details.id);
+  if (!Utils.hasValue(dropp)) DroppError.throwResourceDneError(source, 'dropp');
+  if (dropp.username !== _currentUser.username) {
+    DroppError.throwResourceError(source, 'Unauthorized to remove that dropp');
+  }
+
+  await DroppAccessor.remove(dropp);
+  const result = {
+    success: {
+      message: 'Successful dropp removal',
+    },
+  };
+
+  return result;
+};
+
 module.exports = {
   get,
   create,
+  remove,
   getByUser,
   updateText,
   getByFollows,
