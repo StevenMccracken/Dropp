@@ -8,6 +8,7 @@ const Utils = require('../utilities/utils');
 const Auth = require('../authentication/auth');
 const UserAccessor = require('../database/user');
 const DroppError = require('../errors/DroppError');
+const DroppAccessor = require('../database/dropp');
 const Validator = require('../utilities/validator');
 
 const moduleName = 'User Middleware';
@@ -266,6 +267,9 @@ const remove = async function remove(_currentUser, _usernameDetails) {
   }
 
   await UserAccessor.remove(user);
+  const dropps = await DroppAccessor.getAll();
+  const droppsByUser = dropps.filter(dropp => dropp.username === usernameDetails.username);
+  await DroppAccessor.bulkRemove(droppsByUser);
   const data = {
     success: {
       message: 'Successfully removed all user data',

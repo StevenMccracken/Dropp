@@ -1,9 +1,12 @@
 const Log = require('../../logger');
 const User = require('../../../src/models/User');
+const Dropp = require('../../../src/models/Dropp');
 const Utils = require('../../../src/utilities/utils');
+const Location = require('../../../src/models/Location');
 const Firebase = require('../../../src/firebase/firebase');
 const UserAccessor = require('../../../src/database/user');
 const DroppError = require('../../../src/errors/DroppError');
+const DroppAccessor = require('../../../src/database/dropp');
 const UserMiddleware = require('../../../src/middleware/user');
 
 const testName = 'User Middleware';
@@ -1959,9 +1962,32 @@ describe(testName, () => {
 
   const removeUserTitle = 'Remove user';
   describe(removeUserTitle, () => {
+    beforeEach(async (done) => {
+      this.dropp = new Dropp({
+        text: 'test',
+        media: 'false',
+        username: this.newUser.username,
+        timestamp: 1,
+        location: new Location({
+          latitude: 0,
+          longitude: 0,
+        }),
+      });
+
+      await DroppAccessor.add(this.dropp);
+      done();
+    });
+
+    afterEach(async (done) => {
+      if (Utils.hasValue(this.dropp)) await DroppAccessor.remove(this.dropp);
+      done();
+    });
+
     it('removes a user', async (done) => {
       const result = await UserMiddleware.remove(this.newUser, { username: this.newUser.username });
       expect(result.success.message).toBe('Successfully removed all user data');
+      this.dropp = await DroppAccessor.get(this.dropp.id);
+      expect(this.dropp).toBeNull();
       try {
         const user = await UserMiddleware.get(this.testUser, { username: this.newUser.username });
         expect(user).not.toBeDefined();
