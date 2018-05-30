@@ -2,9 +2,12 @@ const Request = require('request-promise-native');
 const Log = require('../../logger');
 const Server = require('../../../index');
 const User = require('../../../src/models/User');
+const Dropp = require('../../../src/models/Dropp');
 const Utils = require('../../../src/utilities/utils');
+const Location = require('../../../src/models/Location');
 const UserAccessor = require('../../../src/database/user');
 const DroppError = require('../../../src/errors/DroppError');
+const DroppAccessor = require('../../../src/database/dropp');
 const AuthModule = require('../../../src/authentication/auth');
 const UserMiddleware = require('../../../src/middleware/user');
 
@@ -607,6 +610,19 @@ describe(removeUserTitle, () => {
     this.user = await UserMiddleware.create(details);
     const authDetails = await UserMiddleware.getAuthToken(details);
     this.options.headers.authorization = authDetails.success.token;
+
+    this.dropp = new Dropp({
+      text: 'test',
+      media: 'false',
+      username: this.user.username,
+      timestamp: 1,
+      location: new Location({
+        latitude: 0,
+        longitude: 0,
+      }),
+    });
+
+    await DroppAccessor.add(this.dropp);
     done();
   });
 
@@ -684,6 +700,8 @@ describe(removeUserTitle, () => {
     // Verify user information from the backend
     const result = await UserAccessor.get(this.user.username);
     expect(result).toBeNull();
+    const dropp = await DroppAccessor.get(this.dropp.id);
+    expect(dropp).toBeNull();
     this.shouldDeleteUser = Utils.hasValue(result);
     Log(testName, removeUserTitle, response.body);
     done();
