@@ -61,11 +61,12 @@ const get = function get(_folder, _fileName) {
   const promise = new Promise((resolve, reject) => {
     const bytes = [];
     const localFile = `${process.cwd()}/cache/downloads/${Utils.newUuid()}`;
-    remoteReadStream.on('error', (downloadError) => {
+    remoteReadStream.on('error', async (downloadError) => {
       let errorType;
       if (downloadError.code === 404) errorType = StorageError.type.FileDoesNotExist;
       else errorType = StorageError.type.Unknown;
       reject(StorageError.format(errorType, source, downloadError));
+      await Utils.deleteLocalFile(localFile);
     });
 
     remoteReadStream.on('data', byte => bytes.push(byte));
