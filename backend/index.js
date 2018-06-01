@@ -3,6 +3,7 @@
  */
 
 const Cors = require('cors');
+const FileSystem = require('fs');
 const Express = require('express');
 const BodyParser = require('body-parser');
 const Utils = require('./src/utilities/utils');
@@ -67,6 +68,25 @@ const shutdown = async function shutdown() {
 };
 
 // Begin application initialization
+
+const requiredDirectories = [
+  'config/secrets',
+  'cache',
+  'cache/uploads',
+  'cache/downloads',
+];
+
+startupLog('Configuring required directories...', true);
+requiredDirectories.forEach((requiredDirectory) => {
+  if (FileSystem.existsSync(`${process.cwd()}/${requiredDirectory}`)) {
+    startupLog(`/${requiredDirectory} already configured`);
+  } else {
+    startupLog(`Creating /${requiredDirectory} directory`, true);
+    FileSystem.mkdirSync(`${process.cwd()}/${requiredDirectory}`);
+    startupLog(`/${requiredDirectory} directory created`);
+  }
+});
+startupLog('Configured required directories', true);
 
 startupLog('Initializing express application...', true);
 const express = Express();
