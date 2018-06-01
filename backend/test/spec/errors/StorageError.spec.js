@@ -90,6 +90,25 @@ describe(throwTitle, () => {
   });
 });
 
+const throwUnknownErrorTitle = 'Throw Unknown error';
+describe(throwUnknownErrorTitle, () => {
+  it('throws a model error of type Unknown', (done) => {
+    try {
+      StorageError.throwUnknownError('test', 'test');
+      expect(false).toBe(true);
+      Log(testName, throwUnknownErrorTitle, 'Should have thrown error');
+    } catch (error) {
+      expect(error.name).toBe('StorageError');
+      expect(error.details.source).toBe('test');
+      expect(error.details.details).toBe('test');
+      expect(error.details.type).toBe(StorageError.type.Unknown.type);
+      Log(testName, throwUnknownErrorTitle, error);
+    }
+
+    done();
+  });
+});
+
 const throwInvalidFileErrorTitle = 'Throw Invalid File error';
 describe(throwInvalidFileErrorTitle, () => {
   it('throws a model error of type Invalid File', (done) => {

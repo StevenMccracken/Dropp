@@ -46,6 +46,10 @@ class StorageError extends Error {
     throw error;
   }
 
+  static throwUnknownError(_source, _details) {
+    this.throw(this.type.Unknown, _source, _details);
+  }
+
   static throwInvalidFileError(_source, _details) {
     this.throw(this.type.InvalidFile, _source, _details);
   }

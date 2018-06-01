@@ -1,6 +1,7 @@
 const FileSystem = require('fs');
 const Log = require('../../logger');
 const Utils = require('../../../src/utilities/utils');
+const DroppError = require('../../../src/errors/DroppError');
 const CloudStorage = require('../../../src/storage/storage');
 const StorageError = require('../../../src/errors/StorageError');
 
@@ -13,8 +14,8 @@ describe(testName, () => {
       await Utils.deleteLocalFile(_testImageFilePath);
     };
 
-    this.createLocalFile = (_testImageName) => {
-      const uuid = Utils.newUuid();
+    this.createLocalFile = (_testImageName, _uuid) => {
+      const uuid = _uuid || Utils.newUuid();
       const existingImagePath = `${process.cwd()}/test/uploads/${_testImageName}`;
       const copiedImagePath = `${process.cwd()}/test/uploads/${uuid}_${_testImageName}`;
       const promise = new Promise((resolve) => {
@@ -80,8 +81,10 @@ describe(testName, () => {
         done();
       });
 
-      afterEach(() => {
+      afterEach(async (done) => {
+        await CloudStorage.remove('', this.fileInfo.filename);
         delete this.fileInfo;
+        done();
       });
 
       it('gets an image from cloud storage', async (done) => {
@@ -96,6 +99,18 @@ describe(testName, () => {
 
   const addTitle = 'Add';
   describe(addTitle, () => {
+    beforeEach(async (done) => {
+      this.fileInfo = await this.createLocalFile('test_image_001.png');
+      await CloudStorage.add('', this.fileInfo.filename, this.fileInfo.path);
+      done();
+    });
+
+    afterEach(async (done) => {
+      await CloudStorage.remove('', this.fileInfo.filename);
+      delete this.fileInfo;
+      done();
+    });
+
     it('throws an error for invalid folder, filename, and file path', async (done) => {
       try {
         const result = await CloudStorage.add();
@@ -141,10 +156,87 @@ describe(testName, () => {
       done();
     });
 
+    it('throws an error for an already-existing file', async (done) => {
+      this.fileInfo = await this.createLocalFile('test_image_001.png', this.fileInfo.filename);
+      try {
+        const result = await CloudStorage.add('', this.fileInfo.filename, this.fileInfo.path);
+        expect(result).not.toBeDefined();
+        Log(testName, addTitle, 'Should have thrown error');
+      } catch (error) {
+        expect(error.name).toBe('DroppError');
+        expect(error.details.error.type).toBe(DroppError.type.Resource.type);
+        expect(error.privateDetails.error.source).toBe('add()');
+        expect(error.details.error.message).toBe('That file already exists');
+        Log(testName, addTitle, error.details);
+      }
+
+      await this.deleteLocalFile(this.fileInfo.path);
+      done();
+    });
+
     const successAddTitle = 'Add success';
     describe(successAddTitle, () => {
       beforeEach(async (done) => {
+        this.fileInfo2 = await this.createLocalFile('test_image_001.png');
+        done();
+      });
+
+      afterEach(async (done) => {
+        await CloudStorage.remove('', this.fileInfo2.filename);
+        delete this.fileInfo2;
+        done();
+      });
+
+      it('adds a file to cloud storage', async (done) => {
+        await CloudStorage.add('', this.fileInfo2.filename, this.fileInfo2.path);
+
+        // Verify result from cloud storage
+        const result = await CloudStorage.get('', this.fileInfo2.filename);
+        expect(typeof result).toBeDefined('string');
+        expect(result.substring(0, 22)).toBe('data:image/png;base64,');
+        Log(testName, successAddTitle, result.substring(0, 22));
+        done();
+      });
+    });
+  });
+
+  const removeTitle = 'Remove';
+  describe(removeTitle, () => {
+    it('throws an error for invalid folder and filename', async (done) => {
+      try {
+        const result = await CloudStorage.remove();
+        expect(result).not.toBeDefined();
+        Log(testName, removeTitle, 'Should have thrown error');
+      } catch (error) {
+        expect(error.name).toBe('StorageError');
+        expect(error.details.type).toBe(StorageError.type.InvalidMembers.type);
+        expect(error.details.details.invalidMembers).toContain('folder');
+        expect(error.details.details.invalidMembers).toContain('fileName');
+        Log(testName, removeTitle, error.details);
+      }
+
+      done();
+    });
+
+    it('throws an error for a non-existent file', async (done) => {
+      try {
+        const result = await CloudStorage.remove('', Utils.newUuid());
+        expect(result).not.toBeDefined();
+        Log(testName, removeTitle, 'Should have thrown error');
+      } catch (error) {
+        expect(error.name).toBe('StorageError');
+        expect(error.details.type).toBe(StorageError.type.FileDoesNotExist.type);
+        Log(testName, removeTitle, error.details);
+      }
+
+      done();
+    });
+
+    const successRemoveTitle = 'Remove success';
+    describe(successRemoveTitle, () => {
+      beforeEach(async (done) => {
         this.fileInfo = await this.createLocalFile('test_image_001.png');
+        await CloudStorage.add('', this.fileInfo.filename, this.fileInfo.path);
         done();
       });
 
@@ -152,14 +244,20 @@ describe(testName, () => {
         delete this.fileInfo;
       });
 
-      it('adds an image to cloud storage', async (done) => {
-        await CloudStorage.add('', this.fileInfo.filename, this.fileInfo.path);
+      it('removes a file from cloud storage', async (done) => {
+        await CloudStorage.remove('', this.fileInfo.filename);
 
         // Verify result from cloud storage
-        const result = await CloudStorage.get('', this.fileInfo.filename);
-        expect(typeof result).toBeDefined('string');
-        expect(result.substring(0, 22)).toBe('data:image/png;base64,');
-        Log(testName, successAddTitle, result.substring(0, 22));
+        try {
+          const result = await CloudStorage.get('', this.fileInfo.filename);
+          expect(result).not.toBeDefined();
+          Log(testName, successRemoveTitle, 'Should have thrown error');
+        } catch (error) {
+          expect(error.name).toBe('StorageError');
+          expect(error.details.type).toBe(StorageError.type.FileDoesNotExist.type);
+          Log(testName, removeTitle, error.details);
+        }
+
         done();
       });
     });
