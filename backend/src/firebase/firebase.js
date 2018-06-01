@@ -13,8 +13,8 @@ const moduleName = 'Firebase Accessor';
 
 // Firebase initialization
 
-let didStart = false;
 let db;
+let didStart = false;
 const configOptions = {
   databaseURL: 'https://dropp-3a65d.firebaseio.com',
   credential: Firebase.credential.cert(firebaseApiKey),
@@ -26,6 +26,9 @@ const configOptions = {
  * @param {Boolean} [_shouldMock=false] whether or not to use the mock database
  */
 const start = function start(_shouldMock = false) {
+  const source = 'start()';
+  Log.log(moduleName, source, _shouldMock);
+
   if (didStart === true) return;
   if (_shouldMock === true) db = MockFirebase;
   else {
@@ -46,25 +49,6 @@ const hasStarted = function hasStarted() {
   return didStart;
 };
 
-/**
- * Throws an error with the invalid URL in the details
- * @param {String} _source the source of the error
- * @param {String} _url the firebase path to interact with
- * @throws {DatabaseError} because a given Firebase URL is invalid
- */
-function throwInvalidUrlError(_source, _url) {
-  DatabaseError.throwUrlError(`Firebase ${_source}`, _url);
-}
-
-/**
- * Throws an error with the has not started message in the details
- * @param {String} _source the source of the error
- * @throws {DatabaseError} because Firebase has not started yet
- */
-function throwHasNotStartedError(_source) {
-  DatabaseError.throwInvalidStateError(`Firebase ${_source}`);
-}
-
 // Firebase functions
 
 /**
@@ -77,8 +61,8 @@ const get = async function get(_url) {
   const source = 'get()';
   Log.log(moduleName, source, _url);
 
-  if (!didStart) throwHasNotStartedError(source);
-  if (!Validator.isValidFirebaseId(_url)) throwInvalidUrlError(source, _url);
+  if (!didStart) DatabaseError.throwInvalidStateError(source);
+  if (!Validator.isValidFirebaseId(_url)) DatabaseError.throwUrlError(source, _url);
   const ref = db.ref(_url);
   const snapshot = await ref.once('value');
   return snapshot.val();
@@ -95,8 +79,8 @@ const add = async function add(_url, _data) {
   const source = 'add()';
   Log.log(moduleName, source, _url, _data);
 
-  if (!didStart) throwHasNotStartedError(source);
-  if (!Validator.isValidFirebaseId(_url)) throwInvalidUrlError(source, _url);
+  if (!didStart) DatabaseError.throwInvalidStateError(source);
+  if (!Validator.isValidFirebaseId(_url)) DatabaseError.throwUrlError(source, _url);
   const ref = db.ref(_url);
   const key = await ref.push(_data);
   return key.toString();
@@ -112,8 +96,8 @@ const update = async function update(_url, _data) {
   const source = 'update()';
   Log.log(moduleName, source, _url);
 
-  if (!didStart) throwHasNotStartedError(source);
-  if (!Validator.isValidFirebaseId(_url)) throwInvalidUrlError(source, _url);
+  if (!didStart) DatabaseError.throwInvalidStateError(source);
+  if (!Validator.isValidFirebaseId(_url)) DatabaseError.throwUrlError(source, _url);
   const ref = db.ref(_url);
   await ref.set(_data);
 };
@@ -128,9 +112,9 @@ const bulkUpdate = async function bulkUpdate(_urlDataMap = {}) {
   const source = 'bulkUpdate()';
   Log.log(moduleName, source, _urlDataMap);
 
-  if (!didStart) throwHasNotStartedError(source);
+  if (!didStart) DatabaseError.throwInvalidStateError(source);
   Object.keys(_urlDataMap).forEach((key) => {
-    if (!Validator.isValidFirebaseId(key)) throwInvalidUrlError(source, key);
+    if (!Validator.isValidFirebaseId(key)) DatabaseError.throwUrlError(source, key);
   });
 
   const ref = db.ref();
@@ -146,25 +130,25 @@ const remove = async function remove(_url) {
   const source = 'delete()';
   Log.log(moduleName, source, _url);
 
-  if (!didStart) throwHasNotStartedError(source);
-  if (!Validator.isValidFirebaseId(_url)) throwInvalidUrlError(source, _url);
+  if (!didStart) DatabaseError.throwInvalidStateError(source);
+  if (!Validator.isValidFirebaseId(_url)) DatabaseError.throwUrlError(source, _url);
   const ref = db.ref(_url);
   await ref.remove();
 };
 
 /**
  * Removes multiple data values in firebase
- * @param {Array} [_urls=[]] the paths to delete data from
+ * @param {[String]} [_urls=[]] the paths to delete data from
  * @throws {DatabaseError} if Firebase has not started or _url is invalid
  */
 const bulkRemove = async function bulkRemove(_urls = []) {
   const source = 'bulkRemove()';
   Log.log(moduleName, source, _urls);
 
-  if (!didStart) throwHasNotStartedError(source);
+  if (!didStart) DatabaseError.throwInvalidStateError(source);
   const deleteUrlsMap = {};
   _urls.forEach((url) => {
-    if (!Validator.isValidFirebaseId(url)) throwInvalidUrlError(source, url);
+    if (!Validator.isValidFirebaseId(url)) DatabaseError.throwUrlError(source, url);
     else deleteUrlsMap[url] = null;
   });
 

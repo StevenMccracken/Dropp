@@ -2,10 +2,14 @@
  * @module for common functions to reduce verbosity
  */
 
+const Util = require('util');
 const Uuid = require('uuid/v4');
 const Moment = require('moment');
+const FileSystem = require('fs');
 
 const unixEndTimeSeconds = 2147471999;
+const LstatPromise = Util.promisify(FileSystem.lstat);
+const UnlinkPromise = Util.promisify(FileSystem.unlink);
 const unixEndTimeMilliseconds = unixEndTimeSeconds * 1000;
 
 /**
@@ -92,6 +96,19 @@ const degreesToRadians = function degreesToRadians(_degrees) {
   return degrees * (Math.PI / 180);
 };
 
+/**
+ * Removes a local file from the system
+ * @param {String} _path the path to the file to remove
+ * @return {Bool} false if `_path` is not a
+ * string, or true after the file is deleted
+ * @throws if a file system error occurred, like the file not existing
+ */
+const deleteLocalFile = async function deleteLocalFile(_path) {
+  if (typeof _path !== 'string') return false;
+  await UnlinkPromise(_path);
+  return true;
+};
+
 
 module.exports = {
   Moment,
@@ -101,7 +118,10 @@ module.exports = {
   getIpAddress,
   getRequestId,
   reduceToString,
+  deleteLocalFile,
   degreesToRadians,
   unixEndTimeSeconds,
+  lstat: LstatPromise,
+  unlink: UnlinkPromise,
   unixEndTimeMilliseconds,
 };

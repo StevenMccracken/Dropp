@@ -7,6 +7,7 @@ const Express = require('express');
 const BodyParser = require('body-parser');
 const Utils = require('./src/utilities/utils');
 const Firebase = require('./src/firebase/firebase');
+const CloudStorage = require('./src/storage/storage');
 const RoutingModule = require('./src/routing/router');
 
 let server;
@@ -191,6 +192,11 @@ startupLog('Router configured');
 startupLog('Starting database...', true);
 Firebase.start(process.env.MOCK === '1');
 startupLog('Database started');
+
+// Start cloud storage connectionError
+startupLog('Connecting cloud storage...', true);
+CloudStorage.initializeBucket();
+startupLog('Cloud storage connected');
 
 // Listen for all incoming requests on the specified port
 startupLog('Starting Express app...', true);

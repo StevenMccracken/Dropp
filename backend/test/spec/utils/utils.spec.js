@@ -1,3 +1,4 @@
+const FileSystem = require('fs');
 const Log = require('../../logger');
 const Utils = require('../../../src/utilities/utils');
 
@@ -290,5 +291,53 @@ describe(degreesToRadiansTitle, () => {
     const result = Utils.degreesToRadians(49.267804550637528394);
     expect(result).toBe(0.8598854046376703);
     Log(testName, degreesToRadiansTitle, result);
+  });
+});
+
+const deleteLocalFileTitle = 'deleteLocalFile function';
+describe(deleteLocalFileTitle, () => {
+  beforeEach(() => {
+    this.createLocalFile = () => {
+      const path = `${process.cwd()}/test/uploads/${Utils.newUuid()}.txt`;
+      const promise = new Promise((resolve) => {
+        const writeStream = FileSystem.createWriteStream(path);
+        writeStream.on('close', () => resolve(path));
+        writeStream.write(Utils.newUuid());
+        writeStream.end();
+      });
+
+      return promise;
+    };
+  });
+
+  afterEach(() => {
+    delete this.createLocalFile;
+  });
+
+  it('throws an error for a non-existent file', async (done) => {
+    try {
+      const result = await Utils.deleteLocalFile(Utils.newUuid());
+      expect(result).not.toBeDefined();
+      Log(testName, deleteLocalFileTitle, 'Should have thrown error');
+    } catch (error) {
+      Log(testName, deleteLocalFileTitle, error);
+    }
+
+    done();
+  });
+
+  it('returns false for a non-string path argument', async (done) => {
+    const result = await Utils.deleteLocalFile();
+    expect(result).toBe(false);
+    Log(testName, deleteLocalFileTitle, result);
+    done();
+  });
+
+  it('deletes a file and returns true', async (done) => {
+    const path = await this.createLocalFile();
+    const result = await Utils.deleteLocalFile(path);
+    expect(result).toBe(true);
+    Log(testName, deleteLocalFileTitle, result);
+    done();
   });
 });

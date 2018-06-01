@@ -29,6 +29,7 @@
   "author": "Steven McCracken",
   "license": "ISC",
   "dependencies": {
+    "@google-cloud/storage": "^1.7.0",
     "bcryptjs": "^2.4.3",
     "body-parser": "^1.18.2",
     "cors": "^2.8.4",
