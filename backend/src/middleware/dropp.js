@@ -4,16 +4,19 @@
 
 const User = require('../models/User');
 const Log = require('../logging/logger');
+const Media = require('../media/media');
 const Dropp = require('../models/Dropp');
 const Utils = require('../utilities/utils');
 const Location = require('../models/Location');
 const UserAccessor = require('../database/user');
 const DroppError = require('../errors/DroppError');
+const CloudStorage = require('../storage/storage');
 const DroppAccessor = require('../database/dropp');
 const Validator = require('../utilities/validator');
 
 const moduleName = 'Dropp Middleware';
 const maxDistanceMeters = 1000;
+const cloudStorageFolder = 'dropps/';
 
 /**
  * Retrieves all dropps and returns a given filtered result
@@ -217,6 +220,68 @@ const create = async function create(_currentUser, _details) {
 };
 
 /**
+ * Adds a photo for a given dropp
+ * @param {User} _currentUser the current user for the request
+ * @param {Object} _details the information containing
+ * new dropp's ID and file path for the photo to be added
+ * @return {Object} success message
+ */
+const addPhoto = async function addPhoto(_currentUser, _details) {
+  const source = 'addPhoto()';
+  Log.log(moduleName, source, _currentUser, _details);
+
+  if (!(_currentUser instanceof User)) {
+    DroppError.throwServerError(source, null, 'Object is not a User');
+  }
+
+  const invalidMembers = [];
+  const details = Utils.hasValue(_details) ? _details : {};
+  if (!Validator.isValidFirebaseId(details.id)) invalidMembers.push('id');
+  if (!(await Validator.isValidFilePath(details.filePath))) invalidMembers.push('image');
+  if (invalidMembers.length > 0) {
+    DroppError.throwInvalidRequestError(source, invalidMembers);
+  }
+
+  const mimeType = await Media.determineMimeType(details.filePath);
+  if (mimeType !== Media.mimeTypes.png || mimeType !== Media.mimeTypes.jpeg) {
+    DroppError.throwResourceError(source, 'Image must be PNG or JPG');
+  }
+
+  const dropp = await DroppAccessor.get(details.id);
+  if (!Utils.hasValue(dropp)) DroppError.throwResourceDneError(source, 'dropp');
+  if (dropp.username !== _currentUser.username) {
+    DroppError.throwResourceError(source, 'Unauthorized to add a photo to that dropp');
+  }
+
+  if (dropp.media === 'fase') {
+    Dropp.throwResourceError(source, 'This dropp cannot have a photo added to it');
+  }
+
+  try {
+    await CloudStorage.add(cloudStorageFolder, dropp.id, details.filePath);
+  } catch (uploadError) {
+    if (
+      uploadError instanceof DroppError
+      && uploadError.details.error.type === DroppError.type.Resource.type
+    ) {
+      // Throw error with clearer message
+      Dropp.throwResourceError(source, 'A photo has already been added to this dropp');
+    }
+
+    // Re-throw caught error
+    throw uploadError;
+  }
+
+  const result = {
+    success: {
+      message: 'Successful photo creation',
+    },
+  };
+
+  return result;
+};
+
+/**
  * Updates an existing dropp's text content
  * @param {User} _currentUser the current user for the request
  * @param {Object} _details the information containing the new dropp text
@@ -241,10 +306,7 @@ const updateText = async function updateText(_currentUser, _details) {
   const dropp = await DroppAccessor.get(details.id);
   if (!Utils.hasValue(dropp)) DroppError.throwResourceDneError(source, 'dropp');
   if (dropp.username !== _currentUser.username) {
-    DroppError.throwResourceError(
-      source,
-      'Unauthorized to update that dropp\'s text'
-    );
+    DroppError.throwResourceError(source, 'Unauthorized to update that dropp\'s text');
   }
 
   const newText = details.newText.toString().trim();
@@ -308,6 +370,7 @@ module.exports = {
   get,
   create,
   remove,
+  addPhoto,
   getByUser,
   updateText,
   getByFollows,

@@ -89,9 +89,9 @@ describe(testName, () => {
 
       it('gets an image from cloud storage', async (done) => {
         const result = await CloudStorage.get('', this.fileInfo.filename);
-        expect(typeof result).toBeDefined('string');
-        expect(result.substring(0, 22)).toBe('data:image/png;base64,');
-        Log(testName, successGetTitle, result.substring(0, 22));
+        expect(result.mimeType).toBe('image/png');
+        expect(result.base64Data.length > 0).toBe(true);
+        Log(testName, successGetTitle, result.mimeType);
         done();
       });
     });
@@ -119,6 +119,7 @@ describe(testName, () => {
       } catch (error) {
         expect(error.name).toBe('StorageError');
         expect(error.details.type).toBe(StorageError.type.InvalidMembers.type);
+        expect(error.details.details.invalidMembers.length).toBe(3);
         expect(error.details.details.invalidMembers).toContain('folder');
         expect(error.details.details.invalidMembers).toContain('fileName');
         expect(error.details.details.invalidMembers).toContain('filePath');
@@ -135,7 +136,9 @@ describe(testName, () => {
         Log(testName, addTitle, 'Should have thrown error');
       } catch (error) {
         expect(error.name).toBe('StorageError');
-        expect(error.details.type).toBe(StorageError.type.FileDoesNotExist.type);
+        expect(error.details.type).toBe(StorageError.type.InvalidMembers.type);
+        expect(error.details.details.invalidMembers.length).toBe(1);
+        expect(error.details.details.invalidMembers[0]).toBe('filePath');
         Log(testName, addTitle, error.details);
       }
 
@@ -149,7 +152,9 @@ describe(testName, () => {
         Log(testName, addTitle, 'Should have thrown error');
       } catch (error) {
         expect(error.name).toBe('StorageError');
-        expect(error.details.type).toBe(StorageError.type.InvalidFile.type);
+        expect(error.details.type).toBe(StorageError.type.InvalidMembers.type);
+        expect(error.details.details.invalidMembers.length).toBe(1);
+        expect(error.details.details.invalidMembers[0]).toBe('filePath');
         Log(testName, addTitle, error.details);
       }
 
@@ -192,9 +197,9 @@ describe(testName, () => {
 
         // Verify result from cloud storage
         const result = await CloudStorage.get('', this.fileInfo2.filename);
-        expect(typeof result).toBeDefined('string');
-        expect(result.substring(0, 22)).toBe('data:image/png;base64,');
-        Log(testName, successAddTitle, result.substring(0, 22));
+        expect(result.mimeType).toBe('image/png');
+        expect(result.base64Data.length > 0).toBe(true);
+        Log(testName, successAddTitle, result.mimeType);
         done();
       });
     });

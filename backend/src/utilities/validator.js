@@ -127,6 +127,23 @@ const validateBoolean = function validateBoolean(_boolean) {
   return Utils.hasValue(_boolean) && typeof _boolean === 'boolean';
 };
 
+/**
+ * Validates a given file path
+ * @param {String} _path the file path to validate
+ * @return {Boolean} whether the file path is valid or not
+ */
+const validateFilePath = async function validateFilePath(_path) {
+  if (typeof _path !== 'string' || _path.length === 0) return false;
+  let fileInfo;
+  try {
+    fileInfo = await Utils.lstat(_path);
+  } catch (error) {
+    return false;
+  }
+
+  return fileInfo.isFile();
+};
+
 module.exports = {
   isValidEmail: validateEmail,
   isValidNumber: validateNumber,
@@ -140,4 +157,5 @@ module.exports = {
   isValidPositiveFloat: validatePositiveFloat,
   isValidBooleanString: validateBooleanString,
   isValidBoolean: validateBoolean,
+  isValidFilePath: validateFilePath,
 };

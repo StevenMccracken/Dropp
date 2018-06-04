@@ -7,6 +7,7 @@ const Media = require('../media/media');
 const Log = require('../logging/logger');
 const Utils = require('../utilities/utils');
 const DroppError = require('../errors/DroppError');
+const Validator = require('../utilities/validator');
 const CloudStorage = require('@google-cloud/storage');
 const StorageError = require('../errors/StorageError');
 
@@ -40,9 +41,9 @@ const initializeBucket = function initializeBucket() {
  * @param {String} _folder the name of the folder to
  * to retrieve from. Use empty string for base folder
  * @param {String} _fileName the name the uploaded file to retrieve
- * @return {Promise<Object>} rejects when a download error
- * occurs, and resolves when the download is complete. Resolved
- * promise will contain path to local file, as well as data buffer
+ * @return {Promise<Object>} rejects when a download error occurs,
+ * and resolves when the download is complete. Resolved promise
+ * will contain object with MIME type and base-64 encoded data
  * @throws {StorageError} for invalid `_folder`,
  * `_fileName`, or if file does not exist
  */
@@ -76,9 +77,9 @@ const get = async function get(_folder, _fileName) {
     remoteReadStream.on('data', byte => bytes.push(byte));
     remoteReadStream.on('end', async () => {
       const buffer = Buffer.concat(bytes);
-      const base64String = Media.bufferToBase64String(buffer);
+      const data = Media.encodeToBase64(buffer);
       await Utils.deleteLocalFile(localFile);
-      resolve(base64String);
+      resolve(data);
     });
 
     Log.log(moduleName, source, 'Creating write stream for new local file');
@@ -109,18 +110,9 @@ const add = async function add(_folder, _fileName, _filePath) {
   const invalidMembers = [];
   if (typeof _folder !== 'string') invalidMembers.push('folder');
   if (typeof _fileName !== 'string' || _fileName.length === 0) invalidMembers.push('fileName');
-  if (typeof _filePath !== 'string' || _filePath.length === 0) invalidMembers.push('filePath');
+  if (!(await Validator.isValidFilePath(_filePath))) invalidMembers.push('filePath');
   if (invalidMembers.length > 0) StorageError.throwInvalidMembersError(source, invalidMembers);
 
-  let fileInfo;
-  try {
-    Log.log(moduleName, source, 'Analyzing given path');
-    fileInfo = await Utils.lstat(_filePath);
-  } catch (error) {
-    StorageError.throwFileDoesNotExistError(source, error);
-  }
-
-  if (!fileInfo.isFile()) StorageError.throwInvalidFileError(source, fileInfo);
   Log.log(moduleName, source, 'Creating file in bucket');
   const file = this.bucket.file(`${_folder}${_fileName}`);
   const doesFileExist = await file.exists();
