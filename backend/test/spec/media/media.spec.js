@@ -1,9 +1,48 @@
 const Log = require('../../logger');
 const Media = require('../../../src/media/media');
+const Utils = require('../../../src/utilities/utils');
 
 const testName = 'Media';
 /* eslint-disable no-undef */
 describe(testName, () => {
+  const determineMimeTypeTitle = 'determineMimeType function';
+  describe(determineMimeTypeTitle, () => {
+    it('returns an empty string for an undefined argument', async (done) => {
+      const result = await Media.determineMimeType();
+      expect(result).toBe('');
+      Log(testName, determineMimeTypeTitle, result);
+      done();
+    });
+
+    it('returns an empty string for a null argument', async (done) => {
+      const result = await Media.determineMimeType(null);
+      expect(result).toBe('');
+      Log(testName, determineMimeTypeTitle, result);
+      done();
+    });
+
+    it('returns an empty string for an empty string argument', async (done) => {
+      const result = await Media.determineMimeType('');
+      expect(result).toBe('');
+      Log(testName, determineMimeTypeTitle, result);
+      done();
+    });
+
+    it('returns an empty string for a non-existent file', async (done) => {
+      const result = await Media.determineMimeType(Utils.newUuid());
+      expect(result).toBe('');
+      Log(testName, determineMimeTypeTitle, result);
+      done();
+    });
+
+    it('returns directory for a folder', async (done) => {
+      const result = await Media.determineMimeType(process.cwd());
+      expect(result).toBe('inode/directory');
+      Log(testName, determineMimeTypeTitle, result);
+      done();
+    });
+  });
+
   const encodeToBase64Title = 'encodeToBase64 function';
   it('returns an empty string for a non-buffer data argument', () => {
     const result = Media.encodeToBase64();

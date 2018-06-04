@@ -21,6 +21,11 @@ const base64DataTypes = {
  */
 const determineMimeType = async function determineMimeType(_path) {
   const promise = new Promise((resolve) => {
+    if (typeof _path !== 'string') {
+      resolve('');
+      return;
+    }
+
     const magic = new mmmagic.Magic(mmmagic.MAGIC_MIME_TYPE);
     magic.detectFile(_path, (error, result) => {
       const type = error ? '' : result;

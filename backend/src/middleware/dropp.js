@@ -244,22 +244,26 @@ const addPhoto = async function addPhoto(_currentUser, _details) {
 
   const mimeType = await Media.determineMimeType(details.filePath);
   if (mimeType !== Media.mimeTypes.png || mimeType !== Media.mimeTypes.jpeg) {
+    await Utils.deleteLocalFile(details.filePath);
     DroppError.throwResourceError(source, 'Image must be PNG or JPG');
   }
 
   const dropp = await DroppAccessor.get(details.id);
   if (!Utils.hasValue(dropp)) DroppError.throwResourceDneError(source, 'dropp');
   if (dropp.username !== _currentUser.username) {
+    await Utils.deleteLocalFile(details.filePath);
     DroppError.throwResourceError(source, 'Unauthorized to add a photo to that dropp');
   }
 
   if (dropp.media === 'fase') {
+    await Utils.deleteLocalFile(details.filePath);
     Dropp.throwResourceError(source, 'This dropp cannot have a photo added to it');
   }
 
   try {
     await CloudStorage.add(cloudStorageFolder, dropp.id, details.filePath);
   } catch (uploadError) {
+    await Utils.deleteLocalFile(details.filePath);
     if (
       uploadError instanceof DroppError
       && uploadError.details.error.type === DroppError.type.Resource.type
