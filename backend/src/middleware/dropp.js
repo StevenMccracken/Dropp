@@ -62,6 +62,24 @@ const get = async function get(_currentUser, _details) {
 };
 
 /**
+ * Retrieves a photo for a dropp by it's ID
+ * @param {User} _currentUser the current user for the request
+ * @param {Object} _details the information to get the dropp
+ * @return {Object} the retrieved dropp's photo data
+ * @throws {DroppError} if the `id` parameter is not
+ * a valid dropp ID or if no dropp by that ID exists
+ */
+const getPhoto = async function getPhoto(_currentUser, _details) {
+  const source = 'getPhoto()';
+  Log.log(moduleName, source, _currentUser, _details);
+
+  const dropp = await get(_currentUser, _details);
+  if (dropp.media === 'false') DroppError.throwResourceError('This dropp does not contain a photo');
+  const result = await CloudStorage.get(cloudStorageFolder, dropp.id);
+  return { success: result };
+};
+
+/**
  * Retrieves dropps created by a user
  * @param {User} _currentUser the current user for the request
  * @param {Object} _details the information
@@ -380,6 +398,7 @@ module.exports = {
   create,
   remove,
   addPhoto,
+  getPhoto,
   getByUser,
   updateText,
   getByFollows,
