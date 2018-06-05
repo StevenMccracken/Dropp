@@ -249,7 +249,11 @@ const addPhoto = async function addPhoto(_currentUser, _details) {
   }
 
   const dropp = await DroppAccessor.get(details.id);
-  if (!Utils.hasValue(dropp)) DroppError.throwResourceDneError(source, 'dropp');
+  if (!Utils.hasValue(dropp)) {
+    await Utils.deleteLocalFile(details.filePath);
+    DroppError.throwResourceDneError(source, 'dropp');
+  }
+
   if (dropp.username !== _currentUser.username) {
     await Utils.deleteLocalFile(details.filePath);
     DroppError.throwResourceError(source, 'Unauthorized to add a photo to that dropp');

@@ -821,6 +821,7 @@ describe(testName, () => {
     const addPhotoExistingPhotoTitle = 'Add photo existing photo error';
     describe(addPhotoExistingPhotoTitle, () => {
       beforeEach(async (done) => {
+        this.shouldDeleteLocalFile = true;
         this.dropp2 = new Dropp({
           text: 'test',
           media: 'true',
@@ -871,6 +872,7 @@ describe(testName, () => {
     const addPhotoSuccessTitle = 'Add photo success';
     describe(addPhotoSuccessTitle, () => {
       beforeEach(async (done) => {
+        this.shouldDeleteLocalFile = true;
         this.dropp2 = new Dropp({
           text: 'test',
           media: 'true',
