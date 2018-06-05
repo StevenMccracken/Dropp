@@ -1052,6 +1052,7 @@ describe(testName, () => {
   const removeDroppTitle = 'Remove dropp';
   describe(removeDroppTitle, () => {
     beforeEach(async (done) => {
+      this.shouldDeleteDropp = true;
       this.dropp = new Dropp({
         text: 'test',
         media: 'false',
@@ -1069,9 +1070,10 @@ describe(testName, () => {
     });
 
     afterEach(async (done) => {
-      await DroppAccessor.remove(this.dropp);
+      if (this.shouldDeleteDropp === true) await DroppAccessor.remove(this.dropp);
       delete this.dropp;
       delete this.details;
+      delete this.shouldDeleteDropp;
       done();
     });
 
@@ -1142,8 +1144,18 @@ describe(testName, () => {
       done();
     });
 
-    const removeDroppSuccessTitle = 'Remove dropp success';
-    describe(removeDroppSuccessTitle, () => {
+    it('removes a dropp', async (done) => {
+      this.shouldDeleteDropp = false;
+      const result = await DroppMiddleware.remove(this.user, this.details);
+      expect(result.success.message).toBe('Successful dropp removal');
+      const dropp = await DroppAccessor.get(this.dropp.id);
+      expect(dropp).toBeNull();
+      Log(testName, removeDroppTitle, result);
+      done();
+    });
+
+    const removeDroppWithPhotoTitle = 'Remove dropp with photo';
+    describe(removeDroppWithPhotoTitle, () => {
       beforeEach(async (done) => {
         this.dropp2 = new Dropp({
           text: 'test',
@@ -1179,11 +1191,11 @@ describe(testName, () => {
             this.dropp2.id
           );
           expect(result2).not.toBeDefined();
-          Log(testName, removeDroppSuccessTitle, 'Should have thrown error');
+          Log(testName, removeDroppWithPhotoTitle, 'Should have thrown error');
         } catch (error) {
           expect(error.name).toBe('StorageError');
           expect(error.details.type).toBe(StorageError.type.FileDoesNotExist.type);
-          Log(testName, removeDroppSuccessTitle, error.details);
+          Log(testName, removeDroppWithPhotoTitle, error.details);
         }
 
         Log(testName, removeDroppTitle, result);
