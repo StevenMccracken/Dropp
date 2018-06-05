@@ -243,7 +243,7 @@ const addPhoto = async function addPhoto(_currentUser, _details) {
   }
 
   const mimeType = await Media.determineMimeType(details.filePath);
-  if (mimeType !== Media.mimeTypes.png || mimeType !== Media.mimeTypes.jpeg) {
+  if (mimeType !== Media.mimeTypes.png && mimeType !== Media.mimeTypes.jpeg) {
     await Utils.deleteLocalFile(details.filePath);
     DroppError.throwResourceError(source, 'Image must be PNG or JPG');
   }
@@ -255,9 +255,9 @@ const addPhoto = async function addPhoto(_currentUser, _details) {
     DroppError.throwResourceError(source, 'Unauthorized to add a photo to that dropp');
   }
 
-  if (dropp.media === 'fase') {
+  if (dropp.media === 'false') {
     await Utils.deleteLocalFile(details.filePath);
-    Dropp.throwResourceError(source, 'This dropp cannot have a photo added to it');
+    DroppError.throwResourceError(source, 'This dropp cannot have a photo added to it');
   }
 
   try {
@@ -269,7 +269,7 @@ const addPhoto = async function addPhoto(_currentUser, _details) {
       && uploadError.details.error.type === DroppError.type.Resource.type
     ) {
       // Throw error with clearer message
-      Dropp.throwResourceError(source, 'A photo has already been added to this dropp');
+      DroppError.throwResourceError(source, 'A photo has already been added to this dropp');
     }
 
     // Re-throw caught error
@@ -361,6 +361,7 @@ const remove = async function remove(_currentUser, _details) {
   }
 
   await DroppAccessor.remove(dropp);
+  if (dropp.media === 'true') await CloudStorage.remove(cloudStorageFolder, dropp.id);
   const result = {
     success: {
       message: 'Successful dropp removal',
@@ -380,5 +381,6 @@ module.exports = {
   getByFollows,
   getByLocation,
   maxDistanceMeters,
+  cloudStorageFolder,
   filter: filterAllDropps,
 };

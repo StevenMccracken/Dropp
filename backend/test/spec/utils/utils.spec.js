@@ -298,7 +298,7 @@ const deleteLocalFileTitle = 'deleteLocalFile function';
 describe(deleteLocalFileTitle, () => {
   beforeEach(() => {
     this.createLocalFile = () => {
-      const path = `${process.cwd()}/test/uploads/${Utils.newUuid()}.txt`;
+      const path = `${process.cwd()}/cache/uploads/${Utils.newUuid()}.txt`;
       const promise = new Promise((resolve) => {
         const writeStream = FileSystem.createWriteStream(path);
         writeStream.on('close', () => resolve(path));

@@ -1,5 +1,5 @@
-const FileSystem = require('fs');
 const Log = require('../../logger');
+const Helper = require('../../helper');
 const Utils = require('../../../src/utilities/utils');
 const DroppError = require('../../../src/errors/DroppError');
 const CloudStorage = require('../../../src/storage/storage');
@@ -9,38 +9,6 @@ const testName = 'Cloud Storage';
 CloudStorage.initializeBucket();
 /* eslint-disable no-undef */
 describe(testName, () => {
-  beforeEach(() => {
-    this.deleteLocalFile = async (_testImageFilePath) => {
-      await Utils.deleteLocalFile(_testImageFilePath);
-    };
-
-    this.createLocalFile = (_testImageName, _uuid) => {
-      const uuid = _uuid || Utils.newUuid();
-      const existingImagePath = `${process.cwd()}/test/uploads/${_testImageName}`;
-      const copiedImagePath = `${process.cwd()}/test/uploads/${uuid}_${_testImageName}`;
-      const promise = new Promise((resolve) => {
-        const writeStream = FileSystem.createWriteStream(copiedImagePath);
-        writeStream.on('close', () => {
-          const result = {
-            filename: uuid,
-            path: copiedImagePath,
-          };
-
-          resolve(result);
-        });
-
-        FileSystem.createReadStream(existingImagePath).pipe(writeStream);
-      });
-
-      return promise;
-    };
-  });
-
-  afterEach(() => {
-    delete this.createLocalFile;
-    delete this.deleteLocalFile;
-  });
-
   const getTitle = 'Get';
   describe(getTitle, () => {
     it('throws an error for invalid folder and filename', async (done) => {
@@ -76,7 +44,7 @@ describe(testName, () => {
     const successGetTitle = 'Get success';
     describe(successGetTitle, () => {
       beforeEach(async (done) => {
-        this.fileInfo = await this.createLocalFile('test_image_001.png');
+        this.fileInfo = await Helper.copyLocalFile('test_image_001.png');
         await CloudStorage.add('', this.fileInfo.filename, this.fileInfo.path);
         done();
       });
@@ -100,7 +68,7 @@ describe(testName, () => {
   const addTitle = 'Add';
   describe(addTitle, () => {
     beforeEach(async (done) => {
-      this.fileInfo = await this.createLocalFile('test_image_001.png');
+      this.fileInfo = await Helper.copyLocalFile('test_image_001.png');
       await CloudStorage.add('', this.fileInfo.filename, this.fileInfo.path);
       done();
     });
@@ -162,7 +130,7 @@ describe(testName, () => {
     });
 
     it('throws an error for an already-existing file', async (done) => {
-      this.fileInfo = await this.createLocalFile('test_image_001.png', this.fileInfo.filename);
+      this.fileInfo = await Helper.copyLocalFile('test_image_001.png', this.fileInfo.filename);
       try {
         const result = await CloudStorage.add('', this.fileInfo.filename, this.fileInfo.path);
         expect(result).not.toBeDefined();
@@ -175,14 +143,14 @@ describe(testName, () => {
         Log(testName, addTitle, error.details);
       }
 
-      await this.deleteLocalFile(this.fileInfo.path);
+      await Utils.deleteLocalFile(this.fileInfo.path);
       done();
     });
 
     const successAddTitle = 'Add success';
     describe(successAddTitle, () => {
       beforeEach(async (done) => {
-        this.fileInfo2 = await this.createLocalFile('test_image_001.png');
+        this.fileInfo2 = await Helper.copyLocalFile('test_image_001.png');
         done();
       });
 
@@ -240,7 +208,7 @@ describe(testName, () => {
     const successRemoveTitle = 'Remove success';
     describe(successRemoveTitle, () => {
       beforeEach(async (done) => {
-        this.fileInfo = await this.createLocalFile('test_image_001.png');
+        this.fileInfo = await Helper.copyLocalFile('test_image_001.png');
         await CloudStorage.add('', this.fileInfo.filename, this.fileInfo.path);
         done();
       });
