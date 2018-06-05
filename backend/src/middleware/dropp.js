@@ -74,7 +74,10 @@ const getPhoto = async function getPhoto(_currentUser, _details) {
   Log.log(moduleName, source, _currentUser, _details);
 
   const dropp = await get(_currentUser, _details);
-  if (dropp.media === 'false') DroppError.throwResourceError('This dropp does not contain a photo');
+  if (dropp.media === 'false') {
+    DroppError.throwResourceError(source, 'This dropp does not contain a photo');
+  }
+
   const result = await CloudStorage.get(cloudStorageFolder, dropp.id);
   return { success: result };
 };

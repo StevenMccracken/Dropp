@@ -14,15 +14,24 @@ class Dropp extends Object {
       ModelError.throwConstructorError('Dropp', 'details arg has no value');
     }
 
+    let validLocation;
     const invalidMembers = [];
-    if (!(_details.location instanceof Location)) invalidMembers.push('location');
+    if (_details.location instanceof Location) validLocation = _details.location;
+    else {
+      try {
+        validLocation = new Location(_details.location);
+      } catch (error) {
+        invalidMembers.push('location');
+      }
+    }
+
     if (!Validator.isValidTimestamp(_details.timestamp)) invalidMembers.push('timestamp');
     if (!Validator.isValidUsername(_details.username)) invalidMembers.push('username');
     if (!Validator.isValidTextPost(_details.text)) invalidMembers.push('text');
     if (!Validator.isValidBooleanString(_details.media)) invalidMembers.push('media');
     if (invalidMembers.length > 0) ModelError.throwInvalidMembersError('Dropp', invalidMembers);
     this.id = _details.id;
-    this.location = _details.location;
+    this.location = validLocation;
     this.media = _details.media;
     this.text = _details.text;
     this.timestamp = _details.timestamp;
@@ -81,7 +90,7 @@ class Dropp extends Object {
     return {
       text: this._text,
       media: this._media,
-      location: this._location,
+      location: this._location.databaseData,
       username: this._username,
       timestamp: this._timestamp,
     };
@@ -92,7 +101,7 @@ class Dropp extends Object {
       id: this._id,
       text: this._text,
       media: this._media,
-      location: this._location,
+      location: this._location.databaseData,
       username: this._username,
       timestamp: this._timestamp,
     };

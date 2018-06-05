@@ -58,6 +58,22 @@ describe(constructorTitle, () => {
     done();
   });
 
+  it('throws an error for an invalid location', () => {
+    try {
+      this.details.location = this.location.databaseData;
+      delete this.details.location.latitude;
+      const dropp = new Dropp(this.details);
+      expect(dropp).not.toBeDefined();
+      Log(testName, constructorTitle, 'Should have thrown error');
+    } catch (error) {
+      expect(error.name).toBe('ModelError');
+      expect(error.details.type).toBe(ModelError.type.Constructor.type);
+      expect(error.details.details.invalidMembers.length).toBe(1);
+      expect(error.details.details.invalidMembers[0]).toBe('location');
+      Log(testName, constructorTitle, error);
+    }
+  });
+
   it('throws an error for a missing timestamp', (done) => {
     try {
       delete this.details.timestamp;
@@ -127,6 +143,38 @@ describe(constructorTitle, () => {
   });
 
   it('creates a dropp object with the given details', (done) => {
+    const dropp = new Dropp(this.details);
+    expect(dropp.id).not.toBeDefined();
+    expect(dropp.location.latitude).toBe(this.details.location.latitude);
+    expect(dropp.location.longitude).toBe(this.details.location.longitude);
+    expect(dropp.media).toBe(this.details.media);
+    expect(dropp.text).toBe(this.details.text);
+    expect(dropp.timestamp).toBe(this.details.timestamp);
+    expect(dropp.username).toBe(this.details.username);
+
+    const responseData = dropp.databaseData;
+    expect(responseData.id).not.toBeDefined();
+    expect(responseData.location.latitude).toBe(this.details.location.latitude);
+    expect(responseData.location.longitude).toBe(this.details.location.longitude);
+    expect(responseData.media).toBe(this.details.media);
+    expect(responseData.text).toBe(this.details.text);
+    expect(responseData.timestamp).toBe(this.details.timestamp);
+    expect(responseData.username).toBe(this.details.username);
+
+    const data = dropp.publicData;
+    expect(data.id).toBe(this.details.id);
+    expect(data.location.latitude).toBe(this.details.location.latitude);
+    expect(data.location.longitude).toBe(this.details.location.longitude);
+    expect(data.media).toBe(this.details.media);
+    expect(data.text).toBe(this.details.text);
+    expect(data.timestamp).toBe(this.details.timestamp);
+    expect(data.username).toBe(this.details.username);
+    Log(testName, constructorTitle, dropp);
+    done();
+  });
+
+  it('creates a dropp object with location-like location object', (done) => {
+    this.details.location = this.location.databaseData;
     const dropp = new Dropp(this.details);
     expect(dropp.id).not.toBeDefined();
     expect(dropp.location.latitude).toBe(this.details.location.latitude);

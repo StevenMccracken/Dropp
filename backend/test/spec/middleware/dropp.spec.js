@@ -137,6 +137,158 @@ describe(testName, () => {
     });
   });
 
+  const getDroppPhotoTitle = 'Get dropp photo';
+  describe(getDroppPhotoTitle, () => {
+    beforeEach(async (done) => {
+      this.dropp = new Dropp({
+        text: 'test',
+        media: 'false',
+        username: this.user.username,
+        timestamp: 1,
+        location: new Location({
+          latitude: 0,
+          longitude: 0,
+        }),
+      });
+
+      await DroppAccessor.add(this.dropp);
+      this.details = { id: this.dropp.id };
+      done();
+    });
+
+    afterEach(async (done) => {
+      await DroppMiddleware.remove(this.user, this.details);
+      delete this.dropp;
+      delete this.details;
+      done();
+    });
+
+    it('throws an error for an invalid current user', async (done) => {
+      try {
+        const result = await DroppMiddleware.getPhoto(null, this.details);
+        expect(result).not.toBeDefined();
+        Log(testName, getDroppPhotoTitle, 'Should have thrown error');
+      } catch (error) {
+        expect(error.name).toBe('DroppError');
+        expect(error.details.error.type).toBe(DroppError.type.Server.type);
+        expect(error.details.error.message).toBe(DroppError.type.Server.message);
+        Log(testName, getDroppPhotoTitle, error.details);
+      }
+
+      done();
+    });
+
+    it('throws an error for null details', async (done) => {
+      try {
+        const result = await DroppMiddleware.getPhoto(this.user, null);
+        expect(result).not.toBeDefined();
+        Log(testName, getDroppPhotoTitle, 'Should have thrown error');
+      } catch (error) {
+        expect(error.name).toBe('DroppError');
+        expect(error.details.error.type).toBe(DroppError.type.InvalidRequest.type);
+        expect(error.details.error.message).toBe('id');
+        Log(testName, getDroppPhotoTitle, error.details);
+      }
+
+      done();
+    });
+
+    it('throws an error for an invalid dropp ID', async (done) => {
+      const invalidDetails = { id: '$' };
+      try {
+        const result = await DroppMiddleware.getPhoto(this.user, invalidDetails);
+        expect(result).not.toBeDefined();
+        Log(testName, getDroppPhotoTitle, 'Should have thrown error');
+      } catch (error) {
+        expect(error.name).toBe('DroppError');
+        expect(error.details.error.type).toBe(DroppError.type.InvalidRequest.type);
+        expect(error.details.error.message).toBe('id');
+        Log(testName, getDroppPhotoTitle, error.details);
+      }
+
+      done();
+    });
+
+    it('throws an error for a non-existent dropp', async (done) => {
+      const details = { id: Utils.newUuid() };
+      try {
+        const result = await DroppMiddleware.getPhoto(this.user, details);
+        expect(result).not.toBeDefined();
+        Log(testName, getDroppPhotoTitle, 'Should have thrown error');
+      } catch (error) {
+        expect(error.name).toBe('DroppError');
+        expect(error.details.error.type).toBe(DroppError.type.ResourceDNE.type);
+        expect(error.details.error.message).toBe('That dropp does not exist');
+        Log(testName, getDroppPhotoTitle, error.details);
+      }
+
+      done();
+    });
+
+    it('throws an error for a dropp with no media', async (done) => {
+      try {
+        const result = await DroppMiddleware.getPhoto(this.user, this.details);
+        expect(result).not.toBeDefined();
+        Log(testName, getDroppPhotoTitle, 'Should have thrown error');
+      } catch (error) {
+        expect(error.name).toBe('DroppError');
+        expect(error.details.error.type).toBe(DroppError.type.Resource.type);
+        expect(error.details.error.message).toBe('This dropp does not contain a photo');
+        Log(testName, getDroppPhotoTitle, error.details);
+      }
+
+      done();
+    });
+
+    const getDroppPhotoSuccessTitle = 'Get dropp photo success';
+    describe(getDroppPhotoSuccessTitle, () => {
+      let originalTimeout;
+      beforeEach(async (done) => {
+        originalTimeout = jasmine.DEFAULT_TIMEOUT_INTERVAL;
+        jasmine.DEFAULT_TIMEOUT_INTERVAL = 30000;
+
+        this.dropp2 = new Dropp({
+          text: 'test',
+          media: 'true',
+          username: this.user.username,
+          timestamp: 1,
+          location: new Location({
+            latitude: 0,
+            longitude: 0,
+          }),
+        });
+
+        await DroppAccessor.add(this.dropp2);
+        this.details2 = { id: this.dropp2.id };
+        const result = await Helper.copyLocalFile('test_image_001.png');
+        const details = {
+          id: this.dropp2.id,
+          filePath: result.path,
+        };
+
+        await DroppMiddleware.addPhoto(this.user, details);
+        done();
+      });
+
+      afterEach(async (done) => {
+        await DroppMiddleware.remove(this.user, this.details2);
+        delete this.dropp2;
+        delete this.details2;
+
+        jasmine.DEFAULT_TIMEOUT_INTERVAL = originalTimeout;
+        done();
+      });
+
+      it('get\'s a dropp\'s photo data', async (done) => {
+        const result = await DroppMiddleware.getPhoto(this.user, this.details2);
+        expect(result.success.mimeType).toBe('image/png');
+        expect(result.success.base64Data.length > 0).toBe(true);
+        Log(testName, getDroppPhotoSuccessTitle, result.success.mimeType);
+        done();
+      });
+    });
+  });
+
   const getByUserTitle = 'Get dropps by user';
   describe(getByUserTitle, () => {
     beforeEach(async (done) => {
@@ -820,7 +972,11 @@ describe(testName, () => {
 
     const addPhotoExistingPhotoTitle = 'Add photo existing photo error';
     describe(addPhotoExistingPhotoTitle, () => {
+      let originalTimeout;
       beforeEach(async (done) => {
+        originalTimeout = jasmine.DEFAULT_TIMEOUT_INTERVAL;
+        jasmine.DEFAULT_TIMEOUT_INTERVAL = 30000;
+
         this.shouldDeleteLocalFile = true;
         this.dropp2 = new Dropp({
           text: 'test',
@@ -847,9 +1003,11 @@ describe(testName, () => {
       });
 
       afterEach(async (done) => {
-        await DroppAccessor.remove(this.dropp2);
+        await DroppMiddleware.remove(this.user, this.details2);
         delete this.dropp2;
         delete this.details2;
+
+        jasmine.DEFAULT_TIMEOUT_INTERVAL = originalTimeout;
         done();
       });
 
@@ -871,7 +1029,11 @@ describe(testName, () => {
 
     const addPhotoSuccessTitle = 'Add photo success';
     describe(addPhotoSuccessTitle, () => {
+      let originalTimeout;
       beforeEach(async (done) => {
+        originalTimeout = jasmine.DEFAULT_TIMEOUT_INTERVAL;
+        jasmine.DEFAULT_TIMEOUT_INTERVAL = 30000;
+
         this.shouldDeleteLocalFile = true;
         this.dropp2 = new Dropp({
           text: 'test',
@@ -895,9 +1057,11 @@ describe(testName, () => {
       });
 
       afterEach(async (done) => {
-        await DroppAccessor.remove(this.dropp2);
+        await DroppMiddleware.remove(this.user, this.details2);
         delete this.dropp2;
         delete this.details2;
+
+        jasmine.DEFAULT_TIMEOUT_INTERVAL = originalTimeout;
         done();
       });
 
@@ -1156,7 +1320,11 @@ describe(testName, () => {
 
     const removeDroppWithPhotoTitle = 'Remove dropp with photo';
     describe(removeDroppWithPhotoTitle, () => {
+      let originalTimeout;
       beforeEach(async (done) => {
+        originalTimeout = jasmine.DEFAULT_TIMEOUT_INTERVAL;
+        jasmine.DEFAULT_TIMEOUT_INTERVAL = 10000;
+
         this.dropp2 = new Dropp({
           text: 'test',
           media: 'true',
@@ -1178,6 +1346,10 @@ describe(testName, () => {
 
         await DroppMiddleware.addPhoto(this.user, details);
         done();
+      });
+
+      afterEach(() => {
+        jasmine.DEFAULT_TIMEOUT_INTERVAL = originalTimeout;
       });
 
       it('removes a dropp', async (done) => {

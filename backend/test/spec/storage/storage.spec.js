@@ -9,6 +9,16 @@ const testName = 'Cloud Storage';
 CloudStorage.initializeBucket();
 /* eslint-disable no-undef */
 describe(testName, () => {
+  let originalTimeout;
+  beforeEach(() => {
+    originalTimeout = jasmine.DEFAULT_TIMEOUT_INTERVAL;
+    jasmine.DEFAULT_TIMEOUT_INTERVAL = 30000;
+  });
+
+  afterEach(() => {
+    jasmine.DEFAULT_TIMEOUT_INTERVAL = originalTimeout;
+  });
+
   const getTitle = 'Get';
   describe(getTitle, () => {
     it('throws an error for invalid folder and filename', async (done) => {

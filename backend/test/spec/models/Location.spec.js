@@ -1,5 +1,4 @@
 const Log = require('../../logger');
-const Utils = require('../../../src/utilities/utils');
 const Location = require('../../../src/models/Location');
 const ModelError = require('../../../src/errors/ModelError');
 

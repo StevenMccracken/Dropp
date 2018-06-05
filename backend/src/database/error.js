@@ -43,6 +43,9 @@ const add = async function add(_info) {
   if (!Utils.hasValue(_info)) return undefined;
   let id;
   try {
+    /* eslint-disable no-param-reassign */
+    _info.environment = process.env.DROPP_ENV;
+    /* eslint-enable no-param-reassign */
     const url = await Firebase.add(baseUrl, _info);
     id = url.split('/').pop();
   } catch (error) {
