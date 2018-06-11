@@ -6,39 +6,9 @@ const Log = require('../logging/logger');
 const Utils = require('../utilities/utils');
 const Auth = require('../authentication/auth');
 const DroppError = require('../errors/DroppError');
+const Constants = require('../utilities/constants');
 const UserMiddleware = require('../middleware/user');
 const ErrorLogAccessor = require('../database/error');
-
-const moduleName = 'Router Module';
-const routes = {
-  '/': 'GET',
-  '/welcome': 'GET',
-  '/auth': 'POST',
-  '/users': {
-    '/': 'POST',
-    '/<username>': {
-      '/': [
-        'GET',
-        'DELETE',
-      ],
-      '/email': 'PUT',
-      '/password': 'PUT',
-      '/follows': {
-        '/<follow>': 'DELETE',
-        '/requests': {
-          '/': 'POST',
-          '/<requestedUser>': 'DELETE',
-        },
-      },
-      '/followers': {
-        '/<follower>': 'DELETE',
-        '/requests': {
-          '/<requestedUser>': 'PUT',
-        },
-      },
-    },
-  },
-};
 
 /**
  * Sends an error response in JSON format
@@ -48,10 +18,10 @@ const routes = {
  * @param {Function} _next unused callback
  */
 /* eslint-disable no-unused-vars */
-const handleError = function handleError(_error, _request, _response, _next) {
+const handleError = (_error, _request, _response, _next) => {
 /* eslint-enable no-unused-vars */
   const source = 'handleError()';
-  Log.logRequest(moduleName, source, _request, _error);
+  Log.logRequest(Constants.router.moduleName, source, _request, _error);
 
   let errorDetails;
   if (_error instanceof DroppError) {
@@ -77,7 +47,7 @@ const handleError = function handleError(_error, _request, _response, _next) {
     const error = DroppError.format(DroppError.type.Server, source);
     errorDetails = error.details;
     const details = {
-      message: 'An unknown was caught in router',
+      message: Constants.router.messages.errors.unknownCatch,
       error: _error,
       request: _request,
     };
@@ -98,32 +68,32 @@ const handleError = function handleError(_error, _request, _response, _next) {
  * @param {Object} _response the HTTP response object
  * @param {Function} _next the callback used if authentication succeeds
  */
-const validateAuthToken = async function validateAuthToken(_request, _response, _next) {
+const validateAuthToken = async (_request, _response, _next) => {
   try {
     /* eslint-disable no-param-reassign */
     _request.user = await Auth.verifyToken(_request, _response);
     /* eslint-enable no-param-reassign */
     _next();
   } catch (authError) {
-    const source = `Router ${_request.url}`;
+    const source = `${Constants.router.moduleName} ${_request.url}`;
     const error = DroppError.handleAuthError(source, _request, _response, authError);
     handleError(error, _request, _response, _next);
   }
 };
 
 let router;
-const routing = function routing(_router) {
+const routing = (_router) => {
   router = _router;
 
   // Middleware to log metadata about incoming requests
   router.use((request, response, next) => {
     // Add unique request ID to request and response headers
-    const source = 'middleware';
+    const source = 'Logging middleware';
     const requestId = Utils.newUuid();
     request.headers.requestId = requestId;
-    response.set('requestId', requestId);
-    response.set('Access-Control-Expose-Headers', 'requestId');
-    Log.logRequest(moduleName, source, request);
+    response.set(Constants.params.requestId, requestId);
+    response.set(Constants.router.accessControlExposeHeaders, Constants.params.requestId);
+    Log.logRequest(Constants.router.moduleName, source, request);
     next();
   });
 
@@ -132,9 +102,8 @@ const routing = function routing(_router) {
    * Authentication: No
    * Details: Base route for the API. Provides all accessible routes and methods
    */
-  const baseRoute = '/';
-  router.route(baseRoute).get((request, response) => {
-    response.json(routes);
+  router.route(Constants.router.routes.base).get((request, response) => {
+    response.json(Constants.router.details);
   });
 
   /**
@@ -142,9 +111,8 @@ const routing = function routing(_router) {
    * Authentication: No
    * Details: Route to test without other resource access
    */
-  const welcomeRoute = '/welcome';
-  router.route(welcomeRoute).get((request, response) => {
-    response.json({ message: 'This is the REST API for Dropp' });
+  router.route(Constants.router.routes.welcome).get((request, response) => {
+    response.json({ message: Constants.router.messages.success.welcome });
   });
 
   /**
@@ -155,8 +123,7 @@ const routing = function routing(_router) {
    *  username
    *  password
    */
-  const authRoute = '/auth';
-  router.route(authRoute).post(async (request, response, next) => {
+  router.route(Constants.router.routes.auth).post(async (request, response, next) => {
     try {
       const result = await UserMiddleware.getAuthToken(request.body);
       response.json(result);
@@ -174,7 +141,7 @@ const routing = function routing(_router) {
    *  username
    *  password
    */
-  router.route('/users').post(async (request, response, next) => {
+  router.route(Constants.router.routes.users.base).post(async (request, response, next) => {
     try {
       const result = await UserMiddleware.addNewUser(request.body);
       response.status(201);
@@ -191,7 +158,7 @@ const routing = function routing(_router) {
    * URL parameters:
    *  username
    */
-  router.route('/users/:username')
+  router.route(Constants.router.routes.users.username.base)
     .all(validateAuthToken)
     .get(async (request, response, next) => {
       try {
@@ -211,7 +178,7 @@ const routing = function routing(_router) {
    * Body parameters:
    *  newEmail
    */
-  router.route('/users/:username/email')
+  router.route(Constants.router.routes.users.username.email)
     .all(validateAuthToken)
     .put(async (request, response, next) => {
       try {
@@ -232,7 +199,7 @@ const routing = function routing(_router) {
    *  oldPassword
    *  newPassword
    */
-  router.route('/users/:username/password')
+  router.route(Constants.router.routes.users.username.password)
     .all(validateAuthToken)
     .put(async (request, response, next) => {
       try {
@@ -254,7 +221,7 @@ const routing = function routing(_router) {
    * URL parameters:
    *  username
    */
-  router.route('/users/:username/follows/requests')
+  router.route(Constants.router.routes.users.username.follows.requests.base)
     .all(validateAuthToken)
     .post(async (request, response, next) => {
       try {
@@ -277,7 +244,7 @@ const routing = function routing(_router) {
    *  username
    *  requestedUser
    */
-  router.route('/users/:username/follows/requests/:requestedUser')
+  router.route(Constants.router.routes.users.username.follows.requests.requestedUser)
     .all(validateAuthToken)
     .delete(async (request, response, next) => {
       try {
@@ -298,7 +265,7 @@ const routing = function routing(_router) {
    * Body parameters:
    *  accept
    */
-  router.route('/users/:username/followers/requests/:requestedUser')
+  router.route(Constants.router.routes.users.username.followers.requests.requestedUser)
     .all(validateAuthToken)
     .put(async (request, response, next) => {
       try {
@@ -321,7 +288,7 @@ const routing = function routing(_router) {
    *  username
    *  follow
    */
-  router.route('/users/:username/follows/:follow')
+  router.route(Constants.router.routes.users.username.follows.follow)
     .all(validateAuthToken)
     .delete(async (request, response, next) => {
       try {
@@ -340,7 +307,7 @@ const routing = function routing(_router) {
    *  username
    *  follower
    */
-  router.route('/users/:username/followers/:follower')
+  router.route(Constants.router.routes.users.username.followers.follower)
     .all(validateAuthToken)
     .delete(async (request, response, next) => {
       try {
@@ -358,7 +325,7 @@ const routing = function routing(_router) {
    * URL parameters:
    *  username
    */
-  router.route('/users/:username')
+  router.route(Constants.router.routes.users.username.base)
     .all(validateAuthToken)
     .delete(async (request, response, next) => {
       try {
@@ -373,7 +340,6 @@ const routing = function routing(_router) {
 };
 
 module.exports = {
-  routes,
   validateAuthToken,
   configure: routing,
   errorHandler: handleError,

@@ -3,23 +3,18 @@
  */
 
 const mmmagic = require('mmmagic');
-
-const mimeTypes = {
-  png: 'image/png',
-  jpeg: 'image/jpeg',
-};
-
-const base64DataTypes = {
-  png: 'iVBORw0KGgoAAA',
-  jpg: '/9j/4AAQSkZJRg',
-};
+const Log = require('../logging/logger');
+const Constants = require('../utilities/constants');
 
 /**
  * Determines the MIME type of a given file based on it's data
  * @param {String} _path the path to the given file
  * @return {String} the MIME type. Empty string if an error occurred
  */
-const determineMimeType = async function determineMimeType(_path) {
+const determineMimeType = async (_path) => {
+  const source = 'determineMimeType()';
+  Log.log(Constants.media.moduleName, source, _path);
+
   const promise = new Promise((resolve) => {
     if (typeof _path !== 'string') {
       resolve('');
@@ -41,20 +36,25 @@ const determineMimeType = async function determineMimeType(_path) {
  * @param {Buffer} _buffer the data to encode
  * @return {Object} object with MIME type and encoded data
  */
-const encodeToBase64 = function encodeToBase64(_buffer) {
+const encodeToBase64 = (_buffer) => {
+  const source = 'encodeToBase64()';
+  Log.log(Constants.media.moduleName, source, _buffer);
+
   const result = {
     mimeType: '',
     base64Data: '',
   };
 
   if (!(_buffer instanceof Buffer)) return result;
-  const base64String = _buffer.toString('base64');
+  const base64String = _buffer.toString(Constants.media.encodings.base64);
 
-  let mimeType = 'unknown';
+  let mimeType = Constants.media.mimeTypes.unknown;
   if (base64String.length >= 13) {
     const encoding = base64String.substring(0, 14);
-    if (encoding === base64DataTypes.png) mimeType = mimeTypes.png;
-    else if (encoding === base64DataTypes.jpg) mimeType = mimeTypes.jpeg;
+    if (encoding === Constants.media.base64DataTypes.png) mimeType = Constants.media.mimeTypes.png;
+    else if (encoding === Constants.media.base64DataTypes.jpg) {
+      mimeType = Constants.media.mimeTypes.jpeg;
+    }
   }
 
   result.mimeType = mimeType;
@@ -63,8 +63,6 @@ const encodeToBase64 = function encodeToBase64(_buffer) {
 };
 
 module.exports = {
-  mimeTypes,
-  base64DataTypes,
   determineMimeType,
   encodeToBase64,
 };

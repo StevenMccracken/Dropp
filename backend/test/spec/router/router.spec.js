@@ -9,6 +9,7 @@ const handleErrorTitle = 'Handle error';
 /* eslint-disable no-undef */
 describe(handleErrorTitle, () => {
   beforeEach(() => {
+    Log.beforeEach(testName, handleErrorTitle, true);
     this.request = {};
     this.response = {
       status: (value) => {
@@ -18,45 +19,57 @@ describe(handleErrorTitle, () => {
         this.responseResult = result;
       },
     };
+
+    Log.beforeEach(testName, handleErrorTitle, false);
   });
 
   afterEach(() => {
+    Log.afterEach(testName, handleErrorTitle, true);
     delete this.request;
     delete this.response;
     delete this.statusCode;
     delete this.responseResult;
+    Log.afterEach(testName, handleErrorTitle, false);
   });
 
-  it('returns a generic error for an invalid error object', (done) => {
+  const it1 = 'returns a generic error for an invalid error object';
+  it(it1, () => {
+    Log.it(testName, handleErrorTitle, it1, true);
     RouterModule.errorHandler(null, this.request, this.response, null);
     expect(this.statusCode).toBe(DroppError.type.Server.status);
     expect(this.responseResult.error.type).toBe(DroppError.type.Server.type);
     expect(this.responseResult.error.message).toBe(DroppError.type.Server.message);
-    Log(testName, handleErrorTitle, this.responseResult);
-    done();
+    Log.log(testName, handleErrorTitle, this.responseResult);
+    Log.it(testName, handleErrorTitle, it1, false);
   });
 
-  it('returns a generic error for an empty Dropp error', (done) => {
+  const it2 = 'returns a generic error for an empty Dropp error';
+  it(it2, () => {
+    Log.it(testName, handleErrorTitle, it2, true);
     const error = new DroppError();
     error.details = null;
     RouterModule.errorHandler(error, this.request, this.response, null);
     expect(this.statusCode).toBe(DroppError.type.Server.status);
     expect(this.responseResult.error.type).toBe(DroppError.type.Server.type);
     expect(this.responseResult.error.message).toBe(DroppError.type.Server.message);
-    Log(testName, handleErrorTitle, this.responseResult);
-    done();
+    Log.log(testName, handleErrorTitle, this.responseResult);
+    Log.it(testName, handleErrorTitle, it2, false);
   });
 
-  it('returns an error for an semi-complete Dropp error', (done) => {
+  const it3 = 'returns an error for an semi-complete Dropp error';
+  it(it3, () => {
+    Log.it(testName, handleErrorTitle, it3, true);
     const error = new DroppError('test', 'test');
     RouterModule.errorHandler(error, this.request, this.response, null);
     expect(this.responseResult).toBe('test');
     expect(this.statusCode).toBe(DroppError.type.Server.status);
-    Log(testName, handleErrorTitle, this.responseResult);
-    done();
+    Log.log(testName, handleErrorTitle, this.responseResult);
+    Log.it(testName, handleErrorTitle, it3, false);
   });
 
-  it('returns an error for an complete Dropp error', (done) => {
+  const it4 = 'returns an error for an complete Dropp error';
+  it(it4, () => {
+    Log.it(testName, handleErrorTitle, it4, true);
     const privateDetails = {
       error: {
         type: {
@@ -69,8 +82,8 @@ describe(handleErrorTitle, () => {
     RouterModule.errorHandler(error, this.request, this.response, null);
     expect(this.statusCode).toBe(1);
     expect(this.responseResult).toBe('test');
-    Log(testName, handleErrorTitle, this.responseResult);
-    done();
+    Log.log(testName, handleErrorTitle, this.responseResult);
+    Log.it(testName, handleErrorTitle, it4, false);
   });
 });
 
@@ -121,18 +134,23 @@ describe(validateAuthTokenTitle, () => {
     done();
   });
 
-  it('returns an error for a missing auth token', async (done) => {
+  const it5 = 'returns an error for a missing auth token';
+  it(it5, async (done) => {
+    Log.it(testName, validateAuthTokenTitle, it5, true);
     await RouterModule.validateAuthToken(this.request, this.response, this.next);
     expect(this.didCallNext).toBe(false);
     expect(this.request.user).not.toBeDefined();
     expect(this.statusCode).toBe(DroppError.type.Auth.status);
     expect(this.responseResult.error.type).toBe(DroppError.type.Auth.type);
     expect(this.responseResult.error.message).toBe(DroppError.TokenReason.missing);
-    Log(testName, validateAuthTokenTitle, this.responseResult.error.message);
+    Log.log(testName, validateAuthTokenTitle, this.responseResult.error.message);
+    Log.it(testName, validateAuthTokenTitle, it5, false);
     done();
   });
 
-  it('returns an error for an invalid auth token', async (done) => {
+  const it6 = 'returns an error for an invalid auth token';
+  it(it6, async (done) => {
+    Log.it(testName, validateAuthTokenTitle, it6, true);
     this.request.headers.authorization = `Bearer ${Utils.newUuid()}`;
     await RouterModule.validateAuthToken(this.request, this.response, this.next);
     expect(this.didCallNext).toBe(false);
@@ -140,16 +158,20 @@ describe(validateAuthTokenTitle, () => {
     expect(this.statusCode).toBe(DroppError.type.Auth.status);
     expect(this.responseResult.error.type).toBe(DroppError.type.Auth.type);
     expect(this.responseResult.error.message).toBe(DroppError.TokenReason.invalid);
-    Log(testName, validateAuthTokenTitle, this.responseResult.error.message);
+    Log.log(testName, validateAuthTokenTitle, this.responseResult.error.message);
+    Log.it(testName, validateAuthTokenTitle, it6, false);
     done();
   });
 
-  it('returns a user for an valid auth token', async (done) => {
+  const it7 = 'returns a user for an valid auth token';
+  it(it7, async (done) => {
+    Log.it(testName, validateAuthTokenTitle, it7, true);
     this.request.headers.authorization = this.token;
     await RouterModule.validateAuthToken(this.request, this.response, this.next);
     expect(this.didCallNext).toBe(true);
     expect(this.request.user.username).toBe(this.user.username);
-    Log(testName, validateAuthTokenTitle, this.didCallNext);
+    Log.log(testName, validateAuthTokenTitle, this.didCallNext);
+    Log.it(testName, validateAuthTokenTitle, it7, false);
     done();
   });
 });

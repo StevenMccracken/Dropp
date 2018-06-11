@@ -1,7 +1,6 @@
 const Log = require('../logging/logger');
 const Utils = require('../utilities/utils');
-
-const moduleName = 'Storage Error';
+const Constants = require('../utilities/constants');
 
 /**
  * Custom error object to contain extra details
@@ -42,7 +41,7 @@ class StorageError extends Error {
   static throw(_type, _source, _details) {
     const source = 'throw()';
     const error = this.format(_type, _source, _details);
-    Log.log(moduleName, source, error.details);
+    Log.log(Constants.errors.storage.moduleName, source, error.details);
     throw error;
   }
 
@@ -73,7 +72,7 @@ class StorageError extends Error {
 
 StorageError.type = {
   State: {
-    type: 'invalid_state',
+    type: Constants.errors.types.invalidState,
     message: 'Cloud storage was in an invalid state',
   },
   InvalidFile: {
@@ -89,8 +88,8 @@ StorageError.type = {
     message: 'Invalid data',
   },
   Unknown: {
-    type: 'unknown',
-    message: 'An unknown error occurred',
+    type: Constants.errors.types.unknown,
+    message: Constants.errors.messages.unknownErrorOccurred,
   },
 };
 

@@ -11,7 +11,7 @@ const Utils = require('../utilities/utils');
  * @param {Object} _request the HTTP request
  * @param {[Any]} args additional details to log
  */
-const logRequest = function logRequest(_module, _source, _request, ...args) {
+const logRequest = (_module, _source, _request, ...args) => {
   // Capture info about the incoming HTTP request
   const id = Utils.getRequestId(_request);
   const ipAddress = Utils.getIpAddress(_request);
@@ -35,7 +35,7 @@ const logRequest = function logRequest(_module, _source, _request, ...args) {
  * @param {String} _source the source location within the given module
  * @param {[Any]} args additional details to log
  */
-const log = function log(_module, _source, ...args) {
+const log = (_module, _source, ...args) => {
   const appendedMessages = Utils.reduceToString(args);
   const timestamp = new Date().toISOString();
   let formattedMessage;

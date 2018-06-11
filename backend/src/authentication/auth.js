@@ -9,12 +9,10 @@ const User = require('../models/User');
 const Log = require('../logging/logger');
 const Utils = require('../utilities/utils');
 const JwtConfig = require('../../config/jwt');
+const Constants = require('../utilities/constants');
 
 // Configure token storage and verification with Passport
 require('./passport')(Passport);
-
-const moduleName = 'Authentication Module';
-const expirationTime = '7d';
 
 /**
  * Validates a given password against an already hashed password
@@ -24,9 +22,9 @@ const expirationTime = '7d';
  * @return {Boolean} whether the passwords match or not
  * @throws {Error} if _given or _actual are non-strings
  */
-const validatePasswords = async function validatePasswords(_given, _actual) {
+const validatePasswords = async (_given, _actual) => {
   const source = 'validatePasswords()';
-  Log.log(moduleName, source, _given, _actual);
+  Log.log(Constants.auth.moduleName, source, _given, _actual);
 
   const matchResult = await Bcrypt.compare(_given, _actual);
   return matchResult;
@@ -39,23 +37,27 @@ const validatePasswords = async function validatePasswords(_given, _actual) {
  * @return {Promise<Object>} the user object
  * corresponding to the token or a JSON of errors
  */
-const verifyToken = function verifyToken(_request, _response) {
+const verifyToken = (_request, _response) => {
   const source = 'verifyToken()';
-  Log.logRequest(moduleName, source, _request);
+  Log.logRequest(Constants.auth.moduleName, source, _request);
 
   const promise = new Promise((resolve, reject) => {
-    Passport.authenticate('jwt', { session: false }, (passportError, user, tokenError) => {
-      if (user instanceof User) resolve(user);
-      else {
-        const error = {
-          tokenError,
-          passportError,
-          userInfoMissing: !Utils.hasValue(user),
-        };
+    Passport.authenticate(
+      Constants.passport.jwt,
+      { session: false },
+      (passportError, user, tokenError) => {
+        if (user instanceof User) resolve(user);
+        else {
+          const error = {
+            tokenError,
+            passportError,
+            userInfoMissing: !Utils.hasValue(user),
+          };
 
-        reject(error);
+          reject(error);
+        }
       }
-    })(_request, _response);
+    )(_request, _response);
   });
 
   return promise;
@@ -66,12 +68,13 @@ const verifyToken = function verifyToken(_request, _response) {
  * @param {User} _user user object with unique information
  * @return {String} a JSON web token, or null if _user is not of type User
  */
-const generateToken = function generateToken(_user) {
+const generateToken = (_user) => {
   const source = 'generateToken()';
-  Log.log(moduleName, source, _user);
+  Log.log(Constants.auth.moduleName, source, _user);
 
   if (!(_user instanceof User)) return null;
-  return Jwt.sign(_user.privateData, JwtConfig.secret, { expiresIn: expirationTime });
+  const expirationConfig = { expiresIn: Constants.auth.saltIterations };
+  return Jwt.sign(_user.privateData, JwtConfig.secret, expirationConfig);
 };
 
 /**
@@ -80,11 +83,11 @@ const generateToken = function generateToken(_user) {
  * @return {String} the hashed value
  * @throws {Error} if _value is not a string
  */
-const hash = async function hash(_value) {
+const hash = async (_value) => {
   const source = 'hash()';
-  Log.log(moduleName, source, _value);
+  Log.log(Constants.auth.moduleName, source, _value);
 
-  const salt = await Bcrypt.genSalt(5);
+  const salt = await Bcrypt.genSalt(Constants.auth.saltIterations);
   const hashedValue = await Bcrypt.hash(_value, salt);
   return hashedValue;
 };

@@ -1,6 +1,7 @@
 const Utils = require('../utilities/utils');
 const ModelError = require('../errors/ModelError');
 const Validator = require('../utilities/validator');
+const Constants = require('../utilities/constants');
 
 /**
  * Model object for a location
@@ -10,13 +11,22 @@ class Location extends Object {
   constructor(_details) {
     super();
     if (!Utils.hasValue(_details)) {
-      ModelError.throwConstructorError('Location', 'details arg has no value');
+      ModelError.throwConstructorError(
+        Constants.params.Location,
+        Constants.errors.messages.detaisArgNoValue
+      );
     }
 
     const invalidMembers = [];
-    if (!Validator.isValidNumber(_details.latitude)) invalidMembers.push('latitude');
-    if (!Validator.isValidNumber(_details.longitude)) invalidMembers.push('longitude');
-    if (invalidMembers.length > 0) ModelError.throwInvalidMembersError('Location', invalidMembers);
+    if (!Validator.isValidNumber(_details.latitude)) invalidMembers.push(Constants.params.latitude);
+    if (!Validator.isValidNumber(_details.longitude)) {
+      invalidMembers.push(Constants.params.longitude);
+    }
+
+    if (invalidMembers.length > 0) {
+      ModelError.throwInvalidMembersError(Constants.params.Location, invalidMembers);
+    }
+
     this._latitude = _details.latitude;
     this._longitude = _details.longitude;
 
@@ -27,7 +37,10 @@ class Location extends Object {
      * @throws `ModelError` if `_location` is not of the correct type
      */
     this.distance = (_location) => {
-      if (!(_location instanceof Location)) ModelError.throwTypeMismatchError('Location');
+      if (!(_location instanceof Location)) {
+        ModelError.throwTypeMismatchError(Constants.params.Location);
+      }
+
       const thisLatitude = Utils.degreesToRadians(this.latitude);
       const givenLatitude = Utils.degreesToRadians(_location.latitude);
       const dLatitude = Utils.degreesToRadians(this.latitude - _location.latitude);
@@ -36,7 +49,7 @@ class Location extends Object {
       const a = (Math.sin(dLatitude / 2) * Math.sin(dLatitude / 2)) + (Math.sin(dLongitude / 2) * Math.sin(dLongitude / 2) * Math.cos(givenLatitude) * Math.cos(thisLatitude));
       /* eslint-enable max-len */
       const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
-      return c * 6371e3; // Multiply by the approx radius of the earth in meters
+      return c * Constants.models.location.earthRadiusMeters;
     };
   }
 

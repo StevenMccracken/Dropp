@@ -16,7 +16,7 @@ const datastore = {
  * @param {[String]} [_paths] the path within the database
  * @param {String|Number|Boolean|Object} [_value] the value to set at the given path
  */
-const set = function set(_paths, _value) {
+const set = (_paths, _value) => {
   let storeReference = datastore;
   const paths = Array.isArray(_paths) ? _paths : [];
   for (let i = 0; i < paths.length - 1; i++) {
@@ -35,7 +35,7 @@ const set = function set(_paths, _value) {
  * @param {String} _url the URL for a specific piece of data in the database
  * @return {[String]} the URL broken up into it's individual paths
  */
-const urlParts = function urlParts(_url) {
+const urlParts = (_url) => {
   const url = typeof _url === 'string' ? _url : '';
   const parts = url.split('/');
 
@@ -50,7 +50,7 @@ const urlParts = function urlParts(_url) {
  * @return {Promise<Object>} an object holding the
  * data. Get the data by calling val() on the object
  */
-const get = function get(_paths) {
+const get = (_paths) => {
   const promise = new Promise((resolve) => {
     const wrapper = {};
     if (!Array.isArray(_paths)) {
@@ -87,7 +87,7 @@ const get = function get(_paths) {
  * @return {Promise<String>} the full path, including
  * the data's key at the given path, as a URL
  */
-const push = function push(_paths, _data) {
+const push = (_paths, _data) => {
   if (!Array.isArray(_paths)) return new Promise(resolve => resolve());
   const promise = new Promise((resolve) => {
     const key = Utils.newUuid();
@@ -108,7 +108,7 @@ const push = function push(_paths, _data) {
  * to set at the given path. Pass null to delete the data
  * @return {Promise}
  */
-const setData = function setData(_paths, _data) {
+const setData = (_paths, _data) => {
   const promise = new Promise((resolve) => {
     if (Array.isArray(_paths)) set(_paths, _data);
     resolve();
@@ -123,7 +123,7 @@ const setData = function setData(_paths, _data) {
  * data. The set operations are performed in the order the keys exist in the map
  * @return {Promise}
  */
-const update = function update(_updates) {
+const update = (_updates) => {
   const promise = new Promise((resolve) => {
     if (!Utils.hasValue(_updates)) {
       resolve();
@@ -146,7 +146,7 @@ const update = function update(_updates) {
  * @param {[String]} [_paths] the path within the database to set the data.
  * @return {Promise}
  */
-const remove = function remove(_paths) {
+const remove = (_paths) => {
   const promise = new Promise((resolve) => {
     if (Array.isArray(_paths)) set(_paths, null);
     resolve();
@@ -161,7 +161,7 @@ const remove = function remove(_paths) {
  * @return {Object} Reference with functions to perform operations on
  * the data: once(), push(data), set(data), update(updates), and remove()
  */
-const ref = function ref(_url) {
+const ref = (_url) => {
   const paths = urlParts(_url);
   return {
     once: () => get(paths),

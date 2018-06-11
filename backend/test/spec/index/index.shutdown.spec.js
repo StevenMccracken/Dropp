@@ -5,9 +5,11 @@ const testName = 'Index shutdown';
 const shutdownServerTitle = 'Shutdown server';
 /* eslint-disable no-undef */
 describe(shutdownServerTitle, () => {
-  it('shuts down the server', (done) => {
+  const it1 = 'shuts down the server';
+  it(it1, () => {
+    Log.it(testName, shutdownServerTitle, it1, true);
     // Server.shutdown();
-    Log(testName, shutdownServerTitle, 'Did shut down the server');
-    done();
+    Log.log(testName, shutdownServerTitle, 'Did shut down the server');
+    Log.it(testName, shutdownServerTitle, it1, false);
   });
 });

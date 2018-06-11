@@ -5,26 +5,32 @@ const testName = 'Storage Error';
 const constructorTitle = 'Constructor';
 /* eslint-disable no-undef */
 describe(constructorTitle, () => {
-  it('creates a model error object with default details', (done) => {
+  const it1 = 'creates a model error object with default details';
+  it(it1, () => {
+    Log.it(testName, constructorTitle, it1, true);
     const error = new StorageError();
     expect(error.name).toBe('StorageError');
     expect(Object.keys(error.details).length).toBe(0);
-    Log(testName, constructorTitle, error);
-    done();
+    Log.log(testName, constructorTitle, error);
+    Log.it(testName, constructorTitle, it1, false);
   });
 
-  it('creates a model error object with specific details', (done) => {
+  const it2 = 'creates a model error object with specific details';
+  it(it2, () => {
+    Log.it(testName, constructorTitle, it2, true);
     const error = new StorageError('test');
     expect(error.name).toBe('StorageError');
     expect(error.details).toBe('test');
-    Log(testName, constructorTitle, error);
-    done();
+    Log.log(testName, constructorTitle, error);
+    Log.it(testName, constructorTitle, it2, false);
   });
 });
 
 const formatTitle = 'Format';
 describe(formatTitle, () => {
-  it('creates a model error object with specific details', (done) => {
+  const it1 = 'creates a model error object with specific details';
+  it(it1, () => {
+    Log.it(testName, formatTitle, it1, true);
     const type = {
       type: 'test',
     };
@@ -35,41 +41,47 @@ describe(formatTitle, () => {
     expect(error.details.type).toBe(type.type);
     expect(error.details.details).toBe('test');
     expect(typeof error.details.timestamp).toBe('string');
-    Log(testName, formatTitle, error);
-    done();
+    Log.log(testName, formatTitle, error);
+    Log.it(testName, formatTitle, it1, false);
   });
 
-  it('creates a model error object with specific details without a type', (done) => {
+  const it2 = 'creates a model error object with specific details without a type';
+  it(it2, () => {
+    Log.it(testName, formatTitle, it2, true);
     const error = StorageError.format(null, 'test', 'test');
     expect(typeof error.details.id).toBe('string');
     expect(error.details.source).toBe('test');
     expect(error.details.type).toBe(StorageError.type.Unknown.type);
     expect(error.details.details).toBe('test');
     expect(typeof error.details.timestamp).toBe('string');
-    Log(testName, formatTitle, error);
-    done();
+    Log.log(testName, formatTitle, error);
+    Log.it(testName, formatTitle, it2, false);
   });
 });
 
 const throwTitle = 'Throw';
 describe(throwTitle, () => {
-  it('throws a model error with specific details', (done) => {
+  const it1 = 'throws a model error with specific details';
+  it(it1, () => {
+    Log.it(testName, throwTitle, it1, true);
     try {
       StorageError.throw(null, 'test', 'test');
       expect(false).toBe(true);
-      Log(testName, throwTitle, 'Should have thrown error');
+      Log.log(testName, throwTitle, 'Should have thrown error');
     } catch (error) {
       expect(error.name).toBe('StorageError');
       expect(error.details.source).toBe('test');
       expect(error.details.details).toBe('test');
       expect(error.details.type).toBe(StorageError.type.Unknown.type);
-      Log(testName, throwTitle, error);
+      Log.log(testName, throwTitle, error);
     }
 
-    done();
+    Log.it(testName, throwTitle, it1, false);
   });
 
-  it('throws a model error with specific details and a type', (done) => {
+  const it2 = 'throws a model error with specific details and a type';
+  it(it2, () => {
+    Log.it(testName, throwTitle, it2, true);
     const type = {
       type: 'test',
     };
@@ -77,110 +89,120 @@ describe(throwTitle, () => {
     try {
       StorageError.throw(type, 'test', 'test');
       expect(false).toBe(true);
-      Log(testName, throwTitle, 'Should have thrown error');
+      Log.log(testName, throwTitle, 'Should have thrown error');
     } catch (error) {
       expect(error.name).toBe('StorageError');
       expect(error.details.type).toBe('test');
       expect(error.details.source).toBe('test');
       expect(error.details.details).toBe('test');
-      Log(testName, throwTitle, error);
+      Log.log(testName, throwTitle, error);
     }
 
-    done();
+    Log.it(testName, throwTitle, it2, false);
   });
 });
 
 const throwUnknownErrorTitle = 'Throw Unknown error';
 describe(throwUnknownErrorTitle, () => {
-  it('throws a model error of type Unknown', (done) => {
+  const it1 = 'throws a model error of type Unknown';
+  it(it1, () => {
+    Log.it(testName, throwUnknownErrorTitle, it1, true);
     try {
       StorageError.throwUnknownError('test', 'test');
       expect(false).toBe(true);
-      Log(testName, throwUnknownErrorTitle, 'Should have thrown error');
+      Log.log(testName, throwUnknownErrorTitle, 'Should have thrown error');
     } catch (error) {
       expect(error.name).toBe('StorageError');
       expect(error.details.source).toBe('test');
       expect(error.details.details).toBe('test');
       expect(error.details.type).toBe(StorageError.type.Unknown.type);
-      Log(testName, throwUnknownErrorTitle, error);
+      Log.log(testName, throwUnknownErrorTitle, error);
     }
 
-    done();
+    Log.it(testName, throwUnknownErrorTitle, it1, false);
   });
 });
 
 const throwInvalidFileErrorTitle = 'Throw Invalid File error';
 describe(throwInvalidFileErrorTitle, () => {
-  it('throws a model error of type Invalid File', (done) => {
+  const it1 = 'throws a model error of type Invalid File';
+  it(it1, () => {
+    Log.it(testName, throwInvalidFileErrorTitle, it1, true);
     try {
       StorageError.throwInvalidFileError('test', 'test');
       expect(false).toBe(true);
-      Log(testName, throwInvalidFileErrorTitle, 'Should have thrown error');
+      Log.log(testName, throwInvalidFileErrorTitle, 'Should have thrown error');
     } catch (error) {
       expect(error.name).toBe('StorageError');
       expect(error.details.source).toBe('test');
       expect(error.details.details).toBe('test');
       expect(error.details.type).toBe(StorageError.type.InvalidFile.type);
-      Log(testName, throwInvalidFileErrorTitle, error);
+      Log.log(testName, throwInvalidFileErrorTitle, error);
     }
 
-    done();
+    Log.it(testName, throwInvalidFileErrorTitle, it1, false);
   });
 });
 
 const throwFileDoesNotExistErrorTitle = 'Throw Type Mismatch error';
 describe(throwFileDoesNotExistErrorTitle, () => {
-  it('throws a model error of type File Does Not Exist', (done) => {
+  const it1 = 'throws a model error of type File Does Not Exist';
+  it(it1, () => {
+    Log.it(testName, throwFileDoesNotExistErrorTitle, it1, true);
     try {
       StorageError.throwFileDoesNotExistError('test', 'test');
       expect(false).toBe(true);
-      Log(testName, throwFileDoesNotExistErrorTitle, 'Should have thrown error');
+      Log.log(testName, throwFileDoesNotExistErrorTitle, 'Should have thrown error');
     } catch (error) {
       expect(error.name).toBe('StorageError');
       expect(error.details.source).toBe('test');
       expect(error.details.details).toBe('test');
       expect(error.details.type).toBe(StorageError.type.FileDoesNotExist.type);
-      Log(testName, throwFileDoesNotExistErrorTitle, error);
+      Log.log(testName, throwFileDoesNotExistErrorTitle, error);
     }
 
-    done();
+    Log.it(testName, throwFileDoesNotExistErrorTitle, it1, false);
   });
 });
 
 const throwInvalidStateErrorTitle = 'Throw Type Mismatch error';
 describe(throwInvalidStateErrorTitle, () => {
-  it('throws a model error of type File Does Not Exist', (done) => {
+  const it1 = 'throws a model error of type File Does Not Exist';
+  it(it1, () => {
+    Log.it(testName, throwInvalidStateErrorTitle, it1, true);
     try {
       StorageError.throwInvalidStateError('test');
       expect(false).toBe(true);
-      Log(testName, throwInvalidStateErrorTitle, 'Should have thrown error');
+      Log.log(testName, throwInvalidStateErrorTitle, 'Should have thrown error');
     } catch (error) {
       expect(error.name).toBe('StorageError');
       expect(error.details.source).toBe('test');
       expect(error.details.details).not.toBeDefined();
       expect(error.details.type).toBe(StorageError.type.State.type);
-      Log(testName, throwInvalidStateErrorTitle, error);
+      Log.log(testName, throwInvalidStateErrorTitle, error);
     }
 
-    done();
+    Log.it(testName, throwInvalidStateErrorTitle, it1, false);
   });
 });
 
 const throwInvalidMembersErrorTitle = 'Throw Invalid Members error';
 describe(throwInvalidMembersErrorTitle, () => {
-  it('throws a model error of type Invalid Members', (done) => {
+  const it1 = 'throws a model error of type Invalid Members';
+  it(it1, () => {
+    Log.it(testName, throwInvalidMembersErrorTitle, it1, true);
     try {
       StorageError.throwInvalidMembersError('test', 'test');
       expect(false).toBe(true);
-      Log(testName, throwInvalidMembersErrorTitle, 'Should have thrown error');
+      Log.log(testName, throwInvalidMembersErrorTitle, 'Should have thrown error');
     } catch (error) {
       expect(error.name).toBe('StorageError');
       expect(error.details.source).toBe('test');
       expect(error.details.details.invalidMembers).toBe('test');
       expect(error.details.type).toBe(StorageError.type.InvalidMembers.type);
-      Log(testName, throwInvalidMembersErrorTitle, error);
+      Log.log(testName, throwInvalidMembersErrorTitle, error);
     }
 
-    done();
+    Log.it(testName, throwInvalidMembersErrorTitle, it1, false);
   });
 });

@@ -2,6 +2,7 @@ const Location = require('./Location');
 const Utils = require('../utilities/utils');
 const ModelError = require('../errors/ModelError');
 const Validator = require('../utilities/validator');
+const Constants = require('../utilities/constants');
 
 /**
  * Model object for a dropp
@@ -11,7 +12,10 @@ class Dropp extends Object {
   constructor(_details) {
     super();
     if (!Utils.hasValue(_details)) {
-      ModelError.throwConstructorError('Dropp', 'details arg has no value');
+      ModelError.throwConstructorError(
+        Constants.params.Dropp,
+        Constants.errors.messages.detaisArgNoValue
+      );
     }
 
     let validLocation;
@@ -21,15 +25,30 @@ class Dropp extends Object {
       try {
         validLocation = new Location(_details.location);
       } catch (error) {
-        invalidMembers.push('location');
+        invalidMembers.push(Constants.params.location);
       }
     }
 
-    if (!Validator.isValidTimestamp(_details.timestamp)) invalidMembers.push('timestamp');
-    if (!Validator.isValidUsername(_details.username)) invalidMembers.push('username');
-    if (!Validator.isValidTextPost(_details.text)) invalidMembers.push('text');
-    if (!Validator.isValidBooleanString(_details.media)) invalidMembers.push('media');
-    if (invalidMembers.length > 0) ModelError.throwInvalidMembersError('Dropp', invalidMembers);
+    if (!Validator.isValidTimestamp(_details.timestamp)) {
+      invalidMembers.push(Constants.params.timestamp);
+    }
+
+    if (!Validator.isValidUsername(_details.username)) {
+      invalidMembers.push(Constants.params.username);
+    }
+
+    if (!Validator.isValidTextPost(_details.text)) {
+      invalidMembers.push(Constants.params.text);
+    }
+
+    if (!Validator.isValidBooleanString(_details.media)) {
+      invalidMembers.push(Constants.params.media);
+    }
+
+    if (invalidMembers.length > 0) {
+      ModelError.throwInvalidMembersError(Constants.params.Dropp, invalidMembers);
+    }
+
     this.id = _details.id;
     this.location = validLocation;
     this.media = _details.media;

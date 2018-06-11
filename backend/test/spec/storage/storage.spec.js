@@ -12,7 +12,7 @@ describe(testName, () => {
   let originalTimeout;
   beforeEach(() => {
     originalTimeout = jasmine.DEFAULT_TIMEOUT_INTERVAL;
-    jasmine.DEFAULT_TIMEOUT_INTERVAL = 30000;
+    jasmine.DEFAULT_TIMEOUT_INTERVAL = Helper.customTimeout;
   });
 
   afterEach(() => {
@@ -25,13 +25,13 @@ describe(testName, () => {
       try {
         const result = await CloudStorage.get();
         expect(result).not.toBeDefined();
-        Log(testName, getTitle, 'Should have thrown error');
+        Log.log(testName, getTitle, 'Should have thrown error');
       } catch (error) {
         expect(error.name).toBe('StorageError');
         expect(error.details.type).toBe(StorageError.type.InvalidMembers.type);
         expect(error.details.details.invalidMembers).toContain('folder');
         expect(error.details.details.invalidMembers).toContain('fileName');
-        Log(testName, getTitle, error.details);
+        Log.log(testName, getTitle, error.details);
       }
 
       done();
@@ -41,11 +41,11 @@ describe(testName, () => {
       try {
         const result = await CloudStorage.get('', Utils.newUuid());
         expect(result).not.toBeDefined();
-        Log(testName, getTitle, 'Should have thrown error');
+        Log.log(testName, getTitle, 'Should have thrown error');
       } catch (error) {
         expect(error.name).toBe('StorageError');
         expect(error.details.type).toBe(StorageError.type.FileDoesNotExist.type);
-        Log(testName, getTitle, error.details);
+        Log.log(testName, getTitle, error.details);
       }
 
       done();
@@ -69,9 +69,9 @@ describe(testName, () => {
         const result = await CloudStorage.get('', this.fileInfo.filename);
         expect(result.mimeType).toBe('image/png');
         expect(result.base64Data.length > 0).toBe(true);
-        Log(testName, successGetTitle, result.mimeType);
+        Log.log(testName, successGetTitle, result.mimeType);
         done();
-      });
+      }, Helper.customTimeout);
     });
   });
 
@@ -93,7 +93,7 @@ describe(testName, () => {
       try {
         const result = await CloudStorage.add();
         expect(result).not.toBeDefined();
-        Log(testName, addTitle, 'Should have thrown error');
+        Log.log(testName, addTitle, 'Should have thrown error');
       } catch (error) {
         expect(error.name).toBe('StorageError');
         expect(error.details.type).toBe(StorageError.type.InvalidMembers.type);
@@ -101,7 +101,7 @@ describe(testName, () => {
         expect(error.details.details.invalidMembers).toContain('folder');
         expect(error.details.details.invalidMembers).toContain('fileName');
         expect(error.details.details.invalidMembers).toContain('filePath');
-        Log(testName, addTitle, error.details);
+        Log.log(testName, addTitle, error.details);
       }
 
       done();
@@ -111,13 +111,13 @@ describe(testName, () => {
       try {
         const result = await CloudStorage.add('', Utils.newUuid(), Utils.newUuid());
         expect(result).not.toBeDefined();
-        Log(testName, addTitle, 'Should have thrown error');
+        Log.log(testName, addTitle, 'Should have thrown error');
       } catch (error) {
         expect(error.name).toBe('StorageError');
         expect(error.details.type).toBe(StorageError.type.InvalidMembers.type);
         expect(error.details.details.invalidMembers.length).toBe(1);
         expect(error.details.details.invalidMembers[0]).toBe('filePath');
-        Log(testName, addTitle, error.details);
+        Log.log(testName, addTitle, error.details);
       }
 
       done();
@@ -127,13 +127,13 @@ describe(testName, () => {
       try {
         const result = await CloudStorage.add('', Utils.newUuid(), process.cwd());
         expect(result).not.toBeDefined();
-        Log(testName, addTitle, 'Should have thrown error');
+        Log.log(testName, addTitle, 'Should have thrown error');
       } catch (error) {
         expect(error.name).toBe('StorageError');
         expect(error.details.type).toBe(StorageError.type.InvalidMembers.type);
         expect(error.details.details.invalidMembers.length).toBe(1);
         expect(error.details.details.invalidMembers[0]).toBe('filePath');
-        Log(testName, addTitle, error.details);
+        Log.log(testName, addTitle, error.details);
       }
 
       done();
@@ -144,18 +144,18 @@ describe(testName, () => {
       try {
         const result = await CloudStorage.add('', this.fileInfo.filename, this.fileInfo.path);
         expect(result).not.toBeDefined();
-        Log(testName, addTitle, 'Should have thrown error');
+        Log.log(testName, addTitle, 'Should have thrown error');
       } catch (error) {
         expect(error.name).toBe('DroppError');
         expect(error.details.error.type).toBe(DroppError.type.Resource.type);
         expect(error.privateDetails.error.source).toBe('add()');
         expect(error.details.error.message).toBe('That file already exists');
-        Log(testName, addTitle, error.details);
+        Log.log(testName, addTitle, error.details);
       }
 
       await Utils.deleteLocalFile(this.fileInfo.path);
       done();
-    });
+    }, Helper.customTimeout);
 
     const successAddTitle = 'Add success';
     describe(successAddTitle, () => {
@@ -177,9 +177,9 @@ describe(testName, () => {
         const result = await CloudStorage.get('', this.fileInfo2.filename);
         expect(result.mimeType).toBe('image/png');
         expect(result.base64Data.length > 0).toBe(true);
-        Log(testName, successAddTitle, result.mimeType);
+        Log.log(testName, successAddTitle, result.mimeType);
         done();
-      });
+      }, Helper.customTimeout);
     });
   });
 
@@ -189,13 +189,13 @@ describe(testName, () => {
       try {
         const result = await CloudStorage.remove();
         expect(result).not.toBeDefined();
-        Log(testName, removeTitle, 'Should have thrown error');
+        Log.log(testName, removeTitle, 'Should have thrown error');
       } catch (error) {
         expect(error.name).toBe('StorageError');
         expect(error.details.type).toBe(StorageError.type.InvalidMembers.type);
         expect(error.details.details.invalidMembers).toContain('folder');
         expect(error.details.details.invalidMembers).toContain('fileName');
-        Log(testName, removeTitle, error.details);
+        Log.log(testName, removeTitle, error.details);
       }
 
       done();
@@ -205,11 +205,11 @@ describe(testName, () => {
       try {
         const result = await CloudStorage.remove('', Utils.newUuid());
         expect(result).not.toBeDefined();
-        Log(testName, removeTitle, 'Should have thrown error');
+        Log.log(testName, removeTitle, 'Should have thrown error');
       } catch (error) {
         expect(error.name).toBe('StorageError');
         expect(error.details.type).toBe(StorageError.type.FileDoesNotExist.type);
-        Log(testName, removeTitle, error.details);
+        Log.log(testName, removeTitle, error.details);
       }
 
       done();
@@ -234,15 +234,15 @@ describe(testName, () => {
         try {
           const result = await CloudStorage.get('', this.fileInfo.filename);
           expect(result).not.toBeDefined();
-          Log(testName, successRemoveTitle, 'Should have thrown error');
+          Log.log(testName, successRemoveTitle, 'Should have thrown error');
         } catch (error) {
           expect(error.name).toBe('StorageError');
           expect(error.details.type).toBe(StorageError.type.FileDoesNotExist.type);
-          Log(testName, removeTitle, error.details);
+          Log.log(testName, removeTitle, error.details);
         }
 
         done();
-      });
+      }, Helper.customTimeout);
     });
   });
 });

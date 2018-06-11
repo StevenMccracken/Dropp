@@ -1,7 +1,6 @@
 const Log = require('../logging/logger');
 const Utils = require('../utilities/utils');
-
-const moduleName = 'Dropp Error';
+const Constants = require('../utilities/constants');
 
 /**
  * Custom error object to contain extra details
@@ -80,7 +79,7 @@ class DroppError extends Error {
   static throw(_type, _source, _clientMessage, _serverLog) {
     const source = 'throw()';
     const error = this.format(_type, _source, _clientMessage, _serverLog);
-    Log.log(moduleName, source, error.privateDetails);
+    Log.log(Constants.errors.dropp.moduleName, source, error.privateDetails);
     throw error;
   }
 
@@ -168,9 +167,9 @@ class DroppError extends Error {
       serverLog = error.tokenError.message;
       clientErrorMessage = this.handleJwtError(error.tokenError.message);
     } else if (error.userInfoMissing === true) {
-      serverLog = 'User for this token cannot be found';
+      serverLog = Constants.errors.messages.noUserForToken;
       clientErrorMessage = DroppError.TokenReason.expired;
-    } else serverLog = 'Unknown error';
+    } else serverLog = Constants.errors.messages.unknown;
 
     const authError = this.format(this.type.Auth, _source, clientErrorMessage, serverLog);
     return authError;

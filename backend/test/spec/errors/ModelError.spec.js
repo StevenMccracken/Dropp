@@ -5,26 +5,32 @@ const testName = 'Model Error';
 const constructorTitle = 'Constructor';
 /* eslint-disable no-undef */
 describe(constructorTitle, () => {
-  it('creates a model error object with default details', (done) => {
+  const it1 = 'creates a model error object with default details';
+  it(it1, () => {
+    Log.it(testName, constructorTitle, it1, true);
     const error = new ModelError();
     expect(error.name).toBe('ModelError');
     expect(Object.keys(error.details).length).toBe(0);
-    Log(testName, constructorTitle, error);
-    done();
+    Log.log(testName, constructorTitle, error);
+    Log.it(testName, constructorTitle, it1, false);
   });
 
-  it('creates a model error object with specific details', (done) => {
+  const it2 = 'creates a model error object with specific details';
+  it(it2, () => {
+    Log.it(testName, constructorTitle, it2, true);
     const error = new ModelError('test');
     expect(error.name).toBe('ModelError');
     expect(error.details).toBe('test');
-    Log(testName, constructorTitle, error);
-    done();
+    Log.log(testName, constructorTitle, error);
+    Log.it(testName, constructorTitle, it2, false);
   });
 });
 
 const formatTitle = 'Format';
 describe(formatTitle, () => {
-  it('creates a model error object with specific details', (done) => {
+  const it1 = 'creates a model error object with specific details';
+  it(it1, () => {
+    Log.it(testName, formatTitle, it1, true);
     const type = {
       type: 'test',
     };
@@ -35,41 +41,46 @@ describe(formatTitle, () => {
     expect(error.details.type).toBe(type.type);
     expect(error.details.details).toBe('test');
     expect(typeof error.details.timestamp).toBe('string');
-    Log(testName, formatTitle, error);
-    done();
+    Log.log(testName, formatTitle, error);
+    Log.it(testName, formatTitle, it1, false);
   });
 
-  it('creates a model error object with specific details without a type', (done) => {
+  const it2 = 'creates a model error object with specific details without a type';
+  it(it2, () => {
+    Log.it(testName, formatTitle, it2, true);
     const error = ModelError.format(null, 'test', 'test');
     expect(typeof error.details.id).toBe('string');
     expect(error.details.source).toBe('test');
     expect(error.details.type).toBe(ModelError.type.Unknown.type);
     expect(error.details.details).toBe('test');
     expect(typeof error.details.timestamp).toBe('string');
-    Log(testName, formatTitle, error);
-    done();
+    Log.log(testName, formatTitle, error);
+    Log.it(testName, formatTitle, it2, false);
   });
 });
 
 const throwTitle = 'Throw';
 describe(throwTitle, () => {
-  it('throws a model error with specific details', (done) => {
+  const it1 = 'throws a model error with specific details';
+  it(it1, () => {
+    Log.it(testName, throwTitle, it1, true);
     try {
       ModelError.throw(null, 'test', 'test');
       expect(false).toBe(true);
-      Log(testName, throwTitle, 'Should have thrown error');
+      Log.log(testName, throwTitle, 'Should have thrown error');
     } catch (error) {
       expect(error.name).toBe('ModelError');
       expect(error.details.source).toBe('test');
       expect(error.details.details).toBe('test');
       expect(error.details.type).toBe(ModelError.type.Unknown.type);
-      Log(testName, throwTitle, error);
+      Log.log(testName, throwTitle, error);
+      Log.it(testName, throwTitle, it1, false);
     }
-
-    done();
   });
 
-  it('throws a model error with specific details and a type', (done) => {
+  const it2 = 'throws a model error with specific details and a type';
+  it(it2, () => {
+    Log.it(testName, throwTitle, it2, true);
     const type = {
       type: 'test',
     };
@@ -77,72 +88,78 @@ describe(throwTitle, () => {
     try {
       ModelError.throw(type, 'test', 'test');
       expect(false).toBe(true);
-      Log(testName, throwTitle, 'Should have thrown error');
+      Log.log(testName, throwTitle, 'Should have thrown error');
     } catch (error) {
       expect(error.name).toBe('ModelError');
       expect(error.details.type).toBe('test');
       expect(error.details.source).toBe('test');
       expect(error.details.details).toBe('test');
-      Log(testName, throwTitle, error);
+      Log.log(testName, throwTitle, error);
     }
 
-    done();
+    Log.it(testName, throwTitle, it2, false);
   });
 });
 
 const throwConstructorErrorTitle = 'Throw Constructor error';
 describe(throwConstructorErrorTitle, () => {
-  it('throws a model error of type Constructor', (done) => {
+  const it1 = 'throws a model error of type Constructor';
+  it(it1, () => {
+    Log.it(testName, throwConstructorErrorTitle, it1, true);
     try {
       ModelError.throwConstructorError('test', 'test');
       expect(false).toBe(true);
-      Log(testName, throwConstructorErrorTitle, 'Should have thrown error');
+      Log.log(testName, throwConstructorErrorTitle, 'Should have thrown error');
     } catch (error) {
       expect(error.name).toBe('ModelError');
       expect(error.details.source).toBe('test');
       expect(error.details.details).toBe('test');
       expect(error.details.type).toBe(ModelError.type.Constructor.type);
-      Log(testName, throwConstructorErrorTitle, error);
+      Log.log(testName, throwConstructorErrorTitle, error);
     }
 
-    done();
+    Log.it(testName, throwConstructorErrorTitle, it1, false);
   });
 });
 
 const throwInvalidMembersErrorTitle = 'Throw Invalid Members error';
 describe(throwInvalidMembersErrorTitle, () => {
-  it('throws a model error of type Invalid Members', (done) => {
+  const it1 = 'throws a model error of type Invalid Members';
+  it(it1, () => {
+    Log.it(testName, throwInvalidMembersErrorTitle, it1, true);
     try {
       ModelError.throwInvalidMembersError('test', 'test');
       expect(false).toBe(true);
-      Log(testName, throwInvalidMembersErrorTitle, 'Should have thrown error');
+      Log.log(testName, throwInvalidMembersErrorTitle, 'Should have thrown error');
     } catch (error) {
       expect(error.name).toBe('ModelError');
       expect(error.details.source).toBe('test');
       expect(error.details.details.invalidMembers).toBe('test');
       expect(error.details.type).toBe(ModelError.type.Constructor.type);
-      Log(testName, throwInvalidMembersErrorTitle, error);
+      Log.log(testName, throwInvalidMembersErrorTitle, error);
     }
 
-    done();
+    Log.it(testName, throwInvalidMembersErrorTitle, it1, false);
   });
 });
 
 const throwTypeMismatchErrorTitle = 'Throw Type Mismatch error';
 describe(throwTypeMismatchErrorTitle, () => {
-  it('throws a model error of type Type Mismatch', (done) => {
+  const it1 = 'throws a model error of type Type Mismatch';
+  it(it1, () => {
+    Log.it(testName, throwTypeMismatchErrorTitle, it1, true);
     try {
       ModelError.throwTypeMismatchError('test');
       expect(false).toBe(true);
-      Log(testName, throwTypeMismatchErrorTitle, 'Should have thrown error');
+      Log.log(testName, throwTypeMismatchErrorTitle, 'Should have thrown error');
     } catch (error) {
       expect(error.name).toBe('ModelError');
       expect(error.details.source).toBe('test');
       expect(error.details.details).not.toBeDefined();
       expect(error.details.type).toBe(ModelError.type.TypeMismatch.type);
-      Log(testName, throwTypeMismatchErrorTitle, error);
+      Log.log(testName, throwTypeMismatchErrorTitle, error);
     }
 
-    done();
+    Log.it(testName, throwTypeMismatchErrorTitle, it1, false);
   });
 });

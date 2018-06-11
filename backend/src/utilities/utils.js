@@ -6,11 +6,10 @@ const Util = require('util');
 const Uuid = require('uuid/v4');
 const Moment = require('moment');
 const FileSystem = require('fs');
+const Constants = require('./constants');
 
-const unixEndTimeSeconds = 2147471999;
 const LstatPromise = Util.promisify(FileSystem.lstat);
 const UnlinkPromise = Util.promisify(FileSystem.unlink);
-const unixEndTimeMilliseconds = unixEndTimeSeconds * 1000;
 
 /**
  * Generator for enumerating steps in a process
@@ -22,21 +21,18 @@ function* stepper() {
 }
 
 /**
- * Generates a unique hexadecimal identifier in the form xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx
+ * Generates a unique hexadecimal identifier in
+ * the form xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx
  * @return {String} a universal unique identifier
  */
-const newUuid = function newUuid() {
-  return Uuid();
-};
+const newUuid = () => Uuid();
 
 /**
  * Determines whether or not a given value is not undefined and not null
  * @param {any} _value a proposed value
  * @return {Boolean} whether or not _value is not undefined and not null
  */
-const hasValue = function hasValue(_value) {
-  return _value !== undefined && _value !== null;
-};
+const hasValue = value => value !== undefined && value !== null;
 
 /**
  * Helper function to get the IP address from an Express request object
@@ -44,11 +40,11 @@ const hasValue = function hasValue(_value) {
  * @return {String} the IP address from the
  * request if one exists, or an empty string
  */
-const getIpAddress = function getIpAddress(_request) {
+const getIpAddress = (_request) => {
   const request = hasValue(_request) ? _request : {};
   const headers = request.headers || {};
   const connection = request.connection || {};
-  const ipAddress = headers['x-forwarded-for'] || connection.remoteAddress;
+  const ipAddress = headers[Constants.router.xForwardedFor] || connection.remoteAddress;
   return ipAddress || '';
 };
 
@@ -58,7 +54,7 @@ const getIpAddress = function getIpAddress(_request) {
  * @return {String} the custom header field
  * _requestId_, or empty string if none exists
  */
-const getRequestId = function getRequestId(_request) {
+const getRequestId = (_request) => {
   const request = hasValue(_request) ? _request : {};
   const headers = request.headers || {};
   return headers.requestId || '';
@@ -71,7 +67,7 @@ const getRequestId = function getRequestId(_request) {
  * @return {String} comma-separated stringified values. Can be null
  * or undefined if `args` is an array like [null] or [undefined]
  */
-const reduceToString = function reduceToString(_args) {
+const reduceToString = (_args) => {
   const args = Array.isArray(_args) ? _args : [];
   return args.reduce((message, argument, index) => {
     const formattedArgument = hasValue(argument) ? JSON.stringify(argument) : argument;
@@ -85,7 +81,7 @@ const reduceToString = function reduceToString(_args) {
  * Defaults to 0 if `degrees` is not numeric
  * @return {Number} `degrees` in radians
  */
-const degreesToRadians = function degreesToRadians(_degrees) {
+const degreesToRadians = (_degrees) => {
   let degrees;
   /* eslint-disable no-restricted-globals */
   if (typeof _degrees === 'number' && !isNaN(parseFloat(_degrees)) && isFinite(_degrees)) {
@@ -93,7 +89,7 @@ const degreesToRadians = function degreesToRadians(_degrees) {
     degrees = _degrees;
   } else degrees = 0;
 
-  return degrees * (Math.PI / 180);
+  return degrees * (Math.PI / Constants.utils.degress180);
 };
 
 /**
@@ -103,7 +99,7 @@ const degreesToRadians = function degreesToRadians(_degrees) {
  * string, or true after the file is deleted
  * @throws if a file system error occurred, like the file not existing
  */
-const deleteLocalFile = async function deleteLocalFile(_path) {
+const deleteLocalFile = async (_path) => {
   if (typeof _path !== 'string') return false;
   await UnlinkPromise(_path);
   return true;
@@ -120,8 +116,6 @@ module.exports = {
   reduceToString,
   deleteLocalFile,
   degreesToRadians,
-  unixEndTimeSeconds,
   lstat: LstatPromise,
   unlink: UnlinkPromise,
-  unixEndTimeMilliseconds,
 };

@@ -7,6 +7,7 @@ const Firebase = require('../../../src/firebase/firebase');
 const UserAccessor = require('../../../src/database/user');
 const DroppError = require('../../../src/errors/DroppError');
 const DroppAccessor = require('../../../src/database/dropp');
+const Constants = require('../../../src/utilities/constants');
 const UserMiddleware = require('../../../src/middleware/user');
 
 const testName = 'User Middleware';
@@ -21,15 +22,19 @@ describe(testName, () => {
   };
 
   beforeEach(async (done) => {
+    Log.beforeEach(testName, testName, true);
     this.testUser = await UserMiddleware.create(this.testUserData);
     this.testUserDetails = { username: this.testUser.username };
+    Log.beforeEach(testName, testName, false);
     done();
   });
 
   afterEach(async (done) => {
+    Log.afterEach(testName, testName, true);
     await UserMiddleware.remove(this.testUser, { username: this.testUser.username });
     delete this.testUser;
     delete this.testUserDetails;
+    Log.afterEach(testName, testName, false);
     done();
   });
 
@@ -42,143 +47,172 @@ describe(testName, () => {
       email: `${this.uuid2}@${this.uuid2}.com`,
     };
 
-    it('creates a user', async (done) => {
+    const it1 = 'creates a user';
+    it(it1, async (done) => {
+      Log.it(testName, createUserTitle, it1, true);
       this.newUser = await UserMiddleware.create(this.testUserData2);
       expect(this.newUser).toBeDefined();
       expect(this.newUser.email).toBe(this.testUserData2.email);
       expect(this.newUser.username).toBe(this.testUserData2.username);
       expect(this.newUser.password).not.toBe(this.testUserData2.password);
-      Log(testName, createUserTitle, this.newUser);
+      Log.log(testName, createUserTitle, this.newUser);
+      Log.it(testName, createUserTitle, it1, false);
       done();
     });
 
     const invalidCreateUserTitle = 'Invalid details';
     describe(invalidCreateUserTitle, () => {
       beforeEach(() => {
+        Log.beforeEach(testName, invalidCreateUserTitle, true);
         const uuid2 = Utils.newUuid();
         this.invalidUserDetails = {
           username: uuid2,
           password: uuid2,
           email: `${uuid2}@${uuid2}.com`,
         };
+
+        Log.beforeEach(testName, invalidCreateUserTitle, false);
       });
 
       afterEach(() => {
+        Log.afterEach(testName, invalidCreateUserTitle, true);
         delete this.invalidUserDetails;
+        Log.afterEach(testName, invalidCreateUserTitle, false);
       });
 
-      it('throws an error for null user details', async (done) => {
+      const it2 = 'throws an error for null user details';
+      it(it2, async (done) => {
+        Log.it(testName, createUserTitle, it2, true);
         try {
           const result = await UserMiddleware.create(null);
           expect(result).not.toBeDefined();
-          Log(testName, invalidCreateUserTitle, 'Should have thrown error');
-          done();
+          Log.log(testName, invalidCreateUserTitle, 'Should have thrown error');
         } catch (error) {
           expect(error.name).toBe('DroppError');
           expect(error.details.error.type).toBe(DroppError.type.InvalidRequest.type);
           expect(error.details.error.message).toBe('email,username,password');
-          Log(testName, invalidCreateUserTitle, error.details);
-          done();
+          Log.log(testName, invalidCreateUserTitle, error.details);
         }
+
+        Log.it(testName, createUserTitle, it2, false);
+        done();
       });
 
-      it('throws an error for missing username', async (done) => {
+      const it3 = 'throws an error for missing username';
+      it(it3, async (done) => {
+        Log.it(testName, createUserTitle, it3, true);
         try {
           delete this.invalidUserDetails.username;
           const result = await UserMiddleware.create(this.invalidUserDetails);
           expect(result).not.toBeDefined();
-          Log(testName, invalidCreateUserTitle, 'Should have thrown error');
-          done();
+          Log.log(testName, invalidCreateUserTitle, 'Should have thrown error');
         } catch (error) {
           expect(error.name).toBe('DroppError');
           expect(error.details.error.type).toBe(DroppError.type.InvalidRequest.type);
           expect(error.details.error.message).toBe('username');
-          Log(testName, invalidCreateUserTitle, error.details);
-          done();
+          Log.log(testName, invalidCreateUserTitle, error.details);
         }
+
+        Log.it(testName, createUserTitle, it3, false);
+        done();
       });
 
-      it('throws an error for missing password', async (done) => {
+      const it4 = 'throws an error for missing password';
+      it(it4, async (done) => {
+        Log.it(testName, invalidCreateUserTitle, it4, true);
         try {
           delete this.invalidUserDetails.password;
           const result = await UserMiddleware.create(this.invalidUserDetails);
           expect(result).not.toBeDefined();
-          Log(testName, invalidCreateUserTitle, 'Should have thrown error');
-          done();
+          Log.log(testName, invalidCreateUserTitle, 'Should have thrown error');
         } catch (error) {
           expect(error.name).toBe('DroppError');
           expect(error.details.error.type).toBe(DroppError.type.InvalidRequest.type);
           expect(error.details.error.message).toBe('password');
-          Log(testName, invalidCreateUserTitle, error.details);
-          done();
+          Log.log(testName, invalidCreateUserTitle, error.details);
         }
+
+        Log.it(testName, invalidCreateUserTitle, it4, false);
+        done();
       });
 
-      it('throws an error for missing email', async (done) => {
+      const it5 = 'throws an error for missing email';
+      it(it5, async (done) => {
+        Log.it(testName, invalidCreateUserTitle, it5, true);
         try {
           delete this.invalidUserDetails.email;
           const result = await UserMiddleware.create(this.invalidUserDetails);
           expect(result).not.toBeDefined();
-          Log(testName, invalidCreateUserTitle, 'Should have thrown error');
-          done();
+          Log.log(testName, invalidCreateUserTitle, 'Should have thrown error');
         } catch (error) {
           expect(error.name).toBe('DroppError');
           expect(error.details.error.type).toBe(DroppError.type.InvalidRequest.type);
           expect(error.details.error.message).toBe('email');
-          Log(testName, invalidCreateUserTitle, error.details);
-          done();
+          Log.log(testName, invalidCreateUserTitle, error.details);
         }
+
+        Log.it(testName, invalidCreateUserTitle, it5, false);
+        done();
       });
 
-      it('throws an error for 2 missing details', async (done) => {
+      const it6 = 'throws an error for 2 missing details';
+      it(it6, async (done) => {
+        Log.it(testName, invalidCreateUserTitle, it6, true);
         try {
           delete this.invalidUserDetails.username;
           delete this.invalidUserDetails.password;
           const result = await UserMiddleware.create(this.invalidUserDetails);
           expect(result).not.toBeDefined();
-          Log(testName, invalidCreateUserTitle, 'Should have thrown error');
-          done();
+          Log.log(testName, invalidCreateUserTitle, 'Should have thrown error');
         } catch (error) {
           expect(error.name).toBe('DroppError');
           expect(error.details.error.type).toBe(DroppError.type.InvalidRequest.type);
           expect(error.details.error.message).toBe('username,password');
-          Log(testName, invalidCreateUserTitle, error.details);
-          done();
+          Log.log(testName, invalidCreateUserTitle, error.details);
         }
+
+        Log.it(testName, invalidCreateUserTitle, it6, false);
+        done();
       });
 
-      it('throws an error for 3 missing details', async (done) => {
+      const it7 = 'throws an error for 3 missing details';
+      it(it7, async (done) => {
+        Log.it(testName, invalidCreateUserTitle, it7, true);
         try {
           delete this.invalidUserDetails.email;
           delete this.invalidUserDetails.username;
           delete this.invalidUserDetails.password;
           const result = await UserMiddleware.create(this.invalidUserDetails);
           expect(result).not.toBeDefined();
-          Log(testName, invalidCreateUserTitle, 'Should have thrown error');
-          done();
+          Log.log(testName, invalidCreateUserTitle, 'Should have thrown error');
         } catch (error) {
           expect(error.name).toBe('DroppError');
           expect(error.details.error.type).toBe(DroppError.type.InvalidRequest.type);
           expect(error.details.error.message).toBe('email,username,password');
-          Log(testName, invalidCreateUserTitle, error.details);
-          done();
+          Log.log(testName, invalidCreateUserTitle, error.details);
         }
+
+        Log.it(testName, invalidCreateUserTitle, it7, false);
+        done();
       });
 
-      it('throws an error for already existing username', async (done) => {
+      const it8 = 'throws an error for already existing username';
+      it(it8, async (done) => {
+        Log.it(testName, invalidCreateUserTitle, it8, true);
         try {
           this.invalidUserDetails.username = this.testUserData.username;
           const result = await UserMiddleware.create(this.invalidUserDetails);
           expect(result).not.toBeDefined();
-          Log(testName, invalidCreateUserTitle, 'Should have thrown error');
-          done();
+          Log.log(testName, invalidCreateUserTitle, 'Should have thrown error');
         } catch (error) {
           expect(error.name).toBe('DroppError');
           expect(error.details.error.type).toBe(DroppError.type.Resource.type);
           expect(error.details.error.message).toBe('A user with that username already exists');
-          Log(testName, invalidCreateUserTitle, error.details);
-          done();
+          Log.log(testName, invalidCreateUserTitle, error.details);
         }
+
+        Log.it(testName, invalidCreateUserTitle, it8, false);
+        done();
       });
     });
   });
@@ -186,7 +220,9 @@ describe(testName, () => {
   const getSameUserTitle = 'Get same user';
   describe(getSameUserTitle, () => {
     const details = { username: this.uuid2 };
-    it('retrieves a user\'s private details', async (done) => {
+    const it1 = 'retrieves a user\'s private details';
+    it(it1, async (done) => {
+      Log.it(testName, getSameUserTitle, it1, true);
       const user = await UserMiddleware.get(this.newUser, details);
       expect(user.email).toBe(this.newUser.email);
       expect(user.username).toBe(this.uuid2);
@@ -206,7 +242,8 @@ describe(testName, () => {
       expect(typeof user.followRequestCount).toBe('number');
       expect(user.followerRequestCount).toBeDefined();
       expect(typeof user.followerRequestCount).toBe('number');
-      Log(testName, getSameUserTitle, user);
+      Log.log(testName, getSameUserTitle, user);
+      Log.it(testName, getSameUserTitle, it1, false);
       done();
     });
   });
@@ -214,7 +251,9 @@ describe(testName, () => {
   const getDifferentUserTitle = 'Get different user';
   describe(getDifferentUserTitle, () => {
     const details = { username: this.uuid2 };
-    it('retrieves a user\'s public details', async (done) => {
+    const it1 = 'retrieves a user\'s public details';
+    it(it1, async (done) => {
+      Log.it(testName, getSameUserTitle, it1, true);
       const user = await UserMiddleware.get(this.testUser, details);
       expect(user.email).not.toBeDefined();
       expect(user.username).toBe(this.uuid2);
@@ -226,7 +265,8 @@ describe(testName, () => {
       expect(user.followerRequests).not.toBeDefined();
       expect(user.followRequestCount).not.toBeDefined();
       expect(user.followerRequestCount).not.toBeDefined();
-      Log(testName, getDifferentUserTitle, user);
+      Log.log(testName, getDifferentUserTitle, user);
+      Log.it(testName, getSameUserTitle, it1, false);
       done();
     });
   });
@@ -234,90 +274,110 @@ describe(testName, () => {
   const invalidGetUserTitle = 'Invalid get user';
   describe(invalidGetUserTitle, () => {
     beforeEach(() => {
+      Log.beforeEach(testName, invalidGetUserTitle, true);
       this.invalidDetails = {
         username: '$%l;kadfjs',
       };
+
+      Log.beforeEach(testName, invalidGetUserTitle, false);
     });
 
     afterEach(() => {
+      Log.afterEach(testName, invalidGetUserTitle, true);
       delete this.invalidDetails;
+      Log.afterEach(testName, invalidGetUserTitle, false);
     });
 
-    it('throws an error for an invalid current user', async (done) => {
+    const it1 = 'throws an error for an invalid current user';
+    it(it1, async (done) => {
+      Log.it(testName, createUserTitle, it1, true);
       try {
         const result = await UserMiddleware.get(null, this.invalidDetails);
         expect(result).not.toBeDefined();
-        Log(testName, invalidGetUserTitle, 'Should have thrown error');
-        done();
+        Log.log(testName, invalidGetUserTitle, 'Should have thrown error');
       } catch (error) {
         expect(error.name).toBe('DroppError');
         expect(error.details.error.type).toBe(DroppError.type.Server.type);
         expect(error.details.error.message).toBe(DroppError.type.Server.message);
-        Log(testName, invalidGetUserTitle, error.details);
-        done();
+        Log.log(testName, invalidGetUserTitle, error.details);
       }
+
+      Log.it(testName, createUserTitle, it1, false);
+      done();
     });
 
-    it('throws an error for null details', async (done) => {
+    const it2 = 'throws an error for null details';
+    it(it2, async (done) => {
+      Log.it(testName, invalidGetUserTitle, it2, true);
       try {
         const result = await UserMiddleware.get(this.testUser, null);
         expect(result).not.toBeDefined();
-        Log(testName, invalidGetUserTitle, 'Should have thrown error');
-        done();
+        Log.log(testName, invalidGetUserTitle, 'Should have thrown error');
       } catch (error) {
         expect(error.name).toBe('DroppError');
         expect(error.details.error.type).toBe(DroppError.type.InvalidRequest.type);
         expect(error.details.error.message).toBe('username');
-        Log(testName, invalidGetUserTitle, error.details);
-        done();
+        Log.log(testName, invalidGetUserTitle, error.details);
       }
+
+      Log.it(testName, invalidGetUserTitle, it2, false);
+      done();
     });
 
-    it('throws an error for an invalid username', async (done) => {
+    const it3 = 'throws an error for an invalid username';
+    it(it3, async (done) => {
+      Log.it(testName, invalidGetUserTitle, it3, true);
       try {
         const result = await UserMiddleware.get(this.testUser, this.invalidDetails);
         expect(result).not.toBeDefined();
-        Log(testName, invalidGetUserTitle, 'Should have thrown error');
-        done();
+        Log.log(testName, invalidGetUserTitle, 'Should have thrown error');
       } catch (error) {
         expect(error.name).toBe('DroppError');
         expect(error.details.error.type).toBe(DroppError.type.InvalidRequest.type);
         expect(error.details.error.message).toBe('username');
-        Log(testName, invalidGetUserTitle, error.details);
-        done();
+        Log.log(testName, invalidGetUserTitle, error.details);
       }
+
+      Log.it(testName, invalidGetUserTitle, it3, false);
+      done();
     });
 
-    it('throws an error for a missing username', async (done) => {
+    const it4 = 'throws an error for a missing username';
+    it(it4, async (done) => {
+      Log.it(testName, invalidGetUserTitle, it4, true);
       delete this.invalidDetails.username;
       try {
         const result = await UserMiddleware.get(this.testUser, this.invalidDetails);
         expect(result).not.toBeDefined();
-        Log(testName, invalidGetUserTitle, 'Should have thrown error');
-        done();
+        Log.log(testName, invalidGetUserTitle, 'Should have thrown error');
       } catch (error) {
         expect(error.name).toBe('DroppError');
         expect(error.details.error.type).toBe(DroppError.type.InvalidRequest.type);
         expect(error.details.error.message).toBe('username');
-        Log(testName, invalidGetUserTitle, error.details);
-        done();
+        Log.log(testName, invalidGetUserTitle, error.details);
       }
+
+      Log.it(testName, invalidGetUserTitle, it4, false);
+      done();
     });
 
-    it('throws an error for a non-existent user', async (done) => {
+    const it5 = 'throws an error for a non-existent user';
+    it(it5, async (done) => {
+      Log.it(testName, invalidGetUserTitle, it5, true);
       this.invalidDetails.username = Utils.newUuid();
       try {
         const result = await UserMiddleware.get(this.testUser, this.invalidDetails);
         expect(result).not.toBeDefined();
-        Log(testName, invalidGetUserTitle, 'Should have thrown error');
-        done();
+        Log.log(testName, invalidGetUserTitle, 'Should have thrown error');
       } catch (error) {
         expect(error.name).toBe('DroppError');
         expect(error.details.error.type).toBe(DroppError.type.ResourceDNE.type);
         expect(error.details.error.message).toBe('That user does not exist');
-        Log(testName, invalidGetUserTitle, error.details);
-        done();
+        Log.log(testName, invalidGetUserTitle, error.details);
       }
+
+      Log.it(testName, invalidGetUserTitle, it5, false);
+      done();
     });
   });
 
@@ -331,25 +391,32 @@ describe(testName, () => {
     };
 
     afterEach(async (done) => {
+      Log.afterEach(testName, addNewUserTitle, true);
       const user = await UserAccessor.get(details.username);
       await UserMiddleware.remove(user, { username: details.username });
+      Log.afterEach(testName, addNewUserTitle, false);
       done();
     });
 
-    it('adds a new user', async (done) => {
+    const it1 = 'adds a new user';
+    it(it1, async (done) => {
+      Log.it(testName, invalidGetUserTitle, it1, true);
       const result = await UserMiddleware.addNewUser(details);
       expect(result.success).toBeDefined();
       expect(result.success.token).toBeDefined();
       expect(typeof result.success.token).toBe('string');
       expect(result.success.token).toContain('Bearer');
-      Log(testName, addNewUserTitle, result);
+      Log.log(testName, addNewUserTitle, result);
+      Log.it(testName, invalidGetUserTitle, it1, false);
       done();
     });
   });
 
   const getAuthTokenTitle = 'Get authentication token';
   describe(getAuthTokenTitle, () => {
-    it('gets an authentication token', async (done) => {
+    const it1 = 'gets an authentication token';
+    it(it1, async (done) => {
+      Log.it(testName, addNewUserTitle, it1, true);
       const details = {
         username: this.testUser.username,
         password: this.testUserData.password,
@@ -360,7 +427,8 @@ describe(testName, () => {
       expect(result.success.token).toBeDefined();
       expect(typeof result.success.token).toBe('string');
       expect(result.success.token).toContain('Bearer');
-      Log(testName, getAuthTokenTitle, result);
+      Log.log(testName, getAuthTokenTitle, result);
+      Log.it(testName, addNewUserTitle, it1, false);
       done();
     });
   });
@@ -368,115 +436,140 @@ describe(testName, () => {
   const invalidGetAuthTokenTitle = 'Invalid get authentication token';
   describe(invalidGetAuthTokenTitle, () => {
     beforeEach(() => {
+      Log.beforeEach(testName, invalidGetAuthTokenTitle, true);
       this.invalidDetails = {
         username: Utils.newUuid(),
         password: Utils.newUuid(),
       };
+
+      Log.beforeEach(testName, invalidGetAuthTokenTitle, false);
     });
 
     afterEach(() => {
+      Log.afterEach(testName, invalidGetAuthTokenTitle, true);
       delete this.invalidDetails;
+      Log.afterEach(testName, invalidGetAuthTokenTitle, false);
     });
 
-    it('throws an error for null details', async (done) => {
+    const it1 = 'throws an error for null details';
+    it(it1, async (done) => {
+      Log.it(testName, invalidGetAuthTokenTitle, it1, true);
       try {
         const result = await UserMiddleware.getAuthToken(null);
         expect(result).not.toBeDefined();
-        Log(testName, invalidGetAuthTokenTitle, 'Should have thrown error');
-        done();
+        Log.log(testName, invalidGetAuthTokenTitle, 'Should have thrown error');
       } catch (error) {
         expect(error.name).toBe('DroppError');
         expect(error.details.error.type).toBe(DroppError.type.InvalidRequest.type);
         expect(error.details.error.message).toBe('username,password');
-        Log(testName, invalidGetAuthTokenTitle, error.details);
-        done();
+        Log.log(testName, invalidGetAuthTokenTitle, error.details);
       }
+
+      Log.it(testName, invalidGetAuthTokenTitle, it1, false);
+      done();
     });
 
-    it('throws an error for an invalid username and password', async (done) => {
+    const it2 = 'throws an error for an invalid username and password';
+    it(it2, async (done) => {
+      Log.it(testName, invalidGetAuthTokenTitle, it2, true);
       this.invalidDetails.username = '$%l;kadfjs';
       this.invalidDetails.password = 'he$';
       try {
         const result = await UserMiddleware.getAuthToken(this.invalidDetails);
         expect(result).not.toBeDefined();
-        Log(testName, invalidGetAuthTokenTitle, 'Should have thrown error');
-        done();
+        Log.log(testName, invalidGetAuthTokenTitle, 'Should have thrown error');
       } catch (error) {
         expect(error.name).toBe('DroppError');
         expect(error.details.error.type).toBe(DroppError.type.InvalidRequest.type);
         expect(error.details.error.message).toBe('username,password');
-        Log(testName, invalidGetAuthTokenTitle, error.details);
-        done();
+        Log.log(testName, invalidGetAuthTokenTitle, error.details);
       }
+
+      Log.it(testName, invalidGetAuthTokenTitle, it2, false);
+      done();
     });
 
-    it('throws an error for a missing username', async (done) => {
+    const it3 = 'throws an error for a missing username';
+    it(it3, async (done) => {
+      Log.it(testName, invalidGetAuthTokenTitle, it3, true);
       delete this.invalidDetails.username;
       try {
         const result = await UserMiddleware.getAuthToken(this.invalidDetails);
         expect(result).not.toBeDefined();
-        Log(testName, invalidGetAuthTokenTitle, 'Should have thrown error');
-        done();
+        Log.log(testName, invalidGetAuthTokenTitle, 'Should have thrown error');
       } catch (error) {
         expect(error.name).toBe('DroppError');
         expect(error.details.error.type).toBe(DroppError.type.InvalidRequest.type);
         expect(error.details.error.message).toBe('username');
-        Log(testName, invalidGetAuthTokenTitle, error.details);
-        done();
+        Log.log(testName, invalidGetAuthTokenTitle, error.details);
       }
+
+      Log.it(testName, invalidGetAuthTokenTitle, it3, false);
+      done();
     });
 
-    it('throws an error for a missing password', async (done) => {
+    const it4 = 'throws an error for a missing password';
+    it(it4, async (done) => {
+      Log.it(testName, invalidGetAuthTokenTitle, it4, true);
       delete this.invalidDetails.password;
       try {
         const result = await UserMiddleware.getAuthToken(this.invalidDetails);
         expect(result).not.toBeDefined();
-        Log(testName, invalidGetAuthTokenTitle, 'Should have thrown error');
-        done();
+        Log.log(testName, invalidGetAuthTokenTitle, 'Should have thrown error');
       } catch (error) {
         expect(error.name).toBe('DroppError');
         expect(error.details.error.type).toBe(DroppError.type.InvalidRequest.type);
         expect(error.details.error.message).toBe('password');
-        Log(testName, invalidGetAuthTokenTitle, error.details);
-        done();
+        Log.log(testName, invalidGetAuthTokenTitle, error.details);
       }
+
+      Log.it(testName, invalidGetAuthTokenTitle, it4, false);
+      done();
     });
 
-    it('throws an error for a non-existent user', async (done) => {
+    const it5 = 'throws an error for a non-existent user';
+    it(it5, async (done) => {
+      Log.it(testName, invalidGetAuthTokenTitle, it5, true);
       try {
         const result = await UserMiddleware.getAuthToken(this.invalidDetails);
         expect(result).not.toBeDefined();
-        Log(testName, invalidGetAuthTokenTitle, 'Should have thrown error');
-        done();
+        Log.log(testName, invalidGetAuthTokenTitle, 'Should have thrown error');
       } catch (error) {
         expect(error.name).toBe('DroppError');
         expect(error.details.error.type).toBe(DroppError.type.Login.type);
         expect(error.details.error.message).toBe(DroppError.type.Login.message);
-        Log(testName, invalidGetAuthTokenTitle, error.details);
-        done();
+        Log.log(testName, invalidGetAuthTokenTitle, error.details);
       }
+
+      Log.it(testName, invalidGetAuthTokenTitle, it5, false);
+      done();
     });
 
-    it('throws an error for an incorrect password', async (done) => {
+    const it6 = 'throws an error for an incorrect password';
+    it(it6, async (done) => {
+      Log.it(testName, invalidGetAuthTokenTitle, it6, true);
       this.invalidDetails.username = this.testUser.username;
       try {
         const result = await UserMiddleware.getAuthToken(this.invalidDetails);
         expect(result).not.toBeDefined();
-        Log(testName, invalidGetAuthTokenTitle, 'Should have thrown error');
-        done();
+        Log.log(testName, invalidGetAuthTokenTitle, 'Should have thrown error');
       } catch (error) {
         expect(error.name).toBe('DroppError');
         expect(error.details.error.type).toBe(DroppError.type.Login.type);
         expect(error.details.error.message).toBe(DroppError.type.Login.message);
-        Log(testName, invalidGetAuthTokenTitle, error.details);
-        done();
+        Log.log(testName, invalidGetAuthTokenTitle, error.details);
       }
+
+      Log.it(testName, invalidGetAuthTokenTitle, it6, false);
+      done();
     });
   });
 
   const updatePasswordTitle = 'Update password';
   describe(updatePasswordTitle, () => {
-    it('updates the user\'s password', async (done) => {
+    const it1 = 'updates the user\'s password';
+    it(it1, async (done) => {
+      Log.it(testName, updatePasswordTitle, it1, true);
       const details = {
         oldPassword: this.testUserData.password,
         newPassword: 'test2',
@@ -491,7 +584,8 @@ describe(testName, () => {
       expect(result.success.token).toBeDefined();
       expect(typeof result.success.token).toBe('string');
       expect(result.success.token).toContain('Bearer');
-      Log(testName, updatePasswordTitle, result);
+      Log.log(testName, updatePasswordTitle, result);
+      Log.it(testName, updatePasswordTitle, it1, false);
       done();
     });
   });
@@ -499,17 +593,24 @@ describe(testName, () => {
   const invalidUpdatePasswordTitle = 'Invalid update password';
   describe(invalidUpdatePasswordTitle, () => {
     beforeEach(() => {
+      Log.beforeEach(testName, invalidUpdatePasswordTitle, true);
       this.invalidDetails = {
         oldPassword: this.testUserData.password,
         newPassword: Utils.newUuid(),
       };
+
+      Log.beforeEach(testName, invalidUpdatePasswordTitle, false);
     });
 
     afterEach(() => {
+      Log.afterEach(testName, invalidUpdatePasswordTitle, true);
       delete this.invalidDetails;
+      Log.afterEach(testName, invalidUpdatePasswordTitle, false);
     });
 
-    it('throws an error for an invalid current user', async (done) => {
+    const it1 = 'throws an error for an invalid current user';
+    it(it1, async (done) => {
+      Log.it(testName, invalidGetAuthTokenTitle, it1, true);
       try {
         const result = await UserMiddleware.updatePassword(
           null,
@@ -517,18 +618,21 @@ describe(testName, () => {
           this.invalidDetails
         );
         expect(result).not.toBeDefined();
-        Log(testName, invalidUpdatePasswordTitle, 'Should have thrown error');
-        done();
+        Log.log(testName, invalidUpdatePasswordTitle, 'Should have thrown error');
       } catch (error) {
         expect(error.name).toBe('DroppError');
         expect(error.details.error.type).toBe(DroppError.type.Server.type);
         expect(error.details.error.message).toBe(DroppError.type.Server.message);
-        Log(testName, invalidUpdatePasswordTitle, error.details);
-        done();
+        Log.log(testName, invalidUpdatePasswordTitle, error.details);
       }
+
+      Log.it(testName, invalidGetAuthTokenTitle, it1, false);
+      done();
     });
 
-    it('throws an error for null details', async (done) => {
+    const it2 = 'throws an error for null details';
+    it(it2, async (done) => {
+      Log.it(testName, invalidUpdatePasswordTitle, it2, true);
       try {
         const result = await UserMiddleware.updatePassword(
           this.testUser,
@@ -536,18 +640,21 @@ describe(testName, () => {
           null
         );
         expect(result).not.toBeDefined();
-        Log(testName, invalidUpdatePasswordTitle, 'Should have thrown error');
-        done();
+        Log.log(testName, invalidUpdatePasswordTitle, 'Should have thrown error');
       } catch (error) {
         expect(error.name).toBe('DroppError');
         expect(error.details.error.type).toBe(DroppError.type.InvalidRequest.type);
         expect(error.details.error.message).toBe('oldPassword,newPassword');
-        Log(testName, invalidUpdatePasswordTitle, error.details);
-        done();
+        Log.log(testName, invalidUpdatePasswordTitle, error.details);
       }
+
+      Log.it(testName, invalidUpdatePasswordTitle, it2, false);
+      done();
     });
 
-    it('throws an error for null username details', async (done) => {
+    const it3 = 'throws an error for null username details';
+    it(it3, async (done) => {
+      Log.it(testName, invalidUpdatePasswordTitle, it3, true);
       const details = {
         oldPassword: this.testUserData.password,
         newPassword: 'test2',
@@ -556,18 +663,21 @@ describe(testName, () => {
       try {
         const result = await UserMiddleware.updatePassword(this.testUser, null, details);
         expect(result).not.toBeDefined();
-        Log(testName, invalidUpdatePasswordTitle, 'Should have thrown error');
-        done();
+        Log.log(testName, invalidUpdatePasswordTitle, 'Should have thrown error');
       } catch (error) {
         expect(error.name).toBe('DroppError');
         expect(error.details.error.type).toBe(DroppError.type.Resource.type);
-        expect(error.details.error.message).toBe('Unauthorized to update that user\'s password');
-        Log(testName, invalidUpdatePasswordTitle, error.details);
-        done();
+        expect(error.details.error.message).toBe('Unauthorized to access that');
+        Log.log(testName, invalidUpdatePasswordTitle, error.details);
       }
+
+      Log.it(testName, invalidUpdatePasswordTitle, it3, false);
+      done();
     });
 
-    it('throws an error for an invalid old and new password', async (done) => {
+    const it4 = 'throws an error for an invalid old and new password';
+    it(it4, async (done) => {
+      Log.it(testName, invalidUpdatePasswordTitle, it4, true);
       this.invalidDetails.oldPassword = '$%';
       this.invalidDetails.newPassword = 'he$';
       try {
@@ -577,18 +687,21 @@ describe(testName, () => {
           this.invalidDetails
         );
         expect(result).not.toBeDefined();
-        Log(testName, invalidUpdatePasswordTitle, 'Should have thrown error');
-        done();
+        Log.log(testName, invalidUpdatePasswordTitle, 'Should have thrown error');
       } catch (error) {
         expect(error.name).toBe('DroppError');
         expect(error.details.error.type).toBe(DroppError.type.InvalidRequest.type);
         expect(error.details.error.message).toBe('oldPassword,newPassword');
-        Log(testName, invalidUpdatePasswordTitle, error.details);
-        done();
+        Log.log(testName, invalidUpdatePasswordTitle, error.details);
       }
+
+      Log.it(testName, invalidUpdatePasswordTitle, it4, false);
+      done();
     });
 
-    it('throws an error for a missing old password', async (done) => {
+    const it5 = 'throws an error for a missing old password';
+    it(it5, async (done) => {
+      Log.it(testName, invalidUpdatePasswordTitle, it5, true);
       delete this.invalidDetails.oldPassword;
       try {
         const result = await UserMiddleware.updatePassword(
@@ -597,18 +710,21 @@ describe(testName, () => {
           this.invalidDetails
         );
         expect(result).not.toBeDefined();
-        Log(testName, invalidUpdatePasswordTitle, 'Should have thrown error');
-        done();
+        Log.log(testName, invalidUpdatePasswordTitle, 'Should have thrown error');
       } catch (error) {
         expect(error.name).toBe('DroppError');
         expect(error.details.error.type).toBe(DroppError.type.InvalidRequest.type);
         expect(error.details.error.message).toBe('oldPassword');
-        Log(testName, invalidUpdatePasswordTitle, error.details);
-        done();
+        Log.log(testName, invalidUpdatePasswordTitle, error.details);
       }
+
+      Log.it(testName, invalidUpdatePasswordTitle, it5, false);
+      done();
     });
 
-    it('throws an error for a missing new password', async (done) => {
+    const it6 = 'throws an error for a missing new password';
+    it(it6, async (done) => {
+      Log.it(testName, invalidUpdatePasswordTitle, it6, true);
       delete this.invalidDetails.newPassword;
       try {
         const result = await UserMiddleware.updatePassword(
@@ -617,18 +733,21 @@ describe(testName, () => {
           this.invalidDetails
         );
         expect(result).not.toBeDefined();
-        Log(testName, invalidUpdatePasswordTitle, 'Should have thrown error');
-        done();
+        Log.log(testName, invalidUpdatePasswordTitle, 'Should have thrown error');
       } catch (error) {
         expect(error.name).toBe('DroppError');
         expect(error.details.error.type).toBe(DroppError.type.InvalidRequest.type);
         expect(error.details.error.message).toBe('newPassword');
-        Log(testName, invalidUpdatePasswordTitle, error.details);
-        done();
+        Log.log(testName, invalidUpdatePasswordTitle, error.details);
       }
+
+      Log.it(testName, invalidUpdatePasswordTitle, it6, false);
+      done();
     });
 
-    it('throws an error for identical old and new passwords', async (done) => {
+    const it7 = 'throws an error for identical old and new passwords';
+    it(it7, async (done) => {
+      Log.it(testName, invalidUpdatePasswordTitle, it7, true);
       this.invalidDetails.newPassword = this.invalidDetails.oldPassword;
       try {
         const result = await UserMiddleware.updatePassword(
@@ -637,18 +756,21 @@ describe(testName, () => {
           this.invalidDetails
         );
         expect(result).not.toBeDefined();
-        Log(testName, invalidUpdatePasswordTitle, 'Should have thrown error');
-        done();
+        Log.log(testName, invalidUpdatePasswordTitle, 'Should have thrown error');
       } catch (error) {
         expect(error.name).toBe('DroppError');
         expect(error.details.error.type).toBe(DroppError.type.Resource.type);
-        expect(error.details.error.message).toBe('New password must be different from old password');
-        Log(testName, invalidUpdatePasswordTitle, error.details);
-        done();
+        expect(error.details.error.message).toBe('New value must be different than existing value');
+        Log.log(testName, invalidUpdatePasswordTitle, error.details);
       }
+
+      Log.it(testName, invalidUpdatePasswordTitle, it7, false);
+      done();
     });
 
-    it('throws an error for updating a different user', async (done) => {
+    const it8 = 'throws an error for updating a different user';
+    it(it8, async (done) => {
+      Log.it(testName, invalidUpdatePasswordTitle, it8, true);
       const details = { username: 'test' };
       try {
         const result = await UserMiddleware.updatePassword(
@@ -657,18 +779,21 @@ describe(testName, () => {
           this.invalidDetails
         );
         expect(result).not.toBeDefined();
-        Log(testName, invalidUpdatePasswordTitle, 'Should have thrown error');
-        done();
+        Log.log(testName, invalidUpdatePasswordTitle, 'Should have thrown error');
       } catch (error) {
         expect(error.name).toBe('DroppError');
         expect(error.details.error.type).toBe(DroppError.type.Resource.type);
-        expect(error.details.error.message).toBe('Unauthorized to update that user\'s password');
-        Log(testName, invalidUpdatePasswordTitle, error.details);
-        done();
+        expect(error.details.error.message).toBe('Unauthorized to access that');
+        Log.log(testName, invalidUpdatePasswordTitle, error.details);
       }
+
+      Log.it(testName, invalidUpdatePasswordTitle, it8, false);
+      done();
     });
 
-    it('throws an error for updating a non-existent current user', async (done) => {
+    const it9 = 'throws an error for updating a non-existent current user';
+    it(it9, async (done) => {
+      Log.it(testName, invalidUpdatePasswordTitle, it9, true);
       const user = new User({
         username: 'test',
         email: 'test@test.com',
@@ -678,18 +803,21 @@ describe(testName, () => {
       try {
         const result = await UserMiddleware.updatePassword(user, details, this.invalidDetails);
         expect(result).not.toBeDefined();
-        Log(testName, invalidUpdatePasswordTitle, 'Should have thrown error');
-        done();
+        Log.log(testName, invalidUpdatePasswordTitle, 'Should have thrown error');
       } catch (error) {
         expect(error.name).toBe('DroppError');
         expect(error.details.error.type).toBe(DroppError.type.Server.type);
         expect(error.details.error.message).toBe(DroppError.type.Server.message);
-        Log(testName, invalidUpdatePasswordTitle, error.details);
-        done();
+        Log.log(testName, invalidUpdatePasswordTitle, error.details);
       }
+
+      Log.it(testName, invalidUpdatePasswordTitle, it9, false);
+      done();
     });
 
-    it('throws an error for an incorrect password', async (done) => {
+    const it10 = 'throws an error for an incorrect password';
+    it(it10, async (done) => {
+      Log.it(testName, invalidUpdatePasswordTitle, it10, true);
       this.invalidDetails.oldPassword = Utils.newUuid();
       try {
         const result = await UserMiddleware.updatePassword(
@@ -698,21 +826,24 @@ describe(testName, () => {
           this.invalidDetails
         );
         expect(result).not.toBeDefined();
-        Log(testName, invalidUpdatePasswordTitle, 'Should have thrown error');
-        done();
+        Log.log(testName, invalidUpdatePasswordTitle, 'Should have thrown error');
       } catch (error) {
         expect(error.name).toBe('DroppError');
         expect(error.details.error.type).toBe(DroppError.type.Resource.type);
         expect(error.details.error.message).toBe('Old password must match existing password');
-        Log(testName, invalidUpdatePasswordTitle, error.details);
-        done();
+        Log.log(testName, invalidUpdatePasswordTitle, error.details);
       }
+
+      Log.it(testName, invalidUpdatePasswordTitle, it10, false);
+      done();
     });
   });
 
   const updateEmailTitle = 'Update email';
   describe(updateEmailTitle, () => {
-    it('updates the user\'s email', async (done) => {
+    const it1 = 'updates the user\'s email';
+    it(it1, async (done) => {
+      Log.it(testName, updateEmailTitle, it1, true);
       const uuid2 = Utils.newUuid();
       const details = { newEmail: `${uuid2}@${uuid2}.com` };
       const result = await UserMiddleware.updateEmail(this.testUser, this.testUserDetails, details);
@@ -720,7 +851,8 @@ describe(testName, () => {
       expect(result.success.message).toBeDefined();
       expect(typeof result.success.message).toBe('string');
       expect(result.success.message.toLowerCase()).toContain('email');
-      Log(testName, updateEmailTitle, result);
+      Log.log(testName, updateEmailTitle, result);
+      Log.it(testName, updateEmailTitle, it1, false);
       done();
     });
   });
@@ -728,16 +860,23 @@ describe(testName, () => {
   const invalidUpdateEmailTitle = 'Invalid update email';
   describe(invalidUpdateEmailTitle, () => {
     beforeEach(() => {
+      Log.beforeEach(testName, invalidUpdateEmailTitle, true);
       this.invalidDetails = {
         newEmail: Utils.newUuid(),
       };
+
+      Log.beforeEach(testName, invalidUpdateEmailTitle, false);
     });
 
     afterEach(() => {
+      Log.afterEach(testName, invalidUpdateEmailTitle, true);
       delete this.invalidDetails;
+      Log.afterEach(testName, invalidUpdateEmailTitle, false);
     });
 
-    it('throws an error for an invalid current user', async (done) => {
+    const it1 = 'throws an error for an invalid current user';
+    it(it1, async (done) => {
+      Log.it(testName, invalidUpdateEmailTitle, it1, true);
       try {
         const result = await UserMiddleware.updateEmail(
           null,
@@ -745,49 +884,58 @@ describe(testName, () => {
           this.invalidDetails
         );
         expect(result).not.toBeDefined();
-        Log(testName, invalidUpdateEmailTitle, 'Should have thrown error');
-        done();
+        Log.log(testName, invalidUpdateEmailTitle, 'Should have thrown error');
       } catch (error) {
         expect(error.name).toBe('DroppError');
         expect(error.details.error.type).toBe(DroppError.type.Server.type);
         expect(error.details.error.message).toBe(DroppError.type.Server.message);
-        Log(testName, invalidUpdateEmailTitle, error.details);
-        done();
+        Log.log(testName, invalidUpdateEmailTitle, error.details);
       }
+
+      Log.it(testName, invalidUpdateEmailTitle, it1, false);
+      done();
     });
 
-    it('throws an error for null details', async (done) => {
+    const it2 = 'throws an error for null details';
+    it(it2, async (done) => {
+      Log.it(testName, invalidUpdateEmailTitle, it2, true);
       try {
         const result = await UserMiddleware.updateEmail(this.testUser, this.testUserDetails, null);
         expect(result).not.toBeDefined();
-        Log(testName, invalidUpdateEmailTitle, 'Should have thrown error');
-        done();
+        Log.log(testName, invalidUpdateEmailTitle, 'Should have thrown error');
       } catch (error) {
         expect(error.name).toBe('DroppError');
         expect(error.details.error.type).toBe(DroppError.type.InvalidRequest.type);
         expect(error.details.error.message).toBe('newEmail');
-        Log(testName, invalidUpdateEmailTitle, error.details);
-        done();
+        Log.log(testName, invalidUpdateEmailTitle, error.details);
       }
+
+      Log.it(testName, invalidUpdateEmailTitle, it2, false);
+      done();
     });
 
-    it('throws an error for null username details', async (done) => {
+    const it3 = 'throws an error for null username details';
+    it(it3, async (done) => {
+      Log.it(testName, invalidUpdateEmailTitle, it3, true);
       const details = { newEmail: `${Utils.newUuid()}@${Utils.newUuid()}.com` };
       try {
         const result = await UserMiddleware.updateEmail(this.testUser, null, details);
         expect(result).not.toBeDefined();
-        Log(testName, invalidUpdateEmailTitle, 'Should have thrown error');
-        done();
+        Log.log(testName, invalidUpdateEmailTitle, 'Should have thrown error');
       } catch (error) {
         expect(error.name).toBe('DroppError');
         expect(error.details.error.type).toBe(DroppError.type.Resource.type);
-        expect(error.details.error.message).toBe('Unauthorized to update that user\'s email');
-        Log(testName, invalidUpdateEmailTitle, error.details);
-        done();
+        expect(error.details.error.message).toBe('Unauthorized to access that');
+        Log.log(testName, invalidUpdateEmailTitle, error.details);
       }
+
+      Log.it(testName, invalidUpdateEmailTitle, it3, false);
+      done();
     });
 
-    it('throws an error for an invalid email', async (done) => {
+    const it4 = 'throws an error for an invalid email';
+    it(it4, async (done) => {
+      Log.it(testName, invalidUpdateEmailTitle, it4, true);
       try {
         const result = await UserMiddleware.updateEmail(
           this.testUser,
@@ -795,18 +943,21 @@ describe(testName, () => {
           this.invalidDetails
         );
         expect(result).not.toBeDefined();
-        Log(testName, invalidUpdateEmailTitle, 'Should have thrown error');
-        done();
+        Log.log(testName, invalidUpdateEmailTitle, 'Should have thrown error');
       } catch (error) {
         expect(error.name).toBe('DroppError');
         expect(error.details.error.type).toBe(DroppError.type.InvalidRequest.type);
         expect(error.details.error.message).toBe('newEmail');
-        Log(testName, invalidUpdateEmailTitle, error.details);
-        done();
+        Log.log(testName, invalidUpdateEmailTitle, error.details);
       }
+
+      Log.it(testName, invalidUpdateEmailTitle, it4, false);
+      done();
     });
 
-    it('throws an error for a missing email', async (done) => {
+    const it5 = 'throws an error for a missing email';
+    it(it5, async (done) => {
+      Log.it(testName, invalidUpdateEmailTitle, it5, true);
       delete this.invalidDetails.newEmail;
       try {
         const result = await UserMiddleware.updateEmail(
@@ -815,18 +966,21 @@ describe(testName, () => {
           this.invalidDetails
         );
         expect(result).not.toBeDefined();
-        Log(testName, invalidUpdateEmailTitle, 'Should have thrown error');
-        done();
+        Log.log(testName, invalidUpdateEmailTitle, 'Should have thrown error');
       } catch (error) {
         expect(error.name).toBe('DroppError');
         expect(error.details.error.type).toBe(DroppError.type.InvalidRequest.type);
         expect(error.details.error.message).toBe('newEmail');
-        Log(testName, invalidUpdateEmailTitle, error.details);
-        done();
+        Log.log(testName, invalidUpdateEmailTitle, error.details);
       }
+
+      Log.it(testName, invalidUpdateEmailTitle, it5, false);
+      done();
     });
 
-    it('throws an error for updating a different user', async (done) => {
+    const it6 = 'throws an error for updating a different user';
+    it(it6, async (done) => {
+      Log.it(testName, invalidUpdateEmailTitle, it6, true);
       this.invalidDetails.newEmail = 'test@test.com';
       try {
         const details = { username: 'test' };
@@ -836,21 +990,23 @@ describe(testName, () => {
           this.invalidDetails
         );
         expect(result).not.toBeDefined();
-        Log(testName, invalidUpdateEmailTitle, 'Should have thrown error');
-        done();
+        Log.log(testName, invalidUpdateEmailTitle, 'Should have thrown error');
       } catch (error) {
         expect(error.name).toBe('DroppError');
         expect(error.details.error.type).toBe(DroppError.type.Resource.type);
-        expect(error.details.error.message).toBe('Unauthorized to update that user\'s email');
-        Log(testName, invalidUpdateEmailTitle, error.details);
-        done();
+        expect(error.details.error.message).toBe('Unauthorized to access that');
+        Log.log(testName, invalidUpdateEmailTitle, error.details);
       }
+
+      Log.it(testName, invalidUpdateEmailTitle, it6, false);
+      done();
     });
   });
 
   const interUserFunctionsTitle = 'Inter-user functions';
   describe(interUserFunctionsTitle, () => {
     beforeEach(async (done) => {
+      Log.beforeEach(testName, interUserFunctionsTitle, true);
       const uuid2 = Utils.newUuid();
       const details = {
         username: uuid2,
@@ -859,18 +1015,23 @@ describe(testName, () => {
       };
 
       this.testUser2 = await UserMiddleware.create(details);
+      Log.beforeEach(testName, interUserFunctionsTitle, false);
       done();
     });
 
     afterEach(async (done) => {
+      Log.afterEach(testName, interUserFunctionsTitle, true);
       await UserMiddleware.remove(this.testUser2, { username: this.testUser2.username });
       delete this.testUser2;
+      Log.afterEach(testName, interUserFunctionsTitle, false);
       done();
     });
 
     const requestToFollowTitle = 'Request to follow user';
     describe(requestToFollowTitle, () => {
-      it('adds a follow request for the user', async (done) => {
+      const it1 = 'adds a follow request for the user';
+      it(it1, async (done) => {
+        Log.it(testName, requestToFollowTitle, it1, true);
         const details = { username: this.testUser.username };
         const requestedUser = { requestedUser: this.testUser2.username };
         const result = await UserMiddleware.requestToFollow(this.testUser, details, requestedUser);
@@ -879,7 +1040,8 @@ describe(testName, () => {
         expect(typeof result.success.message).toBe('string');
         expect(result.success.message.toLowerCase()).toContain('follow request');
         expect(this.testUser.followRequests.includes(this.testUser2.username)).toBe(true);
-        Log(testName, requestToFollowTitle, result);
+        Log.log(testName, requestToFollowTitle, result);
+        Log.it(testName, requestToFollowTitle, it1, false);
         done();
       });
     });
@@ -887,63 +1049,78 @@ describe(testName, () => {
     const invalidRequestToFollowTitle = 'Invalid request to follow user';
     describe(invalidRequestToFollowTitle, () => {
       beforeEach(() => {
+        Log.beforeEach(testName, invalidRequestToFollowTitle, true);
         this.invalidUsername = '%';
+        Log.beforeEach(testName, invalidRequestToFollowTitle, false);
       });
 
       afterEach(() => {
+        Log.afterEach(testName, invalidRequestToFollowTitle, true);
         delete this.invalidUsername;
+        Log.afterEach(testName, invalidRequestToFollowTitle, false);
       });
 
-      it('throws an error for an invalid current user', async (done) => {
+      const it2 = 'throws an error for an invalid current user';
+      it(it2, async (done) => {
+        Log.it(testName, invalidRequestToFollowTitle, it2, true);
         const details = { username: this.testUser.username };
         const requestedUser = { requestedUser: this.testUser2.username };
         try {
           const result = await UserMiddleware.requestToFollow(null, details, requestedUser);
           expect(result).not.toBeDefined();
-          Log(testName, invalidRequestToFollowTitle, 'Should have thrown error');
-          done();
+          Log.log(testName, invalidRequestToFollowTitle, 'Should have thrown error');
         } catch (error) {
           expect(error.name).toBe('DroppError');
           expect(error.details.error.type).toBe(DroppError.type.Server.type);
           expect(error.details.error.message).toBe(DroppError.type.Server.message);
-          Log(testName, invalidRequestToFollowTitle, error.details);
-          done();
+          Log.log(testName, invalidRequestToFollowTitle, error.details);
         }
+
+        Log.it(testName, invalidRequestToFollowTitle, it2, false);
+        done();
       });
 
-      it('throws an error for an invalid username details argument', async (done) => {
+      const it3 = 'throws an error for an invalid username details argument';
+      it(it3, async (done) => {
+        Log.it(testName, invalidRequestToFollowTitle, it3, true);
         const requestedUser = { requestedUser: this.testUser2.username };
         try {
           const result = await UserMiddleware.requestToFollow(this.testUser, null, requestedUser);
           expect(result).not.toBeDefined();
-          Log(testName, invalidRequestToFollowTitle, 'Should have thrown error');
+          Log.log(testName, invalidRequestToFollowTitle, 'Should have thrown error');
         } catch (error) {
           expect(error.name).toBe('DroppError');
           expect(error.details.error.type).toBe(DroppError.type.InvalidRequest.type);
           expect(error.details.error.message).toBe('username');
-          Log(testName, invalidRequestToFollowTitle, error.details);
+          Log.log(testName, invalidRequestToFollowTitle, error.details);
         }
 
+        Log.it(testName, invalidRequestToFollowTitle, it3, false);
         done();
       });
 
-      it('throws an error for an invalid requested user details argument', async (done) => {
+      const it4 = 'throws an error for an invalid requested user details argument';
+      it(it4, async (done) => {
+        Log.it(testName, invalidRequestToFollowTitle, it4, true);
         const details = { username: this.testUser.username };
         try {
           const result = await UserMiddleware.requestToFollow(this.testUser, details, null);
           expect(result).not.toBeDefined();
-          Log(testName, invalidRequestToFollowTitle, 'Should have thrown error');
+          Log.log(testName, invalidRequestToFollowTitle, 'Should have thrown error');
         } catch (error) {
           expect(error.name).toBe('DroppError');
           expect(error.details.error.type).toBe(DroppError.type.InvalidRequest.type);
           expect(error.details.error.message).toBe('requestedUser');
-          Log(testName, invalidRequestToFollowTitle, error.details);
+          Log.log(testName, invalidRequestToFollowTitle, error.details);
         }
 
+        Log.it(testName, invalidRequestToFollowTitle, it4, false);
         done();
       });
 
-      it('throws an error for an invalid username', async (done) => {
+      const it5 = 'throws an error for an invalid username';
+      it(it5, async (done) => {
+        Log.it(testName, invalidRequestToFollowTitle, it5, true);
         const details = { username: this.testUser.username };
         const requestedUser = { requestedUser: this.invalidUsername };
         try {
@@ -953,18 +1130,21 @@ describe(testName, () => {
             requestedUser
           );
           expect(result).not.toBeDefined();
-          Log(testName, invalidRequestToFollowTitle, 'Should have thrown error');
-          done();
+          Log.log(testName, invalidRequestToFollowTitle, 'Should have thrown error');
         } catch (error) {
           expect(error.name).toBe('DroppError');
           expect(error.details.error.type).toBe(DroppError.type.InvalidRequest.type);
           expect(error.details.error.message).toBe('requestedUser');
-          Log(testName, invalidRequestToFollowTitle, error.details);
-          done();
+          Log.log(testName, invalidRequestToFollowTitle, error.details);
         }
+
+        Log.it(testName, invalidRequestToFollowTitle, it5, false);
+        done();
       });
 
-      it('throws an error for a missing username', async (done) => {
+      const it6 = 'throws an error for a missing username';
+      it(it6, async (done) => {
+        Log.it(testName, invalidRequestToFollowTitle, it6, true);
         delete this.invalidUsername;
         const details = { username: this.testUser.username };
         const requestedUser = { requestedUser: this.invalidUsername };
@@ -975,18 +1155,21 @@ describe(testName, () => {
             requestedUser
           );
           expect(result).not.toBeDefined();
-          Log(testName, invalidRequestToFollowTitle, 'Should have thrown error');
-          done();
+          Log.log(testName, invalidRequestToFollowTitle, 'Should have thrown error');
         } catch (error) {
           expect(error.name).toBe('DroppError');
           expect(error.details.error.type).toBe(DroppError.type.InvalidRequest.type);
           expect(error.details.error.message).toBe('requestedUser');
-          Log(testName, invalidRequestToFollowTitle, error.details);
-          done();
+          Log.log(testName, invalidRequestToFollowTitle, error.details);
         }
+
+        Log.it(testName, invalidRequestToFollowTitle, it6, false);
+        done();
       });
 
-      it('throws an error for accessing a different user\'s follow requests', async (done) => {
+      const it7 = 'throws an error for accessing a different user\'s follow requests';
+      it(it7, async (done) => {
+        Log.it(testName, invalidRequestToFollowTitle, it7, true);
         const details = { username: this.testUser2.username };
         const requestedUser = { requestedUser: this.testUser2.username };
         try {
@@ -996,18 +1179,21 @@ describe(testName, () => {
             requestedUser
           );
           expect(result).not.toBeDefined();
-          Log(testName, invalidRequestToFollowTitle, 'Should have thrown error');
+          Log.log(testName, invalidRequestToFollowTitle, 'Should have thrown error');
         } catch (error) {
           expect(error.name).toBe('DroppError');
           expect(error.details.error.type).toBe(DroppError.type.Resource.type);
-          expect(error.details.error.message).toBe('Unauthorized to access that user\'s follow requests');
-          Log(testName, invalidRequestToFollowTitle, error.details);
+          expect(error.details.error.message).toBe('Unauthorized to access that');
+          Log.log(testName, invalidRequestToFollowTitle, error.details);
         }
 
+        Log.it(testName, invalidRequestToFollowTitle, it7, false);
         done();
       });
 
-      it('throws an error for requesting to follow the same user', async (done) => {
+      const it8 = 'throws an error for requesting to follow the same user';
+      it(it8, async (done) => {
+        Log.it(testName, invalidRequestToFollowTitle, it8, true);
         const details = { username: this.testUser.username };
         const requestedUser = { requestedUser: this.testUser.username };
         try {
@@ -1017,18 +1203,21 @@ describe(testName, () => {
             requestedUser
           );
           expect(result).not.toBeDefined();
-          Log(testName, invalidRequestToFollowTitle, 'Should have thrown error');
+          Log.log(testName, invalidRequestToFollowTitle, 'Should have thrown error');
         } catch (error) {
           expect(error.name).toBe('DroppError');
           expect(error.details.error.type).toBe(DroppError.type.Resource.type);
           expect(error.details.error.message).toBe('You cannot request to follow yourself');
-          Log(testName, invalidRequestToFollowTitle, error.details);
+          Log.log(testName, invalidRequestToFollowTitle, error.details);
         }
 
+        Log.it(testName, invalidRequestToFollowTitle, it8, false);
         done();
       });
 
-      it('throws an error for a non-existent user', async (done) => {
+      const it9 = 'throws an error for a non-existent user';
+      it(it9, async (done) => {
+        Log.it(testName, invalidRequestToFollowTitle, it9, true);
         const details = { username: this.testUser.username };
         const requestedUser = { requestedUser: 'test' };
         try {
@@ -1038,18 +1227,21 @@ describe(testName, () => {
             requestedUser
           );
           expect(result).not.toBeDefined();
-          Log(testName, invalidRequestToFollowTitle, 'Should have thrown error');
-          done();
+          Log.log(testName, invalidRequestToFollowTitle, 'Should have thrown error');
         } catch (error) {
           expect(error.name).toBe('DroppError');
           expect(error.details.error.type).toBe(DroppError.type.ResourceDNE.type);
           expect(error.details.error.message).toBe('That user does not exist');
-          Log(testName, invalidRequestToFollowTitle, error.details);
-          done();
+          Log.log(testName, invalidRequestToFollowTitle, error.details);
         }
+
+        Log.it(testName, invalidRequestToFollowTitle, it9, false);
+        done();
       });
 
-      it('throws an error for existing pending follow request', async (done) => {
+      const it10 = 'throws an error for existing pending follow request';
+      it(it10, async (done) => {
+        Log.it(testName, invalidRequestToFollowTitle, it10, true);
         // Set up test case
         let testUser3;
         try {
@@ -1065,8 +1257,7 @@ describe(testName, () => {
           await UserMiddleware.requestToFollow(this.testUser, usernameDetails, requestedUser);
         } catch (error) {
           expect(error).not.toBeDefined();
-          Log(testName, invalidRequestToFollowTitle, 'Should not have thrown error');
-          done();
+          Log.log(testName, invalidRequestToFollowTitle, 'Should not have thrown error');
         }
 
         try {
@@ -1078,13 +1269,12 @@ describe(testName, () => {
             requestedUser
           );
           expect(result).not.toBeDefined();
-          Log(testName, invalidRequestToFollowTitle, 'Should have thrown error');
-          done();
+          Log.log(testName, invalidRequestToFollowTitle, 'Should have thrown error');
         } catch (error) {
           expect(error.name).toBe('DroppError');
           expect(error.details.error.type).toBe(DroppError.type.Resource.type);
           expect(error.details.error.message).toBe('You already have a pending follow request for that user');
-          Log(testName, invalidRequestToFollowTitle, error.details);
+          Log.log(testName, invalidRequestToFollowTitle, error.details);
         }
 
         // Clean up test case
@@ -1093,9 +1283,10 @@ describe(testName, () => {
           expect(result.success).toBeDefined();
         } catch (error) {
           expect(error).not.toBeDefined();
-          Log(testName, invalidRequestToFollowTitle, 'Should not have thrown error');
+          Log.log(testName, invalidRequestToFollowTitle, 'Should not have thrown error');
         }
 
+        Log.it(testName, invalidRequestToFollowTitle, it10, false);
         done();
       });
     });
@@ -1103,13 +1294,17 @@ describe(testName, () => {
     const removeFollowRequestTitle = 'Remove follow request';
     describe(removeFollowRequestTitle, () => {
       beforeEach(async (done) => {
+        Log.beforeEach(testName, removeFollowRequestTitle, true);
         const details = { username: this.testUser.username };
         const requestedUser = { requestedUser: this.testUser2.username };
         await UserMiddleware.requestToFollow(this.testUser, details, requestedUser);
+        Log.beforeEach(testName, removeFollowRequestTitle, false);
         done();
       });
 
-      it('removes a follow request to the user', async (done) => {
+      const it1 = 'removes a follow request to the user';
+      it(it1, async (done) => {
+        Log.it(testName, removeFollowRequestTitle, it1, true);
         const details = {
           username: this.testUser.username,
           requestedUser: this.testUser2.username,
@@ -1121,7 +1316,8 @@ describe(testName, () => {
         expect(typeof result.success.message).toBe('string');
         expect(result.success.message.toLowerCase()).toContain('removal');
         expect(this.testUser.followRequests.includes(this.testUser2.username)).toBe(false);
-        Log(testName, removeFollowRequestTitle, result);
+        Log.log(testName, removeFollowRequestTitle, result);
+        Log.it(testName, removeFollowRequestTitle, it1, false);
         done();
       });
     });
@@ -1129,14 +1325,20 @@ describe(testName, () => {
     const invalidRemoveFollowRequestTitle = 'Invalid remove follow request';
     describe(invalidRemoveFollowRequestTitle, () => {
       beforeEach(() => {
+        Log.beforeEach(testName, invalidRemoveFollowRequestTitle, true);
         this.invalidUsername = '%';
+        Log.beforeEach(testName, invalidRemoveFollowRequestTitle, false);
       });
 
       afterEach(() => {
+        Log.afterEach(testName, invalidRemoveFollowRequestTitle, true);
         delete this.invalidUsername;
+        Log.afterEach(testName, invalidRemoveFollowRequestTitle, false);
       });
 
-      it('throws an error for an invalid current user', async (done) => {
+      const it2 = 'throws an error for an invalid current user';
+      it(it2, async (done) => {
+        Log.it(testName, invalidRemoveFollowRequestTitle, it2, true);
         const details = {
           username: this.testUser.username,
           requestedUser: this.testUser2.username,
@@ -1145,33 +1347,39 @@ describe(testName, () => {
         try {
           const result = await UserMiddleware.removeFollowRequest(null, details);
           expect(result).not.toBeDefined();
-          Log(testName, invalidRemoveFollowRequestTitle, 'Should have thrown error');
-          done();
+          Log.log(testName, invalidRemoveFollowRequestTitle, 'Should have thrown error');
         } catch (error) {
           expect(error.name).toBe('DroppError');
           expect(error.details.error.type).toBe(DroppError.type.Server.type);
           expect(error.details.error.message).toBe(DroppError.type.Server.message);
-          Log(testName, invalidRemoveFollowRequestTitle, error.details);
-          done();
+          Log.log(testName, invalidRemoveFollowRequestTitle, error.details);
         }
+
+        Log.it(testName, invalidRemoveFollowRequestTitle, it2, false);
+        done();
       });
 
-      it('throws an error for an invalid username details argument', async (done) => {
+      const it3 = 'throws an error for an invalid username details argument';
+      it(it3, async (done) => {
+        Log.it(testName, invalidRemoveFollowRequestTitle, it3, true);
         try {
           const result = await UserMiddleware.removeFollowRequest(this.testUser, null);
           expect(result).not.toBeDefined();
-          Log(testName, invalidRemoveFollowRequestTitle, 'Should have thrown error');
+          Log.log(testName, invalidRemoveFollowRequestTitle, 'Should have thrown error');
         } catch (error) {
           expect(error.name).toBe('DroppError');
           expect(error.details.error.type).toBe(DroppError.type.InvalidRequest.type);
           expect(error.details.error.message).toBe('username,requestedUser');
-          Log(testName, invalidRemoveFollowRequestTitle, error.details);
+          Log.log(testName, invalidRemoveFollowRequestTitle, error.details);
         }
 
+        Log.it(testName, invalidRemoveFollowRequestTitle, it3, false);
         done();
       });
 
-      it('throws an error for an invalid username', async (done) => {
+      const it4 = 'throws an error for an invalid username';
+      it(it4, async (done) => {
+        Log.it(testName, invalidRemoveFollowRequestTitle, it4, true);
         const details = {
           username: this.invalidUsername,
           requestedUser: this.testUser2.username,
@@ -1180,18 +1388,21 @@ describe(testName, () => {
         try {
           const result = await UserMiddleware.removeFollowRequest(this.testUser, details);
           expect(result).not.toBeDefined();
-          Log(testName, invalidRemoveFollowRequestTitle, 'Should have thrown error');
-          done();
+          Log.log(testName, invalidRemoveFollowRequestTitle, 'Should have thrown error');
         } catch (error) {
           expect(error.name).toBe('DroppError');
           expect(error.details.error.type).toBe(DroppError.type.InvalidRequest.type);
           expect(error.details.error.message).toBe('username');
-          Log(testName, invalidRemoveFollowRequestTitle, error.details);
-          done();
+          Log.log(testName, invalidRemoveFollowRequestTitle, error.details);
         }
+
+        Log.it(testName, invalidRemoveFollowRequestTitle, it4, false);
+        done();
       });
 
-      it('throws an error for an invalid requested username', async (done) => {
+      const it5 = 'throws an error for an invalid requested username';
+      it(it5, async (done) => {
+        Log.it(testName, invalidRemoveFollowRequestTitle, it5, true);
         const details = {
           username: this.testUser.username,
           requestedUser: this.invalidUsername,
@@ -1200,18 +1411,21 @@ describe(testName, () => {
         try {
           const result = await UserMiddleware.removeFollowRequest(this.testUser, details);
           expect(result).not.toBeDefined();
-          Log(testName, invalidRemoveFollowRequestTitle, 'Should have thrown error');
-          done();
+          Log.log(testName, invalidRemoveFollowRequestTitle, 'Should have thrown error');
         } catch (error) {
           expect(error.name).toBe('DroppError');
           expect(error.details.error.type).toBe(DroppError.type.InvalidRequest.type);
           expect(error.details.error.message).toBe('requestedUser');
-          Log(testName, invalidRemoveFollowRequestTitle, error.details);
-          done();
+          Log.log(testName, invalidRemoveFollowRequestTitle, error.details);
         }
+
+        Log.it(testName, invalidRemoveFollowRequestTitle, it5, false);
+        done();
       });
 
-      it('throws an error for a missing requested username', async (done) => {
+      const it6 = 'throws an error for a missing requested username';
+      it(it6, async (done) => {
+        Log.it(testName, invalidRemoveFollowRequestTitle, it6, true);
         const details = {
           requestedUser: undefined,
           username: this.testUser.username,
@@ -1220,18 +1434,21 @@ describe(testName, () => {
         try {
           const result = await UserMiddleware.removeFollowRequest(this.testUser, details);
           expect(result).not.toBeDefined();
-          Log(testName, invalidRemoveFollowRequestTitle, 'Should have thrown error');
-          done();
+          Log.log(testName, invalidRemoveFollowRequestTitle, 'Should have thrown error');
         } catch (error) {
           expect(error.name).toBe('DroppError');
           expect(error.details.error.type).toBe(DroppError.type.InvalidRequest.type);
           expect(error.details.error.message).toBe('requestedUser');
-          Log(testName, invalidRemoveFollowRequestTitle, error.details);
-          done();
+          Log.log(testName, invalidRemoveFollowRequestTitle, error.details);
         }
+
+        Log.it(testName, invalidRemoveFollowRequestTitle, it6, false);
+        done();
       });
 
-      it('throws an error for accessing a different user\'s follow requests', async (done) => {
+      const it7 = 'throws an error for accessing a different user\'s follow requests';
+      it(it7, async (done) => {
+        Log.it(testName, invalidRemoveFollowRequestTitle, it7, true);
         const details = {
           username: this.testUser2.username,
           requestedUser: this.testUser2.username,
@@ -1240,18 +1457,21 @@ describe(testName, () => {
         try {
           const result = await UserMiddleware.removeFollowRequest(this.testUser, details);
           expect(result).not.toBeDefined();
-          Log(testName, invalidRemoveFollowRequestTitle, 'Should have thrown error');
+          Log.log(testName, invalidRemoveFollowRequestTitle, 'Should have thrown error');
         } catch (error) {
           expect(error.name).toBe('DroppError');
           expect(error.details.error.type).toBe(DroppError.type.Resource.type);
-          expect(error.details.error.message).toBe('Unauthorized to access that user\'s follow requests');
-          Log(testName, invalidRemoveFollowRequestTitle, error.details);
+          expect(error.details.error.message).toBe('Unauthorized to access that');
+          Log.log(testName, invalidRemoveFollowRequestTitle, error.details);
         }
 
+        Log.it(testName, invalidRemoveFollowRequestTitle, it7, false);
         done();
       });
 
-      it('throws an error for removing a follow request from the same user', async (done) => {
+      const it8 = 'throws an error for removing a follow request from the same user';
+      it(it8, async (done) => {
+        Log.it(testName, invalidRemoveFollowRequestTitle, it8, true);
         const details = {
           username: this.testUser.username,
           requestedUser: this.testUser.username,
@@ -1260,18 +1480,21 @@ describe(testName, () => {
         try {
           const result = await UserMiddleware.removeFollowRequest(this.testUser, details);
           expect(result).not.toBeDefined();
-          Log(testName, invalidRemoveFollowRequestTitle, 'Should have thrown error');
+          Log.log(testName, invalidRemoveFollowRequestTitle, 'Should have thrown error');
         } catch (error) {
           expect(error.name).toBe('DroppError');
           expect(error.details.error.type).toBe(DroppError.type.Resource.type);
           expect(error.details.error.message).toBe('You cannot remove a follow request from yourself');
-          Log(testName, invalidRemoveFollowRequestTitle, error.details);
+          Log.log(testName, invalidRemoveFollowRequestTitle, error.details);
         }
 
+        Log.it(testName, invalidRemoveFollowRequestTitle, it8, false);
         done();
       });
 
-      it('throws an error for a non-existent requested user', async (done) => {
+      const it9 = 'throws an error for a non-existent requested user';
+      it(it9, async (done) => {
+        Log.it(testName, invalidRemoveFollowRequestTitle, it9, true);
         const details = {
           requestedUser: Utils.newUuid(),
           username: this.testUser.username,
@@ -1280,18 +1503,21 @@ describe(testName, () => {
         try {
           const result = await UserMiddleware.removeFollowRequest(this.testUser, details);
           expect(result).not.toBeDefined();
-          Log(testName, invalidRemoveFollowRequestTitle, 'Should have thrown error');
-          done();
+          Log.log(testName, invalidRemoveFollowRequestTitle, 'Should have thrown error');
         } catch (error) {
           expect(error.name).toBe('DroppError');
           expect(error.details.error.type).toBe(DroppError.type.ResourceDNE.type);
           expect(error.details.error.message).toBe('That user does not exist');
-          Log(testName, invalidRemoveFollowRequestTitle, error.details);
-          done();
+          Log.log(testName, invalidRemoveFollowRequestTitle, error.details);
         }
+
+        Log.it(testName, invalidRemoveFollowRequestTitle, it9, false);
+        done();
       });
 
-      it('throws an error for a non-existent follow request', async (done) => {
+      const it10 = 'throws an error for a non-existent follow request';
+      it(it10, async (done) => {
+        Log.it(testName, invalidRemoveFollowRequestTitle, it10, true);
         const details = {
           username: this.testUser.username,
           requestedUser: this.testUser2.username,
@@ -1300,28 +1526,33 @@ describe(testName, () => {
         try {
           const result = await UserMiddleware.removeFollowRequest(this.testUser, details);
           expect(result).not.toBeDefined();
-          Log(testName, invalidRemoveFollowRequestTitle, 'Should have thrown error');
-          done();
+          Log.log(testName, invalidRemoveFollowRequestTitle, 'Should have thrown error');
         } catch (error) {
           expect(error.name).toBe('DroppError');
           expect(error.details.error.type).toBe(DroppError.type.Resource.type);
           expect(error.details.error.message).toBe('You do not have a pending follow request for that user');
-          Log(testName, invalidRemoveFollowRequestTitle, error.details);
-          done();
+          Log.log(testName, invalidRemoveFollowRequestTitle, error.details);
         }
+
+        Log.it(testName, invalidRemoveFollowRequestTitle, it10, false);
+        done();
       });
     });
 
     const respondToFollowerRequestTitle = 'Respond to follow request';
     describe(respondToFollowerRequestTitle, () => {
       beforeEach(async (done) => {
+        Log.beforeEach(testName, respondToFollowerRequestTitle, true);
         const details = { username: this.testUser.username };
         const requestedUser = { requestedUser: this.testUser2.username };
         await UserMiddleware.requestToFollow(this.testUser, details, requestedUser);
+        Log.beforeEach(testName, respondToFollowerRequestTitle, false);
         done();
       });
 
-      it('accepts a follower request', async (done) => {
+      const it1 = 'accepts a follower request';
+      it(it1, async (done) => {
+        Log.it(testName, respondToFollowerRequestTitle, it1, true);
         const details = { accept: 'true' };
         const usernameDetails = {
           username: this.testUser2.username,
@@ -1337,11 +1568,14 @@ describe(testName, () => {
         expect(result.success.message).toBe('Successful follow request acceptance');
         expect(this.testUser2.followerRequests.includes(this.testUser.username)).toBe(false);
         expect(this.testUser2.followers.includes(this.testUser.username)).toBe(true);
-        Log(testName, respondToFollowerRequestTitle, result);
+        Log.log(testName, respondToFollowerRequestTitle, result);
+        Log.it(testName, respondToFollowerRequestTitle, it1, false);
         done();
       });
 
-      it('declines a follower request', async (done) => {
+      const it2 = 'declines a follower request';
+      it(it2, async (done) => {
+        Log.it(testName, respondToFollowerRequestTitle, it2, true);
         const details = { accept: 'false' };
         const usernameDetails = {
           username: this.testUser2.username,
@@ -1357,7 +1591,8 @@ describe(testName, () => {
         expect(result.success.message).toBe('Successful follow request denial');
         expect(this.testUser2.followerRequests.includes(this.testUser.username)).toBe(false);
         expect(this.testUser2.followers.includes(this.testUser.username)).toBe(false);
-        Log(testName, respondToFollowerRequestTitle, result);
+        Log.log(testName, respondToFollowerRequestTitle, result);
+        Log.it(testName, respondToFollowerRequestTitle, it2, false);
         done();
       });
     });
@@ -1365,18 +1600,25 @@ describe(testName, () => {
     const invalidRespondToFollowerRequestTitle = 'Invalid respond to follow request';
     describe(invalidRespondToFollowerRequestTitle, () => {
       beforeEach(() => {
+        Log.beforeEach(testName, invalidRespondToFollowerRequestTitle, true);
         this.invalidUsername = 'test';
         this.invalidDetails = {
           accept: 'true',
         };
+
+        Log.beforeEach(testName, invalidRespondToFollowerRequestTitle, false);
       });
 
       afterEach(() => {
+        Log.afterEach(testName, invalidRespondToFollowerRequestTitle, true);
         delete this.invalidDetails;
         delete this.invalidUsername;
+        Log.afterEach(testName, invalidRespondToFollowerRequestTitle, false);
       });
 
-      it('throws an error for an invalid current user', async (done) => {
+      const it3 = 'throws an error for an invalid current user';
+      it(it3, async (done) => {
+        Log.it(testName, invalidRespondToFollowerRequestTitle, it3, true);
         const usernameDetails = {
           username: this.testUser.username,
           requestedUser: this.testUser2.username,
@@ -1389,18 +1631,21 @@ describe(testName, () => {
             this.invalidDetails
           );
           expect(result).not.toBeDefined();
-          Log(testName, invalidRespondToFollowerRequestTitle, 'Should have thrown error');
-          done();
+          Log.log(testName, invalidRespondToFollowerRequestTitle, 'Should have thrown error');
         } catch (error) {
           expect(error.name).toBe('DroppError');
           expect(error.details.error.type).toBe(DroppError.type.Server.type);
           expect(error.details.error.message).toBe(DroppError.type.Server.message);
-          Log(testName, invalidRespondToFollowerRequestTitle, error.details);
-          done();
+          Log.log(testName, invalidRespondToFollowerRequestTitle, error.details);
         }
+
+        Log.it(testName, invalidRespondToFollowerRequestTitle, it3, false);
+        done();
       });
 
-      it('throws an error for null username details', async (done) => {
+      const it4 = 'throws an error for null username details';
+      it(it4, async (done) => {
+        Log.it(testName, invalidRespondToFollowerRequestTitle, it4, true);
         try {
           const result = await UserMiddleware.respondToFollowerRequest(
             this.testUser,
@@ -1408,18 +1653,21 @@ describe(testName, () => {
             this.invalidDetails
           );
           expect(result).not.toBeDefined();
-          Log(testName, invalidRespondToFollowerRequestTitle, 'Should have thrown error');
-          done();
+          Log.log(testName, invalidRespondToFollowerRequestTitle, 'Should have thrown error');
         } catch (error) {
           expect(error.name).toBe('DroppError');
           expect(error.details.error.type).toBe(DroppError.type.InvalidRequest.type);
           expect(error.details.error.message).toBe('username,requestedUser');
-          Log(testName, invalidRespondToFollowerRequestTitle, error.details);
-          done();
+          Log.log(testName, invalidRespondToFollowerRequestTitle, error.details);
         }
+
+        Log.it(testName, invalidRespondToFollowerRequestTitle, it4, false);
+        done();
       });
 
-      it('throws an error for null details', async (done) => {
+      const it5 = 'throws an error for null details';
+      it(it5, async (done) => {
+        Log.it(testName, invalidRespondToFollowerRequestTitle, it5, true);
         const usernameDetails = {
           username: this.testUser.username,
           requestedUser: this.testUser2.username,
@@ -1432,18 +1680,21 @@ describe(testName, () => {
             null
           );
           expect(result).not.toBeDefined();
-          Log(testName, invalidRespondToFollowerRequestTitle, 'Should have thrown error');
-          done();
+          Log.log(testName, invalidRespondToFollowerRequestTitle, 'Should have thrown error');
         } catch (error) {
           expect(error.name).toBe('DroppError');
           expect(error.details.error.type).toBe(DroppError.type.InvalidRequest.type);
           expect(error.details.error.message).toBe('accept');
-          Log(testName, invalidRespondToFollowerRequestTitle, error.details);
-          done();
+          Log.log(testName, invalidRespondToFollowerRequestTitle, error.details);
         }
+
+        Log.it(testName, invalidRespondToFollowerRequestTitle, it5, false);
+        done();
       });
 
-      it('throws an error for an invalid username', async (done) => {
+      const it6 = 'throws an error for an invalid username';
+      it(it6, async (done) => {
+        Log.it(testName, invalidRespondToFollowerRequestTitle, it6, true);
         const usernameDetails = {
           requestedUser: '%',
           username: this.testUser.username,
@@ -1456,18 +1707,21 @@ describe(testName, () => {
             this.invalidDetails
           );
           expect(result).not.toBeDefined();
-          Log(testName, invalidRespondToFollowerRequestTitle, 'Should have thrown error');
-          done();
+          Log.log(testName, invalidRespondToFollowerRequestTitle, 'Should have thrown error');
         } catch (error) {
           expect(error.name).toBe('DroppError');
           expect(error.details.error.type).toBe(DroppError.type.InvalidRequest.type);
           expect(error.details.error.message).toBe('requestedUser');
-          Log(testName, invalidRespondToFollowerRequestTitle, error.details);
-          done();
+          Log.log(testName, invalidRespondToFollowerRequestTitle, error.details);
         }
+
+        Log.it(testName, invalidRespondToFollowerRequestTitle, it6, false);
+        done();
       });
 
-      it('throws an error for an invalid accept parameter', async (done) => {
+      const it7 = 'throws an error for an invalid accept parameter';
+      it(it7, async (done) => {
+        Log.it(testName, invalidRespondToFollowerRequestTitle, it7, true);
         this.invalidDetails.accept = 'hi';
         const usernameDetails = {
           username: this.testUser.username,
@@ -1481,18 +1735,21 @@ describe(testName, () => {
             this.invalidDetails
           );
           expect(result).not.toBeDefined();
-          Log(testName, invalidRespondToFollowerRequestTitle, 'Should have thrown error');
-          done();
+          Log.log(testName, invalidRespondToFollowerRequestTitle, 'Should have thrown error');
         } catch (error) {
           expect(error.name).toBe('DroppError');
           expect(error.details.error.type).toBe(DroppError.type.InvalidRequest.type);
           expect(error.details.error.message).toBe('accept');
-          Log(testName, invalidRespondToFollowerRequestTitle, error.details);
-          done();
+          Log.log(testName, invalidRespondToFollowerRequestTitle, error.details);
         }
+
+        Log.it(testName, invalidRespondToFollowerRequestTitle, it7, false);
+        done();
       });
 
-      it('throws an error for an invalid username and accept parameter', async (done) => {
+      const it8 = 'throws an error for an invalid username and accept parameter';
+      it(it8, async (done) => {
+        Log.it(testName, invalidRespondToFollowerRequestTitle, it8, true);
         this.invalidDetails.accept = '%';
         const usernameDetails = {
           requestedUser: '%',
@@ -1506,18 +1763,21 @@ describe(testName, () => {
             this.invalidDetails
           );
           expect(result).not.toBeDefined();
-          Log(testName, invalidRespondToFollowerRequestTitle, 'Should have thrown error');
-          done();
+          Log.log(testName, invalidRespondToFollowerRequestTitle, 'Should have thrown error');
         } catch (error) {
           expect(error.name).toBe('DroppError');
           expect(error.details.error.type).toBe(DroppError.type.InvalidRequest.type);
           expect(error.details.error.message).toBe('requestedUser,accept');
-          Log(testName, invalidRespondToFollowerRequestTitle, error.details);
-          done();
+          Log.log(testName, invalidRespondToFollowerRequestTitle, error.details);
         }
+
+        Log.it(testName, invalidRespondToFollowerRequestTitle, it8, false);
+        done();
       });
 
-      it('throws an error for accessing a different user\'s follow requests', async (done) => {
+      const it9 = 'throws an error for accessing a different user\'s follow requests';
+      it(it9, async (done) => {
+        Log.it(testName, invalidRespondToFollowerRequestTitle, it9, true);
         const usernameDetails = {
           username: this.testUser2.username,
           requestedUser: this.testUser2.username,
@@ -1530,45 +1790,48 @@ describe(testName, () => {
             this.invalidDetails
           );
           expect(result).not.toBeDefined();
-          Log(testName, invalidRespondToFollowerRequestTitle, 'Should have thrown error');
+          Log.log(testName, invalidRespondToFollowerRequestTitle, 'Should have thrown error');
         } catch (error) {
           expect(error.name).toBe('DroppError');
           expect(error.details.error.type).toBe(DroppError.type.Resource.type);
-          expect(error.details.error.message).toBe('Unauthorized to access that user\'s follower requests');
-          Log(testName, invalidRespondToFollowerRequestTitle, error.details);
+          expect(error.details.error.message).toBe('Unauthorized to access that');
+          Log.log(testName, invalidRespondToFollowerRequestTitle, error.details);
         }
 
+        Log.it(testName, invalidRespondToFollowerRequestTitle, it9, false);
         done();
       });
 
-      it(
-        'throws an error for attempting to remove a follower request from the same user',
-        async (done) => {
-          const usernameDetails = {
-            username: this.testUser.username,
-            requestedUser: this.testUser.username,
-          };
+      const it95 = 'throws an error for attempting to remove a follower request from the same user';
+      it(it95, async (done) => {
+        Log.it(testName, invalidRespondToFollowerRequestTitle, it95, true);
+        const usernameDetails = {
+          username: this.testUser.username,
+          requestedUser: this.testUser.username,
+        };
 
-          try {
-            const result = await UserMiddleware.respondToFollowerRequest(
-              this.testUser,
-              usernameDetails,
-              this.invalidDetails
-            );
-            expect(result).not.toBeDefined();
-            Log(testName, invalidRespondToFollowerRequestTitle, 'Should have thrown error');
-          } catch (error) {
-            expect(error.name).toBe('DroppError');
-            expect(error.details.error.type).toBe(DroppError.type.Resource.type);
-            expect(error.details.error.message).toBe('You cannot respond to a follower request from yourself');
-            Log(testName, invalidRespondToFollowerRequestTitle, error.details);
-          }
-
-          done();
+        try {
+          const result = await UserMiddleware.respondToFollowerRequest(
+            this.testUser,
+            usernameDetails,
+            this.invalidDetails
+          );
+          expect(result).not.toBeDefined();
+          Log.log(testName, invalidRespondToFollowerRequestTitle, 'Should have thrown error');
+        } catch (error) {
+          expect(error.name).toBe('DroppError');
+          expect(error.details.error.type).toBe(DroppError.type.Resource.type);
+          expect(error.details.error.message).toBe('You cannot respond to a follower request from yourself');
+          Log.log(testName, invalidRespondToFollowerRequestTitle, error.details);
         }
-      );
 
-      it('throws an error for a non-existent user', async (done) => {
+        Log.it(testName, invalidRespondToFollowerRequestTitle, it95, false);
+        done();
+      });
+
+      const it10 = 'throws an error for a non-existent user';
+      it(it10, async (done) => {
+        Log.it(testName, invalidRespondToFollowerRequestTitle, it10, true);
         const usernameDetails = {
           requestedUser: Utils.newUuid(),
           username: this.testUser.username,
@@ -1581,18 +1844,21 @@ describe(testName, () => {
             this.invalidDetails
           );
           expect(result).not.toBeDefined();
-          Log(testName, invalidRespondToFollowerRequestTitle, 'Should have thrown error');
-          done();
+          Log.log(testName, invalidRespondToFollowerRequestTitle, 'Should have thrown error');
         } catch (error) {
           expect(error.name).toBe('DroppError');
           expect(error.details.error.type).toBe(DroppError.type.ResourceDNE.type);
           expect(error.details.error.message).toBe('That user does not exist');
-          Log(testName, invalidRespondToFollowerRequestTitle, error.details);
-          done();
+          Log.log(testName, invalidRespondToFollowerRequestTitle, error.details);
         }
+
+        Log.it(testName, invalidRespondToFollowerRequestTitle, it10, false);
+        done();
       });
 
-      it('throws an error for a non-existent follower request', async (done) => {
+      const it11 = 'throws an error for a non-existent follower request';
+      it(it11, async (done) => {
+        Log.it(testName, invalidRespondToFollowerRequestTitle, it11, true);
         const usernameDetails = {
           username: this.testUser.username,
           requestedUser: this.testUser2.username,
@@ -1605,21 +1871,23 @@ describe(testName, () => {
             this.invalidDetails
           );
           expect(result).not.toBeDefined();
-          Log(testName, invalidRespondToFollowerRequestTitle, 'Should have thrown error');
-          done();
+          Log.log(testName, invalidRespondToFollowerRequestTitle, 'Should have thrown error');
         } catch (error) {
           expect(error.name).toBe('DroppError');
           expect(error.details.error.type).toBe(DroppError.type.Resource.type);
           expect(error.details.error.message).toBe('That user has not requested to follow you');
-          Log(testName, invalidRespondToFollowerRequestTitle, error.details);
-          done();
+          Log.log(testName, invalidRespondToFollowerRequestTitle, error.details);
         }
+
+        Log.it(testName, invalidRespondToFollowerRequestTitle, it11, false);
+        done();
       });
     });
 
     const updateFollowFollowerTitle = 'Update follow/follower';
     describe(updateFollowFollowerTitle, () => {
       beforeEach(async (done) => {
+        Log.beforeEach(testName, updateFollowFollowerTitle, true);
         const details = { accept: 'true' };
         const user1Details = {
           username: this.testUser.username,
@@ -1633,10 +1901,13 @@ describe(testName, () => {
 
         await UserMiddleware.requestToFollow(this.testUser, user1Details, user1Details);
         await UserMiddleware.respondToFollowerRequest(this.testUser2, user2Details, details);
+        Log.beforeEach(testName, updateFollowFollowerTitle, false);
         done();
       });
 
-      it('unfollows a user', async (done) => {
+      const it1 = 'unfollows a user';
+      it(it1, async (done) => {
+        Log.it(testName, updateFollowFollowerTitle, it1, true);
         const usernameDetails = {
           follow: this.testUser2.username,
           username: this.testUser.username,
@@ -1648,10 +1919,14 @@ describe(testName, () => {
         expect(typeof result.success.message).toBe('string');
         expect(result.success.message.toLowerCase()).toContain('unfollow');
         expect(this.testUser.follows.includes(this.testUser2.username)).toBe(false);
+        Log.log(testName, updateFollowFollowerTitle, result);
+        Log.it(testName, updateFollowFollowerTitle, it1, false);
         done();
       });
 
-      it('removes a follower', async (done) => {
+      const it2 = 'removes a follower';
+      it(it2, async (done) => {
+        Log.it(testName, updateFollowFollowerTitle, it2, true);
         const usernameDetails = {
           follower: this.testUser.username,
           username: this.testUser2.username,
@@ -1663,6 +1938,8 @@ describe(testName, () => {
         expect(typeof result.success.message).toBe('string');
         expect(result.success.message.toLowerCase()).toContain('follower removal');
         expect(this.testUser2.followers.includes(this.testUser.username)).toBe(false);
+        Log.log(testName, updateFollowFollowerTitle, result);
+        Log.it(testName, updateFollowFollowerTitle, it2, false);
         done();
       });
     });
@@ -1670,14 +1947,20 @@ describe(testName, () => {
     const invalidUnfollowTitle = 'Invalid unfollow';
     describe(invalidUnfollowTitle, () => {
       beforeEach(() => {
+        Log.beforeEach(testName, invalidUnfollowTitle, true);
         this.invalidUsername = '%';
+        Log.beforeEach(testName, invalidUnfollowTitle, false);
       });
 
       afterEach(() => {
+        Log.afterEach(testName, invalidUnfollowTitle, true);
         delete this.invalidUsername;
+        Log.afterEach(testName, invalidUnfollowTitle, false);
       });
 
-      it('throws an error for an invalid current user', async (done) => {
+      const it1 = 'throws an error for an invalid current user';
+      it(it1, async (done) => {
+        Log.it(testName, invalidUnfollowTitle, it1, true);
         const usernameDetails = {
           follow: this.invalidUsername,
           username: this.testUser.username,
@@ -1686,33 +1969,39 @@ describe(testName, () => {
         try {
           const result = await UserMiddleware.unfollow(null, usernameDetails);
           expect(result).not.toBeDefined();
-          Log(testName, invalidUnfollowTitle, 'Should have thrown error');
-          done();
+          Log.log(testName, invalidUnfollowTitle, 'Should have thrown error');
         } catch (error) {
           expect(error.name).toBe('DroppError');
           expect(error.details.error.type).toBe(DroppError.type.Server.type);
           expect(error.details.error.message).toBe(DroppError.type.Server.message);
-          Log(testName, invalidUnfollowTitle, error.details);
-          done();
+          Log.log(testName, invalidUnfollowTitle, error.details);
         }
+
+        Log.it(testName, invalidUnfollowTitle, it1, false);
+        done();
       });
 
-      it('throws an error for an invalid username details argument', async (done) => {
+      const it2 = 'throws an error for an invalid username details argument';
+      it(it2, async (done) => {
+        Log.it(testName, invalidUnfollowTitle, it2, true);
         try {
           const result = await UserMiddleware.unfollow(this.testUser, null);
           expect(result).not.toBeDefined();
-          Log(testName, invalidUnfollowTitle, 'Should have thrown error');
-          done();
+          Log.log(testName, invalidUnfollowTitle, 'Should have thrown error');
         } catch (error) {
           expect(error.name).toBe('DroppError');
           expect(error.details.error.type).toBe(DroppError.type.InvalidRequest.type);
           expect(error.details.error.message).toBe('username,follow');
-          Log(testName, invalidUnfollowTitle, error.details);
-          done();
+          Log.log(testName, invalidUnfollowTitle, error.details);
         }
+
+        Log.it(testName, invalidUnfollowTitle, it2, false);
+        done();
       });
 
-      it('throws an error for an invalid requested username', async (done) => {
+      const it3 = 'throws an error for an invalid requested username';
+      it(it3, async (done) => {
+        Log.it(testName, invalidUnfollowTitle, it3, true);
         const usernameDetails = {
           follow: this.invalidUsername,
           username: this.testUser.username,
@@ -1721,18 +2010,21 @@ describe(testName, () => {
         try {
           const result = await UserMiddleware.unfollow(this.testUser, usernameDetails);
           expect(result).not.toBeDefined();
-          Log(testName, invalidUnfollowTitle, 'Should have thrown error');
-          done();
+          Log.log(testName, invalidUnfollowTitle, 'Should have thrown error');
         } catch (error) {
           expect(error.name).toBe('DroppError');
           expect(error.details.error.type).toBe(DroppError.type.InvalidRequest.type);
           expect(error.details.error.message).toBe('follow');
-          Log(testName, invalidUnfollowTitle, error.details);
-          done();
+          Log.log(testName, invalidUnfollowTitle, error.details);
         }
+
+        Log.it(testName, invalidUnfollowTitle, it3, false);
+        done();
       });
 
-      it('throws an error for an invalid current username', async (done) => {
+      const it4 = 'throws an error for an invalid current username';
+      it(it4, async (done) => {
+        Log.it(testName, invalidUnfollowTitle, it4, true);
         const usernameDetails = {
           username: this.invalidUsername,
           follow: this.testUser2.username,
@@ -1741,18 +2033,21 @@ describe(testName, () => {
         try {
           const result = await UserMiddleware.unfollow(this.testUser, usernameDetails);
           expect(result).not.toBeDefined();
-          Log(testName, invalidUnfollowTitle, 'Should have thrown error');
-          done();
+          Log.log(testName, invalidUnfollowTitle, 'Should have thrown error');
         } catch (error) {
           expect(error.name).toBe('DroppError');
           expect(error.details.error.type).toBe(DroppError.type.InvalidRequest.type);
           expect(error.details.error.message).toBe('username');
-          Log(testName, invalidUnfollowTitle, error.details);
-          done();
+          Log.log(testName, invalidUnfollowTitle, error.details);
         }
+
+        Log.it(testName, invalidUnfollowTitle, it4, false);
+        done();
       });
 
-      it('throws an error for accessing a different user\'s follows', async (done) => {
+      const it5 = 'throws an error for accessing a different user\'s follows';
+      it(it5, async (done) => {
+        Log.it(testName, invalidUnfollowTitle, it5, true);
         const usernameDetails = {
           follow: this.testUser2.username,
           username: this.testUser2.username,
@@ -1761,18 +2056,22 @@ describe(testName, () => {
         try {
           const result = await UserMiddleware.unfollow(this.testUser, usernameDetails);
           expect(result).not.toBeDefined();
-          Log(testName, invalidUnfollowTitle, 'Should have thrown error');
+          Log.log(testName, invalidUnfollowTitle, 'Should have thrown error');
         } catch (error) {
           expect(error.name).toBe('DroppError');
           expect(error.details.error.type).toBe(DroppError.type.Resource.type);
-          expect(error.details.error.message).toBe('Unauthorized to access that user\'s follows');
-          Log(testName, invalidUnfollowTitle, error.details);
+          expect(error.details.error.message)
+            .toBe(Constants.middleware.messages.unauthorizedAccess);
+          Log.log(testName, invalidUnfollowTitle, error.details);
         }
 
+        Log.it(testName, invalidUnfollowTitle, it5, false);
         done();
       });
 
-      it('throws an error for attempting to unfollow the same user', async (done) => {
+      const it6 = 'throws an error for attempting to unfollow the same user';
+      it(it6, async (done) => {
+        Log.it(testName, invalidUnfollowTitle, it6, true);
         const usernameDetails = {
           follow: this.testUser.username,
           username: this.testUser.username,
@@ -1781,18 +2080,21 @@ describe(testName, () => {
         try {
           const result = await UserMiddleware.unfollow(this.testUser, usernameDetails);
           expect(result).not.toBeDefined();
-          Log(testName, invalidUnfollowTitle, 'Should have thrown error');
+          Log.log(testName, invalidUnfollowTitle, 'Should have thrown error');
         } catch (error) {
           expect(error.name).toBe('DroppError');
           expect(error.details.error.type).toBe(DroppError.type.Resource.type);
           expect(error.details.error.message).toBe('You cannot unfollow yourself');
-          Log(testName, invalidUnfollowTitle, error.details);
+          Log.log(testName, invalidUnfollowTitle, error.details);
         }
 
+        Log.it(testName, invalidUnfollowTitle, it6, false);
         done();
       });
 
-      it('throws an error for a non-existent user', async (done) => {
+      const it7 = 'throws an error for a non-existent user';
+      it(it7, async (done) => {
+        Log.it(testName, invalidUnfollowTitle, it7, true);
         const usernameDetails = {
           follow: Utils.newUuid(),
           username: this.testUser.username,
@@ -1801,18 +2103,21 @@ describe(testName, () => {
         try {
           const result = await UserMiddleware.unfollow(this.testUser, usernameDetails);
           expect(result).not.toBeDefined();
-          Log(testName, invalidUnfollowTitle, 'Should have thrown error');
-          done();
+          Log.log(testName, invalidUnfollowTitle, 'Should have thrown error');
         } catch (error) {
           expect(error.name).toBe('DroppError');
           expect(error.details.error.type).toBe(DroppError.type.ResourceDNE.type);
           expect(error.details.error.message).toBe('That user does not exist');
-          Log(testName, invalidUnfollowTitle, error.details);
-          done();
+          Log.log(testName, invalidUnfollowTitle, error.details);
         }
+
+        Log.it(testName, invalidUnfollowTitle, it7, false);
+        done();
       });
 
-      it('throws an error for a non-existent follow', async (done) => {
+      const it8 = 'throws an error for a non-existent follow';
+      it(it8, async (done) => {
+        Log.it(testName, invalidUnfollowTitle, it8, true);
         const usernameDetails = {
           follow: this.testUser2.username,
           username: this.testUser.username,
@@ -1821,29 +2126,36 @@ describe(testName, () => {
         try {
           const result = await UserMiddleware.unfollow(this.testUser, usernameDetails);
           expect(result).not.toBeDefined();
-          Log(testName, invalidUnfollowTitle, 'Should have thrown error');
-          done();
+          Log.log(testName, invalidUnfollowTitle, 'Should have thrown error');
         } catch (error) {
           expect(error.name).toBe('DroppError');
           expect(error.details.error.type).toBe(DroppError.type.Resource.type);
           expect(error.details.error.message).toBe('You do not follow that user');
-          Log(testName, invalidUnfollowTitle, error.details);
-          done();
+          Log.log(testName, invalidUnfollowTitle, error.details);
         }
+
+        Log.it(testName, invalidUnfollowTitle, it8, false);
+        done();
       });
     });
 
     const invalidRemoveFollowerTitle = 'Invalid remove follower';
     describe(invalidRemoveFollowerTitle, () => {
       beforeEach(() => {
+        Log.beforeEach(testName, invalidRemoveFollowerTitle, true);
         this.invalidUsername = '%';
+        Log.beforeEach(testName, invalidRemoveFollowerTitle, false);
       });
 
       afterEach(() => {
+        Log.afterEach(testName, invalidRemoveFollowerTitle, true);
         delete this.invalidUsername;
+        Log.afterEach(testName, invalidRemoveFollowerTitle, false);
       });
 
-      it('throws an error for an invalid current user', async (done) => {
+      const it1 = 'throws an error for an invalid current user';
+      it(it1, async (done) => {
+        Log.it(testName, invalidRemoveFollowerTitle, it1, true);
         const usernameDetails = {
           username: this.testUser.username,
           follower: this.testUser2.username,
@@ -1852,33 +2164,39 @@ describe(testName, () => {
         try {
           const result = await UserMiddleware.removeFollower(null, usernameDetails);
           expect(result).not.toBeDefined();
-          Log(testName, invalidRemoveFollowerTitle, 'Should have thrown error');
-          done();
+          Log.log(testName, invalidRemoveFollowerTitle, 'Should have thrown error');
         } catch (error) {
           expect(error.name).toBe('DroppError');
           expect(error.details.error.type).toBe(DroppError.type.Server.type);
           expect(error.details.error.message).toBe(DroppError.type.Server.message);
-          Log(testName, invalidRemoveFollowerTitle, error.details);
-          done();
+          Log.log(testName, invalidRemoveFollowerTitle, error.details);
         }
+
+        Log.it(testName, invalidRemoveFollowerTitle, it1, false);
+        done();
       });
 
-      it('throws an error for an invalid username details argument', async (done) => {
+      const it2 = 'throws an error for an invalid username details argument';
+      it(it2, async (done) => {
+        Log.it(testName, invalidRemoveFollowerTitle, it2, true);
         try {
           const result = await UserMiddleware.removeFollower(this.testUser, null);
           expect(result).not.toBeDefined();
-          Log(testName, invalidRemoveFollowerTitle, 'Should have thrown error');
-          done();
+          Log.log(testName, invalidRemoveFollowerTitle, 'Should have thrown error');
         } catch (error) {
           expect(error.name).toBe('DroppError');
           expect(error.details.error.type).toBe(DroppError.type.InvalidRequest.type);
           expect(error.details.error.message).toBe('username,follower');
-          Log(testName, invalidRemoveFollowerTitle, error.details);
-          done();
+          Log.log(testName, invalidRemoveFollowerTitle, error.details);
         }
+
+        Log.it(testName, invalidRemoveFollowerTitle, it2, false);
+        done();
       });
 
-      it('throws an error for accessing a different user\'s followers', async (done) => {
+      const it3 = 'throws an error for accessing a different user\'s followers';
+      it(it3, async (done) => {
+        Log.it(testName, invalidRemoveFollowerTitle, it3, true);
         const usernameDetails = {
           follower: this.testUser2.username,
           username: this.testUser2.username,
@@ -1887,18 +2205,21 @@ describe(testName, () => {
         try {
           const result = await UserMiddleware.removeFollower(this.testUser, usernameDetails);
           expect(result).not.toBeDefined();
-          Log(testName, invalidRemoveFollowerTitle, 'Should have thrown error');
+          Log.log(testName, invalidRemoveFollowerTitle, 'Should have thrown error');
         } catch (error) {
           expect(error.name).toBe('DroppError');
           expect(error.details.error.type).toBe(DroppError.type.Resource.type);
-          expect(error.details.error.message).toBe('Unauthorized to access that user\'s followers');
-          Log(testName, invalidRemoveFollowerTitle, error.details);
+          expect(error.details.error.message).toBe('Unauthorized to access that');
+          Log.log(testName, invalidRemoveFollowerTitle, error.details);
         }
 
+        Log.it(testName, invalidRemoveFollowerTitle, it3, false);
         done();
       });
 
-      it('throws an error for attempting to remove the same follower', async (done) => {
+      const it4 = 'throws an error for attempting to remove the same follower';
+      it(it4, async (done) => {
+        Log.it(testName, invalidRemoveFollowerTitle, it4, true);
         const usernameDetails = {
           follower: this.testUser.username,
           username: this.testUser.username,
@@ -1907,18 +2228,21 @@ describe(testName, () => {
         try {
           const result = await UserMiddleware.removeFollower(this.testUser, usernameDetails);
           expect(result).not.toBeDefined();
-          Log(testName, invalidRemoveFollowerTitle, 'Should have thrown error');
+          Log.log(testName, invalidRemoveFollowerTitle, 'Should have thrown error');
         } catch (error) {
           expect(error.name).toBe('DroppError');
           expect(error.details.error.type).toBe(DroppError.type.Resource.type);
           expect(error.details.error.message).toBe('You cannot remove yourself as a follower');
-          Log(testName, invalidRemoveFollowerTitle, error.details);
+          Log.log(testName, invalidRemoveFollowerTitle, error.details);
         }
 
+        Log.it(testName, invalidRemoveFollowerTitle, it4, false);
         done();
       });
 
-      it('throws an error for a non-existent user', async (done) => {
+      const it5 = 'throws an error for a non-existent user';
+      it(it5, async (done) => {
+        Log.it(testName, invalidRemoveFollowerTitle, it5, true);
         const usernameDetails = {
           follower: Utils.newUuid(),
           username: this.testUser.username,
@@ -1927,18 +2251,21 @@ describe(testName, () => {
         try {
           const result = await UserMiddleware.removeFollower(this.testUser, usernameDetails);
           expect(result).not.toBeDefined();
-          Log(testName, invalidRemoveFollowerTitle, 'Should have thrown error');
-          done();
+          Log.log(testName, invalidRemoveFollowerTitle, 'Should have thrown error');
         } catch (error) {
           expect(error.name).toBe('DroppError');
           expect(error.details.error.type).toBe(DroppError.type.ResourceDNE.type);
           expect(error.details.error.message).toBe('That user does not exist');
-          Log(testName, invalidRemoveFollowerTitle, error.details);
-          done();
+          Log.log(testName, invalidRemoveFollowerTitle, error.details);
         }
+
+        Log.it(testName, invalidRemoveFollowerTitle, it5, false);
+        done();
       });
 
-      it('throws an error for a non-existent follower', async (done) => {
+      const it6 = 'throws an error for a non-existent follower';
+      it(it6, async (done) => {
+        Log.it(testName, invalidRemoveFollowerTitle, it6, true);
         const usernameDetails = {
           username: this.testUser.username,
           follower: this.testUser2.username,
@@ -1947,15 +2274,16 @@ describe(testName, () => {
         try {
           const result = await UserMiddleware.removeFollower(this.testUser, usernameDetails);
           expect(result).not.toBeDefined();
-          Log(testName, invalidRemoveFollowerTitle, 'Should have thrown error');
-          done();
+          Log.log(testName, invalidRemoveFollowerTitle, 'Should have thrown error');
         } catch (error) {
           expect(error.name).toBe('DroppError');
           expect(error.details.error.type).toBe(DroppError.type.Resource.type);
           expect(error.details.error.message).toBe('That user does not follow you');
-          Log(testName, invalidRemoveFollowerTitle, error.details);
-          done();
+          Log.log(testName, invalidRemoveFollowerTitle, error.details);
         }
+
+        Log.it(testName, invalidRemoveFollowerTitle, it6, false);
+        done();
       });
     });
   });
@@ -1963,6 +2291,7 @@ describe(testName, () => {
   const removeUserTitle = 'Remove user';
   describe(removeUserTitle, () => {
     beforeEach(async (done) => {
+      Log.beforeEach(testName, removeUserTitle, true);
       this.dropp = new Dropp({
         text: 'test',
         media: 'false',
@@ -1975,15 +2304,20 @@ describe(testName, () => {
       });
 
       await DroppAccessor.add(this.dropp);
+      Log.beforeEach(testName, removeUserTitle, false);
       done();
     });
 
     afterEach(async (done) => {
+      Log.afterEach(testName, removeUserTitle, true);
       if (Utils.hasValue(this.dropp)) await DroppAccessor.remove(this.dropp);
+      Log.afterEach(testName, removeUserTitle, false);
       done();
     });
 
-    it('removes a user', async (done) => {
+    const it1 = 'removes a user';
+    it(it1, async (done) => {
+      Log.it(testName, removeUserTitle, it1, true);
       const result = await UserMiddleware.remove(this.newUser, { username: this.newUser.username });
       expect(result.success.message).toBe('Successfully removed all user data');
       this.dropp = await DroppAccessor.get(this.dropp.id);
@@ -1991,13 +2325,14 @@ describe(testName, () => {
       try {
         const user = await UserMiddleware.get(this.testUser, { username: this.newUser.username });
         expect(user).not.toBeDefined();
-        Log(testName, removeUserTitle, `Was able to fetch ${user.username} after removing them`);
+        Log.log(testName, removeUserTitle, `Was able to fetch ${user.username} after removing them`);
       } catch (retrieveUserError) {
         expect(retrieveUserError.name).toBe('DroppError');
         expect(retrieveUserError.statusCode).toBe(DroppError.type.ResourceDNE.status);
-        Log(testName, removeUserTitle, retrieveUserError);
+        Log.log(testName, removeUserTitle, retrieveUserError);
       }
 
+      Log.it(testName, removeUserTitle, it1, false);
       done();
     });
   });
@@ -2005,92 +2340,113 @@ describe(testName, () => {
   const invalidRemoveTitle = 'Invalid remove user';
   describe(invalidRemoveTitle, () => {
     beforeEach(() => {
+      Log.beforeEach(testName, invalidRemoveTitle, true);
       this.invalidUsername = '%';
+      Log.beforeEach(testName, invalidRemoveTitle, false);
     });
 
     afterEach(() => {
+      Log.afterEach(testName, invalidRemoveTitle, true);
       delete this.invalidUsername;
+      Log.afterEach(testName, invalidRemoveTitle, false);
     });
 
-    it('throws an error for an invalid current user', async (done) => {
+    const it1 = 'throws an error for an invalid current user';
+    it(it1, async (done) => {
+      Log.it(testName, invalidRemoveTitle, it1, true);
       try {
         const result = await UserMiddleware.remove(null, { username: this.invalidUsername });
         expect(result).not.toBeDefined();
-        Log(testName, invalidRemoveTitle, 'Should have thrown error');
-        done();
+        Log.log(testName, invalidRemoveTitle, 'Should have thrown error');
       } catch (error) {
         expect(error.name).toBe('DroppError');
         expect(error.details.error.type).toBe(DroppError.type.Server.type);
         expect(error.details.error.message).toBe(DroppError.type.Server.message);
-        Log(testName, invalidRemoveTitle, error.details);
-        done();
+        Log.log(testName, invalidRemoveTitle, error.details);
       }
+
+      Log.it(testName, invalidRemoveTitle, it1, false);
+      done();
     });
 
-    it('throws an error for invalid username details', async (done) => {
+    const it2 = 'throws an error for invalid username details';
+    it(it2, async (done) => {
+      Log.it(testName, invalidRemoveTitle, it2, true);
       try {
         const result = await UserMiddleware.remove(this.testUser, null);
         expect(result).not.toBeDefined();
-        Log(testName, invalidRemoveTitle, 'Should have thrown error');
-        done();
+        Log.log(testName, invalidRemoveTitle, 'Should have thrown error');
       } catch (error) {
         expect(error.name).toBe('DroppError');
         expect(error.details.error.type).toBe(DroppError.type.InvalidRequest.type);
         expect(error.details.error.message).toBe('username');
-        Log(testName, invalidRemoveTitle, error.details);
-        done();
+        Log.log(testName, invalidRemoveTitle, error.details);
       }
+
+      Log.it(testName, invalidRemoveTitle, it2, false);
+      done();
     });
 
-    it('throws an error for an invalid username', async (done) => {
+    const it3 = 'throws an error for an invalid username';
+    it(it3, async (done) => {
+      Log.it(testName, invalidRemoveTitle, it3, true);
       const details = { username: this.invalidUsername };
       try {
         const result = await UserMiddleware.remove(this.testUser, details);
         expect(result).not.toBeDefined();
-        Log(testName, invalidRemoveTitle, 'Should have thrown error');
-        done();
+        Log.log(testName, invalidRemoveTitle, 'Should have thrown error');
       } catch (error) {
         expect(error.name).toBe('DroppError');
         expect(error.details.error.type).toBe(DroppError.type.InvalidRequest.type);
         expect(error.details.error.message).toBe('username');
-        Log(testName, invalidRemoveTitle, error.details);
-        done();
+        Log.log(testName, invalidRemoveTitle, error.details);
       }
+
+      Log.it(testName, invalidRemoveTitle, it3, false);
+      done();
     });
 
-    it('throws an error for a missing username', async (done) => {
+    const it4 = 'throws an error for a missing username';
+    it(it4, async (done) => {
+      Log.it(testName, invalidRemoveTitle, it4, true);
       delete this.invalidUsername;
       const details = { username: this.invalidUsername };
       try {
         const result = await UserMiddleware.remove(this.testUser, details);
         expect(result).not.toBeDefined();
-        Log(testName, invalidRemoveTitle, 'Should have thrown error');
-        done();
+        Log.log(testName, invalidRemoveTitle, 'Should have thrown error');
       } catch (error) {
         expect(error.name).toBe('DroppError');
         expect(error.details.error.type).toBe(DroppError.type.InvalidRequest.type);
         expect(error.details.error.message).toBe('username');
-        Log(testName, invalidRemoveTitle, error.details);
-        done();
+        Log.log(testName, invalidRemoveTitle, error.details);
       }
+
+      Log.it(testName, invalidRemoveTitle, it4, false);
+      done();
     });
 
-    it('throws an error for a different user', async (done) => {
+    const it5 = 'throws an error for a different user';
+    it(it5, async (done) => {
+      Log.it(testName, invalidRemoveTitle, it5, true);
       try {
         const result = await UserMiddleware.remove(this.testUser, { username: 'test' });
         expect(result).not.toBeDefined();
-        Log(testName, invalidRemoveTitle, 'Should have thrown error');
-        done();
+        Log.log(testName, invalidRemoveTitle, 'Should have thrown error');
       } catch (error) {
         expect(error.name).toBe('DroppError');
         expect(error.details.error.type).toBe(DroppError.type.Resource.type);
-        expect(error.details.error.message).toBe('Unauthorized to remove that user');
-        Log(testName, invalidRemoveTitle, error.details);
-        done();
+        expect(error.details.error.message).toBe('Unauthorized to access that');
+        Log.log(testName, invalidRemoveTitle, error.details);
       }
+
+      Log.it(testName, invalidRemoveTitle, it5, false);
+      done();
     });
 
-    it('throws an error for a non-existent user', async (done) => {
+    const it6 = 'throws an error for a non-existent user';
+    it(it6, async (done) => {
+      Log.it(testName, invalidRemoveTitle, it6, true);
       const user = new User({
         username: 'test',
         email: 'test@test.com',
@@ -2099,16 +2455,16 @@ describe(testName, () => {
       try {
         const result = await UserMiddleware.remove(user, { username: user.username });
         expect(result).not.toBeDefined();
-        Log(testName, invalidRemoveTitle, 'Should have thrown error');
-        done();
+        Log.log(testName, invalidRemoveTitle, 'Should have thrown error');
       } catch (error) {
         expect(error.name).toBe('DroppError');
         expect(error.details.error.type).toBe(DroppError.type.Server.type);
         expect(error.details.error.message).toBe(DroppError.type.Server.message);
-        Log(testName, invalidRemoveTitle, error.details);
-        done();
+        Log.log(testName, invalidRemoveTitle, error.details);
       }
+
+      Log.it(testName, invalidRemoveTitle, it6, false);
+      done();
     });
   });
 });
-/* eslint-enable no-undef */

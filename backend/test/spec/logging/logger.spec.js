@@ -5,21 +5,27 @@ const testName = 'Logger Module';
 const logRequestTitle = 'Log request';
 /* eslint-disable no-undef */
 describe(logRequestTitle, () => {
-  it('logs a message without request details for no request object', (done) => {
+  const it1 = 'logs a message without request details for no request object';
+  it(it1, () => {
+    Log.it(testName, logRequestTitle, it1, true);
     const message = LoggerModule.logRequest('module', 'source', null);
     expect(message).toContain('} [module -> source] () <> | undefined undefined |');
-    Log(testName, logRequestTitle, message);
-    done();
+    Log.log(testName, logRequestTitle, message);
+    Log.it(testName, logRequestTitle, it1, false);
   });
 
-  it('logs a message with request details for an object with no headers', (done) => {
+  const it2 = 'logs a message with request details for an object with no headers';
+  it(it2, () => {
+    Log.it(testName, logRequestTitle, it2, true);
     const message = LoggerModule.logRequest('module', 'source', {});
     expect(message).toContain('} [module -> source] () <> | undefined undefined |');
-    Log(testName, logRequestTitle, message);
-    done();
+    Log.log(testName, logRequestTitle, message);
+    Log.it(testName, logRequestTitle, it2, false);
   });
 
-  it('logs a message with request details for a true request object', (done) => {
+  const it3 = 'logs a message with request details for a true request object';
+  it(it3, () => {
+    Log.it(testName, logRequestTitle, it3, true);
     const request = {
       headers: {
         requestId: 'testId',
@@ -29,11 +35,13 @@ describe(logRequestTitle, () => {
 
     const message = LoggerModule.logRequest('module', 'source', request);
     expect(message).toContain('} [module -> source] (testAddress) <testId> | undefined undefined |');
-    Log(testName, logRequestTitle, message);
-    done();
+    Log.log(testName, logRequestTitle, message);
+    Log.it(testName, logRequestTitle, it3, false);
   });
 
-  it('logs a message with request details for a request object with other header info', (done) => {
+  const it4 = 'logs a message with request details for a request object with other header info';
+  it(it4, () => {
+    Log.it(testName, logRequestTitle, it4, true);
     const request = {
       url: 'url',
       method: 'method',
@@ -45,11 +53,13 @@ describe(logRequestTitle, () => {
 
     const message = LoggerModule.logRequest('module', 'source', request);
     expect(message).toContain('} [module -> source] (testAddress) <testId> | method url |');
-    Log(testName, logRequestTitle, message);
-    done();
+    Log.log(testName, logRequestTitle, message);
+    Log.it(testName, logRequestTitle, it4, false);
   });
 
-  it('logs a message with request details and extra messages', (done) => {
+  const it5 = 'logs a message with request details and extra messages';
+  it(it5, () => {
+    Log.it(testName, logRequestTitle, it5, true);
     const request = {
       url: 'url',
       method: 'method',
@@ -61,45 +71,55 @@ describe(logRequestTitle, () => {
 
     const message = LoggerModule.logRequest('module', 'source', request, 'wow', 2);
     expect(message).toContain('} [module -> source] (testAddress) <testId> | method url |: "wow",2');
-    Log(testName, logRequestTitle, message);
-    done();
+    Log.log(testName, logRequestTitle, message);
+    Log.it(testName, logRequestTitle, it5, false);
   });
 });
 
-const logTitle = 'Log 2';
+const logTitle = 'Log';
 describe(logTitle, () => {
-  it('logs a message with no arguments', (done) => {
+  const it6 = 'logs a message with no arguments';
+  it(it6, () => {
+    Log.it(testName, logTitle, it6, true);
     const message = LoggerModule.log('module', 'source');
     expect(message).toContain('} [module -> source]');
-    Log(testName, logTitle, message);
-    done();
+    Log.log(testName, logTitle, message);
+    Log.it(testName, logTitle, it6, false);
   });
 
-  it('logs a message with one argument', (done) => {
+  const it7 = 'logs a message with one argument';
+  it(it7, () => {
+    Log.it(testName, logTitle, it7, true);
     const message = LoggerModule.log('module', 'source', 4);
     expect(message).toContain('} [module -> source]: 4');
-    Log(testName, logTitle, message);
-    done();
+    Log.log(testName, logTitle, message);
+    Log.it(testName, logTitle, it7, false);
   });
 
-  it('logs a message with multiple arguments', (done) => {
+  const it8 = 'logs a message with multiple arguments';
+  it(it8, () => {
+    Log.it(testName, logTitle, it8, true);
     const message = LoggerModule.log('module', 'source', 4, 'test');
     expect(message).toContain('} [module -> source]: 4,"test"');
-    Log(testName, logTitle, message);
-    done();
+    Log.log(testName, logTitle, message);
+    Log.it(testName, logTitle, it8, false);
   });
 
-  it('logs a message with an invalid argument', (done) => {
+  const it9 = 'logs a message with an invalid argument';
+  it(it9, () => {
+    Log.it(testName, logTitle, it9, true);
     const message = LoggerModule.log('module', 'source', null);
     expect(message).toContain('} [module -> source]: null');
-    Log(testName, logTitle, message);
-    done();
+    Log.log(testName, logTitle, message);
+    Log.it(testName, logTitle, it9, false);
   });
 
-  it('logs a message with multiple invalid arguments', (done) => {
+  const it10 = 'logs a message with multiple invalid arguments';
+  it(it10, () => {
+    Log.it(testName, logTitle, it10, true);
     const message = LoggerModule.log('module', 'source', null, undefined);
     expect(message).toContain('} [module -> source]: null,undefined');
-    Log(testName, logTitle, message);
-    done();
+    Log.log(testName, logTitle, message);
+    Log.it(testName, logTitle, it10, false);
   });
 });

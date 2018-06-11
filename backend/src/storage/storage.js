@@ -8,31 +8,27 @@ const Log = require('../logging/logger');
 const Utils = require('../utilities/utils');
 const DroppError = require('../errors/DroppError');
 const Validator = require('../utilities/validator');
+const Constants = require('../utilities/constants');
 const CloudStorage = require('@google-cloud/storage');
 const StorageError = require('../errors/StorageError');
 
-const moduleName = 'Cloud Storage Accessor';
-
-// Cloud storage project info
-const projectId = 'dropp-3a65d';
-const projectUrl = `${projectId}.appspot.com`;
-const storageAccountKeyPath = './config/secrets/storageAccountKey.json';
 let didInitializeBucket = false;
 
 /**
  * Initializes the Cloud Storage bucket interface.
  * Returns immediately if bucket was already initialized
  */
-const initializeBucket = function initializeBucket() {
+const initializeBucket = () => {
   const source = 'initializeBucket()';
-  Log.log(moduleName, source);
+  Log.log(Constants.storage.moduleName, source);
 
   if (didInitializeBucket) return;
   const project = CloudStorage({
-    projectId,
-    keyFilename: storageAccountKeyPath,
+    projectId: Constants.storage.project.id,
+    keyFilename: Constants.storage.project.accountKeyPath,
   });
-  this.bucket = project.bucket(projectUrl);
+
+  this.bucket = project.bucket(Constants.storage.project.url);
   didInitializeBucket = true;
 };
 
@@ -47,44 +43,47 @@ const initializeBucket = function initializeBucket() {
  * @throws {StorageError} for invalid `_folder`,
  * `_fileName`, or if file does not exist
  */
-const get = async function get(_folder, _fileName) {
+const get = async (_folder, _fileName) => {
   const source = 'get()';
-  Log.log(moduleName, source, _folder, _fileName);
+  Log.log(Constants.storage.moduleName, source, _folder, _fileName);
 
   if (!didInitializeBucket) StorageError.throwInvalidStateError(source);
   const invalidMembers = [];
-  if (typeof _folder !== 'string') invalidMembers.push('folder');
-  if (typeof _fileName !== 'string' || _fileName.length === 0) invalidMembers.push('fileName');
+  if (typeof _folder !== 'string') invalidMembers.push(Constants.params.folder);
+  if (typeof _fileName !== 'string' || _fileName.length === 0) {
+    invalidMembers.push(Constants.params.fileName);
+  }
+
   if (invalidMembers.length > 0) StorageError.throwInvalidMembersError(source, invalidMembers);
 
-  Log.log(moduleName, source, 'Creating file from bucket');
+  Log.log(Constants.storage.moduleName, source, Constants.storage.messages.configuringStorageFile);
   const file = this.bucket.file(`${_folder}${_fileName}`);
   const doesFileExist = await file.exists();
   if (Array.isArray(doesFileExist) && doesFileExist.length > 0 && doesFileExist[0] === false) {
     StorageError.throwFileDoesNotExistError(source);
   }
 
-  Log.log(moduleName, source, 'Creating read stream for existing file from bucket');
+  Log.log(Constants.storage.moduleName, source, Constants.storage.messages.creatingRemoteStream);
   const remoteReadStream = file.createReadStream();
   const promise = new Promise((resolve, reject) => {
     const bytes = [];
-    const localFile = `${process.cwd()}/cache/downloads/${Utils.newUuid()}`;
-    remoteReadStream.on('error', async (downloadError) => {
+    const localFile = `${process.cwd()}/${Constants.storage.folders.downloads}/${Utils.newUuid()}`;
+    remoteReadStream.on(Constants.storage.streamEvents.error, async (downloadError) => {
       await Utils.deleteLocalFile(localFile);
       reject(StorageError.format(StorageError.type.Unknown, source, downloadError));
     });
 
-    remoteReadStream.on('data', byte => bytes.push(byte));
-    remoteReadStream.on('end', async () => {
+    remoteReadStream.on(Constants.storage.streamEvents.data, byte => bytes.push(byte));
+    remoteReadStream.on(Constants.storage.streamEvents.end, async () => {
       const buffer = Buffer.concat(bytes);
       const data = Media.encodeToBase64(buffer);
       await Utils.deleteLocalFile(localFile);
       resolve(data);
     });
 
-    Log.log(moduleName, source, 'Creating write stream for new local file');
+    Log.log(Constants.storage.moduleName, source, Constants.storage.messages.creatingLocalStream);
     const localWriteStream = FileSystem.createWriteStream(localFile);
-    Log.log(moduleName, source, 'Piping remote read stream to local write stream');
+    Log.log(Constants.storage.moduleName, source, Constants.storage.messages.pipingStreams);
     remoteReadStream.pipe(localWriteStream);
   });
 
@@ -102,46 +101,53 @@ const get = async function get(_folder, _fileName) {
  * @throws {StorageError} for invalid `_folder`,
  * `fileName`, or `_filePath`. Throws if file already exists
  */
-const add = async function add(_folder, _fileName, _filePath) {
+const add = async (_folder, _fileName, _filePath) => {
   const source = 'add()';
-  Log.log(moduleName, source, _folder, _fileName, _filePath);
+  Log.log(Constants.storage.moduleName, source, _folder, _fileName, _filePath);
 
   if (!didInitializeBucket) StorageError.throwInvalidStateError(source);
   const invalidMembers = [];
-  if (typeof _folder !== 'string') invalidMembers.push('folder');
-  if (typeof _fileName !== 'string' || _fileName.length === 0) invalidMembers.push('fileName');
-  if (!(await Validator.isValidFilePath(_filePath))) invalidMembers.push('filePath');
+  if (typeof _folder !== 'string') invalidMembers.push(Constants.params.folder);
+  if (typeof _fileName !== 'string' || _fileName.length === 0) {
+    invalidMembers.push(Constants.params.fileName);
+  }
+
+  if (!(await Validator.isValidFilePath(_filePath))) invalidMembers.push(Constants.params.filePath);
   if (invalidMembers.length > 0) StorageError.throwInvalidMembersError(source, invalidMembers);
 
-  Log.log(moduleName, source, 'Creating file in bucket');
+  Log.log(Constants.storage.moduleName, source, Constants.storage.messages.configuringStorageFile);
   const file = this.bucket.file(`${_folder}${_fileName}`);
   const doesFileExist = await file.exists();
   if (Array.isArray(doesFileExist) && doesFileExist.length > 0 && doesFileExist[0] === true) {
-    DroppError.throwResourceError(source, 'That file already exists');
+    DroppError.throwResourceError(source, Constants.storage.messages.errors.fileAlreadyExists);
   }
 
   const promise = new Promise((resolve, reject) => {
-    Log.log(moduleName, source, 'Creating write stream for new file in bucket');
+    Log.log(Constants.storage.moduleName, source, Constants.storage.messages.creatingRemoteStream);
     const remoteWriteStream = file.createWriteStream({ resumable: false });
-    Log.log(moduleName, source, 'Creating read stream for given file path');
+    Log.log(Constants.storage.moduleName, source, Constants.storage.messages.creatingLocalStream);
     const localReadStream = FileSystem.createReadStream(_filePath);
-    remoteWriteStream.on('error', (uploadError) => {
+    remoteWriteStream.on(Constants.storage.streamEvents.error, (uploadError) => {
       Log.log(
-        moduleName,
+        Constants.storage.moduleName,
         source,
-        'Encountered an error while uploading local file to cloud storage',
+        Constants.storage.messages.errors.uploadError,
         uploadError
       );
       reject(StorageError.format(StorageError.type.Unknown, source, uploadError));
     });
 
-    remoteWriteStream.on('finish', async () => {
-      Log.log(moduleName, source, 'Finished uploading local file to cloud storage');
+    remoteWriteStream.on(Constants.storage.streamEvents.finish, async () => {
+      Log.log(
+        Constants.storage.moduleName,
+        source,
+        Constants.storage.messages.success.finishedUpload
+      );
       await Utils.deleteLocalFile(_filePath);
       resolve();
     });
 
-    Log.log(moduleName, source, 'Piping local read stream to remote write stream');
+    Log.log(Constants.storage.moduleName, source, Constants.storage.messages.pipingStreams);
     localReadStream.pipe(remoteWriteStream);
   });
 
@@ -156,24 +162,27 @@ const add = async function add(_folder, _fileName, _filePath) {
  * @throws {StorageError} for invalid `_folder`,
  * _fileName`, or if the file does not exist
  */
-const remove = async function remove(_folder, _fileName) {
+const remove = async (_folder, _fileName) => {
   const source = 'remove()';
-  Log.log(moduleName, source, _folder, _fileName);
+  Log.log(Constants.storage.moduleName, source, _folder, _fileName);
 
   if (!didInitializeBucket) StorageError.throwInvalidStateError(source);
   const invalidMembers = [];
-  if (typeof _folder !== 'string') invalidMembers.push('folder');
-  if (typeof _fileName !== 'string' || _fileName.length === 0) invalidMembers.push('fileName');
+  if (typeof _folder !== 'string') invalidMembers.push(Constants.params.folder);
+  if (typeof _fileName !== 'string' || _fileName.length === 0) {
+    invalidMembers.push(Constants.params.fileName);
+  }
+
   if (invalidMembers.length > 0) StorageError.throwInvalidMembersError(source, invalidMembers);
 
-  Log.log(moduleName, source, 'Creating file from bucket');
+  Log.log(Constants.storage.moduleName, source, Constants.storage.messages.configuringStorageFile);
   const file = this.bucket.file(`${_folder}${_fileName}`);
   const doesFileExist = await file.exists();
   if (Array.isArray(doesFileExist) && doesFileExist.length > 0 && doesFileExist[0] === false) {
     StorageError.throwFileDoesNotExistError(source);
   }
 
-  Log.log(moduleName, source, 'Deleting remote file from bucket');
+  Log.log(Constants.storage.moduleName, source, Constants.storage.messages.removingRemoteFile);
   try {
     await file.delete();
   } catch (error) {

@@ -5,147 +5,183 @@ const testName = 'Validator Module';
 const isValidLocationTitle = 'isValidLocation()';
 /* eslint-disable no-undef */
 describe(isValidLocationTitle, () => {
-  it('should return false for a null value', (done) => {
+  const it1 = 'should return false for a null value';
+  it(it1, () => {
+    Log.it(testName, isValidLocationTitle, it1, true);
     const value = null;
     const result = Validator.isValidLocation(value);
     expect(result).toBe(false);
-    Log(testName, isValidLocationTitle, `${value} returns ${result}`);
-    done();
+    Log.log(testName, isValidLocationTitle, `${value} returns ${result}`);
+    Log.it(testName, isValidLocationTitle, it1, false);
   });
 
-  it('should return false for an undefined value', (done) => {
+  const it2 = 'should return false for an undefined value';
+  it(it2, () => {
+    Log.it(testName, isValidLocationTitle, it2, true);
     const value = undefined;
     const result = Validator.isValidLocation(value);
     expect(result).toBe(false);
-    Log(testName, isValidLocationTitle, `${value} returns ${result}`);
-    done();
+    Log.log(testName, isValidLocationTitle, `${value} returns ${result}`);
+    Log.it(testName, isValidLocationTitle, it2, false);
   });
 
-  it('should return false for an array', (done) => {
+  const it3 = 'should return false for an array';
+  it(it3, () => {
+    Log.it(testName, isValidLocationTitle, it3, true);
     const value = [];
     const result = Validator.isValidLocation(value);
     expect(result).toBe(false);
-    Log(testName, isValidLocationTitle, `${value} returns ${result}`);
-    done();
+    Log.log(testName, isValidLocationTitle, `${value} returns ${result}`);
+    Log.it(testName, isValidLocationTitle, it3, false);
   });
 
-  it('should return false for an object', (done) => {
+  const it4 = 'should return false for an object';
+  it(it4, () => {
+    Log.it(testName, isValidLocationTitle, it4, true);
     const value = {};
     const result = Validator.isValidLocation(value);
     expect(result).toBe(false);
-    Log(testName, isValidLocationTitle, `${value} returns ${result}`);
-    done();
+    Log.log(testName, isValidLocationTitle, `${value} returns ${result}`);
+    Log.it(testName, isValidLocationTitle, it4, false);
   });
 
-  it('should return false for a number', (done) => {
+  const it5 = 'should return false for a number';
+  it(it5, () => {
+    Log.it(testName, isValidLocationTitle, it5, true);
     const value = 0;
     const result = Validator.isValidLocation(value);
     expect(result).toBe(false);
-    Log(testName, isValidLocationTitle, `${value} returns ${result}`);
-    done();
+    Log.log(testName, isValidLocationTitle, `${value} returns ${result}`);
+    Log.it(testName, isValidLocationTitle, it5, false);
   });
 
-  it('should return false for a negative number', (done) => {
+  const it6 = 'should return false for a negative number';
+  it(it6, () => {
+    Log.it(testName, isValidLocationTitle, it6, true);
     const value = -1;
     const result = Validator.isValidLocation(value);
     expect(result).toBe(false);
-    Log(testName, isValidLocationTitle, `${value} returns ${result}`);
-    done();
+    Log.log(testName, isValidLocationTitle, `${value} returns ${result}`);
+    Log.it(testName, isValidLocationTitle, it6, false);
   });
 
-  it('should return false for a positive number', (done) => {
+  const it7 = 'should return false for a positive number';
+  it(it7, () => {
+    Log.it(testName, isValidLocationTitle, it7, true);
     const value = 1;
     const result = Validator.isValidLocation(value);
     expect(result).toBe(false);
-    Log(testName, isValidLocationTitle, `${value} returns ${result}`);
-    done();
+    Log.log(testName, isValidLocationTitle, `${value} returns ${result}`);
+    Log.it(testName, isValidLocationTitle, it7, false);
   });
 
-  it('should return false for a function', (done) => {
+  const it8 = 'should return false for a function';
+  it(it8, () => {
+    Log.it(testName, isValidLocationTitle, it8, true);
     const value = function value() {};
     const result = Validator.isValidLocation(value);
     expect(result).toBe(false);
-    Log(testName, isValidLocationTitle, `${value} returns ${result}`);
-    done();
+    Log.log(testName, isValidLocationTitle, `${value} returns ${result}`);
+    Log.it(testName, isValidLocationTitle, it8, false);
   });
 
-  it('should return false for a boolean false value', (done) => {
+  const it9 = 'should return false for a boolean false value';
+  it(it9, () => {
+    Log.it(testName, isValidLocationTitle, it9, true);
     const value = false;
     const result = Validator.isValidLocation(value);
     expect(result).toBe(false);
-    Log(testName, isValidLocationTitle, `${value} returns ${result}`);
-    done();
+    Log.log(testName, isValidLocationTitle, `${value} returns ${result}`);
+    Log.it(testName, isValidLocationTitle, it9, false);
   });
 
-  it('should return false for a boolean true value', (done) => {
+  const it10 = 'should return false for a boolean true value';
+  it(it10, () => {
+    Log.it(testName, isValidLocationTitle, it10, true);
     const value = true;
     const result = Validator.isValidLocation(value);
     expect(result).toBe(false);
-    Log(testName, isValidLocationTitle, `${value} returns ${result}`);
-    done();
+    Log.log(testName, isValidLocationTitle, `${value} returns ${result}`);
+    Log.it(testName, isValidLocationTitle, it10, false);
   });
 
-  it('should return false for an empty string', (done) => {
+  const it11 = 'should return false for an empty string';
+  it(it11, () => {
+    Log.it(testName, isValidLocationTitle, it11, true);
     const value = '';
     const result = Validator.isValidLocation(value);
     expect(result).toBe(false);
-    Log(testName, isValidLocationTitle, `${value} returns ${result}`);
-    done();
+    Log.log(testName, isValidLocationTitle, `${value} returns ${result}`);
+    Log.it(testName, isValidLocationTitle, it11, false);
   });
 
-  it('should return false for a non-empty string with no numbers', (done) => {
+  const it12 = 'should return false for a non-empty string with no numbers';
+  it(it12, () => {
+    Log.it(testName, isValidLocationTitle, it12, true);
     const value = 'hey';
     const result = Validator.isValidLocation(value);
     expect(result).toBe(false);
-    Log(testName, isValidLocationTitle, `${value} returns ${result}`);
-    done();
+    Log.log(testName, isValidLocationTitle, `${value} returns ${result}`);
+    Log.it(testName, isValidLocationTitle, it12, false);
   });
 
-  it('should return false for a string with just a comma', (done) => {
+  const it13 = 'should return false for a string with just a comma';
+  it(it13, () => {
+    Log.it(testName, isValidLocationTitle, it13, true);
     const value = ',';
     const result = Validator.isValidLocation(value);
     expect(result).toBe(false);
-    Log(testName, isValidLocationTitle, `${value} returns ${result}`);
-    done();
+    Log.log(testName, isValidLocationTitle, `${value} returns ${result}`);
+    Log.it(testName, isValidLocationTitle, it13, false);
   });
 
-  it('should return false for a string with a number and a comma', (done) => {
+  const it14 = 'should return false for a string with a number and a comma';
+  it(it14, () => {
+    Log.it(testName, isValidLocationTitle, it14, true);
     const value = '1,';
     const result = Validator.isValidLocation(value);
     expect(result).toBe(false);
-    Log(testName, isValidLocationTitle, `${value} returns ${result}`);
-    done();
+    Log.log(testName, isValidLocationTitle, `${value} returns ${result}`);
+    Log.it(testName, isValidLocationTitle, it14, false);
   });
 
-  it('should return false for a string with a comma and a number', (done) => {
+  const it15 = 'should return false for a string with a comma and a number';
+  it(it15, () => {
+    Log.it(testName, isValidLocationTitle, it15, true);
     const value = ',1';
     const result = Validator.isValidLocation(value);
     expect(result).toBe(false);
-    Log(testName, isValidLocationTitle, `${value} returns ${result}`);
-    done();
+    Log.log(testName, isValidLocationTitle, `${value} returns ${result}`);
+    Log.it(testName, isValidLocationTitle, it15, false);
   });
 
-  it('should return false for a string with a number, comma, and a string', (done) => {
+  const it16 = 'should return false for a string with a number, comma, and a string';
+  it(it16, () => {
+    Log.it(testName, isValidLocationTitle, it16, true);
     const value = '1,hey';
     const result = Validator.isValidLocation(value);
     expect(result).toBe(false);
-    Log(testName, isValidLocationTitle, `${value} returns ${result}`);
-    done();
+    Log.log(testName, isValidLocationTitle, `${value} returns ${result}`);
+    Log.it(testName, isValidLocationTitle, it16, false);
   });
 
-  it('should return false for a string with a string, comma, and a number', (done) => {
+  const it17 = 'should return false for a string with a string, comma, and a number';
+  it(it17, () => {
+    Log.it(testName, isValidLocationTitle, it17, true);
     const value = 'hey,1';
     const result = Validator.isValidLocation(value);
     expect(result).toBe(false);
-    Log(testName, isValidLocationTitle, `${value} returns ${result}`);
-    done();
+    Log.log(testName, isValidLocationTitle, `${value} returns ${result}`);
+    Log.it(testName, isValidLocationTitle, it17, false);
   });
 
-  it('should return true for a string with two numbers with a comma', (done) => {
+  const it18 = 'should return true for a string with two numbers with a comma';
+  it(it18, () => {
+    Log.it(testName, isValidLocationTitle, it18, true);
     const value = '1,1';
     const result = Validator.isValidLocation(value);
     expect(result).toBe(true);
-    Log(testName, isValidLocationTitle, `${value} returns ${result}`);
-    done();
+    Log.log(testName, isValidLocationTitle, `${value} returns ${result}`);
+    Log.it(testName, isValidLocationTitle, it18, false);
   });
 });

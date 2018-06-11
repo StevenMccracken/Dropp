@@ -21,7 +21,7 @@ const createLocalTextFile = (_filename, _content) => {
   const content = _content || Utils.newUuid();
   const filename = _filename || Utils.newUuid();
   const path = `${process.cwd()}/cache/uploads/${filename}.txt`;
-  Log(moduleName, source, path);
+  Log.log(moduleName, source, path);
   const promise = new Promise((resolve) => {
     const writeStream = FileSystem.createWriteStream(path);
     writeStream.on('close', () => resolve(path));
@@ -46,7 +46,7 @@ const copyLocalFile = (_filename, _uuid) => {
   const uuid = _uuid || Utils.newUuid();
   const existingImagePath = `${process.cwd()}/test/uploads/${_filename}`;
   const copiedImagePath = `${process.cwd()}/cache/uploads/${uuid}_${_filename}`;
-  Log(moduleName, source, copiedImagePath);
+  Log.log(moduleName, source, copiedImagePath);
   const promise = new Promise((resolve, reject) => {
     const writeStream = FileSystem.createWriteStream(copiedImagePath);
     writeStream.on('error', error => reject(error));
@@ -68,4 +68,5 @@ const copyLocalFile = (_filename, _uuid) => {
 module.exports = {
   copyLocalFile,
   createLocalTextFile,
+  customTimeout: 60000,
 };

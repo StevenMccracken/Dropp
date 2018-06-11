@@ -5,9 +5,11 @@ const testName = 'Index startup';
 const startServerTitle = 'Start server';
 /* eslint-disable no-undef */
 describe(startServerTitle, () => {
-  it('starts the server on a port', (done) => {
+  const it1 = 'starts the server on a port';
+  it(it1, () => {
+    Log.it(testName, startServerTitle, it1, true);
     expect(Server.port).toBeDefined();
-    Log(testName, startServerTitle, Server.port);
-    done();
+    Log.log(testName, startServerTitle, Server.port);
+    Log.it(testName, startServerTitle, it1, false);
   });
 });

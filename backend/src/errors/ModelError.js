@@ -1,7 +1,6 @@
 const Log = require('../logging/logger');
 const Utils = require('../utilities/utils');
-
-const moduleName = 'Model Error';
+const Constants = require('../utilities/constants');
 
 /**
  * Custom error object to contain extra details
@@ -42,7 +41,7 @@ class ModelError extends Error {
   static throw(_type, _source, _details) {
     const source = 'throw()';
     const error = this.format(_type, _source, _details);
-    Log.log(moduleName, source, error.details);
+    Log.log(Constants.errors.model.moduleName, source, error.details);
     throw error;
   }
 
@@ -65,16 +64,16 @@ class ModelError extends Error {
 
 ModelError.type = {
   Constructor: {
-    type: 'constructor',
-    message: 'Invalid data given to the constructor',
+    type: Constants.errors.types.constructor,
+    message: Constants.errors.messages.invalidConstrucutorData,
   },
   TypeMismatch: {
-    type: 'type_mismatch',
-    message: 'Given model was not of the expected type',
+    type: Constants.errors.types.typeMismatch,
+    message: Constants.errors.messages.unexpectedType,
   },
   Unknown: {
-    type: 'unknown',
-    message: 'An unknown error occurred',
+    type: Constants.errors.types.unknown,
+    message: Constants.errors.messages.unknownErrorOccurred,
   },
 };
 

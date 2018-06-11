@@ -13,10 +13,7 @@ const DroppError = require('../errors/DroppError');
 const CloudStorage = require('../storage/storage');
 const DroppAccessor = require('../database/dropp');
 const Validator = require('../utilities/validator');
-
-const moduleName = 'Dropp Middleware';
-const maxDistanceMeters = 1000;
-const cloudStorageFolder = 'dropps/';
+const Constants = require('../utilities/constants');
 
 /**
  * Retrieves all dropps and returns a given filtered result
@@ -24,7 +21,7 @@ const cloudStorageFolder = 'dropps/';
  * @return {Object} JSON containing the count of the filtered
  * dropps, and a list of the public data of each dropp
  */
-const filterAllDropps = async function filterAllDropps(filter) {
+const filterAllDropps = async (filter) => {
   const dropps = await DroppAccessor.getAll();
   const filteredDropps = dropps.filter(filter);
   const result = {
@@ -43,21 +40,21 @@ const filterAllDropps = async function filterAllDropps(filter) {
  * @throws {DroppError} if the `id` parameter is not
  * a valid dropp ID or if no dropp by that ID exists
  */
-const get = async function get(_currentUser, _details) {
+const get = async (_currentUser, _details) => {
   const source = 'get()';
-  Log.log(moduleName, source, _currentUser, _details);
+  Log.log(Constants.middleware.dropp.moduleName, source, _currentUser, _details);
 
   if (!(_currentUser instanceof User)) {
-    DroppError.throwServerError(source, null, 'Object is not a User');
+    DroppError.throwServerError(source, null, Constants.errors.objectIsNot(Constants.params.User));
   }
 
   const details = Utils.hasValue(_details) ? _details : {};
   if (!Validator.isValidFirebaseId(details.id)) {
-    DroppError.throwInvalidRequestError(source, 'id');
+    DroppError.throwInvalidRequestError(source, Constants.params.id);
   }
 
   const dropp = await DroppAccessor.get(details.id);
-  if (!Utils.hasValue(dropp)) DroppError.throwResourceDneError(source, 'dropp');
+  if (!Utils.hasValue(dropp)) DroppError.throwResourceDneError(source, Constants.params.dropp);
   return dropp.publicData;
 };
 
@@ -69,16 +66,16 @@ const get = async function get(_currentUser, _details) {
  * @throws {DroppError} if the `id` parameter is not
  * a valid dropp ID or if no dropp by that ID exists
  */
-const getPhoto = async function getPhoto(_currentUser, _details) {
+const getPhoto = async (_currentUser, _details) => {
   const source = 'getPhoto()';
-  Log.log(moduleName, source, _currentUser, _details);
+  Log.log(Constants.middleware.dropp.moduleName, source, _currentUser, _details);
 
   const dropp = await get(_currentUser, _details);
   if (dropp.media === 'false') {
-    DroppError.throwResourceError(source, 'This dropp does not contain a photo');
+    DroppError.throwResourceError(source, Constants.middleware.dropp.messages.errors.noMedia);
   }
 
-  const result = await CloudStorage.get(cloudStorageFolder, dropp.id);
+  const result = await CloudStorage.get(Constants.middleware.dropp.cloudStorageFolder, dropp.id);
   return { success: result };
 };
 
@@ -89,25 +86,25 @@ const getPhoto = async function getPhoto(_currentUser, _details) {
  * containing the user's dropps to retrieve
  * @return {Object} count of dropps retrieved, and a list of those dropps
  */
-const getByUser = async function getByUser(_currentUser, _details) {
+const getByUser = async (_currentUser, _details) => {
   const source = 'getByUser()';
-  Log.log(moduleName, source, _currentUser, _details);
+  Log.log(Constants.middleware.dropp.moduleName, source, _currentUser, _details);
 
   if (!(_currentUser instanceof User)) {
-    DroppError.throwServerError(source, null, 'Object is not a User');
+    DroppError.throwServerError(source, null, Constants.errors.objectIsNot(Constants.params.User));
   }
 
   const details = Utils.hasValue(_details) ? _details : {};
   if (!Validator.isValidUsername(details.username)) {
-    DroppError.throwInvalidRequestError(source, 'username');
+    DroppError.throwInvalidRequestError(source, Constants.params.username);
   }
 
   const user = await UserAccessor.get(details.username);
-  if (!Utils.hasValue(user)) DroppError.throwResourceDneError(source, 'user');
+  if (!Utils.hasValue(user)) DroppError.throwResourceDneError(source, Constants.params.user);
 
   // Make sure current user is retrieving their own dropps or one of their follow's dropps
   if (_currentUser.username !== user.username && !user.hasFollower(_currentUser.username)) {
-    DroppError.throwResourceError(source, 'You must follow that user see their dropps');
+    DroppError.throwResourceError(source, Constants.middleware.messages.mustFollowUser);
   }
 
   const result = await filterAllDropps(dropp => dropp.username === details.username);
@@ -121,21 +118,21 @@ const getByUser = async function getByUser(_currentUser, _details) {
  * containing the user's dropps to retrieve
  * @return {Object} count of dropps retrieved, and a list of those dropps
  */
-const getByFollows = async function getByFollows(_currentUser, _details) {
+const getByFollows = async (_currentUser, _details) => {
   const source = 'getByFollows()';
-  Log.log(moduleName, source, _currentUser, _details);
+  Log.log(Constants.middleware.dropp.moduleName, source, _currentUser, _details);
 
   if (!(_currentUser instanceof User)) {
-    DroppError.throwServerError(source, null, 'Object is not a User');
+    DroppError.throwServerError(source, null, Constants.errors.objectIsNot(Constants.params.User));
   }
 
   const details = Utils.hasValue(_details) ? _details : {};
   if (!Validator.isValidUsername(details.username)) {
-    DroppError.throwInvalidRequestError(source, 'username');
+    DroppError.throwInvalidRequestError(source, Constants.params.username);
   }
 
   if (_currentUser.username !== details.username) {
-    DroppError.throwResourceError(source, 'Unauthorized to access that user\'s follows');
+    DroppError.throwResourceError(source, Constants.middleware.messages.unauthorizedAccess);
   }
 
   const user = await UserAccessor.get(details.username);
@@ -165,17 +162,20 @@ const getByFollows = async function getByFollows(_currentUser, _details) {
  * containing the location to search around
  * @return {Object} count of dropps retrieved, and a list of those dropps
  */
-const getByLocation = async function getByLocation(_currentUser, _details) {
+const getByLocation = async (_currentUser, _details) => {
   const source = 'getByLocation()';
-  Log.log(moduleName, source, _currentUser, _details);
+  Log.log(Constants.middleware.dropp.moduleName, source, _currentUser, _details);
 
   if (!(_currentUser instanceof User)) {
-    DroppError.throwServerError(source, null, 'Object is not a User');
+    DroppError.throwServerError(source, null, Constants.errors.objectIsNot(Constants.params.User));
   }
 
   const details = Utils.hasValue(_details) ? _details : {};
   if (!Validator.isValidLocation(`${details.latitude},${details.longitude}`)) {
-    DroppError.throwInvalidRequestError(source, 'latitude,longitude');
+    DroppError.throwInvalidRequestError(
+      source,
+      [Constants.params.latitude, Constants.params.longitude]
+    );
   }
 
   const coordinates = {
@@ -185,7 +185,7 @@ const getByLocation = async function getByLocation(_currentUser, _details) {
 
   const location = new Location(coordinates);
   const result = await filterAllDropps(dropp =>
-    location.distance(dropp.location) <= maxDistanceMeters);
+    location.distance(dropp.location) <= Constants.middleware.dropp.maxDistanceMeters);
   return { success: result };
 };
 
@@ -195,27 +195,38 @@ const getByLocation = async function getByLocation(_currentUser, _details) {
  * @param {Object} _details the information containing the new dropp details
  * @return {Object} success message and the new dropp's ID
  */
-const create = async function create(_currentUser, _details) {
+const create = async (_currentUser, _details) => {
   const source = 'create()';
-  Log.log(moduleName, source, _currentUser, _details);
+  Log.log(Constants.middleware.dropp.moduleName, source, _currentUser, _details);
 
   if (!(_currentUser instanceof User)) {
-    DroppError.throwServerError(source, null, 'Object is not a User');
+    DroppError.throwServerError(source, null, Constants.errors.objectIsNot(Constants.params.User));
   }
 
   const invalidMembers = [];
   const details = Utils.hasValue(_details) ? _details : {};
-  if (!Validator.isValidTextPost(details.text)) invalidMembers.push('text');
-  if (!Validator.isValidBooleanString(details.media)) invalidMembers.push('media');
-  if (!Validator.isValidUsername(details.username)) invalidMembers.push('username');
-  if (!Validator.isValidTimestamp(details.timestamp)) invalidMembers.push('timestamp');
+  if (!Validator.isValidTextPost(details.text)) invalidMembers.push(Constants.params.text);
+  if (!Validator.isValidBooleanString(details.media)) invalidMembers.push(Constants.params.media);
+  if (!Validator.isValidUsername(details.username)) invalidMembers.push(Constants.params.username);
+  if (!Validator.isValidTimestamp(details.timestamp)) {
+    invalidMembers.push(Constants.params.timestamp);
+  }
+
   if (Utils.hasValue(details.location)) {
-    if (!Validator.isValidNumber(details.location.latitude)) invalidMembers.push('latitude');
-    if (!Validator.isValidNumber(details.location.longitude)) invalidMembers.push('longitude');
-  } else invalidMembers.push('location');
+    if (!Validator.isValidNumber(details.location.latitude)) {
+      invalidMembers.push(Constants.params.latitude);
+    }
+
+    if (!Validator.isValidNumber(details.location.longitude)) {
+      invalidMembers.push(Constants.params.longitude);
+    }
+  } else invalidMembers.push(Constants.params.location);
   if (invalidMembers.length > 0) DroppError.throwInvalidRequestError(source, invalidMembers);
   if (details.media === 'false' && details.text.toString().trim().length === 0) {
-    DroppError.throwResourceError(source, 'This dropp must contain non-empty text');
+    DroppError.throwResourceError(
+      source,
+      Constants.middleware.dropp.messages.errors.mustContainText
+    );
   }
 
   const droppInfo = {
@@ -233,7 +244,7 @@ const create = async function create(_currentUser, _details) {
   const result = {
     success: {
       droppId: dropp.id,
-      message: 'Successful dropp creation',
+      message: Constants.middleware.dropp.messages.success.createDropp,
     },
   };
 
@@ -247,46 +258,59 @@ const create = async function create(_currentUser, _details) {
  * new dropp's ID and file path for the photo to be added
  * @return {Object} success message
  */
-const addPhoto = async function addPhoto(_currentUser, _details) {
+const addPhoto = async (_currentUser, _details) => {
   const source = 'addPhoto()';
-  Log.log(moduleName, source, _currentUser, _details);
+  Log.log(Constants.middleware.dropp.moduleName, source, _currentUser, _details);
 
   if (!(_currentUser instanceof User)) {
-    DroppError.throwServerError(source, null, 'Object is not a User');
+    DroppError.throwServerError(source, null, Constants.errors.objectIsNot(Constants.params.User));
   }
 
   const invalidMembers = [];
   const details = Utils.hasValue(_details) ? _details : {};
-  if (!Validator.isValidFirebaseId(details.id)) invalidMembers.push('id');
-  if (!(await Validator.isValidFilePath(details.filePath))) invalidMembers.push('image');
+  if (!Validator.isValidFirebaseId(details.id)) invalidMembers.push(Constants.params.id);
+  if (!(await Validator.isValidFilePath(details.filePath))) {
+    invalidMembers.push(Constants.params.media);
+  }
+
   if (invalidMembers.length > 0) {
     DroppError.throwInvalidRequestError(source, invalidMembers);
   }
 
   const mimeType = await Media.determineMimeType(details.filePath);
-  if (mimeType !== Media.mimeTypes.png && mimeType !== Media.mimeTypes.jpeg) {
+  if (mimeType !== Constants.media.mimeTypes.png && mimeType !== Constants.media.mimeTypes.jpeg) {
     await Utils.deleteLocalFile(details.filePath);
-    DroppError.throwResourceError(source, 'Image must be PNG or JPG');
+    DroppError.throwResourceError(
+      source,
+      Constants.middleware.dropp.messages.errors.invalidMediaType
+    );
   }
 
   const dropp = await DroppAccessor.get(details.id);
   if (!Utils.hasValue(dropp)) {
     await Utils.deleteLocalFile(details.filePath);
-    DroppError.throwResourceDneError(source, 'dropp');
+    DroppError.throwResourceDneError(source, Constants.params.dropp);
   }
 
   if (dropp.username !== _currentUser.username) {
     await Utils.deleteLocalFile(details.filePath);
-    DroppError.throwResourceError(source, 'Unauthorized to add a photo to that dropp');
+    DroppError.throwResourceError(source, Constants.middleware.messages.unauthorizedAccess);
   }
 
   if (dropp.media === 'false') {
     await Utils.deleteLocalFile(details.filePath);
-    DroppError.throwResourceError(source, 'This dropp cannot have a photo added to it');
+    DroppError.throwResourceError(
+      source,
+      Constants.middleware.dropp.messages.errors.cannotHaveMedia
+    );
   }
 
   try {
-    await CloudStorage.add(cloudStorageFolder, dropp.id, details.filePath);
+    await CloudStorage.add(
+      Constants.middleware.dropp.cloudStorageFolder,
+      dropp.id,
+      details.filePath
+    );
   } catch (uploadError) {
     await Utils.deleteLocalFile(details.filePath);
     if (
@@ -294,7 +318,10 @@ const addPhoto = async function addPhoto(_currentUser, _details) {
       && uploadError.details.error.type === DroppError.type.Resource.type
     ) {
       // Throw error with clearer message
-      DroppError.throwResourceError(source, 'A photo has already been added to this dropp');
+      DroppError.throwResourceError(
+        source,
+        Constants.middleware.dropp.messages.errors.mediaAlreadyAdded
+      );
     }
 
     // Re-throw caught error
@@ -303,7 +330,7 @@ const addPhoto = async function addPhoto(_currentUser, _details) {
 
   const result = {
     success: {
-      message: 'Successful photo creation',
+      message: Constants.middleware.dropp.messages.success.addMedia,
     },
   };
 
@@ -316,44 +343,44 @@ const addPhoto = async function addPhoto(_currentUser, _details) {
  * @param {Object} _details the information containing the new dropp text
  * @return {Object} JSON containing the success message
  */
-const updateText = async function updateText(_currentUser, _details) {
+const updateText = async (_currentUser, _details) => {
   const source = 'updateText()';
-  Log.log(moduleName, source, _currentUser, _details);
+  Log.log(Constants.middleware.dropp.moduleName, source, _currentUser, _details);
 
   if (!(_currentUser instanceof User)) {
-    DroppError.throwServerError(source, null, 'Object is not a User');
+    DroppError.throwServerError(source, null, Constants.errors.objectIsNot(Constants.params.User));
   }
 
   const invalidMembers = [];
   const details = Utils.hasValue(_details) ? _details : {};
-  if (!Validator.isValidFirebaseId(details.id)) invalidMembers.push('id');
-  if (!Validator.isValidTextPost(details.newText)) invalidMembers.push('newText');
+  if (!Validator.isValidFirebaseId(details.id)) invalidMembers.push(Constants.params.id);
+  if (!Validator.isValidTextPost(details.newText)) invalidMembers.push(Constants.params.newText);
   if (invalidMembers.length > 0) {
     DroppError.throwInvalidRequestError(source, invalidMembers);
   }
 
   const dropp = await DroppAccessor.get(details.id);
-  if (!Utils.hasValue(dropp)) DroppError.throwResourceDneError(source, 'dropp');
+  if (!Utils.hasValue(dropp)) DroppError.throwResourceDneError(source, Constants.params.dropp);
   if (dropp.username !== _currentUser.username) {
-    DroppError.throwResourceError(source, 'Unauthorized to update that dropp\'s text');
+    DroppError.throwResourceError(source, Constants.middleware.messages.unauthorizedAccess);
   }
 
   const newText = details.newText.toString().trim();
   if (dropp.text === newText) {
-    DroppError.throwResourceError(
-      source,
-      'New text must be different than existing text'
-    );
+    DroppError.throwResourceError(source, Constants.errors.messages.newValueMustBeDifferent);
   }
 
   if (dropp.media === 'false' && newText.length === 0) {
-    DroppError.throwResourceError(source, 'This dropp must contain non-empty text');
+    DroppError.throwResourceError(
+      source,
+      Constants.middleware.dropp.messages.errors.mustContainText
+    );
   }
 
   await DroppAccessor.updateText(dropp, newText);
   const result = {
     success: {
-      message: 'Successful text update',
+      message: Constants.middleware.dropp.messages.success.textUpdate,
     },
   };
 
@@ -366,30 +393,33 @@ const updateText = async function updateText(_currentUser, _details) {
  * @param {Object} _details the information containing the dropp to remove
  * @return {Object} JSON containing the success message
  */
-const remove = async function remove(_currentUser, _details) {
+const remove = async (_currentUser, _details) => {
   const source = 'remove()';
-  Log.log(moduleName, source, _currentUser, _details);
+  Log.log(Constants.middleware.dropp.moduleName, source, _currentUser, _details);
 
   if (!(_currentUser instanceof User)) {
-    DroppError.throwServerError(source, null, 'Object is not a User');
+    DroppError.throwServerError(source, null, Constants.errors.objectIsNot(Constants.params.User));
   }
 
   const details = Utils.hasValue(_details) ? _details : {};
   if (!Validator.isValidFirebaseId(details.id)) {
-    DroppError.throwInvalidRequestError(source, 'id');
+    DroppError.throwInvalidRequestError(source, Constants.params.id);
   }
 
   const dropp = await DroppAccessor.get(details.id);
-  if (!Utils.hasValue(dropp)) DroppError.throwResourceDneError(source, 'dropp');
+  if (!Utils.hasValue(dropp)) DroppError.throwResourceDneError(source, Constants.params.dropp);
   if (dropp.username !== _currentUser.username) {
-    DroppError.throwResourceError(source, 'Unauthorized to remove that dropp');
+    DroppError.throwResourceError(source, Constants.middleware.messages.unauthorizedAccess);
   }
 
   await DroppAccessor.remove(dropp);
-  if (dropp.media === 'true') await CloudStorage.remove(cloudStorageFolder, dropp.id);
+  if (dropp.media === 'true') {
+    await CloudStorage.remove(Constants.middleware.dropp.cloudStorageFolder, dropp.id);
+  }
+
   const result = {
     success: {
-      message: 'Successful dropp removal',
+      message: Constants.middleware.dropp.messages.success.removeDropp,
     },
   };
 
@@ -406,7 +436,5 @@ module.exports = {
   updateText,
   getByFollows,
   getByLocation,
-  maxDistanceMeters,
-  cloudStorageFolder,
   filter: filterAllDropps,
 };

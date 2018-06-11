@@ -5,342 +5,426 @@ const testName = 'Validator Module';
 const isValidBooleanStringTitle = 'isValidBooleanString()';
 /* eslint-disable no-undef */
 describe(isValidBooleanStringTitle, () => {
-  it('should return false for a null value', (done) => {
+  const it1 = 'should return false for a null value';
+  it(it1, () => {
+    Log.it(testName, isValidBooleanStringTitle, it1, true);
     const value = null;
     const result = Validator.isValidBooleanString(value);
     expect(result).toBe(false);
-    Log(testName, isValidBooleanStringTitle, `${value} returns ${result}`);
-    done();
+    Log.log(testName, isValidBooleanStringTitle, `${value} returns ${result}`);
+    Log.it(testName, isValidBooleanStringTitle, it1, false);
   });
 
-  it('should return false for an undefined value', (done) => {
+  const it2 = 'should return false for an undefined value';
+  it(it2, () => {
+    Log.it(testName, isValidBooleanStringTitle, it2, true);
     const value = undefined;
     const result = Validator.isValidBooleanString(value);
     expect(result).toBe(false);
-    Log(testName, isValidBooleanStringTitle, `${value} returns ${result}`);
-    done();
+    Log.log(testName, isValidBooleanStringTitle, `${value} returns ${result}`);
+    Log.it(testName, isValidBooleanStringTitle, it2, false);
   });
 
-  it('should return false for an array', (done) => {
+  const it3 = 'should return false for an array';
+  it(it3, () => {
+    Log.it(testName, isValidBooleanStringTitle, it3, true);
     const value = [];
     const result = Validator.isValidBooleanString(value);
     expect(result).toBe(false);
-    Log(testName, isValidBooleanStringTitle, `${value} returns ${result}`);
-    done();
+    Log.log(testName, isValidBooleanStringTitle, `${value} returns ${result}`);
+    Log.it(testName, isValidBooleanStringTitle, it3, false);
   });
 
-  it('should return false for an object', (done) => {
+  const it4 = 'should return false for an object';
+  it(it4, () => {
+    Log.it(testName, isValidBooleanStringTitle, it4, true);
     const value = {};
     const result = Validator.isValidBooleanString(value);
     expect(result).toBe(false);
-    Log(testName, isValidBooleanStringTitle, `${value} returns ${result}`);
-    done();
+    Log.log(testName, isValidBooleanStringTitle, `${value} returns ${result}`);
+    Log.it(testName, isValidBooleanStringTitle, it4, false);
   });
 
-  it('should return false for a function', (done) => {
+  const it5 = 'should return false for a function';
+  it(it5, () => {
+    Log.it(testName, isValidBooleanStringTitle, it5, true);
     const value = function value() {};
     const result = Validator.isValidBooleanString(value);
     expect(result).toBe(false);
-    Log(testName, isValidBooleanStringTitle, `${value} returns ${result}`);
-    done();
+    Log.log(testName, isValidBooleanStringTitle, `${value} returns ${result}`);
+    Log.it(testName, isValidBooleanStringTitle, it5, false);
   });
 
-  it('should return false for a boolean false value', (done) => {
+  const it6 = 'should return false for a boolean false value';
+  it(it6, () => {
+    Log.it(testName, isValidBooleanStringTitle, it6, true);
     const value = false;
     const result = Validator.isValidBooleanString(value);
     expect(result).toBe(false);
-    Log(testName, isValidBooleanStringTitle, `${value} returns ${result}`);
-    done();
+    Log.log(testName, isValidBooleanStringTitle, `${value} returns ${result}`);
+    Log.it(testName, isValidBooleanStringTitle, it6, false);
   });
 
-  it('should return false for a boolean true value', (done) => {
+  const it7 = 'should return false for a boolean true value';
+  it(it7, () => {
+    Log.it(testName, isValidBooleanStringTitle, it7, true);
     const value = true;
     const result = Validator.isValidBooleanString(value);
     expect(result).toBe(false);
-    Log(testName, isValidBooleanStringTitle, `${value} returns ${result}`);
-    done();
+    Log.log(testName, isValidBooleanStringTitle, `${value} returns ${result}`);
+    Log.it(testName, isValidBooleanStringTitle, it7, false);
   });
 
-  it('should return false for an empty string', (done) => {
+  const it8 = 'should return false for an empty string';
+  it(it8, () => {
+    Log.it(testName, isValidBooleanStringTitle, it8, true);
     const value = '';
     const result = Validator.isValidBooleanString(value);
     expect(result).toBe(false);
-    Log(testName, isValidBooleanStringTitle, `${value} returns ${result}`);
-    done();
+    Log.log(testName, isValidBooleanStringTitle, `${value} returns ${result}`);
+    Log.it(testName, isValidBooleanStringTitle, it8, false);
   });
 
-  it('should return false for a string with space whitespace', (done) => {
+  const it9 = 'should return false for a string with space whitespace';
+  it(it9, () => {
+    Log.it(testName, isValidBooleanStringTitle, it9, true);
     const value = '    ';
     const result = Validator.isValidBooleanString(value);
     expect(result).toBe(false);
-    Log(testName, isValidBooleanStringTitle, `${value} returns ${result}`);
-    done();
+    Log.log(testName, isValidBooleanStringTitle, `${value} returns ${result}`);
+    Log.it(testName, isValidBooleanStringTitle, it9, false);
   });
 
-  it('should return false for a string with tabbed whitespace', (done) => {
+  const it10 = 'should return false for a string with tabbed whitespace';
+  it(it10, () => {
+    Log.it(testName, isValidBooleanStringTitle, it10, true);
     const value = '\t';
     const result = Validator.isValidBooleanString(value);
     expect(result).toBe(false);
-    Log(testName, isValidBooleanStringTitle, `${value} returns ${result}`);
-    done();
+    Log.log(testName, isValidBooleanStringTitle, `${value} returns ${result}`);
+    Log.it(testName, isValidBooleanStringTitle, it10, false);
   });
 
-  it('should return false for a string with newline whitespace', (done) => {
+  const it11 = 'should return false for a string with newline whitespace';
+  it(it11, () => {
+    Log.it(testName, isValidBooleanStringTitle, it11, true);
     const value = '\n';
     const result = Validator.isValidBooleanString(value);
     expect(result).toBe(false);
-    Log(testName, isValidBooleanStringTitle, `${value} returns ${result}`);
-    done();
+    Log.log(testName, isValidBooleanStringTitle, `${value} returns ${result}`);
+    Log.it(testName, isValidBooleanStringTitle, it11, false);
   });
 
-  it('should return false for a string with return whitespace', (done) => {
+  const it12 = 'should return false for a string with return whitespace';
+  it(it12, () => {
+    Log.it(testName, isValidBooleanStringTitle, it12, true);
     const value = '\r';
     const result = Validator.isValidBooleanString(value);
     expect(result).toBe(false);
-    Log(testName, isValidBooleanStringTitle, `${value} returns ${result}`);
-    done();
+    Log.log(testName, isValidBooleanStringTitle, `${value} returns ${result}`);
+    Log.it(testName, isValidBooleanStringTitle, it12, false);
   });
 
-  it('should return false for a float with decimal places', (done) => {
+  const it13 = 'should return false for a float with decimal places';
+  it(it13, () => {
+    Log.it(testName, isValidBooleanStringTitle, it13, true);
     const value = 1.1;
     const result = Validator.isValidBooleanString(value);
     expect(result).toBe(false);
-    Log(testName, isValidBooleanStringTitle, `${value} returns ${result}`);
-    done();
+    Log.log(testName, isValidBooleanStringTitle, `${value} returns ${result}`);
+    Log.it(testName, isValidBooleanStringTitle, it13, false);
   });
 
-  it('should return false for a number', (done) => {
+  const it14 = 'should return false for a number';
+  it(it14, () => {
+    Log.it(testName, isValidBooleanStringTitle, it14, true);
     const value = 0;
     const result = Validator.isValidBooleanString(value);
     expect(result).toBe(false);
-    Log(testName, isValidBooleanStringTitle, `${value} returns ${result}`);
-    done();
+    Log.log(testName, isValidBooleanStringTitle, `${value} returns ${result}`);
+    Log.it(testName, isValidBooleanStringTitle, it14, false);
   });
 
-  it('should return false for a string with a number', (done) => {
+  const it15 = 'should return false for a string with a number';
+  it(it15, () => {
+    Log.it(testName, isValidBooleanStringTitle, it15, true);
     const value = '1';
     const result = Validator.isValidBooleanString(value);
     expect(result).toBe(false);
-    Log(testName, isValidBooleanStringTitle, `${value} returns ${result}`);
-    done();
+    Log.log(testName, isValidBooleanStringTitle, `${value} returns ${result}`);
+    Log.it(testName, isValidBooleanStringTitle, it15, false);
   });
 
-  it('should return false for a string with a float', (done) => {
+  const it16 = 'should return false for a string with a float';
+  it(it16, () => {
+    Log.it(testName, isValidBooleanStringTitle, it16, true);
     const value = '1.1';
     const result = Validator.isValidBooleanString(value);
     expect(result).toBe(false);
-    Log(testName, isValidBooleanStringTitle, `${value} returns ${result}`);
-    done();
+    Log.log(testName, isValidBooleanStringTitle, `${value} returns ${result}`);
+    Log.it(testName, isValidBooleanStringTitle, it16, false);
   });
 
-  it('should return false for a string with special characters', (done) => {
+  const it17 = 'should return false for a string with special characters';
+  it(it17, () => {
+    Log.it(testName, isValidBooleanStringTitle, it17, true);
     const value = 'console.log(\'hey\')';
     const result = Validator.isValidBooleanString(value);
     expect(result).toBe(false);
-    Log(testName, isValidBooleanStringTitle, `${value} returns ${result}`);
-    done();
+    Log.log(testName, isValidBooleanStringTitle, `${value} returns ${result}`);
+    Log.it(testName, isValidBooleanStringTitle, it17, false);
   });
 
-  it('should return false for a string containing whitespace and text', (done) => {
+  const it18 = 'should return false for a string containing whitespace and text';
+  it(it18, () => {
+    Log.it(testName, isValidBooleanStringTitle, it18, true);
     const value = '  hey-';
     const result = Validator.isValidBooleanString(value);
     expect(result).toBe(false);
-    Log(testName, isValidBooleanStringTitle, `${value} returns ${result}`);
-    done();
+    Log.log(testName, isValidBooleanStringTitle, `${value} returns ${result}`);
+    Log.it(testName, isValidBooleanStringTitle, it18, false);
   });
 
-  it('should return false for a string containing symbols', (done) => {
+  const it19 = 'should return false for a string containing symbols';
+  it(it19, () => {
+    Log.it(testName, isValidBooleanStringTitle, it19, true);
     const value = 'he$';
     const result = Validator.isValidBooleanString(value);
     expect(result).toBe(false);
-    Log(testName, isValidBooleanStringTitle, `${value} returns ${result}`);
-    done();
+    Log.log(testName, isValidBooleanStringTitle, `${value} returns ${result}`);
+    Log.it(testName, isValidBooleanStringTitle, it19, false);
   });
 
-  it('should return false for a string containing emoji', (done) => {
+  const it20 = 'should return false for a string containing emoji';
+  it(it20, () => {
+    Log.it(testName, isValidBooleanStringTitle, it20, true);
     const value = '😈';
     const result = Validator.isValidBooleanString(value);
     expect(result).toBe(false);
-    Log(testName, isValidBooleanStringTitle, `${value} returns ${result}`);
-    done();
+    Log.log(testName, isValidBooleanStringTitle, `${value} returns ${result}`);
+    Log.it(testName, isValidBooleanStringTitle, it20, false);
   });
 
-  it('should return true for a string containing a boolean true value', (done) => {
+  const it21 = 'should return true for a string containing a boolean true value';
+  it(it21, () => {
+    Log.it(testName, isValidBooleanStringTitle, it21, true);
     const value = 'true';
     const result = Validator.isValidBooleanString(value);
     expect(result).toBe(true);
-    Log(testName, isValidBooleanStringTitle, `${value} returns ${result}`);
-    done();
+    Log.log(testName, isValidBooleanStringTitle, `${value} returns ${result}`);
+    Log.it(testName, isValidBooleanStringTitle, it21, false);
   });
 
-  it('should return true for a string containing a boolean false value', (done) => {
+  const it22 = 'should return true for a string containing a boolean false value';
+  it(it22, () => {
+    Log.it(testName, isValidBooleanStringTitle, it22, true);
     const value = 'false';
     const result = Validator.isValidBooleanString(value);
     expect(result).toBe(true);
-    Log(testName, isValidBooleanStringTitle, `${value} returns ${result}`);
-    done();
+    Log.log(testName, isValidBooleanStringTitle, `${value} returns ${result}`);
+    Log.it(testName, isValidBooleanStringTitle, it22, false);
   });
 });
 
 const booleanInputValidator = 'Boolean input validator';
 describe(booleanInputValidator, () => {
-  it('should return false for a null value', (done) => {
+  const it1 = 'should return false for a null value';
+  it(it1, () => {
+    Log.it(testName, booleanInputValidator, it1, true);
     const value = null;
     const result = Validator.isValidBoolean(value);
     expect(result).toBe(false);
-    Log(testName, booleanInputValidator, `${value} returns ${result}`);
-    done();
+    Log.log(testName, booleanInputValidator, `${value} returns ${result}`);
+    Log.it(testName, booleanInputValidator, it1, false);
   });
 
-  it('should return false for an undefined value', (done) => {
+  const it2 = 'should return false for an undefined value';
+  it(it2, () => {
+    Log.it(testName, booleanInputValidator, it2, true);
     const value = undefined;
     const result = Validator.isValidBoolean(value);
     expect(result).toBe(false);
-    Log(testName, booleanInputValidator, `${value} returns ${result}`);
-    done();
+    Log.log(testName, booleanInputValidator, `${value} returns ${result}`);
+    Log.it(testName, booleanInputValidator, it2, false);
   });
 
-  it('should return false for an array', (done) => {
+  const it3 = 'should return false for an array';
+  it(it3, () => {
+    Log.it(testName, booleanInputValidator, it3, true);
     const value = [];
     const result = Validator.isValidBoolean(value);
     expect(result).toBe(false);
-    Log(testName, booleanInputValidator, `${value} returns ${result}`);
-    done();
+    Log.log(testName, booleanInputValidator, `${value} returns ${result}`);
+    Log.it(testName, booleanInputValidator, it3, false);
   });
 
-  it('should return false for an object', (done) => {
+  const it4 = 'should return false for an object';
+  it(it4, () => {
+    Log.it(testName, booleanInputValidator, it4, true);
     const value = {};
     const result = Validator.isValidBoolean(value);
     expect(result).toBe(false);
-    Log(testName, booleanInputValidator, `${value} returns ${result}`);
-    done();
+    Log.log(testName, booleanInputValidator, `${value} returns ${result}`);
+    Log.it(testName, booleanInputValidator, it4, false);
   });
 
-  it('should return false for a function', (done) => {
+  const it5 = 'should return false for a function';
+  it(it5, () => {
+    Log.it(testName, booleanInputValidator, it5, true);
     const value = function value() {};
     const result = Validator.isValidBoolean(value);
     expect(result).toBe(false);
-    Log(testName, booleanInputValidator, `${value} returns ${result}`);
-    done();
+    Log.log(testName, booleanInputValidator, `${value} returns ${result}`);
+    Log.it(testName, booleanInputValidator, it5, false);
   });
 
-  it('should return false for an empty string', (done) => {
+  const it6 = 'should return false for an empty string';
+  it(it6, () => {
+    Log.it(testName, booleanInputValidator, it6, true);
     const value = '';
     const result = Validator.isValidBoolean(value);
     expect(result).toBe(false);
-    Log(testName, booleanInputValidator, `${value} returns ${result}`);
-    done();
+    Log.log(testName, booleanInputValidator, `${value} returns ${result}`);
+    Log.it(testName, booleanInputValidator, it6, false);
   });
 
-  it('should return false for a string with space whitespace', (done) => {
+  const it7 = 'should return false for a string with space whitespace';
+  it(it7, () => {
+    Log.it(testName, booleanInputValidator, it7, true);
     const value = '    ';
     const result = Validator.isValidBoolean(value);
     expect(result).toBe(false);
-    Log(testName, booleanInputValidator, `${value} returns ${result}`);
-    done();
+    Log.log(testName, booleanInputValidator, `${value} returns ${result}`);
+    Log.it(testName, booleanInputValidator, it7, false);
   });
 
-  it('should return false for a string with tabbed whitespace', (done) => {
+  const it8 = 'should return false for a string with tabbed whitespace';
+  it(it8, () => {
+    Log.it(testName, booleanInputValidator, it8, true);
     const value = '\t';
     const result = Validator.isValidBoolean(value);
     expect(result).toBe(false);
-    Log(testName, booleanInputValidator, `${value} returns ${result}`);
-    done();
+    Log.log(testName, booleanInputValidator, `${value} returns ${result}`);
+    Log.it(testName, booleanInputValidator, it8, false);
   });
 
-  it('should return false for a string with newline whitespace', (done) => {
+  const it9 = 'should return false for a string with newline whitespace';
+  it(it9, () => {
+    Log.it(testName, booleanInputValidator, it9, true);
     const value = '\n';
     const result = Validator.isValidBoolean(value);
     expect(result).toBe(false);
-    Log(testName, booleanInputValidator, `${value} returns ${result}`);
-    done();
+    Log.log(testName, booleanInputValidator, `${value} returns ${result}`);
+    Log.it(testName, booleanInputValidator, it9, false);
   });
 
-  it('should return false for a string with return whitespace', (done) => {
+  const it10 = 'should return false for a string with return whitespace';
+  it(it10, () => {
+    Log.it(testName, booleanInputValidator, it10, true);
     const value = '\r';
     const result = Validator.isValidBoolean(value);
     expect(result).toBe(false);
-    Log(testName, booleanInputValidator, `${value} returns ${result}`);
-    done();
+    Log.log(testName, booleanInputValidator, `${value} returns ${result}`);
+    Log.it(testName, booleanInputValidator, it10, false);
   });
 
-  it('should return false for a float with decimal places', (done) => {
+  const it11 = 'should return false for a float with decimal places';
+  it(it11, () => {
+    Log.it(testName, booleanInputValidator, it11, true);
     const value = 1.1;
     const result = Validator.isValidBoolean(value);
     expect(result).toBe(false);
-    Log(testName, booleanInputValidator, `${value} returns ${result}`);
-    done();
+    Log.log(testName, booleanInputValidator, `${value} returns ${result}`);
+    Log.it(testName, booleanInputValidator, it11, false);
   });
 
-  it('should return false for a number', (done) => {
+  const it12 = 'should return false for a number';
+  it(it12, () => {
+    Log.it(testName, booleanInputValidator, it12, true);
     const value = 0;
     const result = Validator.isValidBoolean(value);
     expect(result).toBe(false);
-    Log(testName, booleanInputValidator, `${value} returns ${result}`);
-    done();
+    Log.log(testName, booleanInputValidator, `${value} returns ${result}`);
+    Log.it(testName, booleanInputValidator, it12, false);
   });
 
-  it('should return false for a string with a number', (done) => {
+  const it13 = 'should return false for a string with a number';
+  it(it13, () => {
+    Log.it(testName, booleanInputValidator, it13, true);
     const value = '1';
     const result = Validator.isValidBoolean(value);
     expect(result).toBe(false);
-    Log(testName, booleanInputValidator, `${value} returns ${result}`);
-    done();
+    Log.log(testName, booleanInputValidator, `${value} returns ${result}`);
+    Log.it(testName, booleanInputValidator, it13, false);
   });
 
-  it('should return false for a string with a float', (done) => {
+  const it14 = 'should return false for a string with a float';
+  it(it14, () => {
+    Log.it(testName, booleanInputValidator, it14, true);
     const value = '1.1';
     const result = Validator.isValidBoolean(value);
     expect(result).toBe(false);
-    Log(testName, booleanInputValidator, `${value} returns ${result}`);
-    done();
+    Log.log(testName, booleanInputValidator, `${value} returns ${result}`);
+    Log.it(testName, booleanInputValidator, it14, false);
   });
 
-  it('should return false for a string with special characters', (done) => {
+  const it15 = 'should return false for a string with special characters';
+  it(it15, () => {
+    Log.it(testName, booleanInputValidator, it15, true);
     const value = 'console.log(\'hey\')';
     const result = Validator.isValidBoolean(value);
     expect(result).toBe(false);
-    Log(testName, booleanInputValidator, `${value} returns ${result}`);
-    done();
+    Log.log(testName, booleanInputValidator, `${value} returns ${result}`);
+    Log.it(testName, booleanInputValidator, it15, false);
   });
 
-  it('should return false for a string containing whitespace and text', (done) => {
+  const it16 = 'should return false for a string containing whitespace and text';
+  it(it16, () => {
+    Log.it(testName, booleanInputValidator, it16, true);
     const value = '  hey-';
     const result = Validator.isValidBoolean(value);
     expect(result).toBe(false);
-    Log(testName, booleanInputValidator, `${value} returns ${result}`);
-    done();
+    Log.log(testName, booleanInputValidator, `${value} returns ${result}`);
+    Log.it(testName, booleanInputValidator, it16, false);
   });
 
-  it('should return false for a string containing symbols', (done) => {
+  const it17 = 'should return false for a string containing symbols';
+  it(it17, () => {
+    Log.it(testName, booleanInputValidator, it17, true);
     const value = 'he$';
     const result = Validator.isValidBoolean(value);
     expect(result).toBe(false);
-    Log(testName, booleanInputValidator, `${value} returns ${result}`);
-    done();
+    Log.log(testName, booleanInputValidator, `${value} returns ${result}`);
+    Log.it(testName, booleanInputValidator, it17, false);
   });
 
-  it('should return false for a string containing emoji', (done) => {
+  const it18 = 'should return false for a string containing emoji';
+  it(it18, () => {
+    Log.it(testName, booleanInputValidator, it18, true);
     const value = '😈';
     const result = Validator.isValidBoolean(value);
     expect(result).toBe(false);
-    Log(testName, booleanInputValidator, `${value} returns ${result}`);
-    done();
+    Log.log(testName, booleanInputValidator, `${value} returns ${result}`);
+    Log.it(testName, booleanInputValidator, it18, false);
   });
 
-  it('should return true for a boolean false value', (done) => {
+  const it19 = 'should return true for a boolean false value';
+  it(it19, () => {
+    Log.it(testName, booleanInputValidator, it19, true);
     const value = false;
     const result = Validator.isValidBoolean(value);
     expect(result).toBe(true);
-    Log(testName, booleanInputValidator, `${value} returns ${result}`);
-    done();
+    Log.log(testName, booleanInputValidator, `${value} returns ${result}`);
+    Log.it(testName, booleanInputValidator, it19, false);
   });
 
-  it('should return true for a boolean true value', (done) => {
+  const it20 = 'should return true for a boolean true value';
+  it(it20, () => {
+    Log.it(testName, booleanInputValidator, it20, true);
     const value = true;
     const result = Validator.isValidBoolean(value);
     expect(result).toBe(true);
-    Log(testName, booleanInputValidator, `${value} returns ${result}`);
-    done();
+    Log.log(testName, booleanInputValidator, `${value} returns ${result}`);
+    Log.it(testName, booleanInputValidator, it20, false);
   });
 });

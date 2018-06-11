@@ -61,7 +61,7 @@ function shutdownLog(_message, _printNewLine = false) {
 /**
  * Shuts down the Express application
  */
-const shutdown = async function shutdown() {
+const shutdown = () => {
   shutdownLog('Closing express application...', true);
   server.close();
   shutdownLog('Express application closed');

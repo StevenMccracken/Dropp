@@ -1,6 +1,7 @@
 const Utils = require('../utilities/utils');
 const ModelError = require('../errors/ModelError');
 const Validator = require('../utilities/validator');
+const Constants = require('../utilities/constants');
 
 /**
  * Model object for a user
@@ -10,13 +11,22 @@ class User extends Object {
   constructor(_details) {
     super();
     if (!Utils.hasValue(_details)) {
-      ModelError.throwConstructorError('User', 'details arg has no value');
+      ModelError.throwConstructorError(
+        Constants.params.User,
+        Constants.errors.messages.detaisArgNoValue
+      );
     }
 
     const invalidMembers = [];
-    if (!Validator.isValidEmail(_details.email)) invalidMembers.push('email');
-    if (!Validator.isValidUsername(_details.username)) invalidMembers.push('username');
-    if (invalidMembers.length > 0) ModelError.throwInvalidMembersError('User', invalidMembers);
+    if (!Validator.isValidEmail(_details.email)) invalidMembers.push(Constants.params.email);
+    if (!Validator.isValidUsername(_details.username)) {
+      invalidMembers.push(Constants.params.username);
+    }
+
+    if (invalidMembers.length > 0) {
+      ModelError.throwInvalidMembersError(Constants.params.User, invalidMembers);
+    }
+
     this.email = _details.email;
     this.username = _details.username;
     this.follows = [];

@@ -8,18 +8,25 @@ const baseRouteTitle = 'Base route';
 /* eslint-disable no-undef */
 describe(baseRouteTitle, () => {
   beforeEach(() => {
+    Log.beforeEach(testName, baseRouteTitle, true);
     this.options = {
       method: 'GET',
       uri: url,
       resolveWithFullResponse: true,
     };
+
+    Log.beforeEach(testName, baseRouteTitle, false);
   });
 
   afterEach(() => {
+    Log.afterEach(testName, baseRouteTitle, true);
     delete this.options;
+    Log.afterEach(testName, baseRouteTitle, false);
   });
 
-  it('gets the list of routes', async (done) => {
+  const it1 = 'gets the list of routes';
+  it(it1, async (done) => {
+    Log.it(testName, baseRouteTitle, it1, true);
     const response = await Request(this.options);
     expect(response.statusCode).toBe(200);
 
@@ -61,7 +68,8 @@ describe(baseRouteTitle, () => {
     expect(Object.keys(followerRequests).length).toBe(1);
     expect(followerRequests['/<requestedUser>']).toBe('PUT');
 
-    Log(testName, baseRouteTitle, response.body);
+    Log.log(testName, baseRouteTitle, response.body);
+    Log.it(testName, baseRouteTitle, it1, false);
     done();
   });
 });
