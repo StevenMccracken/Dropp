@@ -1,171 +1,200 @@
 const Log = require('../../logger');
+const TestConstants = require('../../constants');
 const Dropp = require('../../../src/models/Dropp');
 const Location = require('../../../src/models/Location');
 const ModelError = require('../../../src/errors/ModelError');
+const Constants = require('../../../src/utilities/constants');
 
-const testName = 'Dropp Model';
 const constructorTitle = 'Constructor';
 /* eslint-disable no-undef */
 describe(constructorTitle, () => {
   beforeEach(() => {
-    Log.beforeEach(testName, constructorTitle, true);
+    Log.beforeEach(TestConstants.models.dropp.testName, constructorTitle, true);
     this.location = new Location({
-      latitude: 0,
-      longitude: 0,
+      latitude: TestConstants.params.defaultLocation,
+      longitude: TestConstants.params.defaultLocation,
     });
 
     this.details = {
       location: this.location,
-      timestamp: 1,
-      username: 'test',
-      text: 'test',
-      media: 'false',
+      timestamp: TestConstants.params.defaultTimestamp,
+      username: TestConstants.params.test,
+      text: TestConstants.params.test,
+      media: TestConstants.params.falseString,
     };
 
-    Log.beforeEach(testName, constructorTitle, false);
+    Log.beforeEach(TestConstants.models.dropp.testName, constructorTitle, false);
   });
 
   afterEach(() => {
-    Log.afterEach(testName, constructorTitle, true);
+    Log.afterEach(TestConstants.models.dropp.testName, constructorTitle, true);
     delete this.details;
     delete this.location;
-    Log.afterEach(testName, constructorTitle, false);
+    Log.afterEach(TestConstants.models.dropp.testName, constructorTitle, false);
   });
 
   const it1 = 'throws an error for an invalid details object';
   it(it1, () => {
-    Log.it(testName, constructorTitle, it1, true);
+    Log.it(TestConstants.models.dropp.testName, constructorTitle, it1, true);
     try {
       const dropp = new Dropp();
       expect(dropp).not.toBeDefined();
-      Log.log(testName, constructorTitle, 'Should have thrown error');
+      Log.log(
+        TestConstants.models.dropp.testName,
+        constructorTitle,
+        TestConstants.messages.shouldHaveThrown
+      );
     } catch (error) {
-      expect(error.name).toBe('ModelError');
+      expect(error.name).toBe(Constants.errors.model.name);
       expect(error.details.type).toBe(ModelError.type.Constructor.type);
-      Log.log(testName, constructorTitle, error);
+      Log.log(TestConstants.models.dropp.testName, constructorTitle, error);
     }
 
-    Log.it(testName, constructorTitle, it1, false);
+    Log.it(TestConstants.models.dropp.testName, constructorTitle, it1, false);
   });
 
   const it2 = 'throws an error for a missing location';
   it(it2, () => {
-    Log.it(testName, constructorTitle, it2, true);
+    Log.it(TestConstants.models.dropp.testName, constructorTitle, it2, true);
     try {
       delete this.details.location;
       const dropp = new Dropp(this.details);
       expect(dropp).not.toBeDefined();
-      Log.log(testName, constructorTitle, 'Should have thrown error');
+      Log.log(
+        TestConstants.models.dropp.testName,
+        constructorTitle,
+        TestConstants.messages.shouldHaveThrown
+      );
     } catch (error) {
-      expect(error.name).toBe('ModelError');
+      expect(error.name).toBe(Constants.errors.model.name);
       expect(error.details.type).toBe(ModelError.type.Constructor.type);
       expect(error.details.details.invalidMembers.length).toBe(1);
-      expect(error.details.details.invalidMembers[0]).toBe('location');
-      Log.log(testName, constructorTitle, error);
+      expect(error.details.details.invalidMembers[0]).toBe(Constants.params.location);
+      Log.log(TestConstants.models.dropp.testName, constructorTitle, error);
     }
 
-    Log.it(testName, constructorTitle, it2, false);
+    Log.it(TestConstants.models.dropp.testName, constructorTitle, it2, false);
   });
 
   const it3 = 'throws an error for an invalid location';
   it(it3, () => {
-    Log.it(testName, constructorTitle, it3, true);
+    Log.it(TestConstants.models.dropp.testName, constructorTitle, it3, true);
     try {
       this.details.location = this.location.databaseData;
       delete this.details.location.latitude;
       const dropp = new Dropp(this.details);
       expect(dropp).not.toBeDefined();
-      Log.log(testName, constructorTitle, 'Should have thrown error');
+      Log.log(
+        TestConstants.models.dropp.testName,
+        constructorTitle,
+        TestConstants.messages.shouldHaveThrown
+      );
     } catch (error) {
-      expect(error.name).toBe('ModelError');
+      expect(error.name).toBe(Constants.errors.model.name);
       expect(error.details.type).toBe(ModelError.type.Constructor.type);
       expect(error.details.details.invalidMembers.length).toBe(1);
-      expect(error.details.details.invalidMembers[0]).toBe('location');
-      Log.log(testName, constructorTitle, error);
+      expect(error.details.details.invalidMembers[0]).toBe(Constants.params.location);
+      Log.log(TestConstants.models.dropp.testName, constructorTitle, error);
     }
 
-    Log.it(testName, constructorTitle, it3, false);
+    Log.it(TestConstants.models.dropp.testName, constructorTitle, it3, false);
   });
 
   const it4 = 'throws an error for a missing timestamp';
   it(it4, () => {
-    Log.it(testName, constructorTitle, it4, true);
+    Log.it(TestConstants.models.dropp.testName, constructorTitle, it4, true);
     try {
       delete this.details.timestamp;
       const dropp = new Dropp(this.details);
       expect(dropp).not.toBeDefined();
-      Log.log(testName, constructorTitle, 'Should have thrown error');
+      Log.log(
+        TestConstants.models.dropp.testName,
+        constructorTitle,
+        TestConstants.messages.shouldHaveThrown
+      );
     } catch (error) {
-      expect(error.name).toBe('ModelError');
+      expect(error.name).toBe(Constants.errors.model.name);
       expect(error.details.type).toBe(ModelError.type.Constructor.type);
       expect(error.details.details.invalidMembers.length).toBe(1);
-      expect(error.details.details.invalidMembers[0]).toBe('timestamp');
-      Log.log(testName, constructorTitle, error);
+      expect(error.details.details.invalidMembers[0]).toBe(Constants.params.timestamp);
+      Log.log(TestConstants.models.dropp.testName, constructorTitle, error);
     }
 
-    Log.it(testName, constructorTitle, it4, false);
+    Log.it(TestConstants.models.dropp.testName, constructorTitle, it4, false);
   });
 
   const it5 = 'throws an error for a missing username';
   it(it5, () => {
-    Log.it(testName, constructorTitle, it5, true);
+    Log.it(TestConstants.models.dropp.testName, constructorTitle, it5, true);
     try {
       delete this.details.username;
       const dropp = new Dropp(this.details);
       expect(dropp).not.toBeDefined();
-      Log.log(testName, constructorTitle, 'Should have thrown error');
+      Log.log(
+        TestConstants.models.dropp.testName,
+        constructorTitle,
+        TestConstants.messages.shouldHaveThrown
+      );
     } catch (error) {
-      expect(error.name).toBe('ModelError');
+      expect(error.name).toBe(Constants.errors.model.name);
       expect(error.details.type).toBe(ModelError.type.Constructor.type);
       expect(error.details.details.invalidMembers.length).toBe(1);
-      expect(error.details.details.invalidMembers[0]).toBe('username');
-      Log.log(testName, constructorTitle, error);
+      expect(error.details.details.invalidMembers[0]).toBe(Constants.params.username);
+      Log.log(TestConstants.models.dropp.testName, constructorTitle, error);
     }
 
-    Log.it(testName, constructorTitle, it5, false);
+    Log.it(TestConstants.models.dropp.testName, constructorTitle, it5, false);
   });
 
   const it6 = 'throws an error for missing text';
   it(it6, () => {
-    Log.it(testName, constructorTitle, it6, true);
+    Log.it(TestConstants.models.dropp.testName, constructorTitle, it6, true);
     try {
       delete this.details.text;
       const dropp = new Dropp(this.details);
       expect(dropp).not.toBeDefined();
-      Log.log(testName, constructorTitle, 'Should have thrown error');
+      Log.log(
+        TestConstants.models.dropp.testName,
+        constructorTitle,
+        TestConstants.messages.shouldHaveThrown
+      );
     } catch (error) {
-      expect(error.name).toBe('ModelError');
+      expect(error.name).toBe(Constants.errors.model.name);
       expect(error.details.type).toBe(ModelError.type.Constructor.type);
       expect(error.details.details.invalidMembers.length).toBe(1);
-      expect(error.details.details.invalidMembers[0]).toBe('text');
-      Log.log(testName, constructorTitle, error);
+      expect(error.details.details.invalidMembers[0]).toBe(Constants.params.text);
+      Log.log(TestConstants.models.dropp.testName, constructorTitle, error);
     }
 
-    Log.it(testName, constructorTitle, it6, false);
+    Log.it(TestConstants.models.dropp.testName, constructorTitle, it6, false);
   });
 
   const it7 = 'throws an error for missing media';
   it(it7, () => {
-    Log.it(testName, constructorTitle, it7, true);
+    Log.it(TestConstants.models.dropp.testName, constructorTitle, it7, true);
     try {
       delete this.details.media;
       const dropp = new Dropp(this.details);
       expect(dropp).not.toBeDefined();
-      Log.log(testName, constructorTitle, 'Should have thrown error');
+      Log.log(
+        TestConstants.models.dropp.testName,
+        constructorTitle,
+        TestConstants.messages.shouldHaveThrown
+      );
     } catch (error) {
-      expect(error.name).toBe('ModelError');
+      expect(error.name).toBe(Constants.errors.model.name);
       expect(error.details.type).toBe(ModelError.type.Constructor.type);
       expect(error.details.details.invalidMembers.length).toBe(1);
-      expect(error.details.details.invalidMembers[0]).toBe('media');
-      Log.log(testName, constructorTitle, error);
+      expect(error.details.details.invalidMembers[0]).toBe(Constants.params.media);
+      Log.log(TestConstants.models.dropp.testName, constructorTitle, error);
     }
 
-    Log.it(testName, constructorTitle, it7, false);
+    Log.it(TestConstants.models.dropp.testName, constructorTitle, it7, false);
   });
 
   const it8 = 'creates a dropp object with the given details';
   it(it8, () => {
-    Log.it(testName, constructorTitle, it8, true);
+    Log.it(TestConstants.models.dropp.testName, constructorTitle, it8, true);
     const dropp = new Dropp(this.details);
     expect(dropp.id).not.toBeDefined();
     expect(dropp.location.latitude).toBe(this.details.location.latitude);
@@ -192,13 +221,13 @@ describe(constructorTitle, () => {
     expect(data.text).toBe(this.details.text);
     expect(data.timestamp).toBe(this.details.timestamp);
     expect(data.username).toBe(this.details.username);
-    Log.log(testName, constructorTitle, dropp);
-    Log.it(testName, constructorTitle, it8, false);
+    Log.log(TestConstants.models.dropp.testName, constructorTitle, dropp);
+    Log.it(TestConstants.models.dropp.testName, constructorTitle, it8, false);
   });
 
   const it9 = 'creates a dropp object with location-like location object';
   it(it9, () => {
-    Log.it(testName, constructorTitle, it9, true);
+    Log.it(TestConstants.models.dropp.testName, constructorTitle, it9, true);
     this.details.location = this.location.databaseData;
     const dropp = new Dropp(this.details);
     expect(dropp.id).not.toBeDefined();
@@ -226,7 +255,7 @@ describe(constructorTitle, () => {
     expect(data.text).toBe(this.details.text);
     expect(data.timestamp).toBe(this.details.timestamp);
     expect(data.username).toBe(this.details.username);
-    Log.log(testName, constructorTitle, dropp);
-    Log.it(testName, constructorTitle, it9, false);
+    Log.log(TestConstants.models.dropp.testName, constructorTitle, dropp);
+    Log.it(TestConstants.models.dropp.testName, constructorTitle, it9, false);
   });
 });

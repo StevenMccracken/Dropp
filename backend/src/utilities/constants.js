@@ -57,15 +57,19 @@ const errors = {
   objectIsNot: _type => `Object is not a ${_type}`,
   database: {
     moduleName: 'Database Error',
+    name: 'DatabaseError',
   },
   dropp: {
     moduleName: 'Dropp Error',
+    name: 'DroppError',
   },
   model: {
     moduleName: 'Model Error',
+    name: 'ModelError',
   },
   storage: {
     moduleName: 'Storage Error',
+    name: 'StorageError',
   },
 };
 

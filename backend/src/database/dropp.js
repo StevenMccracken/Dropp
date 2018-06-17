@@ -141,7 +141,11 @@ const bulkRemove = async (_dropps) => {
   const removals = [];
   _dropps.forEach((dropp) => {
     if (!(dropp instanceof Dropp)) {
-      DroppError.throwServerError(source, null, Constants.errors.objectIsNot(Constants.params.Dropp));
+      DroppError.throwServerError(
+        source,
+        null,
+        Constants.errors.objectIsNot(Constants.params.Dropp)
+      );
     }
 
     if (Utils.hasValue(dropp.id)) removals.push(`${Constants.database.dropp.baseUrl}/${dropp.id}`);
