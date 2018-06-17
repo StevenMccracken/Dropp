@@ -73,7 +73,7 @@ const add = async (_dropp) => {
 
   const invalidMembers = [];
   if (!Validator.isValidTextPost(_dropp.text)) invalidMembers.push('text');
-  if (!Validator.isValidBooleanString(_dropp.media)) invalidMembers.push('media');
+  if (!Validator.isValidBoolean(_dropp.media)) invalidMembers.push('media');
   if (!(_dropp.location instanceof Location)) invalidMembers.push('location');
   if (!Validator.isValidUsername(_dropp.username)) invalidMembers.push('username');
   if (!Validator.isValidTimestamp(_dropp.timestamp)) invalidMembers.push('timestamp');

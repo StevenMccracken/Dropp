@@ -21,7 +21,7 @@ describe(getDroppTitle, () => {
 
     this.testDropp = new Dropp({
       location: this.location,
-      media: TestConstants.params.falseString,
+      media: false,
       text: TestConstants.params.test,
       timestamp: TestConstants.params.defaultTimestamp,
       username: TestConstants.params.test,
@@ -112,7 +112,7 @@ describe(getAllDroppsTitle, () => {
 
     this.testDropp = new Dropp({
       location: this.location,
-      media: TestConstants.params.falseString,
+      media: false,
       text: TestConstants.params.test,
       timestamp: TestConstants.params.defaultTimestamp,
       username: TestConstants.params.test,
@@ -163,7 +163,7 @@ describe(createDroppTitle, () => {
 
     this.testDropp = new Dropp({
       location: this.location,
-      media: TestConstants.params.falseString,
+      media: false,
       text: TestConstants.params.test,
       timestamp: TestConstants.params.defaultTimestamp,
       username: TestConstants.params.test,
@@ -340,7 +340,7 @@ describe(updateDroppTitle, () => {
 
     this.testDropp = new Dropp({
       location: this.location,
-      media: TestConstants.params.falseString,
+      media: false,
       text: TestConstants.params.test,
       timestamp: TestConstants.params.defaultTimestamp,
       username: TestConstants.params.test,
@@ -427,7 +427,7 @@ describe(removeDroppTitle, () => {
 
     this.testDropp = new Dropp({
       location: this.location,
-      media: TestConstants.params.falseString,
+      media: false,
       text: TestConstants.params.test,
       timestamp: TestConstants.params.defaultTimestamp,
       username: TestConstants.params.test,
@@ -492,7 +492,7 @@ describe(bulkRemoveTitle, () => {
 
     this.testDropp1 = new Dropp({
       location: this.location,
-      media: TestConstants.params.falseString,
+      media: false,
       text: TestConstants.params.test,
       timestamp: TestConstants.params.defaultTimestamp,
       username: TestConstants.params.test,
@@ -500,7 +500,7 @@ describe(bulkRemoveTitle, () => {
 
     this.testDropp2 = new Dropp({
       location: this.location,
-      media: TestConstants.params.falseString,
+      media: false,
       text: TestConstants.params.test,
       timestamp: TestConstants.params.defaultTimestamp,
       username: TestConstants.params.test,

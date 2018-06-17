@@ -471,7 +471,7 @@ const respondToFollowerRequest = async (_currentUser, _usernameDetails, _details
   }
 
   let response;
-  if (details.accept === 'true') {
+  if (details.accept === Constants.params.true) {
     await UserAccessor.addFollow(user, _currentUser);
     response = Constants.params.acceptance;
   } else {

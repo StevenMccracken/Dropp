@@ -65,7 +65,7 @@ describe(TestConstants.middleware.dropp.testName, () => {
 
       this.dropp = new Dropp({
         timestamp: TestConstants.params.defaultTimestamp,
-        media: TestConstants.params.falseString,
+        media: false,
         text: Utils.newUuid(),
         location: this.location,
         username: this.user.username,
@@ -200,7 +200,7 @@ describe(TestConstants.middleware.dropp.testName, () => {
       Log.beforeEach(TestConstants.middleware.dropp.testName, getDroppPhotoTitle, true);
       this.dropp = new Dropp({
         text: TestConstants.params.test,
-        media: TestConstants.params.falseString,
+        media: false,
         username: this.user.username,
         timestamp: TestConstants.params.defaultTimestamp,
         location: new Location({
@@ -348,7 +348,7 @@ describe(TestConstants.middleware.dropp.testName, () => {
 
         this.dropp2 = new Dropp({
           text: TestConstants.params.test,
-          media: TestConstants.params.trueString,
+          media: true,
           username: this.user.username,
           timestamp: TestConstants.params.defaultTimestamp,
           location: new Location({
@@ -550,7 +550,7 @@ describe(TestConstants.middleware.dropp.testName, () => {
 
         this.dropp1 = new Dropp({
           location: this.location,
-          media: TestConstants.params.falseString,
+          media: false,
           text: TestConstants.params.test,
           timestamp: TestConstants.params.defaultTimestamp,
           username: this.user.username,
@@ -558,7 +558,7 @@ describe(TestConstants.middleware.dropp.testName, () => {
 
         this.dropp2 = new Dropp({
           location: this.location,
-          media: TestConstants.params.falseString,
+          media: false,
           text: TestConstants.params.test,
           timestamp: TestConstants.params.defaultTimestamp,
           username: this.user2.username,
@@ -628,7 +628,7 @@ describe(TestConstants.middleware.dropp.testName, () => {
 
       this.dropp1 = new Dropp({
         location: this.location,
-        media: TestConstants.params.falseString,
+        media: false,
         text: TestConstants.params.test,
         timestamp: TestConstants.params.defaultTimestamp,
         username: this.user2.username,
@@ -795,7 +795,7 @@ describe(TestConstants.middleware.dropp.testName, () => {
 
       this.dropp1 = new Dropp({
         location: this.location,
-        media: TestConstants.params.falseString,
+        media: false,
         text: TestConstants.params.test,
         timestamp: TestConstants.params.defaultTimestamp,
         username: this.user.username,
@@ -934,7 +934,7 @@ describe(TestConstants.middleware.dropp.testName, () => {
       Log.beforeEach(TestConstants.middleware.dropp.testName, createDroppTitle, true);
       this.droppInfo = {
         text: TestConstants.params.test,
-        media: TestConstants.params.falseString,
+        media: Constants.params.false,
         username: this.user.username,
         timestamp: TestConstants.params.defaultTimestamp,
         location: {
@@ -1082,7 +1082,7 @@ describe(TestConstants.middleware.dropp.testName, () => {
       it(it6, async (done) => {
         Log.it(TestConstants.middleware.dropp.testName, createDroppSuccessTitle, it6, true);
         this.droppInfo.text = TestConstants.utils.strings.tab;
-        this.droppInfo.media = TestConstants.params.trueString;
+        this.droppInfo.media = Constants.params.true;
         const result = await DroppMiddleware.create(this.user, this.droppInfo);
         expect(result.success.message)
           .toBe(Constants.middleware.dropp.messages.success.createDropp);
@@ -1104,7 +1104,7 @@ describe(TestConstants.middleware.dropp.testName, () => {
       Log.beforeEach(TestConstants.middleware.dropp.testName, addPhotoTitle, true);
       this.dropp = new Dropp({
         text: TestConstants.params.test,
-        media: TestConstants.params.falseString,
+        media: false,
         username: this.user.username,
         timestamp: TestConstants.params.defaultTimestamp,
         location: new Location({
@@ -1341,7 +1341,7 @@ describe(TestConstants.middleware.dropp.testName, () => {
         this.shouldDeleteLocalFile = true;
         this.dropp2 = new Dropp({
           text: TestConstants.params.test,
-          media: TestConstants.params.trueString,
+          media: true,
           username: this.user.username,
           timestamp: TestConstants.params.defaultTimestamp,
           location: new Location({
@@ -1414,7 +1414,7 @@ describe(TestConstants.middleware.dropp.testName, () => {
         this.shouldDeleteLocalFile = true;
         this.dropp2 = new Dropp({
           text: TestConstants.params.test,
-          media: TestConstants.params.trueString,
+          media: true,
           username: this.user.username,
           timestamp: TestConstants.params.defaultTimestamp,
           location: new Location({
@@ -1463,7 +1463,7 @@ describe(TestConstants.middleware.dropp.testName, () => {
       Log.beforeEach(TestConstants.middleware.dropp.testName, updateDroppTextTitle, true);
       this.dropp = new Dropp({
         text: TestConstants.params.test,
-        media: TestConstants.params.falseString,
+        media: false,
         username: this.user.username,
         timestamp: TestConstants.params.defaultTimestamp,
         location: new Location({
@@ -1655,7 +1655,7 @@ describe(TestConstants.middleware.dropp.testName, () => {
       this.shouldDeleteDropp = true;
       this.dropp = new Dropp({
         text: TestConstants.params.test,
-        media: TestConstants.params.falseString,
+        media: false,
         username: this.user.username,
         timestamp: TestConstants.params.defaultTimestamp,
         location: new Location({
@@ -1799,7 +1799,7 @@ describe(TestConstants.middleware.dropp.testName, () => {
 
         this.dropp2 = new Dropp({
           text: TestConstants.params.test,
-          media: TestConstants.params.trueString,
+          media: true,
           username: this.user.username,
           timestamp: TestConstants.params.defaultTimestamp,
           location: new Location({

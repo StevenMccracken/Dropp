@@ -169,8 +169,6 @@ module.exports = {
     defaultTimestamp: 1,
     testAddress: 'testAddress',
     updatedValue: 'updated value',
-    trueString: 'true',
-    falseString: 'false',
     testEmail: 'test@test.com',
     uuidEmail: () => `${Utils.newUuid()}@${Utils.newUuid()}.com`,
     invalidChars: {

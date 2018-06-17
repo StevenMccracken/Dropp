@@ -71,7 +71,7 @@ const getPhoto = async (_currentUser, _details) => {
   Log.log(Constants.middleware.dropp.moduleName, source, _currentUser, _details);
 
   const dropp = await get(_currentUser, _details);
-  if (dropp.media === 'false') {
+  if (dropp.media === false) {
     DroppError.throwResourceError(source, Constants.middleware.dropp.messages.errors.noMedia);
   }
 
@@ -222,7 +222,7 @@ const create = async (_currentUser, _details) => {
     }
   } else invalidMembers.push(Constants.params.location);
   if (invalidMembers.length > 0) DroppError.throwInvalidRequestError(source, invalidMembers);
-  if (details.media === 'false' && details.text.toString().trim().length === 0) {
+  if (details.media === Constants.params.false && details.text.toString().trim().length === 0) {
     DroppError.throwResourceError(
       source,
       Constants.middleware.dropp.messages.errors.mustContainText
@@ -231,7 +231,7 @@ const create = async (_currentUser, _details) => {
 
   const droppInfo = {
     text: details.text.toString().trim(),
-    media: details.media,
+    media: details.media === Constants.params.true,
     username: details.username,
     timestamp: details.timestamp,
     location: new Location({
@@ -297,7 +297,7 @@ const addPhoto = async (_currentUser, _details) => {
     DroppError.throwResourceError(source, Constants.middleware.messages.unauthorizedAccess);
   }
 
-  if (dropp.media === 'false') {
+  if (dropp.media === false) {
     await Utils.deleteLocalFile(details.filePath);
     DroppError.throwResourceError(
       source,
@@ -370,7 +370,7 @@ const updateText = async (_currentUser, _details) => {
     DroppError.throwResourceError(source, Constants.errors.messages.newValueMustBeDifferent);
   }
 
-  if (dropp.media === 'false' && newText.length === 0) {
+  if (dropp.media === false && newText.length === 0) {
     DroppError.throwResourceError(
       source,
       Constants.middleware.dropp.messages.errors.mustContainText
@@ -413,7 +413,7 @@ const remove = async (_currentUser, _details) => {
   }
 
   await DroppAccessor.remove(dropp);
-  if (dropp.media === 'true') {
+  if (dropp.media === true) {
     await CloudStorage.remove(Constants.middleware.dropp.cloudStorageFolder, dropp.id);
   }
 

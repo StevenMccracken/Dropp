@@ -785,7 +785,7 @@ describe(removeUserTitle, () => {
 
     this.dropp = new Dropp({
       text: TestConstants.params.test,
-      media: TestConstants.params.falseString,
+      media: false,
       username: this.user.username,
       timestamp: TestConstants.params.defaultTimestamp,
       location: new Location({

@@ -20,7 +20,7 @@ describe(constructorTitle, () => {
       timestamp: TestConstants.params.defaultTimestamp,
       username: TestConstants.params.test,
       text: TestConstants.params.test,
-      media: TestConstants.params.falseString,
+      media: false,
     };
 
     Log.beforeEach(TestConstants.models.dropp.testName, constructorTitle, false);

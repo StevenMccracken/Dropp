@@ -8,6 +8,8 @@ const params = {
   user: 'user',
   User: 'User',
   text: 'text',
+  true: 'true',
+  false: 'false',
   media: 'media',
   dropp: 'dropp',
   Dropp: 'Dropp',

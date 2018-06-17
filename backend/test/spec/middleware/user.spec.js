@@ -1918,7 +1918,7 @@ describe(TestConstants.middleware.user.testName, () => {
           it1,
           true
         );
-        const details = { accept: TestConstants.params.trueString };
+        const details = { accept: Constants.params.true };
         const usernameDetails = {
           username: this.testUser2.username,
           requestedUser: this.testUser.username,
@@ -1947,7 +1947,7 @@ describe(TestConstants.middleware.user.testName, () => {
       const it2 = 'declines a follower request';
       it(it2, async (done) => {
         Log.it(TestConstants.middleware.user.testName, respondToFollowerRequestTitle, it2, true);
-        const details = { accept: TestConstants.params.falseString };
+        const details = { accept: Constants.params.false };
         const usernameDetails = {
           username: this.testUser2.username,
           requestedUser: this.testUser.username,
@@ -1980,7 +1980,7 @@ describe(TestConstants.middleware.user.testName, () => {
         );
         this.invalidUsername = TestConstants.params.test;
         this.invalidDetails = {
-          accept: TestConstants.params.trueString,
+          accept: Constants.params.true,
         };
 
         Log.beforeEach(
@@ -2467,7 +2467,7 @@ describe(TestConstants.middleware.user.testName, () => {
     describe(updateFollowFollowerTitle, () => {
       beforeEach(async (done) => {
         Log.beforeEach(TestConstants.middleware.user.testName, updateFollowFollowerTitle, true);
-        const details = { accept: TestConstants.params.trueString };
+        const details = { accept: Constants.params.true };
         const user1Details = {
           username: this.testUser.username,
           requestedUser: this.testUser2.username,
@@ -2961,7 +2961,7 @@ describe(TestConstants.middleware.user.testName, () => {
       Log.beforeEach(TestConstants.middleware.user.testName, removeUserTitle, true);
       this.dropp = new Dropp({
         text: TestConstants.params.test,
-        media: TestConstants.params.falseString,
+        media: false,
         username: this.newUser.username,
         timestamp: TestConstants.params.defaultTimestamp,
         location: new Location({

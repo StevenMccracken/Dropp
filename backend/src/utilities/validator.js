@@ -3,6 +3,7 @@
  */
 
 const Utils = require('./utils');
+const Constants = require('./constants');
 
 /**
  * Validates a given Firebase ID
@@ -111,7 +112,7 @@ const validateTextPost = text => typeof text === 'string';
  */
 const validateBooleanString = (_booleanString) => {
   if (typeof _booleanString !== 'string') return false;
-  return _booleanString === 'true' || _booleanString === 'false';
+  return _booleanString === Constants.params.true || _booleanString === Constants.params.false;
 };
 
 /**

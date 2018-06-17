@@ -41,7 +41,7 @@ class Dropp extends Object {
       invalidMembers.push(Constants.params.text);
     }
 
-    if (!Validator.isValidBooleanString(_details.media)) {
+    if (!Validator.isValidBoolean(_details.media)) {
       invalidMembers.push(Constants.params.media);
     }
 

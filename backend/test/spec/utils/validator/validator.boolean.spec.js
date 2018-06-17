@@ -1,5 +1,6 @@
 const Log = require('../../../logger');
 const TestConstants = require('../../../constants');
+const Constants = require('../../../../src/utilities/constants');
 const Validator = require('../../../../src/utilities/validator');
 
 const isValidBooleanStringTitle = 'isValidBooleanString()';
@@ -288,7 +289,7 @@ describe(isValidBooleanStringTitle, () => {
   const it21 = 'should return true for a string containing a boolean true value';
   it(it21, () => {
     Log.it(TestConstants.validator.testName, isValidBooleanStringTitle, it21, true);
-    const value = TestConstants.params.trueString;
+    const value = Constants.params.true;
     const result = Validator.isValidBooleanString(value);
     expect(result).toBe(true);
     Log.log(
@@ -302,7 +303,7 @@ describe(isValidBooleanStringTitle, () => {
   const it22 = 'should return true for a string containing a boolean false value';
   it(it22, () => {
     Log.it(TestConstants.validator.testName, isValidBooleanStringTitle, it22, true);
-    const value = TestConstants.params.falseString;
+    const value = Constants.params.false;
     const result = Validator.isValidBooleanString(value);
     expect(result).toBe(true);
     Log.log(
