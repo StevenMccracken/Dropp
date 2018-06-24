@@ -227,7 +227,9 @@ const router = {
         base: '/users/:username',
         email: '/users/:username/email',
         password: '/users/:username/password',
+        dropps: '/users/:username/dropps',
         follows: {
+          dropps: '/users/:username/follows/dropps',
           follow: '/users/:username/follows/:follow',
           requests: {
             base: '/users/:username/follows/requests',
@@ -240,6 +242,14 @@ const router = {
             requestedUser: '/users/:username/followers/requests/:requestedUser',
           },
         },
+      },
+    },
+    dropps: {
+      base: '/dropps',
+      dropp: {
+        base: '/dropps/:id',
+        text: '/dropps/:id/text',
+        media: '/dropps/:id/media',
       },
     },
   },
@@ -256,7 +266,9 @@ const router = {
         ],
         '/email': 'PUT',
         '/password': 'PUT',
+        '/dropps': 'GET',
         '/follows': {
+          '/dropps': 'GET',
           '/<follow>': 'DELETE',
           '/requests': {
             '/': 'POST',
@@ -269,6 +281,20 @@ const router = {
             '/<requestedUser>': 'PUT',
           },
         },
+      },
+    },
+    '/dropps': {
+      '/': [
+        'GET',
+        'POST',
+      ],
+      '/<dropp>': {
+        '/': [
+          'GET',
+          'DELETE',
+        ],
+        '/text': 'PUT',
+        '/media': 'POST',
       },
     },
   },

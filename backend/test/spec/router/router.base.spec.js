@@ -32,7 +32,7 @@ describe(baseRouteTitle, () => {
 
     // Verify routes
     const routes = JSON.parse(response.body);
-    expect(Object.keys(routes).length).toBe(4);
+    expect(Object.keys(routes).length).toBe(5);
     expect(routes[Constants.router.routes.base]).toBe(TestConstants.router.methods.get);
     expect(routes[Constants.router.routes.welcome]).toBe(TestConstants.router.methods.get);
     expect(routes[Constants.router.routes.auth]).toBe(TestConstants.router.methods.post);
@@ -42,7 +42,7 @@ describe(baseRouteTitle, () => {
     expect(users[Constants.router.routes.base]).toBe(TestConstants.router.methods.post);
 
     const username = users[TestConstants.router.subroutes.anyUsername];
-    expect(Object.keys(username).length).toBe(5);
+    expect(Object.keys(username).length).toBe(6);
 
     const baseUsername = username[Constants.router.routes.base];
     expect(baseUsername[0]).toBe(TestConstants.router.methods.get);
@@ -51,9 +51,11 @@ describe(baseRouteTitle, () => {
     expect(username[TestConstants.router.subroutes.email]).toBe(TestConstants.router.methods.put);
     expect(username[TestConstants.router.subroutes.password])
       .toBe(TestConstants.router.methods.put);
+    expect(username[TestConstants.router.subroutes.dropps]).toBe(TestConstants.router.methods.get);
 
     const follows = username[TestConstants.router.subroutes.follows];
-    expect(Object.keys(follows).length).toBe(2);
+    expect(Object.keys(follows).length).toBe(3);
+    expect(follows[TestConstants.router.subroutes.dropps]).toBe(TestConstants.router.methods.get);
     expect(follows[TestConstants.router.subroutes.anyFollow])
       .toBe(TestConstants.router.methods.delete);
 
@@ -72,6 +74,25 @@ describe(baseRouteTitle, () => {
     expect(Object.keys(followerRequests).length).toBe(1);
     expect(followerRequests[TestConstants.router.subroutes.anyRequestedUser])
       .toBe(TestConstants.router.methods.put);
+
+    const dropps = routes[Constants.router.routes.dropps.base];
+    expect(Object.keys(users).length).toBe(2);
+
+    const baseDropps = dropps[Constants.router.routes.base];
+    expect(Array.isArray(baseDropps)).toBe(true);
+    expect(baseDropps[0]).toBe(TestConstants.router.methods.get);
+    expect(baseDropps[1]).toBe(TestConstants.router.methods.post);
+
+    const dropp = dropps[TestConstants.router.subroutes.anyDropp];
+    expect(Object.keys(dropp).length).toBe(3);
+
+    const baseDropp = dropp[Constants.router.routes.base];
+    expect(Array.isArray(baseDropp)).toBe(true);
+    expect(baseDropp[0]).toBe(TestConstants.router.methods.get);
+    expect(baseDropp[1]).toBe(TestConstants.router.methods.delete);
+
+    expect(dropp[TestConstants.router.subroutes.text]).toBe(TestConstants.router.methods.put);
+    expect(dropp[TestConstants.router.subroutes.media]).toBe(TestConstants.router.methods.post);
 
     Log.log(TestConstants.router.testName, baseRouteTitle, response.body);
     Log.it(TestConstants.router.testName, baseRouteTitle, it1, false);

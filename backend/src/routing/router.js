@@ -9,6 +9,7 @@ const DroppError = require('../errors/DroppError');
 const Constants = require('../utilities/constants');
 const UserMiddleware = require('../middleware/user');
 const ErrorLogAccessor = require('../database/error');
+const DroppMiddleware = require('../middleware/dropp');
 
 /**
  * Sends an error response in JSON format
@@ -330,6 +331,24 @@ const routing = (_router) => {
     .delete(async (request, response, next) => {
       try {
         const result = await UserMiddleware.remove(request.user, request.params);
+        response.json(result);
+      } catch (error) {
+        next(error);
+      }
+    });
+
+  /**
+   * Method: GET
+   * Authentication: Yes
+   * Details: Retrieves a dropp by it's ID
+   * URL parameters:
+   *  id
+   */
+  router.route(Constants.router.routes.dropps.dropp.base)
+    .all(validateAuthToken)
+    .get(async (request, response, next) => {
+      try {
+        const result = await DroppMiddleware.get(request.user, request.params);
         response.json(result);
       } catch (error) {
         next(error);

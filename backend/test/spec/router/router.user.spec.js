@@ -227,7 +227,7 @@ describe(getUserRouteTitle, () => {
       headers: {},
     };
 
-    this.updateUrl = function updateUrl(_user) {
+    this.updateUrl = (_user) => {
       this.options.uri = `${url}/${_user}`;
     };
 
@@ -414,7 +414,7 @@ describe(updateUserRouteTitle, () => {
       },
     };
 
-    this.updateUrl = function updateUrl(_user, _attribute) {
+    this.updateUrl = (_user, _attribute) => {
       this.options.uri = `${url}/${_user}/${_attribute}`;
     };
 
@@ -769,7 +769,7 @@ describe(removeUserTitle, () => {
       headers: {},
     };
 
-    this.updateUrl = function updateUrl(_user) {
+    this.updateUrl = (_user) => {
       this.options.uri = `${url}/${_user}`;
     };
 
@@ -953,7 +953,7 @@ describe(interUserRoutes, () => {
         form: {},
       };
 
-      this.updateUrl = function updateUrl(_user) {
+      this.updateUrl = (_user) => {
         this.options.uri = `${url}/${_user}${TestConstants.router.subroutes.follows}${TestConstants.router.subroutes.requests}`;
       };
 
@@ -1207,7 +1207,7 @@ describe(interUserRoutes, () => {
         form: {},
       };
 
-      this.updateUrl = function updateUrl(_user, _requestedUser) {
+      this.updateUrl = (_user, _requestedUser) => {
         this.options.uri = `${url}/${_user}${TestConstants.router.subroutes.follows}${TestConstants.router.subroutes.requests}/${_requestedUser}`;
       };
 
@@ -1466,7 +1466,7 @@ describe(interUserRoutes, () => {
         form: {},
       };
 
-      this.updateUrl = function updateUrl(_user, _requestedUser) {
+      this.updateUrl = (_user, _requestedUser) => {
         this.options.uri = `${url}/${_user}${TestConstants.router.subroutes.followers}${TestConstants.router.subroutes.requests}/${_requestedUser}`;
       };
 
@@ -1786,7 +1786,7 @@ describe(interUserRoutes, () => {
         headers: {},
       };
 
-      this.updateUrl = function updateUrl(_user, _follow) {
+      this.updateUrl = (_user, _follow) => {
         this.options.uri = `${url}/${_user}${TestConstants.router.subroutes.follows}/${_follow}`;
       };
 
@@ -2042,7 +2042,7 @@ describe(interUserRoutes, () => {
         headers: {},
       };
 
-      this.updateUrl = function updateUrl(_user, _follower) {
+      this.updateUrl = (_user, _follower) => {
         this.options.uri = `${url}/${_user}${TestConstants.router.subroutes.followers}/${_follower}`;
       };
 
