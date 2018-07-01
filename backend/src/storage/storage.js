@@ -91,6 +91,74 @@ const get = async (_folder, _fileName) => {
 };
 
 /**
+ * Adds a given string as a file in cloud storage
+ * @param {String} _folder the name of the folder
+ * to to add to. Use empty string for base folder
+ * @param {String} _fileName the name the uploaded file should have
+ * @param {String} string the string to add
+ * to cloud storage. Should be base-64 encoded
+ * @return {Promise} rejects when an upload error
+ * occurs, and resolves when the upload is complete
+ * @throws {StorageError} for invalid `_folder`,
+ * `fileName`, or `_filePath`. Throws if file already exists
+ */
+const addString = async (folder, filename, string) => {
+  const source = 'addString()';
+  Log.log(Constants.storage.moduleName, source, folder, filename, string);
+
+  if (!didInitializeBucket) StorageError.throwInvalidStateError(source);
+  const invalidMembers = [];
+  if (typeof folder !== 'string') invalidMembers.push(Constants.params.folder);
+  if (typeof filename !== 'string' || filename.trim().length === 0) {
+    invalidMembers.push(Constants.params.fileName);
+  }
+
+  if (typeof string !== 'string' || string.trim().length === 0) {
+    invalidMembers.push(Constants.params.string);
+  }
+
+  if (invalidMembers.length > 0) StorageError.throwInvalidMembersError(source, invalidMembers);
+  Log.log(Constants.storage.moduleName, source, Constants.storage.messages.configuringStorageFile);
+  const file = this.bucket.file(`${folder}${filename}`);
+  const doesFileExist = await file.exists();
+  if (Array.isArray(doesFileExist) && doesFileExist.length > 0 && doesFileExist[0] === true) {
+    DroppError.throwResourceError(source, Constants.storage.messages.errors.fileAlreadyExists);
+  }
+
+  const promise = new Promise((resolve, reject) => {
+    Log.log(Constants.storage.moduleName, source, Constants.storage.messages.creatingRemoteStream);
+    const remoteWriteStream = file.createWriteStream({ resumable: false });
+
+    Log.log(Constants.storage.moduleName, source, Constants.storage.messages.creatingLocalStream);
+    const buffer = Buffer.from(string, 'base64');
+    const inMemoryStream = Utils.bufferToStream(buffer);
+    remoteWriteStream.on(Constants.storage.streamEvents.error, (uploadError) => {
+      Log.log(
+        Constants.storage.moduleName,
+        source,
+        Constants.storage.messages.errors.uploadError,
+        uploadError
+      );
+      reject(StorageError.format(StorageError.type.Unknown, source, uploadError));
+    });
+
+    remoteWriteStream.on(Constants.storage.streamEvents.finish, async () => {
+      Log.log(
+        Constants.storage.moduleName,
+        source,
+        Constants.storage.messages.success.finishedUpload
+      );
+      resolve();
+    });
+
+    Log.log(Constants.storage.moduleName, source, Constants.storage.messages.pipingStreams);
+    inMemoryStream.pipe(remoteWriteStream);
+  });
+
+  return promise;
+};
+
+/**
  * Uploads a file to cloud storage
  * @param {String} _folder the name of the folder to
  * to retrieve from. Use empty string for base folder
@@ -194,6 +262,7 @@ module.exports = {
   get,
   add,
   remove,
+  addString,
   initializeBucket,
   didInitializeBucket,
 };

@@ -177,4 +177,65 @@ describe(TestConstants.router.testName, () => {
       done();
     });
   });
+
+  const createDroppRouteTitle = 'Create dropp route';
+  describe(createDroppRouteTitle, () => {
+    beforeEach(() => {
+      Log.beforeEach(TestConstants.router.testName, createDroppRouteTitle, true);
+      this.options = {
+        method: TestConstants.router.methods.post,
+        uri: url,
+        resolveWithFullResponse: true,
+        headers: {
+          authorization: this.authToken,
+        },
+      };
+
+      this.details = {
+        timestamp: TestConstants.params.defaultTimestamp,
+        media: Constants.params.false,
+        text: Utils.newUuid(),
+        username: this.user1.username,
+        location: {
+          latitude: TestConstants.params.defaultLocation,
+          longitude: TestConstants.params.defaultLocation,
+        },
+      };
+
+      Log.beforeEach(TestConstants.router.testName, getDroppRouteTitle, false);
+    });
+
+    afterEach(async (done) => {
+      Log.afterEach(TestConstants.router.testName, createDroppRouteTitle, true);
+      if (Utils.hasValue(this.dropp1)) await DroppMiddleware.remove(this.user1, this.dropp1);
+      delete this.options;
+      delete this.details;
+      Log.afterEach(TestConstants.router.testName, createDroppRouteTitle, false);
+      done();
+    });
+
+    const it1 = 'returns an authentication error for a missing auth token';
+    it(it1, async (done) => {
+      Log.it(TestConstants.router.testName, createDroppRouteTitle, it1, true);
+      delete this.options.headers.authorization;
+      try {
+        const response = await Request(this.options);
+        expect(response).not.toBeDefined();
+        Log.log(
+          TestConstants.router.testName,
+          createDroppRouteTitle,
+          TestConstants.messages.shouldHaveThrown
+        );
+      } catch (response) {
+        expect(response.statusCode).toBe(DroppError.type.Auth.status);
+        const details = JSON.parse(response.error);
+        expect(details.error.type).toBe(DroppError.type.Auth.type);
+        expect(details.error.message).toBe(DroppError.TokenReason.missing);
+        Log.log(TestConstants.router.testName, createDroppRouteTitle, response.error);
+      }
+
+      Log.it(TestConstants.router.testName, createDroppRouteTitle, it1, false);
+      done();
+    });
+  });
 });

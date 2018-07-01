@@ -139,6 +139,19 @@ const validateFilePath = async (_path) => {
   return fileInfo.isFile();
 };
 
+/**
+ * Determines whether or not a given Base-64
+ * encoded string contains valid media data
+ * @param {String} base64String the base-64 encoded media
+ * @return {Boolean} the validity of the given media
+ */
+const validateBase64Media = (base64String) => {
+  if (typeof base64String !== 'string' || base64String.length < 13) return false;
+  const encoding = base64String.substring(0, 14);
+  return encoding === Constants.media.base64DataTypes.png
+    || encoding === Constants.media.base64DataTypes.jpg;
+};
+
 module.exports = {
   isValidEmail: validateEmail,
   isValidNumber: validateNumber,
@@ -153,4 +166,5 @@ module.exports = {
   isValidBooleanString: validateBooleanString,
   isValidBoolean: validateBoolean,
   isValidFilePath: validateFilePath,
+  isValidBase64Media: validateBase64Media,
 };

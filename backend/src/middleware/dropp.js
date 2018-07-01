@@ -12,8 +12,10 @@ const UserAccessor = require('../database/user');
 const DroppError = require('../errors/DroppError');
 const CloudStorage = require('../storage/storage');
 const DroppAccessor = require('../database/dropp');
+const ErrorAccessor = require('../database/error');
 const Validator = require('../utilities/validator');
 const Constants = require('../utilities/constants');
+const StorageError = require('../errors/StorageError');
 
 /**
  * Retrieves all dropps and returns a given filtered result
@@ -203,10 +205,17 @@ const create = async (_currentUser, _details) => {
     DroppError.throwServerError(source, null, Constants.errors.objectIsNot(Constants.params.User));
   }
 
+  let hasMedia = false;
   const invalidMembers = [];
   const details = Utils.hasValue(_details) ? _details : {};
   if (!Validator.isValidTextPost(details.text)) invalidMembers.push(Constants.params.text);
-  if (!Validator.isValidBooleanString(details.media)) invalidMembers.push(Constants.params.media);
+  if (Validator.isValidBooleanString(details.media)) {
+    hasMedia = details.media === Constants.params.true;
+    if (hasMedia && !Validator.isValidBase64Media(details.base64Data)) {
+      invalidMembers.push(Constants.params.base64Data);
+    }
+  } else invalidMembers.push(Constants.params.media);
+
   if (!Validator.isValidUsername(details.username)) invalidMembers.push(Constants.params.username);
   if (!Validator.isValidTimestamp(details.timestamp)) {
     invalidMembers.push(Constants.params.timestamp);
@@ -221,8 +230,9 @@ const create = async (_currentUser, _details) => {
       invalidMembers.push(Constants.params.longitude);
     }
   } else invalidMembers.push(Constants.params.location);
+
   if (invalidMembers.length > 0) DroppError.throwInvalidRequestError(source, invalidMembers);
-  if (details.media === Constants.params.false && details.text.toString().trim().length === 0) {
+  if (!hasMedia && details.text.toString().trim().length === 0) {
     DroppError.throwResourceError(
       source,
       Constants.middleware.dropp.messages.errors.mustContainText
@@ -231,7 +241,7 @@ const create = async (_currentUser, _details) => {
 
   const droppInfo = {
     text: details.text.toString().trim(),
-    media: details.media === Constants.params.true,
+    media: hasMedia,
     username: details.username,
     timestamp: details.timestamp,
     location: new Location({
@@ -247,6 +257,20 @@ const create = async (_currentUser, _details) => {
       message: Constants.middleware.dropp.messages.success.createDropp,
     },
   };
+
+  if (hasMedia) {
+    try {
+      await CloudStorage.addString(
+        Constants.middleware.dropp.cloudStorageFolder,
+        dropp.id,
+        details.base64Data
+      );
+    } catch (uploadError) {
+      // Indicate partial-failure and log error asynchronously
+      result.mediaUploadError = StorageError.type.Unknown;
+      ErrorAccessor.add(uploadError);
+    }
+  }
 
   return result;
 };

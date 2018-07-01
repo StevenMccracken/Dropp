@@ -355,6 +355,17 @@ const routing = (_router) => {
       }
     });
 
+  router.route(Constants.router.routes.dropps.base)
+    .all(validateAuthToken)
+    .post(async (request, response, next) => {
+      try {
+        const result = await DroppMiddleware.create(request.user, request.body);
+        response.json(result);
+      } catch (error) {
+        next(error);
+      }
+    });
+
   return router;
 };
 

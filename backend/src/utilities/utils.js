@@ -7,6 +7,7 @@ const Uuid = require('uuid/v4');
 const Moment = require('moment');
 const FileSystem = require('fs');
 const Constants = require('./constants');
+const { Duplex } = require('stream').Duplex;
 
 const LstatPromise = Util.promisify(FileSystem.lstat);
 const UnlinkPromise = Util.promisify(FileSystem.unlink);
@@ -105,6 +106,18 @@ const deleteLocalFile = async (_path) => {
   return true;
 };
 
+/**
+ * Adds a given buffer to a stream
+ * @param {Buffer} _buffer the buffer to add.
+ * Will not be added if type is not `Buffer`
+ * @return {Duplex} stream from `_buffer`
+ */
+const bufferToStream = (_buffer) => {
+  const stream = new Duplex();
+  if (Buffer.isBuffer(_buffer)) stream.push(_buffer);
+  stream.push(null);
+  return stream;
+};
 
 module.exports = {
   Moment,
@@ -113,6 +126,7 @@ module.exports = {
   hasValue,
   getIpAddress,
   getRequestId,
+  bufferToStream,
   reduceToString,
   deleteLocalFile,
   degreesToRadians,

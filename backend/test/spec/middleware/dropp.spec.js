@@ -1083,14 +1083,23 @@ describe(TestConstants.middleware.dropp.testName, () => {
         Log.it(TestConstants.middleware.dropp.testName, createDroppSuccessTitle, it6, true);
         this.droppInfo.text = TestConstants.utils.strings.tab;
         this.droppInfo.media = Constants.params.true;
+        this.droppInfo.base64Data = `${Constants.media.base64DataTypes.png}${TestConstants.media.base64DataTypes.test}`;
         const result = await DroppMiddleware.create(this.user, this.droppInfo);
+        expect(result.mediaUploadError).not.toBeDefined();
         expect(result.success.message)
           .toBe(Constants.middleware.dropp.messages.success.createDropp);
         expect(typeof result.success.droppId).toBe('string');
         expect(result.success.droppId.length > 0).toBe(true);
+
+        // Validate results from the backend
         this.dropp = await DroppAccessor.get(result.success.droppId);
         expect(this.dropp.id).toBe(result.success.droppId);
         expect(this.dropp.text).toBe('');
+        expect(this.dropp.media).toBe(true);
+
+        const media = await DroppMiddleware.getPhoto(this.user, { id: this.dropp.id });
+        expect(media.success.mimeType).toBe(Constants.media.mimeTypes.png);
+        expect(media.success.base64Data).toBe(this.droppInfo.base64Data);
         Log.log(TestConstants.middleware.dropp.testName, createDroppSuccessTitle, result);
         Log.it(TestConstants.middleware.dropp.testName, createDroppSuccessTitle, it6, false);
         done();
