@@ -26,7 +26,9 @@ describe(TestConstants.storage.testName, () => {
 
   const getTitle = 'Get';
   describe(getTitle, () => {
-    it('throws an error for invalid folder and filename', async (done) => {
+    const it1 = 'throws an error for invalid folder and filename';
+    it(it1, async (done) => {
+      Log.it(TestConstants.storage.testName, getTitle, it1, true);
       try {
         const result = await CloudStorage.get();
         expect(result).not.toBeDefined();
@@ -39,10 +41,13 @@ describe(TestConstants.storage.testName, () => {
         Log.log(TestConstants.storage.testName, getTitle, error.details);
       }
 
+      Log.it(TestConstants.storage.testName, getTitle, it1, false);
       done();
     });
 
-    it('throws an error for a non-existent file', async (done) => {
+    const it2 = 'throws an error for a non-existent file';
+    it(it2, async (done) => {
+      Log.it(TestConstants.storage.testName, getTitle, it2, true);
       try {
         const result = await CloudStorage.get(
           TestConstants.utils.strings.emptyString,
@@ -56,28 +61,35 @@ describe(TestConstants.storage.testName, () => {
         Log.log(TestConstants.storage.testName, getTitle, error.details);
       }
 
+      Log.it(TestConstants.storage.testName, getTitle, it2, false);
       done();
     });
 
     const successGetTitle = 'Get success';
     describe(successGetTitle, () => {
       beforeEach(async (done) => {
+        Log.beforeEach(TestConstants.storage.testName, successGetTitle, true);
         this.fileInfo = await Helper.copyLocalFile(TestConstants.files.image001);
         await CloudStorage.add(
           TestConstants.utils.strings.emptyString,
           this.fileInfo.filename,
           this.fileInfo.path
         );
+        Log.beforeEach(TestConstants.storage.testName, successGetTitle, false);
         done();
       });
 
       afterEach(async (done) => {
+        Log.afterEach(TestConstants.storage.testName, successGetTitle, true);
         await CloudStorage.remove(TestConstants.utils.strings.emptyString, this.fileInfo.filename);
         delete this.fileInfo;
+        Log.afterEach(TestConstants.storage.testName, successGetTitle, false);
         done();
       });
 
-      it('gets an image from cloud storage', async (done) => {
+      const it3 = 'gets an image from cloud storage';
+      it(it3, async (done) => {
+        Log.it(TestConstants.storage.testName, successGetTitle, it3, true);
         const result = await CloudStorage.get(
           TestConstants.utils.strings.emptyString,
           this.fileInfo.filename
@@ -85,6 +97,7 @@ describe(TestConstants.storage.testName, () => {
         expect(result.mimeType).toBe(Constants.media.mimeTypes.png);
         expect(result.base64Data.length > 0).toBe(true);
         Log.log(TestConstants.storage.testName, successGetTitle, result.mimeType);
+        Log.it(TestConstants.storage.testName, successGetTitle, it3, false);
         done();
       }, Helper.customTimeout);
     });
@@ -93,22 +106,28 @@ describe(TestConstants.storage.testName, () => {
   const addTitle = 'Add';
   describe(addTitle, () => {
     beforeEach(async (done) => {
+      Log.beforeEach(TestConstants.storage.testName, addTitle, true);
       this.fileInfo = await Helper.copyLocalFile(TestConstants.files.image001);
       await CloudStorage.add(
         TestConstants.utils.strings.emptyString,
         this.fileInfo.filename,
         this.fileInfo.path
       );
+      Log.beforeEach(TestConstants.storage.testName, addTitle, false);
       done();
     });
 
     afterEach(async (done) => {
+      Log.afterEach(TestConstants.storage.testName, addTitle, true);
       await CloudStorage.remove(TestConstants.utils.strings.emptyString, this.fileInfo.filename);
       delete this.fileInfo;
+      Log.afterEach(TestConstants.storage.testName, addTitle, false);
       done();
     });
 
-    it('throws an error for invalid folder, filename, and file path', async (done) => {
+    const it1 = 'throws an error for invalid folder, filename, and file path';
+    it(it1, async (done) => {
+      Log.it(TestConstants.storage.testName, addTitle, it1, true);
       try {
         await CloudStorage.add();
         expect(true).toBe(false);
@@ -123,10 +142,13 @@ describe(TestConstants.storage.testName, () => {
         Log.log(TestConstants.storage.testName, addTitle, error.details);
       }
 
+      Log.it(TestConstants.storage.testName, addTitle, it1, false);
       done();
     });
 
-    it('throws an error for a non-existent file path', async (done) => {
+    const it2 = 'throws an error for a non-existent file path';
+    it(it2, async (done) => {
+      Log.it(TestConstants.storage.testName, addTitle, it2, true);
       try {
         await CloudStorage.add(
           TestConstants.utils.strings.emptyString,
@@ -143,10 +165,13 @@ describe(TestConstants.storage.testName, () => {
         Log.log(TestConstants.storage.testName, addTitle, error.details);
       }
 
+      Log.it(TestConstants.storage.testName, addTitle, it2, false);
       done();
     });
 
-    it('throws an error for a non-file file path', async (done) => {
+    const it3 = 'throws an error for a non-file file path';
+    it(it3, async (done) => {
+      Log.it(TestConstants.storage.testName, addTitle, it3, true);
       try {
         await CloudStorage.add(
           TestConstants.utils.strings.emptyString,
@@ -163,10 +188,13 @@ describe(TestConstants.storage.testName, () => {
         Log.log(TestConstants.storage.testName, addTitle, error.details);
       }
 
+      Log.it(TestConstants.storage.testName, addTitle, it3, false);
       done();
     });
 
-    it('throws an error for an already-existing file', async (done) => {
+    const it4 = 'throws an error for an already-existing file';
+    it(it4, async (done) => {
+      Log.it(TestConstants.storage.testName, addTitle, it4, true);
       this.fileInfo = await Helper.copyLocalFile(
         TestConstants.files.image001,
         this.fileInfo.filename
@@ -189,23 +217,30 @@ describe(TestConstants.storage.testName, () => {
       }
 
       await Utils.deleteLocalFile(this.fileInfo.path);
+      Log.it(TestConstants.storage.testName, addTitle, it4, false);
       done();
     }, Helper.customTimeout);
 
     const successAddTitle = 'Add success';
     describe(successAddTitle, () => {
       beforeEach(async (done) => {
+        Log.beforeEach(TestConstants.storage.testName, successAddTitle, true);
         this.fileInfo2 = await Helper.copyLocalFile(TestConstants.files.image001);
+        Log.beforeEach(TestConstants.storage.testName, successAddTitle, false);
         done();
       });
 
       afterEach(async (done) => {
+        Log.afterEach(TestConstants.storage.testName, successAddTitle, true);
         await CloudStorage.remove(TestConstants.utils.strings.emptyString, this.fileInfo2.filename);
         delete this.fileInfo2;
+        Log.afterEach(TestConstants.storage.testName, successAddTitle, false);
         done();
       });
 
-      it('adds a file to cloud storage', async (done) => {
+      const it5 = 'adds a file to cloud storage';
+      it(it5, async (done) => {
+        Log.it(TestConstants.storage.testName, successAddTitle, it5, true);
         await CloudStorage.add(
           TestConstants.utils.strings.emptyString,
           this.fileInfo2.filename,
@@ -220,6 +255,7 @@ describe(TestConstants.storage.testName, () => {
         expect(result.mimeType).toBe(Constants.media.mimeTypes.png);
         expect(result.base64Data.length > 0).toBe(true);
         Log.log(TestConstants.storage.testName, successAddTitle, result.mimeType);
+        Log.it(TestConstants.storage.testName, successAddTitle, it5, false);
         done();
       }, Helper.customTimeout);
     });
@@ -228,6 +264,7 @@ describe(TestConstants.storage.testName, () => {
   const addStringTitle = 'Add string';
   describe(addStringTitle, () => {
     beforeEach(async (done) => {
+      Log.beforeEach(TestConstants.storage.testName, addStringTitle, true);
       this.didAdd = false;
       this.data = Utils.newUuid();
       this.filename = Utils.newUuid();
@@ -237,10 +274,12 @@ describe(TestConstants.storage.testName, () => {
         this.existingFilename,
         Utils.newUuid()
       );
+      Log.beforeEach(TestConstants.storage.testName, addStringTitle, false);
       done();
     });
 
     afterEach(async (done) => {
+      Log.afterEach(TestConstants.storage.testName, addStringTitle, true);
       await CloudStorage.remove(TestConstants.utils.strings.emptyString, this.existingFilename);
       if (this.didAdd === true) {
         await CloudStorage.remove(TestConstants.utils.strings.emptyString, this.filename);
@@ -250,10 +289,13 @@ describe(TestConstants.storage.testName, () => {
       delete this.didAdd;
       delete this.filename;
       delete this.existingFilename;
+      Log.afterEach(TestConstants.storage.testName, addStringTitle, false);
       done();
     });
 
-    it('throws an error for invalid folder, filename, and string', async (done) => {
+    const it1 = 'throws an error for invalid folder, filename, and string';
+    it(it1, async (done) => {
+      Log.it(TestConstants.storage.testName, addStringTitle, it1, true);
       try {
         await CloudStorage.addString();
         expect(true).toBe(false);
@@ -272,10 +314,13 @@ describe(TestConstants.storage.testName, () => {
         Log.log(TestConstants.storage.testName, addStringTitle, error.details);
       }
 
+      Log.it(TestConstants.storage.testName, addStringTitle, it1, false);
       done();
     });
 
-    it('throws an error for an empty filename and string', async (done) => {
+    const it2 = 'throws an error for an empty filename and string';
+    it(it2, async (done) => {
+      Log.it(TestConstants.storage.testName, addStringTitle, it2, true);
       try {
         await CloudStorage.addString(
           TestConstants.utils.strings.emptyString,
@@ -297,10 +342,13 @@ describe(TestConstants.storage.testName, () => {
         Log.log(TestConstants.storage.testName, addStringTitle, error.details);
       }
 
+      Log.it(TestConstants.storage.testName, addStringTitle, it2, false);
       done();
     });
 
-    it('throws an error for an already-existing file', async (done) => {
+    const it3 = 'throws an error for an already-existing file';
+    it(it3, async (done) => {
+      Log.it(TestConstants.storage.testName, addStringTitle, it3, true);
       try {
         await CloudStorage.addString(
           TestConstants.utils.strings.emptyString,
@@ -322,12 +370,15 @@ describe(TestConstants.storage.testName, () => {
         Log.log(TestConstants.storage.testName, addStringTitle, error.details);
       }
 
+      Log.it(TestConstants.storage.testName, addStringTitle, it3, false);
       done();
     }, Helper.customTimeout);
 
     const addStringSuccessTitle = 'Add string success';
     describe(addStringSuccessTitle, () => {
-      it('adds a string to cloud storage', async (done) => {
+      const it4 = 'adds a string to cloud storage';
+      it(it4, async (done) => {
+        Log.it(TestConstants.storage.testName, addStringSuccessTitle, it4, true);
         await CloudStorage.addString(
           TestConstants.utils.strings.emptyString,
           this.filename,
@@ -344,6 +395,7 @@ describe(TestConstants.storage.testName, () => {
 
         this.didAdd = true;
         Log.log(TestConstants.storage.testName, addStringSuccessTitle, result.mimeType);
+        Log.it(TestConstants.storage.testName, addStringSuccessTitle, it4, false);
         done();
       });
     });
@@ -351,7 +403,9 @@ describe(TestConstants.storage.testName, () => {
 
   const removeTitle = 'Remove';
   describe(removeTitle, () => {
-    it('throws an error for invalid folder and filename', async (done) => {
+    const it1 = 'throws an error for invalid folder and filename';
+    it(it1, async (done) => {
+      Log.it(TestConstants.storage.testName, removeTitle, it1, true);
       try {
         const result = await CloudStorage.remove();
         expect(result).not.toBeDefined();
@@ -368,10 +422,13 @@ describe(TestConstants.storage.testName, () => {
         Log.log(TestConstants.storage.testName, removeTitle, error.details);
       }
 
+      Log.it(TestConstants.storage.testName, removeTitle, it1, false);
       done();
     });
 
-    it('throws an error for a non-existent file', async (done) => {
+    const it2 = 'throws an error for a non-existent file';
+    it(it2, async (done) => {
+      Log.it(TestConstants.storage.testName, removeTitle, it2, true);
       try {
         const result = await CloudStorage.remove(
           TestConstants.utils.strings.emptyString,
@@ -389,26 +446,33 @@ describe(TestConstants.storage.testName, () => {
         Log.log(TestConstants.storage.testName, removeTitle, error.details);
       }
 
+      Log.it(TestConstants.storage.testName, removeTitle, it2, false);
       done();
     });
 
     const successRemoveTitle = 'Remove success';
     describe(successRemoveTitle, () => {
       beforeEach(async (done) => {
+        Log.beforeEach(TestConstants.storage.testName, successRemoveTitle, true);
         this.fileInfo = await Helper.copyLocalFile(TestConstants.files.image001);
         await CloudStorage.add(
           TestConstants.utils.strings.emptyString,
           this.fileInfo.filename,
           this.fileInfo.path
         );
+        Log.beforeEach(TestConstants.storage.testName, successRemoveTitle, false);
         done();
       });
 
       afterEach(() => {
+        Log.afterEach(TestConstants.storage.testName, successRemoveTitle, true);
         delete this.fileInfo;
+        Log.afterEach(TestConstants.storage.testName, successRemoveTitle, false);
       });
 
-      it('removes a file from cloud storage', async (done) => {
+      const it3 = 'removes a file from cloud storage';
+      it(it3, async (done) => {
+        Log.it(TestConstants.storage.testName, successRemoveTitle, it3, true);
         await CloudStorage.remove(TestConstants.utils.strings.emptyString, this.fileInfo.filename);
 
         // Verify result from cloud storage
@@ -429,6 +493,7 @@ describe(TestConstants.storage.testName, () => {
           Log.log(TestConstants.storage.testName, removeTitle, error.details);
         }
 
+        Log.it(TestConstants.storage.testName, successRemoveTitle, it3, false);
         done();
       }, Helper.customTimeout);
     });
