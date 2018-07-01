@@ -476,3 +476,23 @@ describe(deleteLocalFileTitle, () => {
     done();
   });
 });
+
+const bufferToStreamTitle = 'bufferToStream function';
+describe(bufferToStreamTitle, () => {
+  const it1 = 'contains length 0 for a non-buffer argument';
+  it(it1, () => {
+    Log.it(TestConstants.utils.testName, bufferToStreamTitle, it1, true);
+    const stream = Utils.bufferToStream('test');
+    expect(stream._readableState.length).toBe(0);
+    Log.it(TestConstants.utils.testName, bufferToStreamTitle, it1, false);
+  });
+
+  const it2 = 'contains length 1 for a buffer argument';
+  it(it2, () => {
+    Log.it(TestConstants.utils.testName, bufferToStreamTitle, it2, true);
+    const buffer = Buffer.from('1');
+    const stream = Utils.bufferToStream(buffer);
+    expect(stream._readableState.length).toBe(1);
+    Log.it(TestConstants.utils.testName, bufferToStreamTitle, it2, false);
+  });
+});

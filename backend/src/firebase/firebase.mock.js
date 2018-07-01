@@ -3,6 +3,7 @@
  */
 
 const Utils = require('../utilities/utils');
+const Constants = require('../utilities/constants');
 
 /**
  * In-memory database
@@ -36,11 +37,11 @@ const set = (_paths, _value) => {
  * @return {[String]} the URL broken up into it's individual paths
  */
 const urlParts = (_url) => {
-  const url = typeof _url === 'string' ? _url : '';
+  const url = typeof _url === 'string' ? _url : Constants.utils.emptyString;
   const parts = url.split('/');
 
   // Drop the first element empty space, if it exists
-  if (parts.length > 0 && parts[0] === '') parts.splice(0, 1);
+  if (parts.length > 0 && parts[0] === Constants.utils.emptyString) parts.splice(0, 1);
   return parts;
 };
 

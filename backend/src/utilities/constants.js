@@ -339,6 +339,7 @@ const storage = {
 // utils
 const utils = {
   moduleName: 'Utils',
+  emptyString: '',
   degress180: 180,
   unixEndTimeSeconds: 2147471999,
   unixEndTimeMilliseconds: 2147471999000,

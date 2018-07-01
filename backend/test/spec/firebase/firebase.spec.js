@@ -152,7 +152,7 @@ describe(addDataTitle, () => {
     const data = { key: TestConstants.params.value };
     const url = await Firebase.add(`/${TestConstants.params.test}`, data);
     const key = url.split('/').pop();
-    expect(key).not.toBe('');
+    expect(key).not.toBe(TestConstants.utils.strings.emptyString);
     this.testDataUrl = `/${TestConstants.params.test}/${key}`;
     Log.log(TestConstants.firebase.testName, addDataTitle, url);
     Log.it(TestConstants.firebase.testName, addDataTitle, it1, false);

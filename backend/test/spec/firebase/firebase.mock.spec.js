@@ -18,7 +18,7 @@ describe(urlPartsTitle, () => {
   const it02 = 'returns empty array for an empty string';
   it(it02, () => {
     Log.it(TestConstants.firebase.mock.testName, urlPartsTitle, it02, true);
-    const result = MockFirebase.urlParts('');
+    const result = MockFirebase.urlParts(TestConstants.utils.strings.emptyString);
     expect(result.length).toBe(0);
     Log.log(TestConstants.firebase.mock.testName, urlPartsTitle, result);
     Log.it(TestConstants.firebase.mock.testName, urlPartsTitle, it02, false);

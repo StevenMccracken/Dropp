@@ -12,7 +12,7 @@ const Constants = require('./constants');
  */
 const validateFirebaseId = (_firebaseId) => {
   if (typeof _firebaseId !== 'string') return false;
-  return _firebaseId.trim() !== '' && !(/[.#$[\]]/).test(_firebaseId);
+  return _firebaseId.trim() !== Constants.utils.emptyString && !(/[.#$[\]]/).test(_firebaseId);
 };
 
 // Data validators for user attributes

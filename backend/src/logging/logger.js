@@ -3,6 +3,7 @@
  */
 
 const Utils = require('../utilities/utils');
+const Constants = require('../utilities/constants');
 
 /**
  * Logs a detailed message about an HTTP request
@@ -19,7 +20,7 @@ const logRequest = (_module, _source, _request, ...args) => {
   const request = Utils.hasValue(_request) ? _request : {};
   const timestamp = new Date().toISOString();
   let formattedMessage;
-  if (appendedMessages === '') {
+  if (appendedMessages === Constants.utils.emptyString) {
     formattedMessage = `{${timestamp}} [${_module} -> ${_source}] (${ipAddress}) <${id}> | ${request.method} ${request.url} |`;
   } else {
     formattedMessage = `{${timestamp}} [${_module} -> ${_source}] (${ipAddress}) <${id}> | ${request.method} ${request.url} |: ${appendedMessages}`;
@@ -39,8 +40,10 @@ const log = (_module, _source, ...args) => {
   const appendedMessages = Utils.reduceToString(args);
   const timestamp = new Date().toISOString();
   let formattedMessage;
-  if (appendedMessages === '') formattedMessage = `{${timestamp}} [${_module} -> ${_source}]`;
-  else formattedMessage = `{${timestamp}} [${_module} -> ${_source}]: ${appendedMessages}`;
+  if (appendedMessages === Constants.utils.emptyString) {
+    formattedMessage = `{${timestamp}} [${_module} -> ${_source}]`;
+  } else formattedMessage = `{${timestamp}} [${_module} -> ${_source}]: ${appendedMessages}`;
+
   console.log(formattedMessage);
   return formattedMessage;
 };

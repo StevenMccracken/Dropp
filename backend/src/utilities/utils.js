@@ -7,7 +7,9 @@ const Uuid = require('uuid/v4');
 const Moment = require('moment');
 const FileSystem = require('fs');
 const Constants = require('./constants');
-const { Duplex } = require('stream').Duplex;
+/* eslint-disable prefer-destructuring */
+const Duplex = require('stream').Duplex;
+/* eslint-enable prefer-destructuring */
 
 const LstatPromise = Util.promisify(FileSystem.lstat);
 const UnlinkPromise = Util.promisify(FileSystem.unlink);
@@ -46,7 +48,7 @@ const getIpAddress = (_request) => {
   const headers = request.headers || {};
   const connection = request.connection || {};
   const ipAddress = headers[Constants.router.xForwardedFor] || connection.remoteAddress;
-  return ipAddress || '';
+  return ipAddress || Constants.utils.emptyString;
 };
 
 /**
@@ -58,7 +60,7 @@ const getIpAddress = (_request) => {
 const getRequestId = (_request) => {
   const request = hasValue(_request) ? _request : {};
   const headers = request.headers || {};
-  return headers.requestId || '';
+  return headers.requestId || Constants.utils.emptyString;
 };
 
 /**
@@ -73,7 +75,7 @@ const reduceToString = (_args) => {
   return args.reduce((message, argument, index) => {
     const formattedArgument = hasValue(argument) ? JSON.stringify(argument) : argument;
     return index === 0 ? formattedArgument : `${message},${formattedArgument}`;
-  }, '');
+  }, Constants.utils.emptyString);
 };
 
 /**

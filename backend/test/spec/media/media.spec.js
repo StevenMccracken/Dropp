@@ -12,7 +12,7 @@ describe(TestConstants.media.testName, () => {
     it(it1, async (done) => {
       Log.it(TestConstants.media.testName, determineMimeTypeTitle, it1, true);
       const result = await Media.determineMimeType();
-      expect(result).toBe('');
+      expect(result).toBe(TestConstants.utils.strings.emptyString);
       Log.log(TestConstants.media.testName, determineMimeTypeTitle, result);
       Log.it(TestConstants.media.testName, determineMimeTypeTitle, it1, false);
       done();
@@ -22,7 +22,7 @@ describe(TestConstants.media.testName, () => {
     it(it2, async (done) => {
       Log.it(TestConstants.media.testName, determineMimeTypeTitle, it2, true);
       const result = await Media.determineMimeType(null);
-      expect(result).toBe('');
+      expect(result).toBe(TestConstants.utils.strings.emptyString);
       Log.log(TestConstants.media.testName, determineMimeTypeTitle, result);
       Log.it(TestConstants.media.testName, determineMimeTypeTitle, it2, false);
       done();
@@ -31,8 +31,8 @@ describe(TestConstants.media.testName, () => {
     const it3 = 'returns an empty string for an empty string argument';
     it(it3, async (done) => {
       Log.it(TestConstants.media.testName, determineMimeTypeTitle, it3, true);
-      const result = await Media.determineMimeType('');
-      expect(result).toBe('');
+      const result = await Media.determineMimeType(TestConstants.utils.strings.emptyString);
+      expect(result).toBe(TestConstants.utils.strings.emptyString);
       Log.log(TestConstants.media.testName, determineMimeTypeTitle, result);
       Log.it(TestConstants.media.testName, determineMimeTypeTitle, it3, false);
       done();
@@ -42,7 +42,7 @@ describe(TestConstants.media.testName, () => {
     it(it4, async (done) => {
       Log.it(TestConstants.media.testName, determineMimeTypeTitle, it4, true);
       const result = await Media.determineMimeType(Utils.newUuid());
-      expect(result).toBe('');
+      expect(result).toBe(TestConstants.utils.strings.emptyString);
       Log.log(TestConstants.media.testName, determineMimeTypeTitle, result);
       Log.it(TestConstants.media.testName, determineMimeTypeTitle, it4, false);
       done();
@@ -64,8 +64,8 @@ describe(TestConstants.media.testName, () => {
   it(it1, () => {
     Log.it(TestConstants.media.testName, encodeToBase64Title, it1, true);
     const result = Media.encodeToBase64();
-    expect(result.mimeType).toBe('');
-    expect(result.base64Data).toBe('');
+    expect(result.mimeType).toBe(TestConstants.utils.strings.emptyString);
+    expect(result.base64Data).toBe(TestConstants.utils.strings.emptyString);
     Log.it(TestConstants.media.testName, encodeToBase64Title, it1, false);
     Log.log(TestConstants.media.testName, encodeToBase64Title, result);
   });
@@ -73,10 +73,10 @@ describe(TestConstants.media.testName, () => {
   const it2 = 'returns an empty string for an empty buffer';
   it(it2, () => {
     Log.it(TestConstants.media.testName, encodeToBase64Title, it2, true);
-    const buffer = Buffer.from('');
+    const buffer = Buffer.from(TestConstants.utils.strings.emptyString);
     const result = Media.encodeToBase64(buffer);
     expect(result.mimeType).toBe(Constants.media.mimeTypes.unknown);
-    expect(result.base64Data).toBe('');
+    expect(result.base64Data).toBe(TestConstants.utils.strings.emptyString);
     Log.it(TestConstants.media.testName, encodeToBase64Title, it2, false);
     Log.log(TestConstants.media.testName, encodeToBase64Title, result);
   });

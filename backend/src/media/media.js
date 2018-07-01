@@ -17,13 +17,13 @@ const determineMimeType = async (_path) => {
 
   const promise = new Promise((resolve) => {
     if (typeof _path !== 'string') {
-      resolve('');
+      resolve(Constants.utils.emptyString);
       return;
     }
 
     const magic = new mmmagic.Magic(mmmagic.MAGIC_MIME_TYPE);
     magic.detectFile(_path, (error, result) => {
-      const type = error ? '' : result;
+      const type = error ? Constants.utils.emptyString : result;
       resolve(type);
     });
   });
@@ -41,8 +41,8 @@ const encodeToBase64 = (_buffer) => {
   Log.log(Constants.media.moduleName, source, _buffer);
 
   const result = {
-    mimeType: '',
-    base64Data: '',
+    mimeType: Constants.utils.emptyString,
+    base64Data: Constants.utils.emptyString,
   };
 
   if (!(_buffer instanceof Buffer)) return result;

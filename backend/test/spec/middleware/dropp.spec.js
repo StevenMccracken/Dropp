@@ -1032,7 +1032,7 @@ describe(TestConstants.middleware.dropp.testName, () => {
     const it4 = 'throws an error for no media and empty text';
     it(it4, async (done) => {
       Log.it(TestConstants.middleware.dropp.testName, createDroppTitle, it4, true);
-      this.droppInfo.text = '';
+      this.droppInfo.text = TestConstants.utils.strings.emptyString;
       try {
         const result = await DroppMiddleware.create(this.user, this.droppInfo);
         expect(result).not.toBeDefined();
@@ -1057,7 +1057,7 @@ describe(TestConstants.middleware.dropp.testName, () => {
     describe(createDroppSuccessTitle, () => {
       afterEach(async (done) => {
         Log.afterEach(TestConstants.middleware.dropp.testName, createDroppSuccessTitle, true);
-        await DroppAccessor.remove(this.dropp);
+        await DroppMiddleware.remove(this.user, this.dropp.publicData);
         delete this.dropp;
         Log.afterEach(TestConstants.middleware.dropp.testName, createDroppSuccessTitle, false);
         done();
@@ -1094,12 +1094,13 @@ describe(TestConstants.middleware.dropp.testName, () => {
         // Validate results from the backend
         this.dropp = await DroppAccessor.get(result.success.droppId);
         expect(this.dropp.id).toBe(result.success.droppId);
-        expect(this.dropp.text).toBe('');
+        expect(this.dropp.text).toBe(TestConstants.utils.strings.emptyString);
         expect(this.dropp.media).toBe(true);
 
         const media = await DroppMiddleware.getPhoto(this.user, { id: this.dropp.id });
         expect(media.success.mimeType).toBe(Constants.media.mimeTypes.png);
-        expect(media.success.base64Data).toBe(this.droppInfo.base64Data);
+        expect(media.success.base64Data)
+          .toBe(this.droppInfo.base64Data.slice(0, this.droppInfo.base64Data.length - 2));
         Log.log(TestConstants.middleware.dropp.testName, createDroppSuccessTitle, result);
         Log.it(TestConstants.middleware.dropp.testName, createDroppSuccessTitle, it6, false);
         done();
