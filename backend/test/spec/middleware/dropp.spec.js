@@ -1053,6 +1053,30 @@ describe(TestConstants.middleware.dropp.testName, () => {
       done();
     });
 
+    const it5 = 'throws an error for true media but invalid media data';
+    it(it5, async (done) => {
+      Log.it(TestConstants.middleware.dropp.testName, createDroppTitle, it5, true);
+      this.droppInfo.media = 'true';
+      this.droppInfo.base64Data = TestConstants.media.base64DataTypes.random;
+      try {
+        const result = await DroppMiddleware.create(this.user, this.droppInfo);
+        expect(result).not.toBeDefined();
+        Log.log(
+          TestConstants.middleware.dropp.testName,
+          createDroppTitle,
+          TestConstants.messages.shouldHaveThrown
+        );
+      } catch (error) {
+        expect(error.name).toBe(Constants.errors.dropp.name);
+        expect(error.details.error.type).toBe(DroppError.type.InvalidRequest.type);
+        expect(error.details.error.message).toBe(Constants.params.base64Data);
+        Log.log(TestConstants.middleware.dropp.testName, createDroppTitle, error.details);
+      }
+
+      Log.it(TestConstants.middleware.dropp.testName, createDroppTitle, it5, false);
+      done();
+    });
+
     const createDroppSuccessTitle = 'Create dropp success';
     describe(createDroppSuccessTitle, () => {
       afterEach(async (done) => {
@@ -1063,9 +1087,9 @@ describe(TestConstants.middleware.dropp.testName, () => {
         done();
       });
 
-      const it5 = 'creates a dropp and returns an ID';
-      it(it5, async (done) => {
-        Log.it(TestConstants.middleware.dropp.testName, createDroppTitle, it5, true);
+      const it6 = 'creates a dropp and returns an ID';
+      it(it6, async (done) => {
+        Log.it(TestConstants.middleware.dropp.testName, createDroppTitle, it6, true);
         const result = await DroppMiddleware.create(this.user, this.droppInfo);
         expect(result.success.message)
           .toBe(Constants.middleware.dropp.messages.success.createDropp);
@@ -1074,13 +1098,13 @@ describe(TestConstants.middleware.dropp.testName, () => {
         this.dropp = await DroppAccessor.get(result.success.droppId);
         expect(this.dropp.id).toBe(result.success.droppId);
         Log.log(TestConstants.middleware.dropp.testName, createDroppSuccessTitle, result);
-        Log.it(TestConstants.middleware.dropp.testName, createDroppTitle, it5, false);
+        Log.it(TestConstants.middleware.dropp.testName, createDroppTitle, it6, false);
         done();
       });
 
-      const it6 = 'creates a dropp with media and no text';
-      it(it6, async (done) => {
-        Log.it(TestConstants.middleware.dropp.testName, createDroppSuccessTitle, it6, true);
+      const it7 = 'creates a dropp with media and no text';
+      it(it7, async (done) => {
+        Log.it(TestConstants.middleware.dropp.testName, createDroppSuccessTitle, it7, true);
         this.droppInfo.text = TestConstants.utils.strings.tab;
         this.droppInfo.media = Constants.params.true;
         this.droppInfo.base64Data = `${Constants.media.base64DataTypes.png}${TestConstants.media.base64DataTypes.test}`;
@@ -1102,7 +1126,7 @@ describe(TestConstants.middleware.dropp.testName, () => {
         expect(media.success.base64Data)
           .toBe(this.droppInfo.base64Data.slice(0, this.droppInfo.base64Data.length - 2));
         Log.log(TestConstants.middleware.dropp.testName, createDroppSuccessTitle, result);
-        Log.it(TestConstants.middleware.dropp.testName, createDroppSuccessTitle, it6, false);
+        Log.it(TestConstants.middleware.dropp.testName, createDroppSuccessTitle, it7, false);
         done();
       });
     });
