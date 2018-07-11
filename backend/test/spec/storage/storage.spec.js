@@ -95,7 +95,7 @@ describe(TestConstants.storage.testName, () => {
           this.fileInfo.filename
         );
         expect(result.mimeType).toBe(Constants.media.mimeTypes.png);
-        expect(result.base64Data.length > 0).toBe(true);
+        expect(result.base64Data.length).toBeGreaterThan(0);
         Log.log(TestConstants.storage.testName, successGetTitle, result.mimeType);
         Log.it(TestConstants.storage.testName, successGetTitle, it3, false);
         done();
@@ -253,7 +253,7 @@ describe(TestConstants.storage.testName, () => {
           this.fileInfo2.filename
         );
         expect(result.mimeType).toBe(Constants.media.mimeTypes.png);
-        expect(result.base64Data.length > 0).toBe(true);
+        expect(result.base64Data.length).toBeGreaterThan(0);
         Log.log(TestConstants.storage.testName, successAddTitle, result.mimeType);
         Log.it(TestConstants.storage.testName, successAddTitle, it5, false);
         done();
@@ -391,7 +391,7 @@ describe(TestConstants.storage.testName, () => {
           this.filename
         );
         expect(result.mimeType).toBe(Constants.media.mimeTypes.unknown);
-        expect(result.base64Data.length > 0).toBe(true);
+        expect(result.base64Data.length).toBeGreaterThan(0);
 
         this.didAdd = true;
         Log.log(TestConstants.storage.testName, addStringSuccessTitle, result.mimeType);

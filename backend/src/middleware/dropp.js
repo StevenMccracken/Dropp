@@ -216,11 +216,6 @@ const create = async (_currentUser, _details) => {
     }
   } else invalidMembers.push(Constants.params.media);
 
-  if (!Validator.isValidUsername(details.username)) invalidMembers.push(Constants.params.username);
-  if (!Validator.isValidTimestamp(details.timestamp)) {
-    invalidMembers.push(Constants.params.timestamp);
-  }
-
   if (Utils.hasValue(details.location)) {
     if (!Validator.isValidNumber(details.location.latitude)) {
       invalidMembers.push(Constants.params.latitude);
@@ -240,20 +235,17 @@ const create = async (_currentUser, _details) => {
   }
 
   const droppInfo = {
-    text: details.text.toString().trim(),
+    text: details.text.trim(),
     media: hasMedia,
-    username: details.username,
-    timestamp: details.timestamp,
-    location: new Location({
-      latitude: details.location.latitude,
-      longitude: details.location.longitude,
-    }),
+    username: _currentUser.username,
+    timestamp: Utils.currentUnixSeconds(),
+    location: new Location(details.location),
   };
 
   const dropp = await DroppAccessor.add(new Dropp(droppInfo));
   const result = {
     success: {
-      droppId: dropp.id,
+      dropp: dropp.publicData,
       message: Constants.middleware.dropp.messages.success.createDropp,
     },
   };

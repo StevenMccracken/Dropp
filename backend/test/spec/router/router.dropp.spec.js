@@ -189,16 +189,13 @@ describe(TestConstants.router.testName, () => {
         headers: {
           authorization: this.authToken,
         },
-      };
-
-      this.details = {
-        timestamp: TestConstants.params.defaultTimestamp,
-        media: Constants.params.false,
-        text: Utils.newUuid(),
-        username: this.user1.username,
-        location: {
-          latitude: TestConstants.params.defaultLocation,
-          longitude: TestConstants.params.defaultLocation,
+        form: {
+          text: Utils.newUuid(),
+          media: Constants.params.false,
+          location: {
+            latitude: TestConstants.params.defaultLocation,
+            longitude: TestConstants.params.defaultLocation,
+          },
         },
       };
 
@@ -208,7 +205,6 @@ describe(TestConstants.router.testName, () => {
     afterEach(async (done) => {
       Log.afterEach(TestConstants.router.testName, createDroppRouteTitle, true);
       if (Utils.hasValue(this.dropp1)) await DroppMiddleware.remove(this.user1, this.dropp1);
-      delete this.options;
       delete this.details;
       Log.afterEach(TestConstants.router.testName, createDroppRouteTitle, false);
       done();
@@ -231,6 +227,32 @@ describe(TestConstants.router.testName, () => {
         const details = JSON.parse(response.error);
         expect(details.error.type).toBe(DroppError.type.Auth.type);
         expect(details.error.message).toBe(DroppError.TokenReason.missing);
+        Log.log(TestConstants.router.testName, createDroppRouteTitle, response.error);
+      }
+
+      Log.it(TestConstants.router.testName, createDroppRouteTitle, it1, false);
+      done();
+    });
+
+    const it2 = 'returns an error for all invalid parameters';
+    it(it2, async (done) => {
+      Log.it(TestConstants.router.testName, createDroppRouteTitle, it2, true);
+      delete this.options.form;
+      try {
+        const response = await Request(this.options);
+        expect(response).not.toBeDefined();
+        Log.log(
+          TestConstants.router.testName,
+          createDroppRouteTitle,
+          TestConstants.messages.shouldHaveThrown
+        );
+      } catch (response) {
+        expect(response.statusCode).toBe(DroppError.type.InvalidRequest.status);
+        const details = JSON.parse(response.error);
+        expect(details.error.type).toBe(DroppError.type.InvalidRequest.type);
+        expect(details.error.message).toContain(Constants.params.text);
+        expect(details.error.message).toContain(Constants.params.media);
+        expect(details.error.message).toContain(Constants.params.location);
         Log.log(TestConstants.router.testName, createDroppRouteTitle, response.error);
       }
 

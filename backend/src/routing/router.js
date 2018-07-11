@@ -355,6 +355,16 @@ const routing = (_router) => {
       }
     });
 
+  /**
+   * Method: POST
+   * Authentication: Yes
+   * Details: Creates a new dropp for a user
+   * Body parameters:
+   *  text
+   *  media
+   *  timestamp
+   *  location
+   */
   router.route(Constants.router.routes.dropps.base)
     .all(validateAuthToken)
     .post(async (request, response, next) => {

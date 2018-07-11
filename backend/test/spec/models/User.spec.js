@@ -112,8 +112,7 @@ describe(constructorTitle, () => {
     expect(Object.keys(data.follow_requests).length).toBe(0);
     expect(Object.keys(data.follower_requests).length).toBe(0);
 
-    /* eslint-disable prefer-destructuring */
-    const privateData = user.privateData;
+    const { privateData } = user;
     expect(Object.keys(privateData).length).toBe(10);
     expect(privateData.email).toBe(this.details.email);
     expect(privateData.username).toBe(this.details.username);
@@ -126,7 +125,7 @@ describe(constructorTitle, () => {
     expect(privateData.followRequestCount).toBe(0);
     expect(privateData.followerRequestCount).toBe(0);
 
-    const publicData = user.publicData;
+    const { publicData } = user;
     expect(Object.keys(publicData).length).toBe(5);
     expect(publicData.username).toBe(this.details.username);
     expect(Object.keys(publicData.follows).length).toBe(0);
@@ -138,7 +137,6 @@ describe(constructorTitle, () => {
     expect(publicData.followerRequests).not.toBeDefined();
     expect(publicData.followRequestCount).not.toBeDefined();
     expect(publicData.followerRequestCount).not.toBeDefined();
-    /* eslint-enable prefer-destructuring */
     Log.log(TestConstants.models.user.testName, constructorTitle, user);
     Log.it(TestConstants.models.user.testName, constructorTitle, it3, false);
   });
@@ -158,15 +156,13 @@ describe(constructorTitle, () => {
     expect(Object.keys(data.follows).length).toBe(1);
     expect(data.follows.test).toBe(TestConstants.params.test);
 
-    /* eslint-disable prefer-destructuring */
-    const privateData = user.privateData;
+    const { privateData } = user;
     expect(Object.keys(privateData.follows).length).toBe(1);
     expect(privateData.followsCount).toBe(1);
 
-    const publicData = user.publicData;
+    const { publicData } = user;
     expect(Object.keys(publicData.follows).length).toBe(1);
     expect(publicData.followsCount).toBe(1);
-    /* eslint-enable prefer-destructuring */
     Log.log(TestConstants.models.user.testName, constructorTitle, user);
     Log.it(TestConstants.models.user.testName, constructorTitle, it4, false);
   });
@@ -186,15 +182,13 @@ describe(constructorTitle, () => {
     expect(Object.keys(data.followers).length).toBe(1);
     expect(data.followers.test).toBe(TestConstants.params.test);
 
-    /* eslint-disable prefer-destructuring */
-    const privateData = user.privateData;
+    const { privateData } = user;
     expect(Object.keys(privateData.followers).length).toBe(1);
     expect(privateData.followerCount).toBe(1);
 
-    const publicData = user.publicData;
+    const { publicData } = user;
     expect(Object.keys(publicData.followers).length).toBe(1);
     expect(publicData.followerCount).toBe(1);
-    /* eslint-enable prefer-destructuring */
     Log.log(TestConstants.models.user.testName, constructorTitle, user);
     Log.it(TestConstants.models.user.testName, constructorTitle, it5, false);
   });
@@ -214,11 +208,9 @@ describe(constructorTitle, () => {
     expect(Object.keys(data.follow_requests).length).toBe(1);
     expect(data.follow_requests.test).toBe(TestConstants.params.test);
 
-    /* eslint-disable prefer-destructuring */
-    const privateData = user.privateData;
+    const { privateData } = user;
     expect(Object.keys(privateData.followRequests).length).toBe(1);
     expect(privateData.followRequestCount).toBe(1);
-    /* eslint-enable prefer-destructuring */
     Log.log(TestConstants.models.user.testName, constructorTitle, user);
     Log.it(TestConstants.models.user.testName, constructorTitle, it6, false);
   });
@@ -238,11 +230,9 @@ describe(constructorTitle, () => {
     expect(Object.keys(data.follower_requests).length).toBe(1);
     expect(data.follower_requests.test).toBe(TestConstants.params.test);
 
-    /* eslint-disable prefer-destructuring */
-    const privateData = user.privateData;
+    const { privateData } = user;
     expect(Object.keys(privateData.followerRequests).length).toBe(1);
     expect(privateData.followerRequestCount).toBe(1);
-    /* eslint-enable prefer-destructuring */
     Log.log(TestConstants.models.user.testName, constructorTitle, user);
     Log.it(TestConstants.models.user.testName, constructorTitle, it7, false);
   });

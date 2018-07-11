@@ -496,3 +496,16 @@ describe(bufferToStreamTitle, () => {
     Log.it(TestConstants.utils.testName, bufferToStreamTitle, it2, false);
   });
 });
+
+const currentUnixSecondsTitle = 'currentUnixSeconds function';
+describe(currentUnixSecondsTitle, () => {
+  const it1 = 'returns the number of UNIX seconds for the current time';
+  it(it1, () => {
+    Log.it(TestConstants.utils.testName, currentUnixSecondsTitle, it1, true);
+    const seconds = Math.round((new Date()).getTime() / 1000);
+    const result = Utils.currentUnixSeconds();
+    expect(typeof result).toBe('number');
+    expect(result - seconds).not.toBeLessThan(0);
+    Log.it(TestConstants.utils.testName, currentUnixSecondsTitle, it1, false);
+  });
+});

@@ -7,9 +7,7 @@ const Uuid = require('uuid/v4');
 const Moment = require('moment');
 const FileSystem = require('fs');
 const Constants = require('./constants');
-/* eslint-disable prefer-destructuring */
-const Duplex = require('stream').Duplex;
-/* eslint-enable prefer-destructuring */
+const { Duplex } = require('stream');
 
 const LstatPromise = Util.promisify(FileSystem.lstat);
 const UnlinkPromise = Util.promisify(FileSystem.unlink);
@@ -121,6 +119,16 @@ const bufferToStream = (_buffer) => {
   return stream;
 };
 
+/**
+ * Gives the number of seconds from the UNIX epoch to now
+ * @return {Number} integer number of seconds
+ */
+const currentUnixSeconds = () => {
+  const now = new Date();
+  const seconds = now.getTime() / 1000;
+  return Math.round(seconds);
+};
+
 module.exports = {
   Moment,
   stepper,
@@ -132,6 +140,7 @@ module.exports = {
   reduceToString,
   deleteLocalFile,
   degreesToRadians,
+  currentUnixSeconds,
   lstat: LstatPromise,
   unlink: UnlinkPromise,
 };

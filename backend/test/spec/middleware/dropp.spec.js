@@ -386,7 +386,7 @@ describe(TestConstants.middleware.dropp.testName, () => {
         Log.it(TestConstants.middleware.dropp.testName, getDroppPhotoSuccessTitle, it6, true);
         const result = await DroppMiddleware.getPhoto(this.user, this.details2);
         expect(result.success.mimeType).toBe(Constants.media.mimeTypes.png);
-        expect(result.success.base64Data.length > 0).toBe(true);
+        expect(result.success.base64Data.length).toBeGreaterThan(0);
         Log.log(
           TestConstants.middleware.dropp.testName,
           getDroppPhotoSuccessTitle,
@@ -935,8 +935,6 @@ describe(TestConstants.middleware.dropp.testName, () => {
       this.droppInfo = {
         text: TestConstants.params.test,
         media: Constants.params.false,
-        username: this.user.username,
-        timestamp: TestConstants.params.defaultTimestamp,
         location: {
           latitude: TestConstants.params.defaultLocation,
           longitude: TestConstants.params.defaultLocation,
@@ -991,8 +989,6 @@ describe(TestConstants.middleware.dropp.testName, () => {
         const params = [
           Constants.params.text,
           Constants.params.media,
-          Constants.params.username,
-          Constants.params.timestamp,
           Constants.params.location,
         ];
 
@@ -1087,16 +1083,28 @@ describe(TestConstants.middleware.dropp.testName, () => {
         done();
       });
 
-      const it6 = 'creates a dropp and returns an ID';
+      const it6 = 'creates a dropp and returns a dropp with an ID';
       it(it6, async (done) => {
         Log.it(TestConstants.middleware.dropp.testName, createDroppTitle, it6, true);
         const result = await DroppMiddleware.create(this.user, this.droppInfo);
         expect(result.success.message)
           .toBe(Constants.middleware.dropp.messages.success.createDropp);
-        expect(typeof result.success.droppId).toBe('string');
-        expect(result.success.droppId.length > 0).toBe(true);
-        this.dropp = await DroppAccessor.get(result.success.droppId);
-        expect(this.dropp.id).toBe(result.success.droppId);
+
+        // Verify properties in result
+        const { dropp } = result.success;
+        expect(typeof dropp.id).toBe('string');
+        expect(dropp.id.length).toBeGreaterThan(0);
+        expect(dropp.text).toBe(this.droppInfo.text.trim());
+        expect(dropp.media).toBe(this.droppInfo.media === Constants.params.true);
+        expect(dropp.username).toBe(this.user.username);
+        expect(typeof dropp.timestamp).toBe('number');
+        expect(dropp.timestamp).toBeGreaterThan(0);
+        expect(dropp.location.latitude).toBe(this.droppInfo.location.latitude);
+        expect(dropp.location.longitude).toBe(this.droppInfo.location.longitude);
+
+        // Validate results from the backend
+        this.dropp = await DroppAccessor.get(dropp.id);
+        expect(this.dropp.id).toBe(dropp.id);
         Log.log(TestConstants.middleware.dropp.testName, createDroppSuccessTitle, result);
         Log.it(TestConstants.middleware.dropp.testName, createDroppTitle, it6, false);
         done();
@@ -1112,12 +1120,17 @@ describe(TestConstants.middleware.dropp.testName, () => {
         expect(result.mediaUploadError).not.toBeDefined();
         expect(result.success.message)
           .toBe(Constants.middleware.dropp.messages.success.createDropp);
-        expect(typeof result.success.droppId).toBe('string');
-        expect(result.success.droppId.length > 0).toBe(true);
+
+        // Verify properties in result
+        const { dropp } = result.success;
+        expect(typeof dropp.id).toBe('string');
+        expect(dropp.id.length).toBeGreaterThan(0);
+        expect(dropp.text).toBe(TestConstants.utils.strings.emptyString);
+        expect(dropp.media).toBe(true);
 
         // Validate results from the backend
-        this.dropp = await DroppAccessor.get(result.success.droppId);
-        expect(this.dropp.id).toBe(result.success.droppId);
+        this.dropp = await DroppAccessor.get(dropp.id);
+        expect(this.dropp.id).toBe(dropp.id);
         expect(this.dropp.text).toBe(TestConstants.utils.strings.emptyString);
         expect(this.dropp.media).toBe(true);
 
