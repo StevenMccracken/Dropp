@@ -69,6 +69,21 @@ const validateNumber = num => typeof num === 'number' && !isNaN(parseFloat(num))
 /* eslint-enable no-restricted-globals */
 
 /**
+ * Validates a given number string
+ * @param {String} numberString the number string to validate
+ * @return {Boolean} whether the number
+ * string only contains a valid number or not
+ */
+const validateNumberString = (numberString) => {
+  if (typeof numberString !== 'string' || numberString.trim() === Constants.utils.emptyString) {
+    return false;
+  }
+
+  const potentialNumber = Number(numberString);
+  return validateNumber(potentialNumber);
+};
+
+/**
  * Validates a given integer
  * @param {Number} _integer the integer to validate
  * @return {Boolean} whether or not the integer is valid
@@ -155,6 +170,7 @@ const validateBase64Media = (base64String) => {
 module.exports = {
   isValidEmail: validateEmail,
   isValidNumber: validateNumber,
+  isValidNumberString: validateNumberString,
   isValidInteger: validateInteger,
   isValidTextPost: validateTextPost,
   isValidUsername: validateUsername,

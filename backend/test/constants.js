@@ -171,6 +171,7 @@ module.exports = {
     testId: 'testId',
     defaultLocation: 0,
     defaultTimestamp: 1,
+    defaultLocationString: '0',
     testAddress: 'testAddress',
     updatedValue: 'updated value',
     testEmail: 'test@test.com',

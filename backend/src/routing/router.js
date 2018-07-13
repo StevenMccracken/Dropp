@@ -362,7 +362,6 @@ const routing = (_router) => {
    * Body parameters:
    *  text
    *  media
-   *  timestamp
    *  location
    */
   router.route(Constants.router.routes.dropps.base)
@@ -370,6 +369,7 @@ const routing = (_router) => {
     .post(async (request, response, next) => {
       try {
         const result = await DroppMiddleware.create(request.user, request.body);
+        response.status(201);
         response.json(result);
       } catch (error) {
         next(error);

@@ -865,7 +865,7 @@ describe(TestConstants.middleware.dropp.testName, () => {
       Log.it(TestConstants.middleware.dropp.testName, getByLocationTitle, it3, true);
       const details = {
         latitude: TestConstants.params.invalidChars.dollar,
-        longitude: `${TestConstants.params.defaultLocation}`,
+        longitude: TestConstants.params.defaultLocationString,
       };
 
       try {
@@ -892,7 +892,7 @@ describe(TestConstants.middleware.dropp.testName, () => {
     it(it4, async (done) => {
       Log.it(TestConstants.middleware.dropp.testName, getByLocationTitle, it4, true);
       const details = {
-        latitude: `${TestConstants.params.defaultLocation}`,
+        latitude: TestConstants.params.defaultLocationString,
         longitude: TestConstants.params.invalidChars.dollar,
       };
 
@@ -936,8 +936,8 @@ describe(TestConstants.middleware.dropp.testName, () => {
         text: TestConstants.params.test,
         media: Constants.params.false,
         location: {
-          latitude: TestConstants.params.defaultLocation,
-          longitude: TestConstants.params.defaultLocation,
+          latitude: TestConstants.params.defaultLocationString,
+          longitude: TestConstants.params.defaultLocationString,
         },
       };
 
@@ -1052,7 +1052,7 @@ describe(TestConstants.middleware.dropp.testName, () => {
     const it5 = 'throws an error for true media but invalid media data';
     it(it5, async (done) => {
       Log.it(TestConstants.middleware.dropp.testName, createDroppTitle, it5, true);
-      this.droppInfo.media = 'true';
+      this.droppInfo.media = Constants.params.true;
       this.droppInfo.base64Data = TestConstants.media.base64DataTypes.random;
       try {
         const result = await DroppMiddleware.create(this.user, this.droppInfo);
@@ -1099,8 +1099,8 @@ describe(TestConstants.middleware.dropp.testName, () => {
         expect(dropp.username).toBe(this.user.username);
         expect(typeof dropp.timestamp).toBe('number');
         expect(dropp.timestamp).toBeGreaterThan(0);
-        expect(dropp.location.latitude).toBe(this.droppInfo.location.latitude);
-        expect(dropp.location.longitude).toBe(this.droppInfo.location.longitude);
+        expect(dropp.location.latitude).toBe(TestConstants.params.defaultLocation);
+        expect(dropp.location.longitude).toBe(TestConstants.params.defaultLocation);
 
         // Validate results from the backend
         this.dropp = await DroppAccessor.get(dropp.id);

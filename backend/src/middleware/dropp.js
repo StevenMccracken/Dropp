@@ -216,14 +216,15 @@ const create = async (_currentUser, _details) => {
     }
   } else invalidMembers.push(Constants.params.media);
 
+  let validLatitude;
+  let validLongitude;
   if (Utils.hasValue(details.location)) {
-    if (!Validator.isValidNumber(details.location.latitude)) {
-      invalidMembers.push(Constants.params.latitude);
-    }
+    const { latitude, longitude } = details.location;
+    if (Validator.isValidNumberString(latitude)) validLatitude = parseFloat(latitude);
+    else invalidMembers.push(Constants.params.latitude);
 
-    if (!Validator.isValidNumber(details.location.longitude)) {
-      invalidMembers.push(Constants.params.longitude);
-    }
+    if (Validator.isValidNumberString(longitude)) validLongitude = parseFloat(longitude);
+    else invalidMembers.push(Constants.params.longitude);
   } else invalidMembers.push(Constants.params.location);
 
   if (invalidMembers.length > 0) DroppError.throwInvalidRequestError(source, invalidMembers);
@@ -234,12 +235,17 @@ const create = async (_currentUser, _details) => {
     );
   }
 
+  const location = new Location({
+    latitude: validLatitude,
+    longitude: validLongitude,
+  });
+
   const droppInfo = {
     text: details.text.trim(),
     media: hasMedia,
     username: _currentUser.username,
     timestamp: Utils.currentUnixSeconds(),
-    location: new Location(details.location),
+    location,
   };
 
   const dropp = await DroppAccessor.add(new Dropp(droppInfo));

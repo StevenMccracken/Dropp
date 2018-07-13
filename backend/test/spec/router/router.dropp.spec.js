@@ -1,16 +1,17 @@
 const Log = require('../../logger');
 const Server = require('../../../index');
-const User = require('../../../src/models/User');
+// const User = require('../../../src/models/User');
 const TestConstants = require('../../constants');
 const Request = require('request-promise-native');
 const Dropp = require('../../../src/models/Dropp');
 const Utils = require('../../../src/utilities/utils');
 const Location = require('../../../src/models/Location');
-const UserAccessor = require('../../../src/database/user');
+// const UserAccessor = require('../../../src/database/user');
 const DroppError = require('../../../src/errors/DroppError');
 const DroppAccessor = require('../../../src/database/dropp');
 const Constants = require('../../../src/utilities/constants');
 const UserMiddleware = require('../../../src/middleware/user');
+const DroppMiddleware = require('../../../src/middleware/dropp');
 
 const url = `${TestConstants.router.url(Server.port)}${Constants.router.routes.dropps.base}`;
 /* eslint-disable no-undef */
@@ -173,6 +174,7 @@ describe(TestConstants.router.testName, () => {
       expect(details.location.latitude).toBe(this.dropp1.location.latitude);
       expect(details.location.longitude).toBe(this.dropp1.location.longitude);
 
+      Log.log(TestConstants.router.testName, getDroppRouteTitle, response.body);
       Log.it(TestConstants.router.testName, getDroppRouteTitle, it4, false);
       done();
     });
@@ -256,8 +258,156 @@ describe(TestConstants.router.testName, () => {
         Log.log(TestConstants.router.testName, createDroppRouteTitle, response.error);
       }
 
-      Log.it(TestConstants.router.testName, createDroppRouteTitle, it1, false);
+      Log.it(TestConstants.router.testName, createDroppRouteTitle, it2, false);
       done();
+    });
+
+    const it3 = 'returns an error for invalid location details';
+    it(it3, async (done) => {
+      Log.it(TestConstants.router.testName, createDroppRouteTitle, it3, true);
+      this.options.form.location.latitude = Utils.newUuid();
+      this.options.form.location.longitude = Utils.newUuid();
+      try {
+        const response = await Request(this.options);
+        expect(response).not.toBeDefined();
+        Log.log(
+          TestConstants.router.testName,
+          createDroppRouteTitle,
+          TestConstants.messages.shouldHaveThrown
+        );
+      } catch (response) {
+        expect(response.statusCode).toBe(DroppError.type.InvalidRequest.status);
+        const details = JSON.parse(response.error);
+        expect(details.error.type).toBe(DroppError.type.InvalidRequest.type);
+        expect(details.error.message).toContain(Constants.params.latitude);
+        expect(details.error.message).toContain(Constants.params.longitude);
+        Log.log(TestConstants.router.testName, createDroppRouteTitle, response.error);
+      }
+
+      Log.it(TestConstants.router.testName, createDroppRouteTitle, it3, false);
+      done();
+    });
+
+    const it4 = 'returns an error for no media and empty text';
+    it(it4, async (done) => {
+      Log.it(TestConstants.router.testName, createDroppRouteTitle, it4, true);
+      this.options.form.text = TestConstants.utils.strings.emptyString;
+      try {
+        const response = await Request(this.options);
+        expect(response).not.toBeDefined();
+        Log.log(
+          TestConstants.router.testName,
+          createDroppRouteTitle,
+          TestConstants.messages.shouldHaveThrown
+        );
+      } catch (response) {
+        expect(response.statusCode).toBe(DroppError.type.Resource.status);
+        const details = JSON.parse(response.error);
+        expect(details.error.type).toBe(DroppError.type.Resource.type);
+        expect(details.error.message)
+          .toBe(Constants.middleware.dropp.messages.errors.mustContainText);
+        Log.log(TestConstants.router.testName, createDroppRouteTitle, response.error);
+      }
+
+      Log.it(TestConstants.router.testName, createDroppRouteTitle, it4, false);
+      done();
+    });
+
+    const it5 = 'returns an error for true media but invalid media data';
+    it(it5, async (done) => {
+      Log.it(TestConstants.router.testName, createDroppRouteTitle, it5, true);
+      this.options.form.media = Constants.params.true;
+      this.options.form.base64Data = TestConstants.media.base64DataTypes.random;
+      try {
+        const response = await Request(this.options);
+        expect(response).not.toBeDefined();
+        Log.log(
+          TestConstants.router.testName,
+          createDroppRouteTitle,
+          TestConstants.messages.shouldHaveThrown
+        );
+      } catch (response) {
+        expect(response.statusCode).toBe(DroppError.type.InvalidRequest.status);
+        const details = JSON.parse(response.error);
+        expect(details.error.type).toBe(DroppError.type.InvalidRequest.type);
+        expect(details.error.message).toBe(Constants.params.base64Data);
+        Log.log(TestConstants.router.testName, createDroppRouteTitle, response.error);
+      }
+
+      Log.it(TestConstants.router.testName, createDroppRouteTitle, it5, false);
+      done();
+    });
+
+    const createDroppSuccessTitle = 'Create dropp success';
+    describe(createDroppSuccessTitle, () => {
+      afterEach(async (done) => {
+        Log.afterEach(TestConstants.router.testName, createDroppSuccessTitle, true);
+        await DroppMiddleware.remove(this.user1, this.droppInfo);
+        delete this.droppInfo;
+        Log.afterEach(TestConstants.router.testName, createDroppSuccessTitle, false);
+        done();
+      });
+
+      const it6 = 'creates a dropp and with text and no media';
+      it(it6, async (done) => {
+        Log.it(TestConstants.router.testName, createDroppSuccessTitle, it6, true);
+        const response = await Request(this.options);
+        expect(response.statusCode).toBe(TestConstants.router.statusCodes.creation);
+        const details = JSON.parse(response.body);
+
+        const { message, dropp } = details.success;
+        expect(message).toBe(Constants.middleware.dropp.messages.success.createDropp);
+        expect(typeof dropp.id).toBe('string');
+        expect(dropp.id.length).toBeGreaterThan(0);
+        expect(dropp.text).toBe(this.options.form.text.trim());
+        expect(dropp.media).toBe(false);
+        expect(dropp.username).toBe(this.user1.username);
+        expect(typeof dropp.timestamp).toBe('number');
+        expect(dropp.timestamp).toBeGreaterThan(0);
+        expect(dropp.location.latitude).toBe(TestConstants.params.defaultLocation);
+        expect(dropp.location.longitude).toBe(TestConstants.params.defaultLocation);
+
+        this.droppInfo = dropp;
+        Log.log(TestConstants.router.testName, createDroppSuccessTitle, response.body);
+        Log.it(TestConstants.router.testName, createDroppSuccessTitle, it6, false);
+        done();
+      });
+
+      const it7 = 'creates a dropp with media and no text';
+      it(it7, async (done) => {
+        Log.it(TestConstants.router.testName, createDroppSuccessTitle, it7, true);
+        this.options.form.media = true;
+        this.options.form.text = TestConstants.utils.strings.tab;
+        this.options.form.base64Data = `${Constants.media.base64DataTypes.png}${TestConstants.media.base64DataTypes.test}`;
+
+        const response = await Request(this.options);
+        expect(response.statusCode).toBe(TestConstants.router.statusCodes.creation);
+        const details = JSON.parse(response.body);
+        expect(details.mediaUploadError).not.toBeDefined();
+
+        const { message, dropp } = details.success;
+        expect(message).toBe(Constants.middleware.dropp.messages.success.createDropp);
+        expect(typeof dropp.id).toBe('string');
+        expect(dropp.id.length).toBeGreaterThan(0);
+        expect(dropp.text).toBe(TestConstants.utils.strings.emptyString);
+        expect(dropp.media).toBe(true);
+        expect(dropp.username).toBe(this.user1.username);
+        expect(typeof dropp.timestamp).toBe('number');
+        expect(dropp.timestamp).toBeGreaterThan(0);
+        expect(dropp.location.latitude).toBe(TestConstants.params.defaultLocation);
+        expect(dropp.location.longitude).toBe(TestConstants.params.defaultLocation);
+
+        // Validate media results from the backend
+        const media = await DroppMiddleware.getPhoto(this.user1, dropp);
+        const { base64Data } = this.options.form;
+        expect(media.success.mimeType).toBe(Constants.media.mimeTypes.png);
+        expect(media.success.base64Data).toBe(base64Data.slice(0, base64Data.length - 2));
+
+        this.droppInfo = dropp;
+        Log.log(TestConstants.router.testName, createDroppSuccessTitle, response.body);
+        Log.it(TestConstants.router.testName, createDroppSuccessTitle, it7, false);
+        done();
+      });
     });
   });
 });
