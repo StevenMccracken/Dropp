@@ -733,7 +733,8 @@ describe(TestConstants.middleware.dropp.testName, () => {
       } catch (error) {
         expect(error.name).toBe(Constants.errors.dropp.name);
         expect(error.details.error.type).toBe(DroppError.type.Resource.type);
-        expect(error.details.error.message).toBe(Constants.middleware.messages.unauthorizedAccess);
+        expect(error.details.error.message)
+          .toBe(Constants.middleware.messages.unauthorizedAccess);
         Log.log(TestConstants.middleware.dropp.testName, getByFollowsTitle, error.details);
       }
 

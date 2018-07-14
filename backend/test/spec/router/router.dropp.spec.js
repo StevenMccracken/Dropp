@@ -8,9 +8,11 @@ const Utils = require('../../../src/utilities/utils');
 const Location = require('../../../src/models/Location');
 // const UserAccessor = require('../../../src/database/user');
 const DroppError = require('../../../src/errors/DroppError');
+const CloudStorage = require('../../../src/storage/storage');
 const DroppAccessor = require('../../../src/database/dropp');
 const Constants = require('../../../src/utilities/constants');
 const UserMiddleware = require('../../../src/middleware/user');
+const StorageError = require('../../../src/errors/StorageError');
 const DroppMiddleware = require('../../../src/middleware/dropp');
 
 const url = `${TestConstants.router.url(Server.port)}${Constants.router.routes.dropps.base}`;
@@ -406,6 +408,280 @@ describe(TestConstants.router.testName, () => {
         this.droppInfo = dropp;
         Log.log(TestConstants.router.testName, createDroppSuccessTitle, response.body);
         Log.it(TestConstants.router.testName, createDroppSuccessTitle, it7, false);
+        done();
+      });
+    });
+  });
+
+  const removeDroppRouteTitle = 'Remove dropp route';
+  describe(removeDroppRouteTitle, () => {
+    beforeEach(async (done) => {
+      Log.beforeEach(TestConstants.router.testName, removeDroppRouteTitle, true);
+      this.options = {
+        method: TestConstants.router.methods.delete,
+        uri: url,
+        resolveWithFullResponse: true,
+        headers: {
+          authorization: this.authToken,
+        },
+      };
+
+      this.updateUrl = (dropp) => {
+        this.options.uri = `${url}/${dropp}`;
+      };
+
+      this.dropp1 = new Dropp({
+        timestamp: TestConstants.params.defaultTimestamp,
+        media: false,
+        text: Utils.newUuid(),
+        username: this.user1.username,
+        location: new Location({
+          latitude: TestConstants.params.defaultLocation,
+          longitude: TestConstants.params.defaultLocation,
+        }),
+      });
+
+      await DroppAccessor.add(this.dropp1);
+      this.shouldDeleteDropp = true;
+      Log.beforeEach(TestConstants.router.testName, removeDroppRouteTitle, false);
+      done();
+    });
+
+    afterEach(async (done) => {
+      Log.afterEach(TestConstants.router.testName, removeDroppRouteTitle, true);
+      if (this.shouldDeleteDropp === true) await DroppAccessor.remove(this.dropp1);
+      delete this.dropp1;
+      delete this.options;
+      delete this.updateUrl;
+      Log.afterEach(TestConstants.router.testName, removeDroppRouteTitle, false);
+      done();
+    });
+
+    const it1 = 'returns an authentication error for a missing auth token';
+    it(it1, async (done) => {
+      Log.it(TestConstants.router.testName, removeDroppRouteTitle, it1, true);
+      this.updateUrl(this.dropp1.id);
+      delete this.options.headers.authorization;
+      try {
+        const response = await Request(this.options);
+        expect(response).not.toBeDefined();
+        Log.log(
+          TestConstants.router.testName,
+          removeDroppRouteTitle,
+          TestConstants.messages.shouldHaveThrown
+        );
+      } catch (response) {
+        expect(response.statusCode).toBe(DroppError.type.Auth.status);
+        const details = JSON.parse(response.error);
+        expect(details.error.type).toBe(DroppError.type.Auth.type);
+        expect(details.error.message).toBe(DroppError.TokenReason.missing);
+        Log.log(TestConstants.router.testName, removeDroppRouteTitle, response.error);
+      }
+
+      Log.it(TestConstants.router.testName, removeDroppRouteTitle, it1, false);
+      done();
+    });
+
+    const it2 = 'returns an error for an invalid dropp ID';
+    it(it2, async (done) => {
+      Log.it(TestConstants.router.testName, removeDroppRouteTitle, it2, true);
+      this.updateUrl(TestConstants.params.invalidChars.encodedDroppId);
+      try {
+        const response = await Request(this.options);
+        expect(response).not.toBeDefined();
+        Log.log(
+          TestConstants.router.testName,
+          removeDroppRouteTitle,
+          TestConstants.messages.shouldHaveThrown
+        );
+      } catch (response) {
+        expect(response.statusCode).toBe(DroppError.type.InvalidRequest.status);
+        const details = JSON.parse(response.error);
+        expect(details.error.type).toBe(DroppError.type.InvalidRequest.type);
+        expect(details.error.message).toContain(Constants.params.id);
+        Log.log(TestConstants.router.testName, removeDroppRouteTitle, response.error);
+      }
+
+      Log.it(TestConstants.router.testName, removeDroppRouteTitle, it2, false);
+      done();
+    });
+
+    const it3 = 'returns an error for a non-existent dropp';
+    it(it3, async (done) => {
+      Log.it(TestConstants.router.testName, removeDroppRouteTitle, it3, true);
+      this.updateUrl(Utils.newUuid());
+      try {
+        const response = await Request(this.options);
+        expect(response).not.toBeDefined();
+        Log.log(
+          TestConstants.router.testName,
+          removeDroppRouteTitle,
+          TestConstants.messages.shouldHaveThrown
+        );
+      } catch (response) {
+        expect(response.statusCode).toBe(DroppError.type.ResourceDNE.status);
+        const details = JSON.parse(response.error);
+        expect(details.error.type).toBe(DroppError.type.ResourceDNE.type);
+        expect(details.error.message)
+          .toBe(TestConstants.messages.doesNotExist(Constants.params.dropp));
+        Log.log(TestConstants.router.testName, removeDroppRouteTitle, response.error);
+      }
+
+      Log.it(TestConstants.router.testName, removeDroppRouteTitle, it3, false);
+      done();
+    });
+
+    const removeDifferentUserDroppRouteTitle = 'Remove different user\'s dropp route';
+    describe(removeDifferentUserDroppRouteTitle, () => {
+      beforeEach(async (done) => {
+        Log.beforeEach(TestConstants.router.testName, removeDifferentUserDroppRouteTitle, true);
+        const details = {
+          username: Utils.newUuid(),
+          password: Utils.newUuid(),
+          email: TestConstants.params.uuidEmail(),
+        };
+
+        this.user2 = await UserMiddleware.create(details);
+        this.dropp2 = new Dropp({
+          timestamp: TestConstants.params.defaultTimestamp,
+          media: false,
+          text: Utils.newUuid(),
+          username: this.user2.username,
+          location: new Location({
+            latitude: TestConstants.params.defaultLocation,
+            longitude: TestConstants.params.defaultLocation,
+          }),
+        });
+
+        await DroppAccessor.add(this.dropp2);
+        Log.beforeEach(TestConstants.router.testName, removeDifferentUserDroppRouteTitle, false);
+        done();
+      });
+
+      afterEach(async (done) => {
+        Log.afterEach(TestConstants.router.testName, removeDifferentUserDroppRouteTitle, true);
+
+        // This will also delete `this.dropp2`
+        await UserMiddleware.remove(this.user2, { username: this.user2.username });
+        delete this.user2;
+        delete this.dropp2;
+        Log.afterEach(TestConstants.router.testName, removeDifferentUserDroppRouteTitle, false);
+        done();
+      });
+
+      const it4 = 'returns an error for removing a different user\'s dropp';
+      it(it4, async (done) => {
+        Log.it(TestConstants.router.testName, removeDifferentUserDroppRouteTitle, it4, true);
+        this.updateUrl(this.dropp2.id);
+        try {
+          const response = await Request(this.options);
+          expect(response).not.toBeDefined();
+          Log.log(
+            TestConstants.router.testName,
+            removeDifferentUserDroppRouteTitle,
+            TestConstants.messages.shouldHaveThrown
+          );
+        } catch (response) {
+          expect(response.statusCode).toBe(DroppError.type.Resource.status);
+          const details = JSON.parse(response.error);
+          expect(details.error.type).toBe(DroppError.type.Resource.type);
+          expect(details.error.message).toBe(Constants.middleware.messages.unauthorizedAccess);
+          Log.log(
+            TestConstants.router.testName,
+            removeDifferentUserDroppRouteTitle,
+            response.error
+          );
+        }
+
+        Log.it(TestConstants.router.testName, removeDifferentUserDroppRouteTitle, it4, false);
+        done();
+      });
+    });
+
+    const removeDroppSuccessRouteTitle = 'Remove dropp success route';
+    describe(removeDroppSuccessRouteTitle, () => {
+      const it4 = 'successfully removes a dropp';
+      it(it4, async (done) => {
+        Log.it(TestConstants.router.testName, removeDroppSuccessRouteTitle, it4, true);
+        this.updateUrl(this.dropp1.id);
+        const response = await Request(this.options);
+        expect(response.statusCode).toBe(TestConstants.router.statusCodes.success);
+        const details = JSON.parse(response.body);
+        const { message } = details.success;
+        expect(message).toBe(Constants.middleware.dropp.messages.success.removeDropp);
+
+        // Verify results from backend
+        const dropp = await DroppAccessor.get(this.dropp1.id);
+        expect(dropp).toBeNull();
+
+        this.shouldDeleteDropp = false;
+        Log.log(TestConstants.router.testName, removeDroppSuccessRouteTitle, response.body);
+        Log.it(TestConstants.router.testName, removeDroppSuccessRouteTitle, it4, false);
+        done();
+      });
+    });
+
+    const removeDroppWithPhotoSuccessRouteTitle = 'Remove dropp with photo success route';
+    describe(removeDroppWithPhotoSuccessRouteTitle, () => {
+      beforeEach(async (done) => {
+        Log.beforeEach(TestConstants.router.testName, removeDroppWithPhotoSuccessRouteTitle, true);
+        const droppInfo = {
+          text: TestConstants.params.test,
+          media: 'true',
+          base64Data: `${Constants.media.base64DataTypes.png}${TestConstants.media.base64DataTypes.test}`,
+          location: {
+            latitude: TestConstants.params.defaultLocationString,
+            longitude: TestConstants.params.defaultLocationString,
+          },
+        };
+
+        const result = await DroppMiddleware.create(this.user1, droppInfo);
+        this.dropp2 = result.success.dropp;
+        Log.beforeEach(TestConstants.router.testName, removeDroppWithPhotoSuccessRouteTitle, false);
+        done();
+      });
+
+      const it4 = 'successfully removes a dropp with media';
+      it(it4, async (done) => {
+        Log.it(TestConstants.router.testName, removeDroppWithPhotoSuccessRouteTitle, it4, true);
+        this.updateUrl(this.dropp2.id);
+        const response = await Request(this.options);
+        expect(response.statusCode).toBe(TestConstants.router.statusCodes.success);
+        const details = JSON.parse(response.body);
+        const { message } = details.success;
+        expect(message).toBe(Constants.middleware.dropp.messages.success.removeDropp);
+        expect(details.mediaRemovalError).not.toBeDefined();
+
+        // Verify results from backend
+        const dropp = await DroppAccessor.get(this.dropp2.id);
+        expect(dropp).toBeNull();
+        try {
+          const mediaResult = await CloudStorage.get(
+            Constants.middleware.dropp.cloudStorageFolder,
+            this.dropp2.id
+          );
+          expect(mediaResult).not.toBeDefined();
+          Log.log(
+            TestConstants.router.testName,
+            removeDroppWithPhotoSuccessRouteTitle,
+            TestConstants.messages.shouldHaveThrown
+          );
+        } catch (error) {
+          expect(error.name).toBe(Constants.errors.storage.name);
+          expect(error.details.type).toBe(StorageError.type.FileDoesNotExist.type);
+          Log.log(
+            TestConstants.router.testName,
+            removeDroppWithPhotoSuccessRouteTitle,
+            error.details
+          );
+        }
+
+        Log.log(
+          TestConstants.router.testName,
+          removeDroppWithPhotoSuccessRouteTitle,
+          response.body
+        );
+        Log.it(TestConstants.router.testName, removeDroppWithPhotoSuccessRouteTitle, it4, false);
         done();
       });
     });

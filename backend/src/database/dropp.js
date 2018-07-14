@@ -44,6 +44,8 @@ const getAll = async () => {
   Log.log(Constants.database.dropp.moduleName, source);
 
   const json = await Firebase.get(Constants.database.dropp.baseUrl);
+  if (!Utils.hasValue(json)) return [];
+
   const dropps = [];
   Object.entries(json).forEach(([key, value]) => {
     if (key === Constants.database.dropp.forbiddenDroppId) return;

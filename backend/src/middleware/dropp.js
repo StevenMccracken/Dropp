@@ -435,15 +435,21 @@ const remove = async (_currentUser, _details) => {
   }
 
   await DroppAccessor.remove(dropp);
-  if (dropp.media === true) {
-    await CloudStorage.remove(Constants.middleware.dropp.cloudStorageFolder, dropp.id);
-  }
-
   const result = {
     success: {
       message: Constants.middleware.dropp.messages.success.removeDropp,
     },
   };
+
+  if (dropp.media === true) {
+    try {
+      await CloudStorage.remove(Constants.middleware.dropp.cloudStorageFolder, dropp.id);
+    } catch (removePhotoError) {
+      // Indicate partial-failure and log error asynchronously
+      result.mediaRemovalError = StorageError.type.Unknown;
+      ErrorAccessor.add(removePhotoError);
+    }
+  }
 
   return result;
 };

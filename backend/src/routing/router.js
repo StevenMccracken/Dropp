@@ -376,6 +376,24 @@ const routing = (_router) => {
       }
     });
 
+  /**
+   * Method: DELETE
+   * Authentication: Yes
+   * Details: Removes a dropp by it's ID
+   * URL parameters:
+   *  id
+   */
+  router.route(Constants.router.routes.dropps.dropp.base)
+    .all(validateAuthToken)
+    .delete(async (request, response, next) => {
+      try {
+        const result = await DroppMiddleware.remove(request.user, request.params);
+        response.json(result);
+      } catch (error) {
+        next(error);
+      }
+    });
+
   return router;
 };
 
