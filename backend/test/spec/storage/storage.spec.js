@@ -490,10 +490,164 @@ describe(TestConstants.storage.testName, () => {
         } catch (error) {
           expect(error.name).toBe(Constants.errors.storage.name);
           expect(error.details.type).toBe(StorageError.type.FileDoesNotExist.type);
-          Log.log(TestConstants.storage.testName, removeTitle, error.details);
+          Log.log(TestConstants.storage.testName, successRemoveTitle, error.details);
         }
 
         Log.it(TestConstants.storage.testName, successRemoveTitle, it3, false);
+        done();
+      }, Helper.customTimeout);
+    });
+  });
+
+  const bulkRemoveTitle = 'Bulk remove';
+  describe(bulkRemoveTitle, () => {
+    const it1 = 'throws an error for invalid folder and filenames';
+    it(it1, async (done) => {
+      Log.it(TestConstants.storage.testName, bulkRemoveTitle, it1, true);
+      try {
+        const result = await CloudStorage.bulkRemove();
+        expect(result).not.toBeDefined();
+        Log.log(
+          TestConstants.storage.testName,
+          bulkRemoveTitle,
+          TestConstants.messages.shouldHaveThrown
+        );
+      } catch (error) {
+        expect(error.name).toBe(Constants.errors.storage.name);
+        expect(error.details.type).toBe(StorageError.type.InvalidMembers.type);
+        expect(error.details.details.invalidMembers).toContain(Constants.params.folder);
+        expect(error.details.details.invalidMembers).toContain(Constants.params.fileNames);
+        Log.log(TestConstants.storage.testName, bulkRemoveTitle, error.details);
+      }
+
+      Log.it(TestConstants.storage.testName, bulkRemoveTitle, it1, false);
+      done();
+    }, Helper.customTimeout);
+
+    const it2 = 'throws an error for invalid folder and array with invalid filename';
+    it(it2, async (done) => {
+      Log.it(TestConstants.storage.testName, bulkRemoveTitle, it2, true);
+      const filenames = [Utils.newUuid(), TestConstants.utils.strings.tab];
+      try {
+        const result = await CloudStorage.bulkRemove(
+          TestConstants.utils.strings.emptyString,
+          filenames
+        );
+        expect(result).not.toBeDefined();
+        Log.log(
+          TestConstants.storage.testName,
+          bulkRemoveTitle,
+          TestConstants.messages.shouldHaveThrown
+        );
+      } catch (error) {
+        expect(error.name).toBe(Constants.errors.storage.name);
+        expect(error.details.type).toBe(StorageError.type.InvalidMembers.type);
+        expect(error.details.details.invalidMembers).toContain(Constants.params.fileName);
+        Log.log(TestConstants.storage.testName, bulkRemoveTitle, error.details);
+      }
+
+      Log.it(TestConstants.storage.testName, bulkRemoveTitle, it2, false);
+      done();
+    }, Helper.customTimeout);
+
+    const it3 = 'throws an error for a non-existent file';
+    it(it3, async (done) => {
+      Log.it(TestConstants.storage.testName, bulkRemoveTitle, it3, true);
+      const filenames = [Utils.newUuid()];
+      try {
+        const result = await CloudStorage.bulkRemove(
+          TestConstants.utils.strings.emptyString,
+          filenames
+        );
+        expect(result).not.toBeDefined();
+        Log.log(
+          TestConstants.storage.testName,
+          bulkRemoveTitle,
+          TestConstants.messages.shouldHaveThrown
+        );
+      } catch (error) {
+        expect(error.name).toBe(Constants.errors.storage.name);
+        expect(error.details.type).toBe(StorageError.type.FileDoesNotExist.type);
+        Log.log(TestConstants.storage.testName, bulkRemoveTitle, error.details);
+      }
+
+      Log.it(TestConstants.storage.testName, bulkRemoveTitle, it3, false);
+      done();
+    }, Helper.customTimeout);
+
+    const successBulkRemoveTitle = 'Bulk remove success';
+    describe(successBulkRemoveTitle, () => {
+      beforeEach(async (done) => {
+        Log.beforeEach(TestConstants.storage.testName, successBulkRemoveTitle, true);
+        this.filename1 = Utils.newUuid();
+        this.filename2 = Utils.newUuid();
+        const addFile1 = CloudStorage.addString(
+          TestConstants.utils.strings.emptyString,
+          this.filename1,
+          Utils.newUuid()
+        );
+        const addFile2 = CloudStorage.addString(
+          TestConstants.utils.strings.emptyString,
+          this.filename2,
+          Utils.newUuid()
+        );
+
+        await Promise.all([addFile1, addFile2]);
+        Log.beforeEach(TestConstants.storage.testName, successBulkRemoveTitle, false);
+        done();
+      });
+
+      afterEach(() => {
+        Log.afterEach(TestConstants.storage.testName, successBulkRemoveTitle, true);
+        delete this.filename1;
+        delete this.filename2;
+        Log.afterEach(TestConstants.storage.testName, successBulkRemoveTitle, false);
+      });
+
+      const it4 = 'removes multiple files from cloud storage';
+      it(it4, async (done) => {
+        Log.it(TestConstants.storage.testName, successBulkRemoveTitle, it4, true);
+        await CloudStorage.bulkRemove(
+          TestConstants.utils.strings.emptyString,
+          [this.filename1, this.filename2]
+        );
+
+        // Verify results for each file from cloud storage
+        try {
+          const result = await CloudStorage.get(
+            TestConstants.utils.strings.emptyString,
+            this.filename1
+          );
+          expect(result).not.toBeDefined();
+          Log.log(
+            TestConstants.storage.testName,
+            successBulkRemoveTitle,
+            TestConstants.messages.shouldHaveThrown
+          );
+        } catch (error) {
+          expect(error.name).toBe(Constants.errors.storage.name);
+          expect(error.details.type).toBe(StorageError.type.FileDoesNotExist.type);
+          Log.log(TestConstants.storage.testName, successBulkRemoveTitle, error.details);
+        }
+
+        try {
+          const result = await CloudStorage.get(
+            TestConstants.utils.strings.emptyString,
+            this.filename2
+          );
+          expect(result).not.toBeDefined();
+          Log.log(
+            TestConstants.storage.testName,
+            successBulkRemoveTitle,
+            TestConstants.messages.shouldHaveThrown
+          );
+        } catch (error) {
+          expect(error.name).toBe(Constants.errors.storage.name);
+          expect(error.details.type).toBe(StorageError.type.FileDoesNotExist.type);
+          Log.log(TestConstants.storage.testName, successBulkRemoveTitle, error.details);
+        }
+
+        Log.it(TestConstants.storage.testName, successBulkRemoveTitle, it4, false);
         done();
       }, Helper.customTimeout);
     });

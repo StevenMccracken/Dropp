@@ -8,9 +8,12 @@ const Utils = require('../utilities/utils');
 const Auth = require('../authentication/auth');
 const UserAccessor = require('../database/user');
 const DroppError = require('../errors/DroppError');
+const CloudStorage = require('../storage/storage');
 const DroppAccessor = require('../database/dropp');
+const ErrorAccessor = require('../database/error');
 const Validator = require('../utilities/validator');
 const Constants = require('../utilities/constants');
+const StorageError = require('../errors/StorageError');
 
 // Single user functions
 
@@ -278,16 +281,36 @@ const remove = async (_currentUser, _usernameDetails) => {
   }
 
   await UserAccessor.remove(user);
-  const dropps = await DroppAccessor.getAll();
-  const droppsByUser = dropps.filter(dropp => dropp.username === usernameDetails.username);
-  await DroppAccessor.bulkRemove(droppsByUser);
-  const data = {
+  const result = {
     success: {
       message: Constants.middleware.user.messages.success.remove,
     },
   };
 
-  return data;
+  // Try to remove all user dropps and media
+  try {
+    const dropps = await DroppAccessor.getAll();
+    const droppsByUser = [];
+    const droppIdsWithMedia = [];
+    dropps.forEach((dropp) => {
+      if (dropp.username !== usernameDetails.username) return;
+
+      droppsByUser.push(dropp);
+      if (dropp.media === true) droppIdsWithMedia.push(dropp.id);
+    });
+
+    const removals = [
+      DroppAccessor.bulkRemove(droppsByUser),
+      CloudStorage.bulkRemove(Constants.middleware.dropp.cloudStorageFolder, droppIdsWithMedia),
+    ];
+    await Promise.all(removals);
+  } catch (mediaRemovalError) {
+    // Indicate partial-failure and log error asynchronously
+    result.mediaRemovalError = StorageError.type.Unknown;
+    ErrorAccessor.add(mediaRemovalError);
+  }
+
+  return result;
 };
 
 // Inter-user functions

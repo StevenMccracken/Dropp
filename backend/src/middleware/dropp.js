@@ -441,14 +441,13 @@ const remove = async (_currentUser, _details) => {
     },
   };
 
-  if (dropp.media === true) {
-    try {
-      await CloudStorage.remove(Constants.middleware.dropp.cloudStorageFolder, dropp.id);
-    } catch (removePhotoError) {
-      // Indicate partial-failure and log error asynchronously
-      result.mediaRemovalError = StorageError.type.Unknown;
-      ErrorAccessor.add(removePhotoError);
-    }
+  if (dropp.media === false) return result;
+  try {
+    await CloudStorage.remove(Constants.middleware.dropp.cloudStorageFolder, dropp.id);
+  } catch (removePhotoError) {
+    // Indicate partial-failure and log error asynchronously
+    result.mediaRemovalError = StorageError.type.Unknown;
+    ErrorAccessor.add(removePhotoError);
   }
 
   return result;

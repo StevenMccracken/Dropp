@@ -5,13 +5,15 @@ const TestConstants = require('../../constants');
 const Request = require('request-promise-native');
 const Dropp = require('../../../src/models/Dropp');
 const Utils = require('../../../src/utilities/utils');
-const Location = require('../../../src/models/Location');
 const UserAccessor = require('../../../src/database/user');
 const DroppError = require('../../../src/errors/DroppError');
+const CloudStorage = require('../../../src/storage/storage');
 const DroppAccessor = require('../../../src/database/dropp');
 const Constants = require('../../../src/utilities/constants');
 const AuthModule = require('../../../src/authentication/auth');
 const UserMiddleware = require('../../../src/middleware/user');
+const StorageError = require('../../../src/errors/StorageError');
+const DroppMiddleware = require('../../../src/middleware/dropp');
 
 const url = `${TestConstants.router.url(Server.port)}${Constants.router.routes.users.base}`;
 const postUserRouteTitle = 'Post user route';
@@ -783,18 +785,19 @@ describe(removeUserTitle, () => {
     const authDetails = await UserMiddleware.getAuthToken(details);
     this.options.headers.authorization = authDetails.success.token;
 
-    this.dropp = new Dropp({
+    // Create dropp with media for user
+    const droppInfo = {
       text: TestConstants.params.test,
-      media: false,
-      username: this.user.username,
-      timestamp: TestConstants.params.defaultTimestamp,
-      location: new Location({
-        latitude: TestConstants.params.defaultLocation,
-        longitude: TestConstants.params.defaultLocation,
-      }),
-    });
+      media: 'true',
+      base64Data: `${Constants.media.base64DataTypes.png}${TestConstants.media.base64DataTypes.test}`,
+      location: {
+        latitude: TestConstants.params.defaultLocationString,
+        longitude: TestConstants.params.defaultLocationString,
+      },
+    };
 
-    await DroppAccessor.add(this.dropp);
+    const result = await DroppMiddleware.create(this.user, droppInfo);
+    this.dropp = new Dropp(result.success.dropp);
     Log.beforeEach(TestConstants.router.testName, removeUserTitle, false);
     done();
   });
@@ -806,6 +809,7 @@ describe(removeUserTitle, () => {
     }
 
     delete this.user;
+    delete this.dropp;
     delete this.options;
     delete this.updateUrl;
     delete this.shouldDeleteUser;
@@ -893,15 +897,30 @@ describe(removeUserTitle, () => {
     const response = await Request(this.options);
     expect(response.statusCode).toBe(TestConstants.router.statusCodes.success);
     const details = JSON.parse(response.body);
+    expect(details.mediaRemovalError).not.toBeDefined();
     expect(details.success.message).toBe(Constants.middleware.user.messages.success.remove);
 
     // Verify user information from the backend
-    const result = await UserAccessor.get(this.user.username);
-    expect(result).toBeNull();
-    const dropp = await DroppAccessor.get(this.dropp.id);
-    expect(dropp).toBeNull();
-    this.shouldDeleteUser = Utils.hasValue(result);
+    const promises = [UserAccessor.get(this.user.username), DroppAccessor.get(this.dropp.id)];
+    const results = await Promise.all(promises);
+    expect(results[0]).toBeNull();
+    expect(results[1]).toBeNull();
+    try {
+      const media = await CloudStorage.get(TestConstants.utils.strings.emptyString, this.dropp.id);
+      expect(media).not.toBeDefined();
+      Log.log(
+        TestConstants.router.testName,
+        removeUserTitle,
+        TestConstants.messages.shouldHaveThrown
+      );
+    } catch (error) {
+      expect(error.name).toBe(Constants.errors.storage.name);
+      expect(error.details.type).toBe(StorageError.type.FileDoesNotExist.type);
+      Log.log(TestConstants.router.testName, removeUserTitle, error.details);
+    }
+
     Log.log(TestConstants.router.testName, removeUserTitle, response.body);
+    this.shouldDeleteUser = Utils.hasValue(results[0]);
     Log.it(TestConstants.router.testName, removeUserTitle, it4, false);
     done();
   });

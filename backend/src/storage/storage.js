@@ -228,7 +228,7 @@ const add = async (_folder, _fileName, _filePath) => {
  * to remove from. Use empty string for base folder
  * @param {String} _fileName the name the uploaded file to remove
  * @throws {StorageError} for invalid `_folder`,
- * _fileName`, or if the file does not exist
+ * `_fileName`, or if the file does not exist
  */
 const remove = async (_folder, _fileName) => {
   const source = 'remove()';
@@ -258,11 +258,36 @@ const remove = async (_folder, _fileName) => {
   }
 };
 
+/**
+ * Removes multiple files from cloud storage
+ * @param {String} _folder the name of the folder
+ * to remove from. Use empty string for base folder
+ * @param {[String]} _fileNames the names of the uploaded files to remove
+ * @throws {StorageError} for invalid `_folder` or `_fileNames`
+ */
+const bulkRemove = async (_folder, _fileNames) => {
+  const source = 'bulkRemove()';
+  Log.log(Constants.storage.moduleName, source, _folder, _fileNames);
+
+  if (!didInitializeBucket) StorageError.throwInvalidStateError(source);
+  const invalidMembers = [];
+  if (typeof _folder !== 'string') invalidMembers.push(Constants.params.folder);
+  if (Array.isArray(_fileNames)) {
+    const invalidFileNames = _fileNames.filter(fileName => typeof fileName !== 'string' || fileName.trim().length === 0);
+    if (invalidFileNames.length > 0) invalidMembers.push(Constants.params.fileName);
+  } else invalidMembers.push(Constants.params.fileNames);
+
+  if (invalidMembers.length > 0) StorageError.throwInvalidMembersError(source, invalidMembers);
+  const removals = _fileNames.map(fileName => remove(_folder, fileName));
+  await Promise.all(removals);
+};
+
 module.exports = {
   get,
   add,
   remove,
   addString,
+  bulkRemove,
   initializeBucket,
   didInitializeBucket,
 };

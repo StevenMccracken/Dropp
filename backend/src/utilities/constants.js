@@ -30,6 +30,7 @@ const params = {
   Location: 'Location',
   latitude: 'latitude',
   longitude: 'longitude',
+  fileNames: 'fileNames',
   timestamp: 'timestamp',
   requestId: 'requestId',
   base64Data: 'base64Data',

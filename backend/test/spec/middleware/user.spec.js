@@ -3,14 +3,17 @@ const User = require('../../../src/models/User');
 const TestConstants = require('../../constants');
 const Dropp = require('../../../src/models/Dropp');
 const Utils = require('../../../src/utilities/utils');
-const Location = require('../../../src/models/Location');
 const Firebase = require('../../../src/firebase/firebase');
 const UserAccessor = require('../../../src/database/user');
 const DroppError = require('../../../src/errors/DroppError');
+const CloudStorage = require('../../../src/storage/storage');
 const DroppAccessor = require('../../../src/database/dropp');
 const Constants = require('../../../src/utilities/constants');
 const UserMiddleware = require('../../../src/middleware/user');
+const StorageError = require('../../../src/errors/StorageError');
+const DroppMiddleware = require('../../../src/middleware/dropp');
 
+CloudStorage.initializeBucket();
 Firebase.start(process.env.MOCK === '1');
 /* eslint-disable no-undef */
 describe(TestConstants.middleware.user.testName, () => {
@@ -2959,18 +2962,18 @@ describe(TestConstants.middleware.user.testName, () => {
   describe(removeUserTitle, () => {
     beforeEach(async (done) => {
       Log.beforeEach(TestConstants.middleware.user.testName, removeUserTitle, true);
-      this.dropp = new Dropp({
+      const droppInfo = {
         text: TestConstants.params.test,
-        media: false,
-        username: this.newUser.username,
-        timestamp: TestConstants.params.defaultTimestamp,
-        location: new Location({
-          latitude: TestConstants.params.defaultLocation,
-          longitude: TestConstants.params.defaultLocation,
-        }),
-      });
+        media: 'true',
+        base64Data: `${Constants.media.base64DataTypes.png}${TestConstants.media.base64DataTypes.test}`,
+        location: {
+          latitude: TestConstants.params.defaultLocationString,
+          longitude: TestConstants.params.defaultLocationString,
+        },
+      };
 
-      await DroppAccessor.add(this.dropp);
+      const result = await DroppMiddleware.create(this.newUser, droppInfo);
+      this.dropp = new Dropp(result.success.dropp);
       Log.beforeEach(TestConstants.middleware.user.testName, removeUserTitle, false);
       done();
     });
@@ -2987,15 +2990,35 @@ describe(TestConstants.middleware.user.testName, () => {
       Log.it(TestConstants.middleware.user.testName, removeUserTitle, it1, true);
       const result = await UserMiddleware.remove(this.newUser, { username: this.newUser.username });
       expect(result.success.message).toBe(Constants.middleware.user.messages.success.remove);
-      this.dropp = await DroppAccessor.get(this.dropp.id);
-      expect(this.dropp).toBeNull();
+      expect(result.mediaRemovalError).not.toBeDefined();
+
+      // Verify results from backend
+      const dropp = await DroppAccessor.get(this.dropp.id);
+      expect(dropp).toBeNull();
+      try {
+        const media = await CloudStorage.get(
+          Constants.middleware.dropp.cloudStorageFolder,
+          this.dropp.id
+        );
+        expect(media).not.toBeDefined();
+        Log.log(
+          TestConstants.middleware.user.testName,
+          removeUserTitle,
+          TestConstants.messages.shouldHaveThrown
+        );
+      } catch (error) {
+        expect(error.name).toBe(Constants.errors.storage.name);
+        expect(error.details.type).toBe(StorageError.type.FileDoesNotExist.type);
+        Log.log(TestConstants.middleware.user.testName, removeUserTitle, error.details);
+      }
+
       try {
         const user = await UserMiddleware.get(this.testUser, { username: this.newUser.username });
         expect(user).not.toBeDefined();
         Log.log(
           TestConstants.middleware.user.testName,
           removeUserTitle,
-          `Was able to fetch ${user.username} after removing them`
+          TestConstants.messages.shouldHaveThrown
         );
       } catch (retrieveUserError) {
         expect(retrieveUserError.name).toBe(Constants.errors.dropp.name);
@@ -3003,6 +3026,7 @@ describe(TestConstants.middleware.user.testName, () => {
         Log.log(TestConstants.middleware.user.testName, removeUserTitle, retrieveUserError);
       }
 
+      this.dropp = null;
       Log.it(TestConstants.middleware.user.testName, removeUserTitle, it1, false);
       done();
     });
