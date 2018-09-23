@@ -47,13 +47,13 @@
     "eslint": "^4.16.0",
     "eslint-config-airbnb-base": "^12.1.0",
     "eslint-plugin-import": "^2.8.0",
-    "grunt": "^1.0.1",
+    "grunt": "^1.0.3",
     "grunt-cli": "^1.2.0",
     "grunt-jasmine-node": "^0.3.1",
     "grunt-shell-spawn": "^0.3.10",
-    "jasmine-node": "^2.0.0",
+    "jasmine-node": "^2.0.1",
     "nyc": "^11.7.1",
-    "request": "^2.83.0",
+    "request": "^2.88.0",
     "request-promise-native": "^1.0.5"
   }
 }
