@@ -208,14 +208,16 @@ express.use('/', router);
 express.use(RoutingModule.errorHandler);
 startupLog('Router configured');
 
+const shouldMock = process.env.MOCK === '1';
+
 // Start database connection
 startupLog('Starting database...', true);
-Firebase.start(process.env.MOCK === '1');
+Firebase.start(shouldMock);
 startupLog('Database started');
 
 // Start cloud storage connectionError
 startupLog('Connecting cloud storage...', true);
-CloudStorage.initializeBucket();
+CloudStorage.initializeBucket(shouldMock);
 startupLog('Cloud storage connected');
 
 // Listen for all incoming requests on the specified port

@@ -6,6 +6,7 @@ const FileSystem = require('fs');
 const Media = require('../media/media');
 const Log = require('../logging/logger');
 const Utils = require('../utilities/utils');
+const MockStorage = require('./mock/MockStorage');
 const DroppError = require('../errors/DroppError');
 const Validator = require('../utilities/validator');
 const Constants = require('../utilities/constants');
@@ -17,18 +18,24 @@ let didInitializeBucket = false;
 /**
  * Initializes the Cloud Storage bucket interface.
  * Returns immediately if bucket was already initialized
+ * @param {Boolean} [_shouldMock=false] whether
+ * or not to use the mock storage bucket
  */
-const initializeBucket = () => {
+const initializeBucket = (_shouldMock = false) => {
   const source = 'initializeBucket()';
-  Log.log(Constants.storage.moduleName, source);
+  Log.log(Constants.storage.moduleName, source, _shouldMock);
 
   if (didInitializeBucket) return;
-  const project = CloudStorage({
-    projectId: Constants.storage.project.id,
-    keyFilename: Constants.storage.project.accountKeyPath,
-  });
+  let storage;
+  if (_shouldMock === true) storage = new MockStorage();
+  else {
+    storage = CloudStorage({
+      projectId: Constants.storage.project.id,
+      keyFilename: Constants.storage.project.accountKeyPath,
+    });
+  }
 
-  this.bucket = project.bucket(Constants.storage.project.url);
+  this.bucket = storage.bucket(Constants.storage.project.url);
   didInitializeBucket = true;
 };
 
@@ -148,6 +155,8 @@ const addString = async (folder, filename, string) => {
         source,
         Constants.storage.messages.success.finishedUpload
       );
+
+      this.bucket.addFile(folder, filename, file);
       resolve();
     });
 
@@ -212,6 +221,8 @@ const add = async (_folder, _fileName, _filePath) => {
         Constants.storage.messages.success.finishedUpload
       );
       await Utils.deleteLocalFile(_filePath);
+
+      this.bucket.addFile(_folder, _fileName, file);
       resolve();
     });
 
