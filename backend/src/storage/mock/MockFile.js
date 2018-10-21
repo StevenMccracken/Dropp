@@ -66,6 +66,15 @@ class MockFile extends Object {
 
     return promise;
   }
+
+  delete() {
+    const promise = new Promise((resolve) => {
+      this.doesExist = false;
+      resolve();
+    });
+
+    return promise;
+  }
 }
 
 module.exports = MockFile;

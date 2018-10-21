@@ -36,6 +36,11 @@ const initializeBucket = (_shouldMock = false) => {
   }
 
   this.bucket = storage.bucket(Constants.storage.project.url);
+  if (_shouldMock === false) {
+    this.bucket.addFile = () => {};
+    this.bucket.removeFile = () => {};
+  }
+
   didInitializeBucket = true;
 };
 
@@ -264,6 +269,7 @@ const remove = async (_folder, _fileName) => {
   Log.log(Constants.storage.moduleName, source, Constants.storage.messages.removingRemoteFile);
   try {
     await file.delete();
+    this.bucket.removeFile(_folder, _fileName);
   } catch (error) {
     StorageError.throwUnknownError(source, error);
   }

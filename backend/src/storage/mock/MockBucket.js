@@ -30,6 +30,12 @@ class MockBucket extends Object {
     if (!(_file instanceof MockFile)) throw new Error('invalid file');
     this.files[`${_folder}${_name}`] = _file;
   }
+
+  removeFile(_folder, _name) {
+    if (typeof _folder !== 'string') throw new Error('invalid folder');
+    if (typeof _name !== 'string') throw new Error('invalid name');
+    delete this.files[`${_folder}${_name}`];
+  }
 }
 
 module.exports = MockBucket;
