@@ -1543,7 +1543,7 @@ describe(TestConstants.middleware.dropp.testName, () => {
     it(it1, async (done) => {
       Log.it(TestConstants.middleware.dropp.testName, addPhotoTitle, it1, true);
       try {
-        const result = await DroppMiddleware.updateText(null, this.details);
+        const result = await DroppMiddleware.updateText(null, this.details, this.details);
         expect(result).not.toBeDefined();
         Log.log(
           TestConstants.middleware.dropp.testName,
@@ -1565,7 +1565,7 @@ describe(TestConstants.middleware.dropp.testName, () => {
     it(it2, async (done) => {
       Log.it(TestConstants.middleware.dropp.testName, updateDroppTextTitle, it2, true);
       try {
-        const result = await DroppMiddleware.updateText(this.user, null);
+        const result = await DroppMiddleware.updateText(this.user, null, null);
         expect(result).not.toBeDefined();
         Log.log(
           TestConstants.middleware.dropp.testName,
@@ -1589,7 +1589,7 @@ describe(TestConstants.middleware.dropp.testName, () => {
       Log.it(TestConstants.middleware.dropp.testName, updateDroppTextTitle, it3, true);
       this.details.id = Utils.newUuid();
       try {
-        const result = await DroppMiddleware.updateText(this.user, this.details);
+        const result = await DroppMiddleware.updateText(this.user, this.details, this.details);
         expect(result).not.toBeDefined();
         Log.log(
           TestConstants.middleware.dropp.testName,
@@ -1618,7 +1618,7 @@ describe(TestConstants.middleware.dropp.testName, () => {
       });
 
       try {
-        const result = await DroppMiddleware.updateText(user, this.details);
+        const result = await DroppMiddleware.updateText(user, this.details, this.details);
         expect(result).not.toBeDefined();
         Log.log(
           TestConstants.middleware.dropp.testName,
@@ -1641,7 +1641,7 @@ describe(TestConstants.middleware.dropp.testName, () => {
       Log.it(TestConstants.middleware.dropp.testName, updateDroppTextTitle, it5, true);
       this.details.newText = this.dropp.text;
       try {
-        const result = await DroppMiddleware.updateText(this.user, this.details);
+        const result = await DroppMiddleware.updateText(this.user, this.details, this.details);
         expect(result).not.toBeDefined();
         Log.log(
           TestConstants.middleware.dropp.testName,
@@ -1664,7 +1664,7 @@ describe(TestConstants.middleware.dropp.testName, () => {
       Log.it(TestConstants.middleware.dropp.testName, updateDroppTextTitle, it6, true);
       this.details.newText = TestConstants.utils.strings.tab;
       try {
-        const result = await DroppMiddleware.updateText(this.user, this.details);
+        const result = await DroppMiddleware.updateText(this.user, this.details, this.details);
         expect(result).not.toBeDefined();
         Log.log(
           TestConstants.middleware.dropp.testName,
@@ -1686,7 +1686,7 @@ describe(TestConstants.middleware.dropp.testName, () => {
     const it7 = 'updates a dropp\'s text';
     it(it7, async (done) => {
       Log.it(TestConstants.middleware.dropp.testName, updateDroppTextTitle, it7, true);
-      const result = await DroppMiddleware.updateText(this.user, this.details);
+      const result = await DroppMiddleware.updateText(this.user, this.details, this.details);
       expect(result.success.message).toBe(Constants.middleware.dropp.messages.success.textUpdate);
       const dropp = await DroppAccessor.get(this.dropp.id);
       expect(dropp.text).toBe(this.details.newText.trim());
