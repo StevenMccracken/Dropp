@@ -203,7 +203,7 @@ describe(TestConstants.router.testName, () => {
         },
       };
 
-      Log.beforeEach(TestConstants.router.testName, getDroppRouteTitle, false);
+      Log.beforeEach(TestConstants.router.testName, createDroppRouteTitle, false);
     });
 
     afterEach(async (done) => {
@@ -410,6 +410,146 @@ describe(TestConstants.router.testName, () => {
         Log.it(TestConstants.router.testName, createDroppSuccessTitle, it7, false);
         done();
       });
+    });
+  });
+
+  const updateDroppTextRouteTitle = 'Update dropp text route';
+  describe(updateDroppTextRouteTitle, () => {
+    beforeEach(async (done) => {
+      Log.beforeEach(TestConstants.router.testName, updateDroppTextRouteTitle, true);
+      this.options = {
+        method: TestConstants.router.methods.put,
+        uri: url,
+        resolveWithFullResponse: true,
+        headers: { authorization: this.authToken },
+        form: { newText: Utils.newUuid() },
+      };
+
+      this.updateUrl = (droppID) => {
+        this.options.uri = `${url}/${droppID}/text`;
+      };
+
+      this.dropp1 = new Dropp({
+        timestamp: TestConstants.params.defaultTimestamp,
+        media: false,
+        text: Utils.newUuid(),
+        username: this.user1.username,
+        location: new Location({
+          latitude: TestConstants.params.defaultLocation,
+          longitude: TestConstants.params.defaultLocation,
+        }),
+      });
+
+      await DroppAccessor.add(this.dropp1);
+      Log.beforeEach(TestConstants.router.testName, updateDroppTextRouteTitle, false);
+      done();
+    });
+
+    afterEach(async (done) => {
+      Log.afterEach(TestConstants.router.testName, updateDroppTextRouteTitle, true);
+      if (Utils.hasValue(this.dropp1)) await DroppMiddleware.remove(this.user1, this.dropp1);
+      delete this.dropp1;
+      Log.afterEach(TestConstants.router.testName, updateDroppTextRouteTitle, false);
+      done();
+    });
+
+    const it1 = 'returns an authentication error for a missing auth token';
+    it(it1, async (done) => {
+      Log.it(TestConstants.router.testName, updateDroppTextRouteTitle, it1, true);
+      this.updateUrl(this.dropp1.id);
+      delete this.options.headers.authorization;
+      try {
+        const response = await Request(this.options);
+        expect(response).not.toBeDefined();
+        Log.log(
+          TestConstants.router.testName,
+          updateDroppTextRouteTitle,
+          TestConstants.messages.shouldHaveThrown
+        );
+      } catch (response) {
+        expect(response.statusCode).toBe(DroppError.type.Auth.status);
+        const details = JSON.parse(response.error);
+        expect(details.error.type).toBe(DroppError.type.Auth.type);
+        expect(details.error.message).toBe(DroppError.TokenReason.missing);
+        Log.log(TestConstants.router.testName, updateDroppTextRouteTitle, response.error);
+      }
+
+      Log.it(TestConstants.router.testName, updateDroppTextRouteTitle, it1, false);
+      done();
+    });
+
+    const it2 = 'returns an error for an invalid dropp ID';
+    it(it2, async (done) => {
+      Log.it(TestConstants.router.testName, updateDroppTextRouteTitle, it2, true);
+      this.updateUrl(TestConstants.params.invalidChars.encodedDroppId);
+      try {
+        const response = await Request(this.options);
+        expect(response).not.toBeDefined();
+        Log.log(
+          TestConstants.router.testName,
+          updateDroppTextRouteTitle,
+          TestConstants.messages.shouldHaveThrown
+        );
+      } catch (response) {
+        expect(response.statusCode).toBe(DroppError.type.InvalidRequest.status);
+        const details = JSON.parse(response.error);
+        expect(details.error.type).toBe(DroppError.type.InvalidRequest.type);
+        expect(details.error.message).toContain(Constants.params.id);
+        Log.log(TestConstants.router.testName, updateDroppTextRouteTitle, response.error);
+      }
+
+      Log.it(TestConstants.router.testName, updateDroppTextRouteTitle, it2, false);
+      done();
+    });
+
+    const it3 = 'returns an error for a non-existent dropp';
+    it(it3, async (done) => {
+      Log.it(TestConstants.router.testName, updateDroppTextRouteTitle, it3, true);
+      this.updateUrl(Utils.newUuid());
+      try {
+        const response = await Request(this.options);
+        expect(response).not.toBeDefined();
+        Log.log(
+          TestConstants.router.testName,
+          updateDroppTextRouteTitle,
+          TestConstants.messages.shouldHaveThrown
+        );
+      } catch (response) {
+        expect(response.statusCode).toBe(DroppError.type.ResourceDNE.status);
+        const details = JSON.parse(response.error);
+        expect(details.error.type).toBe(DroppError.type.ResourceDNE.type);
+        expect(details.error.message)
+          .toBe(TestConstants.messages.doesNotExist(Constants.params.dropp));
+        Log.log(TestConstants.router.testName, updateDroppTextRouteTitle, response.error);
+      }
+
+      Log.it(TestConstants.router.testName, updateDroppTextRouteTitle, it3, false);
+      done();
+    });
+
+    const it4 = 'returns an error for all invalid parameters';
+    it(it4, async (done) => {
+      Log.it(TestConstants.router.testName, updateDroppTextRouteTitle, it4, true);
+      this.updateUrl(this.dropp1.id);
+      delete this.options.form;
+      try {
+        const response = await Request(this.options);
+        expect(response).not.toBeDefined();
+        Log.log(
+          TestConstants.router.testName,
+          updateDroppTextRouteTitle,
+          TestConstants.messages.shouldHaveThrown
+        );
+      } catch (response) {
+        expect(response.statusCode).toBe(DroppError.type.InvalidRequest.status);
+        const details = JSON.parse(response.error);
+        expect(details.error.type).toBe(DroppError.type.InvalidRequest.type);
+        expect(details.error.message).toContain(Constants.params.newText);
+        Log.log(TestConstants.router.testName, updateDroppTextRouteTitle, response.error);
+      }
+
+      Log.it(TestConstants.router.testName, updateDroppTextRouteTitle, it4, false);
+      done();
     });
   });
 

@@ -377,6 +377,27 @@ const routing = (_router) => {
     });
 
   /**
+   * Method: PUT
+   * Authentication: Yes
+   * Details: Updates a dropp's text content
+   * URL parameters:
+   *  id
+   * Body parameters:
+   *  newText
+   */
+  router.route(Constants.router.routes.dropps.dropp.text)
+    .all(validateAuthToken)
+    .put(async (request, response, next) => {
+      try {
+        const result = await DroppMiddleware.updateText(request.user, request.body);
+        response.status(201);
+        response.json(result);
+      } catch (error) {
+        next(error);
+      }
+    });
+
+  /**
    * Method: DELETE
    * Authentication: Yes
    * Details: Removes a dropp by it's ID
